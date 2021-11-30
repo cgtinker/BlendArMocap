@@ -1,3 +1,0 @@
-[submodule "submodule/mediapipe"]
-	path = submodule/mediapipe
-	url = git@github.com:google/mediapipe.git
