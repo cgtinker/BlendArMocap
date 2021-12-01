@@ -1,7 +1,7 @@
 import mediapipe as mp
-from open_cv import stream as s
 from bridge import events
 from utils import log
+from utils.open_cv import stream as s
 from ml_detection import helper
 
 
