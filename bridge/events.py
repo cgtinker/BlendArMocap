@@ -3,6 +3,7 @@ from __future__ import annotations
 from interfaces import observer_pattern as op
 from typing import List
 from utils import log
+from custom_data import cd_hand
 
 
 class UpdateListener(op.Listener):
@@ -30,8 +31,11 @@ class UpdatePrinter(op.Observer):
 
 
 class BpyHandUpdateReceiver(op.Observer):
+    def __init__(self):
+        self.hand = cd_hand.Hand()
+
     def update(self, subject: op.Listener) -> None:
-        print(subject.data)
+        self.hand.set_position(subject.data)
 
 
 class BpyPoseUpdateReceiver(op.Observer):

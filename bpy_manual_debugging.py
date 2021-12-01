@@ -42,27 +42,33 @@ main_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'module')
 sys.path.append(main_dir)
 
 
-from .ml_detection import hand
-from .utils import log
-from .utils.open_cv import stream
-from .bridge import events
-from .custom_data import cd_hand
+from ml_detection import hand
+from utils import log
+from utils.open_cv import stream
+from bridge import events
+from custom_data import cd_hand
+import importlib
 
+importlib.reload(hand)
+importlib.reload(log)
+importlib.reload(stream)
+importlib.reload(events)
+importlib.reload(cd_hand)
 
 def main():
-    hand = cd_hand.Hand()
-    """
+    # hand = cd_hand.Hand()
+    
     log.init_logger('debug')
     s = stream.Webcam()
 
     # observe data
-    _observer = events.UpdatePrinter()
+    _observer = events.BpyHandUpdateReceiver()
     _listener = events.UpdateListener()
     _listener.attach(_observer)
 
     hand.main(s, _listener)
     del s
-    """
+    
 
 
 if __name__ == '__main__':
