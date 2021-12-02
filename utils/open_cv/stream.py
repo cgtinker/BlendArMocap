@@ -4,8 +4,15 @@ import cv2
 class Webcam:
     def __init__(self,
                  camera_index: int = 0,
-                 title: str = "ml tracking"):
+                 title: str = "ml tracking",
+                 width: int = 800,
+                 height: int = 600):
+
         self.capture = cv2.VideoCapture(camera_index)
+        self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+        self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+
         self.title = title
         self.updated, self.frame = None, None
         self.color_spaces = {

@@ -1,9 +1,8 @@
 from blender import objects
 from mathutils import Vector
-import bpy
 
 
-class Hand(object):
+class Hand:
     def __init__(self):
         landmark_references = {
             0: "WRIST",
@@ -28,19 +27,13 @@ class Hand(object):
             19: "PINKY_DIP",
             20: "PINKY_TIP"
         }
+        self.objs = objects.generate_empties(landmark_references, 0.025)
+        self.data = None
 
-        self.objs = objects.generate_empties(landmark_references, 0.1)
-        self.blender_link_handler()
-
-    def set_position(self, data):
-        for position_data in data[0]: # can be 2 hands
-            for i, p in enumerate(position_data):
-                self.objs[p[0]].location = Vector((p[1][0], p[1][1], p[1][2]))
-        self.frame_change_pre()
-
-    def blender_link_handler(self):
-        bpy.app.handlers.frame_change_pre.append(self.frame_change_pre())
-
-    def frame_change_pre(self):
-        print("none")
-        pass
+    def set_position(self):
+        try:
+            for position_data in self.data[0]:  # can be 2 hands
+                for i, p in enumerate(position_data):
+                    self.objs[p[0]].location = Vector((p[1][0], p[1][1], p[1][2]))
+        except ValueError:
+            print("no hand active")
