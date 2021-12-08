@@ -5,7 +5,7 @@ from utils import log
 
 
 class JsonWriter(object):
-    def __init__(self, path, _type='default'):
+    def __init__(self, sub_path, _type='default'):
         type_dict = {
             'byte': 'wb',
             'text': 'wt',
@@ -13,13 +13,12 @@ class JsonWriter(object):
         }
 
         self.writer = open(
-            path,
+            sys.path[0]+'/'+sub_path,
             type_dict[_type],
             encoding='UTF-8'
         )
 
         self.chunks = {}
-        log.logger.debug('INITIALIZED JSON WRITER')
 
     def add_chunk(self, data, idx):
         self.chunks[idx] = data
@@ -43,7 +42,7 @@ def main():
         d[f'{t}'] = t
         t += 1
 
-    writer = JsonWriter(sys.path[0] + 'test.json')
+    writer = JsonWriter('test.json')
     while t < 10 ** 6:
         writer.add_chunk(d, t)
         t += 1

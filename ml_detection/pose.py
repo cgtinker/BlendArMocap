@@ -1,4 +1,5 @@
 import mediapipe as mp
+import time
 from bridge import events
 from utils import log
 from utils.open_cv import stream as s
@@ -9,12 +10,16 @@ def main(stream: s.Webcam,
          listener: events.op.Listener,
          min_detection_confidence: float = 0.8,
          min_tracking_confidence: float = 0.5,
+         max_recording_length: int = 120
          ):
 
+    """Pose detection using active webcam stream.
+    Attempting to stash tracking results for further processing."""
     # data and display specs
     mp_drawings = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
     mp_pose = mp.solutions.pose
+    start_time = time.time()
 
     log.logger.info('INITIALIZE POSE DETECTION')
     with mp_pose.Pose(
@@ -48,6 +53,9 @@ def main(stream: s.Webcam,
             if stream.exit_stream():
                 break
 
+            elif time.time() - start_time > max_recording_length:
+                break
+
 
 def draw_pose(stream, mp_res, mp_drawing, mp_drawing_styles, mp_pose):
     """Draws the landmarks and the connections on the image."""
@@ -60,4 +68,4 @@ def draw_pose(stream, mp_res, mp_drawing, mp_drawing_styles, mp_pose):
 
 if __name__ == "__main__":
     log.init_logger()
-    helper.init_main(s, events, main)
+    helper.init_helper(s, events, main)

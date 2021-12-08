@@ -13,11 +13,11 @@ class UpdateListener(op.Listener):
     data = None
 
     def attach(self, observer: op.Observer) -> None:
-        log.logger.debug("Subject: Attached an observer.")
+        log.logger.debug("OBSERVER ATTACHED FROM UPDATE LISTENER")
         self._observers.append(observer)
 
     def detach(self, observer: op.Observer) -> None:
-        log.logger.debug("Subject: Detached an observer")
+        log.logger.debug("OBSERVER DETACHED FROM UPDATE LISTENER")
         self._observers.remove(observer)
 
     def notify(self) -> None:
@@ -31,6 +31,7 @@ class UpdatePrinter(op.Observer):
         print(subject.data)
 
 
+# region Hand
 class BpyHandUpdateReceiver(op.Observer):
     def __init__(self, _hand):
         self.hand = _hand
@@ -38,6 +39,18 @@ class BpyHandUpdateReceiver(op.Observer):
     def update(self, subject: op.Listener) -> None:
         self.hand.data = subject.data
         self.hand.set_position()
+
+
+class MemoryHandUpdateReceiver(op.Observer):
+    def __init__(self, _hand):
+        self.hand = _hand
+        self.idx = 0
+
+    def update(self, subject: op.Listener) -> None:
+        self.idx += 1
+        self.hand.allocate_memory(self.idx, subject.data)
+
+# endregion
 
 
 class BpyPoseUpdateReceiver(op.Observer):

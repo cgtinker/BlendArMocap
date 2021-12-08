@@ -1,20 +1,26 @@
 import mediapipe as mp
+import time
 from bridge import events
 from utils import log
 from utils.open_cv import stream as s
 from ml_detection import helper
+from custom_data import cd_hand
 
 
 def main(stream: s.Webcam,
          listener: events.op.Listener,
          min_detection_confidence: float = 0.8,
          min_tracking_confidence: float = 0.5,
+         max_recording_length: int = 10
          ):
 
+    """Hand detection using active webcam stream.
+    Attempting to stash tracking results for further processing."""
     # data and display specs
     mp_hands = mp.solutions.hands
     mp_drawings = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
+    start_time = time.time()
 
     log.logger.info('INITIALIZE HAND DETECTION')
     with mp_hands.Hands(
@@ -53,6 +59,9 @@ def main(stream: s.Webcam,
             if stream.exit_stream():
                 break
 
+            elif time.time() - start_time > max_recording_length:
+                break
+
 
 def draw_hands(stream, mp_res, mp_drawings, mp_hands):
     """Draws the landmarks and the connections on the image."""
@@ -62,4 +71,18 @@ def draw_hands(stream, mp_res, mp_drawings, mp_hands):
 
 if __name__ == "__main__":
     log.init_logger()
-    helper.init_main(s, events, main)
+    log.logger.debug('ACCESS WEBCAM STREAM')
+    _stream = s.Webcam()
+
+    log.logger.debug('ATTEMPT TO OBSERVE DATA')
+    m_hand = cd_hand.Hand('memory')
+    #_observer = events.UpdatePrinter()
+    _observer = events.MemoryHandUpdateReceiver(m_hand)
+    _listener = events.UpdateListener()
+    _listener.attach(_observer)
+
+    log.logger.debug('START RUNNING')
+    main(_stream, _listener)
+    del _stream
+
+    #m_hand.write_json()

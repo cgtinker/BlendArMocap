@@ -1,4 +1,5 @@
 import mediapipe as mp
+import time
 from bridge import events
 from utils import log
 from utils.open_cv import stream as s
@@ -9,12 +10,16 @@ def main(stream: s.Webcam,
          listener: events.op.Listener,
          min_detection_confidence: float = 0.8,
          min_tracking_confidence: float = 0.5,
+         max_recording_length: float = 120
          ):
 
+    """Face detection using active webcam stream.
+    Attempting to stash tracking results for further processing."""
     # data and display specs
     mp_drawings = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
     mp_face_mesh = mp.solutions.face_mesh
+    start_time = time.time()
 
     log.logger.info('INITIALIZE FACE DETECTION')
     with mp_face_mesh.FaceMesh(
@@ -47,7 +52,11 @@ def main(stream: s.Webcam,
             # render
             draw_face(stream, mp_res, mp_drawings, mp_drawing_styles, mp_face_mesh)
             stream.draw()
+
             if stream.exit_stream():
+                break
+
+            elif time.time() - start_time > max_recording_length:
                 break
 
 
@@ -65,4 +74,4 @@ def draw_face(stream, mp_res, mp_drawing, mp_drawing_styles, mp_face_mesh):
 
 if __name__ == "__main__":
     log.init_logger()
-    helper.init_main(s, events, main)
+    helper.init_helper(s, events, main)

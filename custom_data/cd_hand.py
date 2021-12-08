@@ -1,10 +1,11 @@
 from blender import objects
 from mathutils import Vector
+from utils.writer import json_writer
 
 
 class Hand:
-    def __init__(self):
-        landmark_references = {
+    def __init__(self, mode='realtime'):
+        self.landmark_references = {
             0: "WRIST",
             1: "THUMB_CMC",
             2: "THUMB_MCP",
@@ -27,13 +28,75 @@ class Hand:
             19: "PINKY_DIP",
             20: "PINKY_TIP"
         }
-        self.objs = objects.generate_empties(landmark_references, 0.025)
+
+        self.left_hand = []
+        self.right_hand = []
+
         self.data = None
+        self.memory_stack = {}
+
+        if mode == 'realtime':
+            self.init_references()
+
+    def init_references(self):
+        self.left_hand = objects.generate_empties(self.landmark_references, 0.025, "_l")
+        self.right_hand = objects.generate_empties(self.landmark_references, 0.025, "_r")
 
     def set_position(self):
         try:
-            for position_data in self.data[0]:  # can be 2 hands
-                for i, p in enumerate(position_data):
-                    self.objs[p[0]].location = Vector((p[1][0], p[1][1], p[1][2]))
+            left_hand, right_hand = self.assign_hands(list(zip(self.data[0], self.data[1])))
+            for p in left_hand:
+                print("l", p)
+                #self.left_hand[p[0]].location = Vector((p[1][0], p[1][1], p[1][2]))
+            for p in right_hand:
+                print("r", p)
+                #self.right_hand[p[0]].location = Vector((p[1][0], p[1][1], p[1][2]))
+
         except ValueError:
             print("no hand active")
+
+    def allocate_memory(self, idx, data):
+        d = list(zip(data[0], data[1]))
+        self.memory_stack[f'{idx}'] = d
+        # left_hand, right_hand = self.assign_hands(d)
+
+    @staticmethod
+    def assign_hands(hand_data):
+        if len(hand_data) == 2:
+            if hand_data[0][1][1] == hand_data[1][1][1]:
+                return [], []
+
+        left_hand = [data[0] for data in hand_data if data[1][1] == True]
+        right_hand = [data[0] for data in hand_data if data[1][1] == False]
+        return left_hand, right_hand
+
+    def write_json(self):
+        """Structure:
+        f:   [
+                Hands:
+                [
+                    [
+                        [idx: [x, y, z]
+                    ]
+
+                    [
+                        [idx: [x, y, z]
+                    ]
+                ]
+
+                Orientation: num = idx
+                true = left || false = right
+                [
+                    [
+                        0, true [left
+                    ]
+
+                    [
+                        1, false
+                    ]
+                ]
+            ]
+        """
+        writer = json_writer.JsonWriter('hand.json')
+        writer.chunks = self.memory_stack
+        writer.write()

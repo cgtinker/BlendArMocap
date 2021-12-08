@@ -1,4 +1,21 @@
 from mediapipe.framework.formats import landmark_pb2, classification_pb2
+from utils import log
+
+
+def init_helper(s, events, main):
+    """ helper method to init main detection functions for debugging purposes """
+
+    log.logger.debug('ACCESS WEBCAM STREAM')
+    _stream = s.Webcam()
+
+    log.logger.debug('ATTEMPT TO OBSERVE DATA')
+    _observer = events.UpdatePrinter()
+    _listener = events.UpdateListener()
+    _listener.attach(_observer)
+
+    log.logger.debug('START RUNNING')
+    main(_stream, _listener)
+    del _stream
 
 
 def detect_features(mp_lib, stream):
@@ -26,18 +43,3 @@ def cvt_hand_orientation(orientation: classification_pb2):
         return None
 
     return [[idx, "Right" in str(o)] for idx, o in enumerate(orientation)]
-
-
-def init_main(s, events, main):
-    """ helper method to init main detection functions for debugging purposes """
-    # webcam stream
-    _stream = s.Webcam()
-
-    # observe data
-    _observer = events.UpdatePrinter()
-    _listener = events.UpdateListener()
-    _listener.attach(_observer)
-
-    # run main function
-    main(_stream, _listener)
-    del _stream
