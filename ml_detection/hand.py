@@ -1,5 +1,6 @@
 import mediapipe as mp
 import time
+import numpy as np
 from bridge import events
 from utils import log
 from utils.open_cv import stream as s
@@ -21,7 +22,7 @@ def main(stream: s.Webcam,
     mp_drawings = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
     start_time = time.time()
-
+    idx = 0
     log.logger.info('INITIALIZE HAND DETECTION')
     with mp_hands.Hands(
             model_complexity=0,

@@ -64,7 +64,7 @@ class FeatureDetectionModal(bpy.types.Operator):
 
         with mp_hands.Hands(
                 static_image_mode=True,
-                max_num_hands=1,
+                max_num_hands=2,
                 min_detection_confidence=0.7) as mp_lib:
             self.stream.update()
             if not self.stream.updated:

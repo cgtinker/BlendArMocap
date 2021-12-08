@@ -11,6 +11,7 @@ class UpdateListener(op.Listener):
     """ Listens to updates of mp-ml tracking data and notifies receivers. """
     _observers: List[op.Observer] = []
     data = None
+    frame = 0
 
     def attach(self, observer: op.Observer) -> None:
         log.logger.debug("OBSERVER ATTACHED FROM UPDATE LISTENER")
@@ -35,10 +36,12 @@ class UpdatePrinter(op.Observer):
 class BpyHandUpdateReceiver(op.Observer):
     def __init__(self, _hand):
         self.hand = _hand
+        self.idx = 0
 
     def update(self, subject: op.Listener) -> None:
+        self.idx += 1
         self.hand.data = subject.data
-        self.hand.set_position()
+        self.hand.set_position(self.idx)
 
 
 class MemoryHandUpdateReceiver(op.Observer):

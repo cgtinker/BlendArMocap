@@ -1,5 +1,6 @@
 from mediapipe.framework.formats import landmark_pb2, classification_pb2
 from utils import log
+import numpy as np
 
 
 def init_helper(s, events, main):
