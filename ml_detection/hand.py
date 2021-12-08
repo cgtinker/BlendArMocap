@@ -16,6 +16,7 @@ def main(stream: s.Webcam,
     mp_drawings = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
 
+    log.logger.info('INITIALIZE HAND DETECTION')
     with mp_hands.Hands(
             model_complexity=0,
             min_detection_confidence=min_detection_confidence,
@@ -60,4 +61,5 @@ def draw_hands(stream, mp_res, mp_drawings, mp_hands):
 
 
 if __name__ == "__main__":
+    log.init_logger()
     helper.init_main(s, events, main)

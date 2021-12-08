@@ -16,6 +16,7 @@ def main(stream: s.Webcam,
     mp_drawing_styles = mp.solutions.drawing_styles
     mp_face_mesh = mp.solutions.face_mesh
 
+    log.logger.info('INITIALIZE FACE DETECTION')
     with mp_face_mesh.FaceMesh(
             refine_landmarks=True,
             min_detection_confidence=min_detection_confidence,
@@ -63,4 +64,5 @@ def draw_face(stream, mp_res, mp_drawing, mp_drawing_styles, mp_face_mesh):
 
 
 if __name__ == "__main__":
+    log.init_logger()
     helper.init_main(s, events, main)

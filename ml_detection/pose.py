@@ -16,6 +16,7 @@ def main(stream: s.Webcam,
     mp_drawing_styles = mp.solutions.drawing_styles
     mp_pose = mp.solutions.pose
 
+    log.logger.info('INITIALIZE POSE DETECTION')
     with mp_pose.Pose(
             min_detection_confidence=min_detection_confidence,
             min_tracking_confidence=min_tracking_confidence,
@@ -58,4 +59,5 @@ def draw_pose(stream, mp_res, mp_drawing, mp_drawing_styles, mp_pose):
 
 
 if __name__ == "__main__":
+    log.init_logger()
     helper.init_main(s, events, main)
