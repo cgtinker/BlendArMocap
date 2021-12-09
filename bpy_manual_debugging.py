@@ -44,7 +44,8 @@ sys.path.append(main_dir)
 #from ml_detection.stream import hand
 from utils import log
 from utils.open_cv import stream
-from bridge import events, mp_hand_op
+from bridge import events
+from ml_detection import detection_operator
 from custom_data import cd_hand
 import importlib
 
@@ -53,7 +54,7 @@ importlib.reload(log)
 importlib.reload(stream)
 importlib.reload(events)
 importlib.reload(cd_hand)
-importlib.reload(mp_hand_op)
+importlib.reload(detection_operator)
 
 def main():
     # hand = cd_hand.Hand()
@@ -71,15 +72,16 @@ def main():
     
 
 def register():
-    bpy.utils.register_class(mp_hand_op.FeatureDetectionModal)
+    bpy.utils.register_class(detection_operator.DetectionModalOperator)
 
 
 def unregister():
-    bpy.utils.unregister_class(mp_hand_op.FeatureDetectionModal)
+    bpy.utils.unregister_class(detection_operator.DetectionModalOperator)
 
     
 if __name__ == '__main__':
+    log.init_logger()
     register()
     # test call
-    bpy.ops.wm.feature_detection_modal()
+    bpy.ops.wm.feature_detection_modal('INVOKE_DEFAULT')
 
