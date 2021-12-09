@@ -3,7 +3,7 @@ import time
 from bridge import events
 from utils import log
 from utils.open_cv import stream as s
-from ml_detection.stream import helper
+from ml_detection.methods import helper
 from custom_data import cd_hand
 
 

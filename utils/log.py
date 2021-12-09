@@ -39,6 +39,7 @@ def init_logger(mode="debug") -> logging.Logger:
 
     try:
         logger.setLevel(logging_levels[mode])
+
     except KeyError:
         logger.setLevel(logging_levels['debug'])
         print("logger mode not available, using debug mode")
@@ -49,13 +50,13 @@ def init_logger(mode="debug") -> logging.Logger:
         fh = logging.FileHandler(file_name)
         fh.setLevel(level)
         fh.setFormatter(formatter)
-
         logger.addHandler(fh)
 
     # create console handler with a higher log level
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG)
     ch.setFormatter(CustomFormatter())
+
     logger.addHandler(ch)
 
     setup_logger('app.log', logging.DEBUG)

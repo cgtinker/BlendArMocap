@@ -1,11 +1,9 @@
 import bpy
-import mediapipe as mp
 
-from bridge import events
-from custom_data import cd_hand
-from ml_detection.stream import helper
+from ml_detection.methods import ml_hands, helper
 from utils import log
 from utils.open_cv import stream
+import time
 
 
 class DetectionModalOperator(bpy.types.Operator):
@@ -13,60 +11,47 @@ class DetectionModalOperator(bpy.types.Operator):
     bl_idname = "wm.feature_detection_modal"
     bl_label = "Detection Modal"
 
-    # internals
-    target = None
-    observer = None
-    listener = None
-    stream = None
-    _timer = None
+    # detection
+    observer, listener, _timer = None, None, None
+    tracking_handler = None
+    solution_type, solution_target = None, None
+    drawing_utils, drawing_style, stream = None, None, None
 
-    # properties
-    running = False
-    min_detection_confidence: float = 0.8
-    min_tracking_confidence: float = 0.5
-
-    # frame timing
     time_step = 4
     frame = 0
 
-    def invoke(self, context, event):
-        log.logger.info("FEATURE DETECTION MODAL INVOKED")
-        self.stream = stream.Webcam()
+    def execute(self, context):
+        log.logger.info("RUNNING MP AS TIMER DETECTION MODAL")
         wm = context.window_manager
-        # initialize bridge
-        self.target = cd_hand.Hand()
-        self.observer = events.BpyHandUpdateReceiver(self.target)
-        self.listener = events.UpdateListener()
-        self.listener.attach(self.observer)
-
         self._timer = wm.event_timer_add(0.1, window=context.window)
         context.window_manager.modal_handler_add(self)
+
+        self.tracking_handler = ml_hands.HandDetectionBridge()
+        self.stream = stream.Webcam()
+        self.observer, self.listener = self.tracking_handler.initialize_bridge()
+        self.solution_type, self.solution_target = self.tracking_handler.initialize_model()
+        self.drawing_utils, self.drawing_style = self.tracking_handler.get_drawing_solutions()
+        self.listener.attach(self.observer)
         return {'RUNNING_MODAL'}
 
     @classmethod
     def poll(cls, context):
-        # check if player is in object mode
         return context.mode == 'OBJECT'
 
     def modal(self, context, event):
         if event.type == "TIMER":
-            # self.detection()
-            print('TIMER EVENT')
-            self.init_hand_detection()
+            self.run_detection()
             return {'PASS_THROUGH'}
 
         if event.type in {'ESC', 'Q'}:
-            return {'CANCELLED'}
+            return self.cancel(context)
 
         return {'PASS_THROUGH'}
 
-    def init_hand_detection(self):
-        # data and display specs
-        mp_hands = mp.solutions.hands
-        mp_drawings = mp.solutions.drawing_utils
-        mp_drawing_styles = mp.solutions.drawing_styles
-
-        with mp_hands.Hands(
+    def run_detection(self):
+        start = time.time()
+        # TODO: FIX WITH
+        with self.solution_target(
                 static_image_mode=True,
                 max_num_hands=2,
                 min_detection_confidence=0.7) as mp_lib:
@@ -74,14 +59,15 @@ class DetectionModalOperator(bpy.types.Operator):
                 return {'PASS_THROUGH'}
 
             mp_res = helper.detect_features(mp_lib, self.stream)
-            if not contains_hand_features(mp_res):
+            if not self.tracking_handler.contains_features(mp_res):
                 self.stream.draw()
                 return {'PASS_THROUGH'}
 
-            self.listener.data = receive_listener_data(mp_res)
+            self.listener.data = self.tracking_handler.process_detection_result(mp_res)
             self.update_listeners()
-            draw_hands(self.stream, mp_res, mp_drawings, mp_hands)
+            self.tracking_handler.draw_result(self.stream, mp_res, self.drawing_utils, self.solution_type)
             self.stream.draw()
+            log.logger.debug(start - time.time())
             return {'PASS_THROUGH'}
 
     def stream_updated(self):
@@ -97,26 +83,13 @@ class DetectionModalOperator(bpy.types.Operator):
         self.listener.notify()
 
     def cancel(self, context):
+        self.listener.detach(self.observer)
+        del self.observer
+        del self.listener
+        del self.stream
+        del self.tracking_handler
+
         wm = context.window_manager
         wm.event_timer_remove(self._timer)
-        del self.stream
-        self.listener.detach(self.observer)
-
-
-def receive_listener_data(mp_res):
-    return (
-        [helper.cvt2landmark_array(hand) for hand in mp_res.multi_hand_landmarks],
-        helper.cvt_hand_orientation(mp_res.multi_handedness)
-    )
-
-
-def contains_hand_features(mp_res):
-    if not mp_res.multi_hand_landmarks and not mp_res.multi_handedness:
-        return False
-    return True
-
-
-def draw_hands(s, mp_res, mp_drawings, mp_hands):
-    """Draws the landmarks and the connections on the image."""
-    for hand in mp_res.multi_hand_landmarks:
-        mp_drawings.draw_landmarks(s.frame, hand, mp_hands.HAND_CONNECTIONS)
+        log.logger.info("CANCELLED")
+        return {'CANCELLED'}

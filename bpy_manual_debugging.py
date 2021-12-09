@@ -32,6 +32,7 @@ bl_info = {
 import os
 import sys
 import bpy
+
 # getting access to the current dir - necessary to access blender file location
 blend_dir = os.path.dirname(bpy.data.filepath)
 if blend_dir not in sys.path:
@@ -41,35 +42,14 @@ if blend_dir not in sys.path:
 main_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'module')
 sys.path.append(main_dir)
 
-#from ml_detection.stream import hand
+
 from utils import log
-from utils.open_cv import stream
-from bridge import events
 from ml_detection import detection_operator
-from custom_data import cd_hand
 import importlib
 
-#importlib.reload(hand)
 importlib.reload(log)
-importlib.reload(stream)
-importlib.reload(events)
-importlib.reload(cd_hand)
 importlib.reload(detection_operator)
 
-def main():
-    # hand = cd_hand.Hand()
-    
-    log.init_logger('debug')
-    s = stream.Webcam()
-
-    # observe data
-    _observer = events.BpyHandUpdateReceiver()
-    _listener = events.UpdateListener()
-    _listener.attach(_observer)
-
-    # hand.main(s, _listener)
-    del s
-    
 
 def register():
     bpy.utils.register_class(detection_operator.DetectionModalOperator)
@@ -83,5 +63,6 @@ if __name__ == '__main__':
     log.init_logger()
     register()
     # test call
-    bpy.ops.wm.feature_detection_modal('INVOKE_DEFAULT')
-
+    #bpy.ops.wm.feature_detection_modal('INVOKE_DEFAULT')
+    bpy.ops.wm.feature_detection_modal('EXEC_DEFAULT')
+    log.logger.debug("str")

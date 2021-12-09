@@ -2,7 +2,6 @@ from blender import objects
 from mathutils import Vector
 from utils.writer import json_writer
 from utils import log
-import numpy as np
 
 
 class Hand:
@@ -61,7 +60,7 @@ class Hand:
                 hand[p[0]].keyframe_insert(data_path="location", frame=frame)
 
         except IndexError:
-            log.logger.debug('HAND NOT AVAILABLE')
+            pass
 
     def allocate_memory(self, idx, data):
         """Store Detection data in memory."""
