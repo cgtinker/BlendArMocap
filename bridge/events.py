@@ -36,12 +36,11 @@ class UpdatePrinter(op.Observer):
 class BpyHandUpdateReceiver(op.Observer):
     def __init__(self, _hand):
         self.hand = _hand
-        self.idx = 0
 
     def update(self, subject: op.Listener) -> None:
-        self.idx += 1
+        # todo: calculate effective frame rate
         self.hand.data = subject.data
-        self.hand.set_position(self.idx)
+        self.hand.set_position(subject.frame)
 
 
 class MemoryHandUpdateReceiver(op.Observer):

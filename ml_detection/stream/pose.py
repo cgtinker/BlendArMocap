@@ -3,31 +3,29 @@ import time
 from bridge import events
 from utils import log
 from utils.open_cv import stream as s
-from ml_detection import helper
+from ml_detection.stream import helper
 
 
 def main(stream: s.Webcam,
          listener: events.op.Listener,
          min_detection_confidence: float = 0.8,
          min_tracking_confidence: float = 0.5,
-         max_recording_length: float = 120
+         max_recording_length: int = 120
          ):
 
-    """Face detection using active webcam stream.
+    """Pose detection using active webcam stream.
     Attempting to stash tracking results for further processing."""
     # data and display specs
     mp_drawings = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
-    mp_face_mesh = mp.solutions.face_mesh
+    mp_pose = mp.solutions.pose
     start_time = time.time()
 
-    log.logger.info('INITIALIZE FACE DETECTION')
-    with mp_face_mesh.FaceMesh(
-            refine_landmarks=True,
+    log.logger.info('INITIALIZE POSE DETECTION')
+    with mp_pose.Pose(
             min_detection_confidence=min_detection_confidence,
             min_tracking_confidence=min_tracking_confidence,
             static_image_mode=False,
-            max_num_faces=1,
     ) as mp_lib:
         while stream.capture.isOpened():
             stream.update()
@@ -39,20 +37,19 @@ def main(stream: s.Webcam,
             mp_res = helper.detect_features(mp_lib, stream)
 
             # draw stream and stop processing if no landmarks are available
-            if not mp_res.multi_face_landmarks:
+            if not mp_res.pose_landmarks:
                 stream.draw()
                 if stream.exit_stream():
                     break
                 continue
 
-            # send converted data to bridge
-            listener.data = [helper.cvt2landmark_array(landmark) for landmark in mp_res.multi_face_landmarks]
+            # process ml data as send to bridge
+            listener.data = helper.cvt2landmark_array(mp_res.pose_landmarks)
             listener.notify()
 
             # render
-            draw_face(stream, mp_res, mp_drawings, mp_drawing_styles, mp_face_mesh)
+            draw_pose(stream, mp_res, mp_drawings, mp_drawing_styles, mp_pose)
             stream.draw()
-
             if stream.exit_stream():
                 break
 
@@ -60,16 +57,13 @@ def main(stream: s.Webcam,
                 break
 
 
-def draw_face(stream, mp_res, mp_drawing, mp_drawing_styles, mp_face_mesh):
+def draw_pose(stream, mp_res, mp_drawing, mp_drawing_styles, mp_pose):
     """Draws the landmarks and the connections on the image."""
-    for face_landmarks in mp_res.multi_face_landmarks:
-        mp_drawing.draw_landmarks(
-            image=stream.frame,
-            landmark_list=face_landmarks,
-            connections=mp_face_mesh.FACEMESH_TESSELATION,
-            landmark_drawing_spec=None,
-            connection_drawing_spec=mp_drawing_styles
-            .get_default_face_mesh_tesselation_style())
+    mp_drawing.draw_landmarks(
+        stream.frame,
+        mp_res.pose_landmarks,
+        mp_pose.POSE_CONNECTIONS,
+        landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
 
 
 if __name__ == "__main__":

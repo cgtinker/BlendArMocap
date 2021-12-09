@@ -3,29 +3,32 @@ import time
 from bridge import events
 from utils import log
 from utils.open_cv import stream as s
-from ml_detection import helper
+from ml_detection.stream import helper
+from custom_data import cd_hand
 
 
 def main(stream: s.Webcam,
          listener: events.op.Listener,
          min_detection_confidence: float = 0.8,
          min_tracking_confidence: float = 0.5,
-         max_recording_length: int = 120
+         max_recording_length: int = 10
          ):
 
-    """Pose detection using active webcam stream.
+    """Hand detection using active webcam stream.
     Attempting to stash tracking results for further processing."""
     # data and display specs
+    mp_hands = mp.solutions.hands
     mp_drawings = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
-    mp_pose = mp.solutions.pose
     start_time = time.time()
-
-    log.logger.info('INITIALIZE POSE DETECTION')
-    with mp_pose.Pose(
+    idx = 0
+    log.logger.info('INITIALIZE HAND DETECTION')
+    with mp_hands.Hands(
+            model_complexity=0,
             min_detection_confidence=min_detection_confidence,
             min_tracking_confidence=min_tracking_confidence,
             static_image_mode=False,
+            max_num_hands=2,
     ) as mp_lib:
         while stream.capture.isOpened():
             stream.update()
@@ -37,18 +40,22 @@ def main(stream: s.Webcam,
             mp_res = helper.detect_features(mp_lib, stream)
 
             # draw stream and stop processing if no landmarks are available
-            if not mp_res.pose_landmarks:
+            if not mp_res.multi_hand_landmarks and not mp_res.multi_handedness:
                 stream.draw()
                 if stream.exit_stream():
                     break
                 continue
 
-            # process ml data as send to bridge
-            listener.data = helper.cvt2landmark_array(mp_res.pose_landmarks)
+            # send converted data to bridge
+            # TODO: send frame to listener
+            listener.data = (
+                [helper.cvt2landmark_array(hand) for hand in mp_res.multi_hand_landmarks],
+                helper.cvt_hand_orientation(mp_res.multi_handedness)
+            )
             listener.notify()
 
             # render
-            draw_pose(stream, mp_res, mp_drawings, mp_drawing_styles, mp_pose)
+            draw_hands(stream, mp_res, mp_drawings, mp_hands)
             stream.draw()
             if stream.exit_stream():
                 break
@@ -57,15 +64,26 @@ def main(stream: s.Webcam,
                 break
 
 
-def draw_pose(stream, mp_res, mp_drawing, mp_drawing_styles, mp_pose):
+def draw_hands(stream, mp_res, mp_drawings, mp_hands):
     """Draws the landmarks and the connections on the image."""
-    mp_drawing.draw_landmarks(
-        stream.frame,
-        mp_res.pose_landmarks,
-        mp_pose.POSE_CONNECTIONS,
-        landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
+    for hand in mp_res.multi_hand_landmarks:
+        mp_drawings.draw_landmarks(stream.frame, hand, mp_hands.HAND_CONNECTIONS)
 
 
 if __name__ == "__main__":
     log.init_logger()
-    helper.init_helper(s, events, main)
+    log.logger.debug('ACCESS WEBCAM STREAM')
+    _stream = s.Webcam()
+
+    log.logger.debug('ATTEMPT TO OBSERVE DATA')
+    m_hand = cd_hand.Hand('memory')
+    #_observer = events.UpdatePrinter()
+    _observer = events.MemoryHandUpdateReceiver(m_hand)
+    _listener = events.UpdateListener()
+    _listener.attach(_observer)
+
+    log.logger.debug('START RUNNING')
+    main(_stream, _listener)
+    del _stream
+
+    #m_hand.write_json()

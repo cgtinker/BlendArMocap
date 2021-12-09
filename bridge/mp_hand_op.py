@@ -4,7 +4,8 @@ from utils.open_cv import stream
 import mediapipe as mp
 from bridge import events
 from utils import log
-from ml_detection import helper
+from ml_detection.stream import helper
+import time
 
 
 class FeatureDetectionModal(bpy.types.Operator):
@@ -23,6 +24,10 @@ class FeatureDetectionModal(bpy.types.Operator):
     running = False
     min_detection_confidence: float = 0.8
     min_tracking_confidence: float = 0.5
+
+    # frame timing
+    time_step = 4
+    frame = 0
 
     @classmethod
     def poll(cls, context):
@@ -61,7 +66,7 @@ class FeatureDetectionModal(bpy.types.Operator):
         mp_hands = mp.solutions.hands
         mp_drawings = mp.solutions.drawing_utils
         mp_drawing_styles = mp.solutions.drawing_styles
-
+        cur_t = time.time()
         with mp_hands.Hands(
                 static_image_mode=True,
                 max_num_hands=2,
@@ -86,6 +91,8 @@ class FeatureDetectionModal(bpy.types.Operator):
                 [helper.cvt2landmark_array(hand) for hand in mp_res.multi_hand_landmarks],
                 helper.cvt_hand_orientation(mp_res.multi_handedness)
             )
+            self.frame += self.time_step
+            self.listener.frame = self.frame
             self.listener.notify()
 
             # render

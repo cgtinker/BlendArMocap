@@ -1,4 +1,4 @@
-from ml_detection import face, hand, pose
+from ml_detection.stream import pose, face, hand
 from bridge import events
 from utils import log
 from utils.open_cv import stream

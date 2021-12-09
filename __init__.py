@@ -1,4 +1,4 @@
-from ml_detection import hand
+from ml_detection.stream import hand
 from utils import log
 from utils.open_cv import stream
 from bridge import events
