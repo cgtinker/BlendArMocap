@@ -28,9 +28,9 @@ bl_info = {
     "category": "Development"
 }
 
-
 import os
 import sys
+
 import bpy
 
 # getting access to the current dir - necessary to access blender file location
@@ -42,9 +42,8 @@ if blend_dir not in sys.path:
 main_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'module')
 sys.path.append(main_dir)
 
-
 from utils import log
-from blender import detection_operator
+from interface import detection_operator
 import importlib
 
 importlib.reload(log)
@@ -58,11 +57,8 @@ def register():
 def unregister():
     bpy.utils.unregister_class(detection_operator.DetectionModalOperator)
 
-    
+
 if __name__ == '__main__':
     log.init_logger()
     register()
-    # test call
-    #bpy.ops.wm.feature_detection_modal('INVOKE_DEFAULT')
     bpy.ops.wm.feature_detection_modal('EXEC_DEFAULT')
-    log.logger.debug("str")

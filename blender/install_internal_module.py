@@ -1,8 +1,10 @@
 import sys
 import os
 
+
 # TODO: CHECK FOR WINDOWS / MAC
 def main():
+    """ Install requirements for mediapipe_ml and open cv usage. """
     bpy_path = ensure_pip()
     required_modules = [
         ["opencv-python", "cv2"],
@@ -22,7 +24,7 @@ def ensure_pip():
     
     
 def is_module_installed(bpy_path, module):
-    """ Installes module to internal bpy python. """
+    """ Installs module to internal bpy python. """
     
     res = os.system(f'{bpy_path}/bin/python3.7m -c "import {module[1]}"')
     if res == 0:
@@ -34,6 +36,7 @@ def is_module_installed(bpy_path, module):
 
 
 def install_module(bpy_path, module):
+    """ Finally install the module. """
     if not is_module_installed(bpy_path, module):
         cmd = f'{bpy_path}/bin/python3.7m -m pip install {module[0]}'
         print(cmd)

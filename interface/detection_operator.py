@@ -26,7 +26,6 @@ class DetectionModalOperator(bpy.types.Operator):
         self.tracking_handler.stream = stream.Webcam()
         self.tracking_handler.initialize_model()
         self.tracking_handler.init_bpy_bridge()
-        self.tracking_handler.set_drawing_solution()
         self.tracking_handler.listener.attach(self.tracking_handler.observer)
 
     @classmethod
@@ -38,7 +37,7 @@ class DetectionModalOperator(bpy.types.Operator):
             rt_event = self.tracking_handler.image_detection()
             return rt_event
 
-        if event.type in {'ESC', 'Q'}:
+        if event.type == 'Q':
             return self.cancel(context)
 
         return {'PASS_THROUGH'}

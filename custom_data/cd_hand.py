@@ -1,10 +1,9 @@
 from blender import objects
-from mathutils import Vector
-from utils.writer import json_writer
 from utils import log
+from custom_data.abstract_receiver import DataAssignment
 
 
-class Hand:
+class Hand(DataAssignment):
     def __init__(self, mode='realtime'):
         self.landmark_references = {
             0: "WRIST",
@@ -33,7 +32,6 @@ class Hand:
         self.left_hand = []
         self.right_hand = []
 
-        self.data = None
         self.memory_stack = {}
 
         if mode == 'realtime':
@@ -53,15 +51,6 @@ class Hand:
         except IndexError:
             log.logger.error("VALUE ERROR WHILE ASSIGNING HAND POSITION")
 
-    def translate(self, hand, data, frame):
-        try:
-            for p in data[0]:
-                hand[p[0]].location = Vector((p[1][0], p[1][1], p[1][2]))
-                hand[p[0]].keyframe_insert(data_path="location", frame=frame)
-
-        except IndexError:
-            pass
-
     def allocate_memory(self, idx, data):
         """Store Detection data in memory."""
         d = list(zip(data[0], data[1]))
@@ -70,17 +59,6 @@ class Hand:
     @staticmethod
     def assign_hands(hand_data):
         """Determines where the data belongs to"""
-        """ removing switch to save preformance
-        if len(hand_data) == 2:
-            if hand_data[0][1][1] == hand_data[1][1][1]:
-                return [], []
-        """
         left_hand = [data[0] for data in hand_data if data[1][1] is True]
         right_hand = [data[0] for data in hand_data if data[1][1] is False]
         return left_hand, right_hand
-
-    def write_json(self):
-        """Writes a .json file for async processing"""
-        writer = json_writer.JsonWriter('hand.json')
-        writer.chunks = self.memory_stack
-        writer.write()
