@@ -44,7 +44,7 @@ sys.path.append(main_dir)
 
 
 from utils import log
-from ml_detection import detection_operator
+from blender import detection_operator
 import importlib
 
 importlib.reload(log)

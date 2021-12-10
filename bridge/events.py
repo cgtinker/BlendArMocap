@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-from interfaces import observer_pattern as op
+from bridge import observer_pattern as op
 from typing import List
 from utils import log
-from custom_data import cd_hand
-import bpy
 
 
 class UpdateListener(op.Listener):

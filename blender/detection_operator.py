@@ -1,5 +1,5 @@
 import bpy
-from ml_detection.methods import ml_hands
+from ml_detection import ml_hands
 from utils import log
 from utils.open_cv import stream
 
