@@ -1,7 +1,12 @@
 import bpy
-from ml_detection import ml_hands
+from ml_detection import ml_hands, ml_pose, ml_face
 from utils import log
 from utils.open_cv import stream
+
+import importlib
+importlib.reload(ml_hands)
+importlib.reload(ml_pose)
+importlib.reload(ml_face)
 
 
 class DetectionModalOperator(bpy.types.Operator):
@@ -12,6 +17,13 @@ class DetectionModalOperator(bpy.types.Operator):
     _timer = None
     tracking_handler = None
 
+    handlers = {
+        "pose": ml_pose.PoseDetector,
+        "hand": ml_hands.HandDetector,
+        "face": ml_face.FaceDetector,
+        "holistic": ""
+    }
+
     def execute(self, context):
         log.logger.info("RUNNING MP AS TIMER DETECTION MODAL")
         self.init_detector()
@@ -21,7 +33,7 @@ class DetectionModalOperator(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
     def init_detector(self):
-        self.tracking_handler = ml_hands.HandDetector()
+        self.tracking_handler = self.handlers["hand"]()
 
         self.tracking_handler.stream = stream.Webcam()
         self.tracking_handler.initialize_model()

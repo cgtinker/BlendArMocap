@@ -29,8 +29,8 @@ class DataAssignment(ABC):
     def translate(target, data, frame):
         """ Translates and keyframes bpy empty objects. """
         try:
-            for p in data[0]:
-                target[p[0]].location = Vector((p[1][0], p[1][1], p[1][2]))
+            for p in data:
+                target[p[0]].location = Vector((p[1][0], p[1][2], p[1][1]))
                 target[p[0]].keyframe_insert(data_path="location", frame=frame)
 
         except IndexError:

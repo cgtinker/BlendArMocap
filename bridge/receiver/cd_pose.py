@@ -39,24 +39,22 @@ class Pose(DataAssignment):
             30: "right_heel",
             31: "left_foot_index",
             32: "right_foot_index"
-
         }
+
         self.pose = []
+        self.init_references()
 
     def init_references(self):
         self.pose = objects.generate_empties(self.references, 0.1)
 
     def set_position(self, frame):
-        pass
-
-    def set_position_b(self, frame):
         """Keyframe the position of input data."""
         try:
-            print(self.data, frame)
+            self.translate(self.pose, self.data, frame)
+
         except IndexError:
-            log.logger.error("VALUE ERROR WHILE ASSIGNING HAND POSITION")
+            log.logger.error("VALUE ERROR WHILE ASSIGNING POSE POSITION")
 
     def allocate_memory_b(self, idx, data):
         """Store Detection data in memory."""
-        d = list(zip(data[0], data[1]))
-        self.memory_stack[f'{idx}'] = d
+        self.memory_stack[f'{idx}'] = data

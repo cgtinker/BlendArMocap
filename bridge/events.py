@@ -25,12 +25,13 @@ class UpdateListener(op.Listener):
 
 
 class UpdatePrinter(op.Observer):
-    """ Prints updated data for debugging """
+    """ Prints updated data for debugging. """
     def update(self, subject: op.Listener) -> None:
         print(subject.data)
 
 
 class BpyUpdateReceiver(op.Observer):
+    """ Updates empties in realtime via modal operator. """
     def __init__(self, _model):
         self.model = _model
 
@@ -40,6 +41,7 @@ class BpyUpdateReceiver(op.Observer):
 
 
 class MemoryUpdateReceiver(op.Observer):
+    """ Preserve changes in memory for async update. """
     def __init__(self, _hand):
         self.hand = _hand
         self.idx = 0

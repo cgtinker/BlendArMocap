@@ -43,9 +43,9 @@ class Hand(DataAssignment):
     def set_position(self, frame):
         """Keyframe the position of input data."""
         try:
-            left_hand, right_hand = self.assign_hands(list(zip(self.data[0], self.data[1])))
-            self.translate(self.left_hand, left_hand, frame)
-            self.translate(self.right_hand, right_hand, frame)
+            left_positions, right_positions = self.assign_hands(list(zip(self.data[0], self.data[1])))
+            self.translate(self.left_hand, left_positions[0], frame)
+            self.translate(self.right_hand, right_positions[0], frame)
         except IndexError:
             log.logger.error("VALUE ERROR WHILE ASSIGNING HAND POSITION")
 

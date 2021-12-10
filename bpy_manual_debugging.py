@@ -43,7 +43,7 @@ main_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'module')
 sys.path.append(main_dir)
 
 from utils import log
-from interface import detection_operator
+from management import detection_operator
 import importlib
 
 importlib.reload(log)
