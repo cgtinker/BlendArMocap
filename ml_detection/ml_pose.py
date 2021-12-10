@@ -2,6 +2,7 @@ import mediapipe as mp
 from bridge import events
 from ml_detection.abstract_detector import RealtimeDetector
 from utils.open_cv import stream
+from bridge.receiver import cd_pose
 
 
 class PoseDetector(RealtimeDetector):
@@ -28,7 +29,9 @@ class PoseDetector(RealtimeDetector):
         self.drawing_style = mp.solutions.drawing_styles
 
     def init_bpy_bridge(self):
-        pass
+        target = cd_pose.Pose()
+        self.observer = events.BpyUpdateReceiver(target)
+        self.listener = events.UpdateListener()
 
     def init_debug_logs(self):
         self.observer = events.UpdatePrinter()

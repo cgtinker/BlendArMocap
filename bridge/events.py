@@ -30,18 +30,16 @@ class UpdatePrinter(op.Observer):
         print(subject.data)
 
 
-# region Hand
-class BpyHandUpdateReceiver(op.Observer):
-    def __init__(self, _hand):
-        self.hand = _hand
+class BpyUpdateReceiver(op.Observer):
+    def __init__(self, _model):
+        self.model = _model
 
     def update(self, subject: op.Listener) -> None:
-        # todo: calculate effective frame rate
-        self.hand.data = subject.data
-        self.hand.set_position(subject.frame)
+        self.model.data = subject.data
+        self.model.set_position(subject.frame)
 
 
-class MemoryHandUpdateReceiver(op.Observer):
+class MemoryUpdateReceiver(op.Observer):
     def __init__(self, _hand):
         self.hand = _hand
         self.idx = 0
@@ -50,14 +48,3 @@ class MemoryHandUpdateReceiver(op.Observer):
         self.idx += 1
         self.hand.allocate_memory(self.idx, subject.data)
 
-# endregion
-
-
-class BpyPoseUpdateReceiver(op.Observer):
-    def update(self, subject: op.Listener) -> None:
-        print(subject.data)
-
-
-class BpyFaceUpdateReceiver(op.Observer):
-    def update(self, subject: op.Listener) -> None:
-        print(subject.data)

@@ -1,11 +1,11 @@
 from blender import objects
 from utils import log
-from custom_data.abstract_receiver import DataAssignment
+from bridge.receiver.abstract_receiver import DataAssignment
 
 
 class Hand(DataAssignment):
     def __init__(self, mode='realtime'):
-        self.landmark_references = {
+        self.references = {
             0: "WRIST",
             1: "THUMB_CMC",
             2: "THUMB_MCP",
@@ -32,15 +32,13 @@ class Hand(DataAssignment):
         self.left_hand = []
         self.right_hand = []
 
-        self.memory_stack = {}
-
         if mode == 'realtime':
             self.init_references()
 
     def init_references(self):
         """Generate empty objects."""
-        self.left_hand = objects.generate_empties(self.landmark_references, 0.025, "_l")
-        self.right_hand = objects.generate_empties(self.landmark_references, 0.025, "_r")
+        self.left_hand = objects.generate_empties(self.references, 0.025, "_l")
+        self.right_hand = objects.generate_empties(self.references, 0.025, "_r")
 
     def set_position(self, frame):
         """Keyframe the position of input data."""

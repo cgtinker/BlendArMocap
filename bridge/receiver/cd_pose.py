@@ -1,9 +1,11 @@
 from blender import objects
+from bridge.receiver.abstract_receiver import DataAssignment
+from utils import log
 
 
-class Pose(object):
+class Pose(DataAssignment):
     def __init__(self):
-        landmark_references = {
+        self.references = {
             0: "nose",
             1: "left_eye_inner",
             2: "left_eye",
@@ -39,6 +41,22 @@ class Pose(object):
             32: "right_foot_index"
 
         }
+        self.pose = []
 
-        objects.generate_empties(landmark_references, 0.1)
+    def init_references(self):
+        self.pose = objects.generate_empties(self.references, 0.1)
 
+    def set_position(self, frame):
+        pass
+
+    def set_position_b(self, frame):
+        """Keyframe the position of input data."""
+        try:
+            print(self.data, frame)
+        except IndexError:
+            log.logger.error("VALUE ERROR WHILE ASSIGNING HAND POSITION")
+
+    def allocate_memory_b(self, idx, data):
+        """Store Detection data in memory."""
+        d = list(zip(data[0], data[1]))
+        self.memory_stack[f'{idx}'] = d

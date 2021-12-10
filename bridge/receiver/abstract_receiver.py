@@ -6,6 +6,7 @@ from mathutils import Vector
 class DataAssignment(ABC):
     data = None
     references = None
+    memory_stack = {}
 
     @abstractmethod
     def init_references(self):
