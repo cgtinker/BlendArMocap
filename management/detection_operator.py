@@ -18,22 +18,23 @@ class DetectionModalOperator(bpy.types.Operator):
     tracking_handler = None
 
     handlers = {
-        "pose": ml_pose.PoseDetector,
-        "hand": ml_hands.HandDetector,
-        "face": ml_face.FaceDetector,
-        "holistic": ""
+        "POSE": ml_pose.PoseDetector,
+        "HAND": ml_hands.HandDetector,
+        "FACE": ml_face.FaceDetector,
+        "HOLISTIC": ""
     }
 
     def execute(self, context):
         log.logger.info("RUNNING MP AS TIMER DETECTION MODAL")
-        self.init_detector()
+        user = context.scene.m_cgtinker_mediapipe
+        self.init_detector(user.enum_detection_type)
         wm = context.window_manager
         self._timer = wm.event_timer_add(0.1, window=context.window)
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
 
-    def init_detector(self):
-        self.tracking_handler = self.handlers["face"]()
+    def init_detector(self, detection_type='HAND'):
+        self.tracking_handler = self.handlers[detection_type]()
 
         self.tracking_handler.stream = stream.Webcam()
         self.tracking_handler.initialize_model()

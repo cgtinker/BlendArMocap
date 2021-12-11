@@ -19,7 +19,7 @@ bl_info = {
     "name": "ml_rt_detector",
     "description": "desc",
     "author": "cgtinker",
-    "version": (2, 0, 0),
+    "version": (1, 0, 0),
     "blender": (2, 90, 0),
     "location": "3D View > Tool",
     "warning": "",
@@ -43,22 +43,21 @@ main_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'module')
 sys.path.append(main_dir)
 
 from utils import log
-from management import detection_operator
+from interface import Registration
 import importlib
 
 importlib.reload(log)
-importlib.reload(detection_operator)
+importlib.reload(Registration)
 
 
 def register():
-    bpy.utils.register_class(detection_operator.DetectionModalOperator)
+    Registration.register()
 
 
 def unregister():
-    bpy.utils.unregister_class(detection_operator.DetectionModalOperator)
+    Registration.unregister()
 
 
 if __name__ == '__main__':
     log.init_logger()
     register()
-    bpy.ops.wm.feature_detection_modal('EXEC_DEFAULT')

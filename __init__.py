@@ -1,21 +1,49 @@
-from ml_detection.stream import hand
+'''
+Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+'''
+
+bl_info = {
+    "name": "BpyMediapipe",
+    "description": "Mediapipe implementation for Blender 2.9+.",
+    "author": "cgtinker",
+    "version": (1, 0, 0),
+    "blender": (2, 90, 0),
+    "location": "3D View > Tool",
+    "warning": "",
+    "wiki_url": "",
+    "tracker_url": "",
+    "category": "Development"
+}
+
 from utils import log
-from utils.open_cv import stream
-from bridge import events
+from interface import Registration
+import importlib
+
+importlib.reload(log)
+importlib.reload(Registration)
 
 
-def main():
-    log.init_logger('debug')
-    s = stream.Webcam()
+def register():
+    Registration.register()
 
-    # observe data
-    _observer = events.UpdatePrinter()
-    _listener = events.UpdateListener()
-    _listener.attach(_observer)
 
-    hand.main(s, _listener)
-    del s
+def unregister():
+    Registration.unregister()
 
 
 if __name__ == '__main__':
-    main()
+    log.init_logger()
+    register()
