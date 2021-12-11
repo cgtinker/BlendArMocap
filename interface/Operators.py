@@ -1,4 +1,5 @@
 import bpy
+from management import input_manager
 
 
 class UI_detection_button(bpy.types.Operator):
@@ -7,11 +8,7 @@ class UI_detection_button(bpy.types.Operator):
     bl_description = "Detect solution in Stream."
 
     def execute(self, context):
-        user = context.scene.m_cgtinker_mediapipe
-        if user.enum_synchronize == 'SYNC':
-            bpy.ops.wm.feature_detection_modal('EXEC_DEFAULT')
-        elif user.enum_synchronize == 'ASYNC':
-            pass
+        input_manager.start_detection()
         return {'FINISHED'}
 
 
@@ -21,5 +18,5 @@ class UI_add_rig_button(bpy.types.Operator):
     bl_description = "Add a rig for motion tracking transfer"
 
     def execute(self, context):
-        # TODO: Management exec path
+        input_manager.add_rig()
         return {'FINISHED'}

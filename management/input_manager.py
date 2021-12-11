@@ -1,19 +1,16 @@
-from bridge import events
-from utils import log
-from utils.open_cv import stream
+import bpy
 
 
-def face_tracking():
-    pass
+def start_detection():
+    """ Starts feature Detection
+        - SYNC - via detection operator.
+        - ASYNC - not implemented yet. """
+    user = bpy.context.scene.m_cgtinker_mediapipe
+    if user.enum_synchronize == 'SYNC':
+        bpy.ops.wm.feature_detection_modal('EXEC_DEFAULT')
+    elif user.enum_synchronize == 'ASYNC':
+        pass
 
 
-def hand_tracking():
-    pass
-
-
-def pose_tracking():
-    pass
-
-
-def start_detection(model, observer):
+def add_rig():
     pass

@@ -1,9 +1,11 @@
+import importlib
+
 import bpy
+
 from ml_detection import ml_hands, ml_pose, ml_face
 from utils import log
 from utils.open_cv import stream
 
-import importlib
 importlib.reload(ml_hands)
 importlib.reload(ml_pose)
 importlib.reload(ml_face)
@@ -16,6 +18,7 @@ class DetectionModalOperator(bpy.types.Operator):
 
     _timer = None
     tracking_handler = None
+    user = None
 
     handlers = {
         "POSE": ml_pose.PoseDetector,
@@ -26,8 +29,19 @@ class DetectionModalOperator(bpy.types.Operator):
 
     def execute(self, context):
         log.logger.info("RUNNING MP AS TIMER DETECTION MODAL")
-        user = context.scene.m_cgtinker_mediapipe
-        self.init_detector(user.enum_detection_type)
+
+        # default detection type for testing while add-on is not registered
+        detection_type = 'HAND'
+        try:
+            self.user = context.scene.m_cgtinker_mediapipe
+            detection_type = self.user.enum_detection_type
+        except Exception:
+            self.user = None
+
+        # initialize the detection
+        self.init_detector(detection_type)
+
+        # add a timer property and start running
         wm = context.window_manager
         self._timer = wm.event_timer_add(0.1, window=context.window)
         context.window_manager.modal_handler_add(self)
@@ -36,7 +50,13 @@ class DetectionModalOperator(bpy.types.Operator):
     def init_detector(self, detection_type='HAND'):
         self.tracking_handler = self.handlers[detection_type]()
 
-        self.tracking_handler.stream = stream.Webcam()
+        # default camera index if add-on is not registered
+        camera_index = 0
+        if self.user is not None:
+            camera_index = self.user.webcam_input_device
+
+        # init tracking handler vars
+        self.tracking_handler.stream = stream.Webcam(camera_index=camera_index)
         self.tracking_handler.initialize_model()
         self.tracking_handler.init_bpy_bridge()
         self.tracking_handler.listener.attach(self.tracking_handler.observer)

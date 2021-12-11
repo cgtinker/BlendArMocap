@@ -50,9 +50,9 @@ class MyProperties(PropertyGroup):
     webcam_input_device: IntProperty(
         name="Webcam Device Slot",
         description="Select Webcam device.",
-        min=-1,
-        max=11,
-        default=1,
+        min=0,
+        max=4,
+        default=0,
     )
 
 
