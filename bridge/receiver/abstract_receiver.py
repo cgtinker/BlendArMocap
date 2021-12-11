@@ -30,10 +30,12 @@ class DataAssignment(ABC):
         """ Translates and keyframes bpy empty objects. """
         try:
             for p in data:
-                target[p[0]].location = Vector((p[1][0], p[1][2], p[1][1]))
+                target[p[0]].location = Vector((p[1][0], p[1][2], -p[1][1]))
                 target[p[0]].keyframe_insert(data_path="location", frame=frame)
+                print("set positing")
 
         except IndexError:
+            print("missing index!!!")
             pass
 
     @staticmethod

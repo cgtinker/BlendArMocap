@@ -45,7 +45,7 @@ class Pose(DataAssignment):
         self.init_references()
 
     def init_references(self):
-        self.pose = objects.generate_empties(self.references, 0.1)
+        self.pose = objects.generate_empties(self.references, 0.05)
 
     def set_position(self, frame):
         """Keyframe the position of input data."""

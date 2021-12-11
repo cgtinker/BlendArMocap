@@ -33,7 +33,7 @@ class DetectionModalOperator(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
     def init_detector(self):
-        self.tracking_handler = self.handlers["hand"]()
+        self.tracking_handler = self.handlers["face"]()
 
         self.tracking_handler.stream = stream.Webcam()
         self.tracking_handler.initialize_model()
