@@ -1,9 +1,12 @@
 from blender import objects
-from utils import log
-from bridge.receiver.abstract_receiver import DataAssignment
+from bridge.receiver import abstract_receiver
+import importlib
+
+importlib.reload(objects)
+importlib.reload(abstract_receiver)
 
 
-class Hand(DataAssignment):
+class Hand(abstract_receiver.DataAssignment):
     def __init__(self, mode='realtime'):
         self.references = {
             0: "WRIST",
@@ -31,23 +34,33 @@ class Hand(DataAssignment):
 
         self.left_hand = []
         self.right_hand = []
+        self.col_name = "Hands"
 
         if mode == 'realtime':
             self.init_references()
 
     def init_references(self):
         """Generate empty objects."""
-        self.left_hand = objects.generate_empties(self.references, 0.025, "_l")
-        self.right_hand = objects.generate_empties(self.references, 0.025, "_r")
+        self.left_hand = objects.add_empties(self.references, 0.025, ".L")
+        self.right_hand = objects.add_empties(self.references, 0.025, ".R")
+
+        objects.set_parents(self.left_hand[0], self.left_hand[1:])
+        objects.set_parents(self.right_hand[0], self.right_hand[1:])
+
+        objects.add_list_to_collection(self.col_name, self.left_hand)
+        objects.add_list_to_collection(self.col_name, self.right_hand)
 
     def set_position(self, frame):
         """Keyframe the position of input data."""
+        left_positions, right_positions = self.assign_hands(list(zip(self.data[0], self.data[1])))
+        self.try_translating(self.left_hand, left_positions, frame)
+        self.try_translating(self.right_hand, right_positions, frame)
+
+    def try_translating(self, hand, positions, frame):
         try:
-            left_positions, right_positions = self.assign_hands(list(zip(self.data[0], self.data[1])))
-            self.translate(self.left_hand, left_positions[0], frame)
-            self.translate(self.right_hand, right_positions[0], frame)
+            self.translate(hand, positions[0], frame)
         except IndexError:
-            log.logger.error("VALUE ERROR WHILE ASSIGNING HAND POSITION")
+            pass
 
     def allocate_memory(self, idx, data):
         """Store Detection data in memory."""

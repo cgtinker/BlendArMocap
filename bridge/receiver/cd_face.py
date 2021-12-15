@@ -14,7 +14,7 @@ class Face(DataAssignment):
         """Generate empty objects."""
         for i in range(467):
             self.references[f'{i}'] = f"face_empty_{i}"
-        self.face = objects.generate_empties(self.references, 0.005)
+        self.face = objects.add_empties(self.references, 0.005)
         print("generated refs")
 
     def set_position(self, frame):

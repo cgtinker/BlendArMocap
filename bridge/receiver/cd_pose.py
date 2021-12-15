@@ -1,15 +1,18 @@
 from blender import objects
-from bridge.receiver.abstract_receiver import DataAssignment
+from bridge.receiver import abstract_receiver
 from utils import log
+import importlib
+
+importlib.reload(abstract_receiver)
 
 
-class Pose(DataAssignment):
+class Pose(abstract_receiver.DataAssignment):
     def __init__(self):
         self.references = {
             0: "nose",
             1: "left_eye_inner",
             2: "left_eye",
-            3: "right_eye_outer",
+            3: "left_eye_outer",
             4: "right_eye_inner",
             5: "right_eye",
             6: "right_eye_outer",
@@ -45,7 +48,7 @@ class Pose(DataAssignment):
         self.init_references()
 
     def init_references(self):
-        self.pose = objects.generate_empties(self.references, 0.05)
+        self.pose = objects.add_empties(self.references, 0.05)
 
     def set_position(self, frame):
         """Keyframe the position of input data."""

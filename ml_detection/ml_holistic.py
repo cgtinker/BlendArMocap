@@ -30,6 +30,7 @@ class HolisticDetector(RealtimeDetector):
         self.drawing_style = mp.solutions.drawing_styles
 
     def init_bpy_bridge(self):
+        # TODO: requires multiple listeners. also requires a special observer pattern.
         target = cd_pose.Pose()
         self.observer = events.BpyUpdateReceiver(target)
         self.listener = events.UpdateListener()

@@ -1,5 +1,8 @@
+import importlib
 import bpy
 from management import input_manager
+
+importlib.reload(input_manager)
 
 
 class UI_detection_button(bpy.types.Operator):

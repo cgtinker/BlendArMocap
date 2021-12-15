@@ -28,7 +28,8 @@ class UI_PT_main_panel(ExpandedPanel, Panel):
         box.label(text='Detection Properties')
         box.row().prop(user, "webcam_input_device")
         box.row().prop(user, "enum_detection_type")
-        box.row().prop(user, "enum_synchronize")
+        box.row().prop(user, "enum_fps")
+        # box.row().prop(user, "enum_synchronize")
 
         self.layout.split(factor=2.0, align=False)
         self.layout.operator("button.add_rig", text=user.button_add_rig)

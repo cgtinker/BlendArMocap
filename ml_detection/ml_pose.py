@@ -3,6 +3,9 @@ from bridge import events
 from ml_detection.abstract_detector import RealtimeDetector
 from utils.open_cv import stream
 from bridge.receiver import cd_pose
+import importlib
+
+importlib.reload(cd_pose)
 
 
 class PoseDetector(RealtimeDetector):
@@ -17,6 +20,7 @@ class PoseDetector(RealtimeDetector):
                 min_detection_confidence=0.8,
                 min_tracking_confidence=0.5,
                 static_image_mode=False,
+                smooth_segmentation=True
         ) as mp_lib:
             while self.stream.capture.isOpened():
                 state = self.exec_detection(mp_lib)
@@ -38,10 +42,10 @@ class PoseDetector(RealtimeDetector):
         self.listener = events.UpdateListener()
 
     def process_detection_result(self, mp_res):
-        return self.cvt2landmark_array(mp_res.pose_landmarks)
+        return self.cvt2landmark_array(mp_res.pose_world_landmarks)
 
     def contains_features(self, mp_res):
-        if not mp_res.pose_landmarks:
+        if not mp_res.pose_world_landmarks:
             return False
         return True
 

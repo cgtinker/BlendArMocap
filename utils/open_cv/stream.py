@@ -5,8 +5,8 @@ class Webcam:
     def __init__(self,
                  camera_index: int = 0,
                  title: str = "ml tracking",
-                 width: int = 800,
-                 height: int = 600):
+                 width: int = 1920,
+                 height: int = 1080):
 
         self.capture = cv2.VideoCapture(camera_index)
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, width)

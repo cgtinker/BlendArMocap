@@ -4,14 +4,6 @@ from bpy.types import PropertyGroup
 
 
 class MyProperties(PropertyGroup):
-    # PATHS
-    data_path: StringProperty(
-        name="File Path",
-        description="File path to .mov file.",
-        default="",
-        maxlen=1024,
-        subtype='FILE_PATH'
-    )
     # BUTTONS
     button_start_detection: StringProperty(
         name="",
@@ -37,6 +29,17 @@ class MyProperties(PropertyGroup):
         )
     )
 
+    enum_fps: EnumProperty(
+        name="FPS",
+        description="Select Scene FPS",
+        items=(
+            ("24", "24", ""),
+            ("25", "25", ""),
+            ("30", "30", ""),
+            ("60", "60", "")
+        )
+    )
+
     enum_synchronize: EnumProperty(
         name="Update",
         description="Select detection update type.",
@@ -46,13 +49,21 @@ class MyProperties(PropertyGroup):
         )
     )
 
-    # SLIDER
+    # Integer Input
     webcam_input_device: IntProperty(
         name="Webcam Device Slot",
         description="Select Webcam device.",
         min=0,
         max=4,
-        default=0,
+        default=0
+    )
+
+    data_path: StringProperty(
+        name="File Path",
+        description="File path to .mov file.",
+        default="",
+        maxlen=1024,
+        subtype='FILE_PATH'
     )
 
 

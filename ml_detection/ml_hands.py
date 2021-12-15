@@ -3,6 +3,9 @@ from bridge import events
 from bridge.receiver import cd_hand
 from ml_detection.abstract_detector import RealtimeDetector
 from utils.open_cv import stream
+import importlib
+
+importlib.reload(cd_hand)
 
 
 class HandDetector(RealtimeDetector):
@@ -40,8 +43,9 @@ class HandDetector(RealtimeDetector):
         self.listener = events.UpdateListener()
 
     def process_detection_result(self, mp_res):
+        #multi_hand_world_landmarks // multi_hand_landmarks
         return (
-            [self.cvt2landmark_array(hand) for hand in mp_res.multi_hand_landmarks],
+            [self.cvt2landmark_array(hand) for hand in mp_res.multi_hand_world_landmarks],
             self.cvt_hand_orientation(mp_res.multi_handedness)
         )
 
