@@ -38,6 +38,7 @@ class BpyUpdateReceiver(op.Observer):
     def update(self, subject: op.Listener) -> None:
         self.model.data = subject.data
         self.model.set_position(subject.frame)
+        self.model.set_custom_rotation(subject.frame)
 
 
 class MemoryUpdateReceiver(op.Observer):

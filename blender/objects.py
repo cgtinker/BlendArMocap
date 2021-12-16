@@ -5,11 +5,7 @@ from mathutils import Vector
 # region OBJECTS
 # region GENERATE EMPTY
 def add_empties(data: dict, size, extension=""):
-    empties = []
-    for key, value in data.items():
-        obj = add_empty(size=size, name=value+extension)
-        empties.append(obj)
-    return empties
+    return [add_empty(size=size, name=value+extension) for key, value in data.items()]
 
 
 def add_empty(size, name):
@@ -47,8 +43,7 @@ def get_selected_object():
 
 # region ACTIONS
 def set_parents(parent, children):
-    for child in children:
-        set_parent(parent, child)
+    [set_parent(parent, child) for child in children]
 
 
 def set_parent(parent, child):
@@ -93,6 +88,9 @@ def remove_collection(name, remove_objects):
 
 
 def add_list_to_collection(name, objects):
+    if not collection_exists(name):
+        create_collection(name, True)
+
     for o in objects:
         link_obj_to_collection(o, name)
 
@@ -101,9 +99,8 @@ def add_obj_to_collection(name, m_object):
     if collection_exists(name):
         link_obj_to_collection(m_object, name)
 
-    else:
-        create_collection(name, True)
-        link_obj_to_collection(m_object, name)
+    create_collection(name, True)
+    link_obj_to_collection(m_object, name)
 
 
 def link_obj_to_collection(m_object, name):
