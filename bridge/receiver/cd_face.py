@@ -24,6 +24,9 @@ class Face(DataAssignment):
         except IndexError:
             log.logger.error("VALUE ERROR WHILE ASSIGNING FACE POSITION")
 
+    def set_custom_rotation(self, frame):
+        pass
+
     def allocate_memory(self, idx, data):
         """Store Detection data in memory."""
         self.memory_stack[f'{idx}'] = data[0]

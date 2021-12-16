@@ -62,6 +62,9 @@ class Hand(abstract_receiver.DataAssignment):
         except IndexError:
             pass
 
+    def set_custom_rotation(self, frame):
+        pass
+
     def allocate_memory(self, idx, data):
         """Store Detection data in memory."""
         d = list(zip(data[0], data[1]))
