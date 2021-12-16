@@ -18,12 +18,12 @@ class MyProperties(PropertyGroup):
     )
 
     # ENUMS
+    # ("HOLISTIC", "Holistic", ""),
     enum_detection_type: EnumProperty(
         name="",
         description="Select detection type for motion tracking.",
         items=(
             ("POSE", "Pose", ""),
-            ("HOLISTIC", "Holistic", ""),
             ("FACE", "Face", ""),
             ("HAND", "Hands", "")
         )

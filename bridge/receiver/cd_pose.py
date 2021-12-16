@@ -1,13 +1,12 @@
 from blender import objects
 from bridge.receiver import abstract_receiver
 from utils import log, vector_math
-from mathutils import Vector
 import importlib
 
 importlib.reload(abstract_receiver)
 
 
-class Pose(abstract_receiver.DataAssignment):
+class BridgePose(abstract_receiver.DataAssignment):
     def __init__(self):
         self.references = {
             0: "nose",

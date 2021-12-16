@@ -32,7 +32,7 @@ class FaceDetector(RealtimeDetector):
         self.drawing_style = mp.solutions.drawing_styles
 
     def init_bpy_bridge(self):
-        target = cd_face.Face()
+        target = cd_face.BridgeFace()
         self.observer = events.BpyUpdateReceiver(target)
         self.listener = events.UpdateListener()
 

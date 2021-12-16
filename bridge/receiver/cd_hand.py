@@ -6,7 +6,7 @@ importlib.reload(objects)
 importlib.reload(abstract_receiver)
 
 
-class Hand(abstract_receiver.DataAssignment):
+class BridgeHand(abstract_receiver.DataAssignment):
     def __init__(self, mode='realtime'):
         self.references = {
             0: "WRIST",

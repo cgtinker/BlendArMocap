@@ -31,7 +31,7 @@ class HolisticDetector(RealtimeDetector):
 
     def init_bpy_bridge(self):
         # TODO: requires multiple listeners. also requires a special observer pattern.
-        target = cd_pose.Pose()
+        target = cd_pose.BridgePose()
         self.observer = events.BpyUpdateReceiver(target)
         self.listener = events.UpdateListener()
 
