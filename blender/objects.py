@@ -8,11 +8,11 @@ def add_empties(data: dict, size, extension=""):
     return [add_empty(size=size, name=value+extension) for key, value in data.items()]
 
 
-def add_empty(size, name):
+def add_empty(size, name, display='ARROWS'):
     obj = bpy.data.objects.new(name, None)
     bpy.context.scene.collection.objects.link(obj)
     obj.empty_display_size = size
-    obj.empty_display_type = 'ARROWS'
+    obj.empty_display_type = display
     return obj
 
 

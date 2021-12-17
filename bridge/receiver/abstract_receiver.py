@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
 from utils.writer import json_writer
 from mathutils import Vector, Euler
+from utils import vector_math
 
 
 class DataAssignment(ABC):
     data = None
     references = None
+    prev_rotation = None
     memory_stack = {}
 
     # region abstract methods
@@ -40,19 +42,32 @@ class DataAssignment(ABC):
 
     @staticmethod
     def prep_vector(vec):
-        return Vector((-vec[0], vec[1], -vec[2]))
+        return Vector((-vec[0], vec[2], -vec[1]))
 
-    @staticmethod
-    def euler_rotate(target, data, frame):
+    def euler_rotate(self, target, data, frame):
         """ Translates and keyframes bpy empty objects. """
         try:
             for p in data:
                 target[p[0]].rotation_euler = Euler((p[1][0], p[1][1], p[1][2]), 'XYZ')
                 target[p[0]].keyframe_insert(data_path="rotation_euler", frame=frame)
 
+            self.prev_rotation = data
         except IndexError:
             print("missing index!!!")
             pass
+
+    def quart_to_euler_combat(self, quart, idx):
+        """ Converts quart to euler rotation while comparing with previous rotation. """
+        if self.prev_rotation is not None:
+            combat = Euler(
+                (self.prev_rotation[idx][1][0],
+                 self.prev_rotation[idx][1][1],
+                 self.prev_rotation[idx][1][2]),
+                'XYZ')
+            return vector_math.to_euler(quart, combat, 'XYZ')
+        
+        else:
+            return vector_math.to_euler(quart)
 
     @staticmethod
     def write_json(filename, data):
@@ -72,4 +87,3 @@ class DataAssignment(ABC):
 
     def get_vector_by_entry(self, index):
         return Vector((self.data[index][1][0], self.data[index][1][1], self.data[index][1][2]))
-

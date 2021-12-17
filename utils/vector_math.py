@@ -1,5 +1,6 @@
 import math
-from mathutils import Vector
+from mathutils import Vector, Euler
+import numpy as np
 
 
 # region location
@@ -62,16 +63,39 @@ def normalize_vector(vec):
 
 
 # region Rotation
-def rotate_towards(origin, destination):
+def rotate_towards(origin, destination, track='Z', up='Y'):
     """ returns rotation from an origin to a destination. """
     dir_vec = get_direction_vec(origin, destination)
     dir_vec = dir_vec.normalized()
-    quart = dir_vec.to_track_quat('Z', 'Y')
-    euler = quart.to_euler('XYZ')
+    quart = dir_vec.to_track_quat(track, up)
+    return quart
+
+
+def to_euler(quart, combat=Euler(), space='XYZ', ):
+    euler = quart.to_euler(space, combat)
     return euler
 
 
 def get_angle_between_vectors(vec_a, vec_b):
     """ returns angle between two vectors. """
     return vec_a.angle(vec_b)
+
+
+def look_at(origin, target):
+    """https://learnopengl.com/Getting-started/Camera"""
+    dir = origin - target
+    dir = dir / np.linalg.norm(dir)
+    right = np.cross(np.array([0.0, 0.0, 1.0]), dir)
+    right = right / np.linalg.norm(right)
+    up = np.cross(dir, right)
+    up = up / np.linalg.norm(up)
+    rotation_transform = np.zeros((4, 4))
+    rotation_transform[0, :3] = right
+    rotation_transform[1, :3] = up
+    rotation_transform[2, :3] = dir
+    rotation_transform[-1, -1] = 1
+    translation_transform = np.eye(4)
+    translation_transform[:3, -1] = - origin
+    look_at_transform = np.matmul(rotation_transform, translation_transform)
+    return look_at_transform
 # endregion

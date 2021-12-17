@@ -2,6 +2,7 @@ from blender import objects
 from bridge.receiver import abstract_receiver
 from utils import log, vector_math
 import importlib
+from mathutils import Vector
 
 importlib.reload(abstract_receiver)
 
@@ -73,22 +74,22 @@ class BridgePose(abstract_receiver.DataAssignment):
 
     def set_custom_rotation(self, frame):
         """ Creates custom rotation data for driving the rig. """
+        v = vector_math
         # rotate custom shoulder center point from shoulder.R to shoulder.L
-        # a, b = self.get_vector_by_entry(11), self.get_vector_by_entry(12)
-        # shoulder_rot = vector_math.rotate_towards(Vector((-a[0], a[2], -a[1])), Vector((-b[0], b[2], -b[1])))
-
-        shoulder_rot = vector_math.rotate_towards(
+        shoulder_rot = v.rotate_towards(
             self.prep_vector(
                 self.get_vector_by_entry(11)),
             self.prep_vector(
                 self.get_vector_by_entry(12)))
+        shoulder_rot = self.quart_to_euler_combat(shoulder_rot, 0)
 
         # rotate custom hip center point from hip.R to hip.L
-        hip_rot = vector_math.rotate_towards(
+        hip_rot = v.rotate_towards(
             self.prep_vector(
                 self.get_vector_by_entry(23)),
             self.prep_vector(
                 self.get_vector_by_entry(24)))
+        hip_rot = self.quart_to_euler_combat(hip_rot, 1)
 
         # setup data format
         data = [
@@ -99,7 +100,7 @@ class BridgePose(abstract_receiver.DataAssignment):
         self.euler_rotate(self.pose, data, frame)
 
     def append_custom_location_data(self):
-        """ Appending custom location data to data array. """
+        """ Appending custom location data for driving the rig. """
         shoulder_cp = vector_math.get_center_point(self.get_vector_by_entry(11), self.get_vector_by_entry(12))
         self.data.append([33, [shoulder_cp[0], shoulder_cp[1], shoulder_cp[2]]])
 

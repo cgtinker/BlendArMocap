@@ -23,9 +23,9 @@ class MyProperties(PropertyGroup):
         name="",
         description="Select detection type for motion tracking.",
         items=(
-            ("POSE", "Pose", ""),
+            ("HAND", "Hands", ""),
             ("FACE", "Face", ""),
-            ("HAND", "Hands", "")
+            ("POSE", "Pose", ""),
         )
     )
 
