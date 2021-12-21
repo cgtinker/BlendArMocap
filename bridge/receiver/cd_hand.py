@@ -41,11 +41,15 @@ class BridgeHand(abstract_receiver.DataAssignment):
 
     def init_references(self):
         """Generate empty objects."""
-        self.left_hand = objects.add_empties(self.references, 0.025, ".L")
-        self.right_hand = objects.add_empties(self.references, 0.025, ".R")
-
-        objects.set_parents(self.left_hand[0], self.left_hand[1:])
-        objects.set_parents(self.right_hand[0], self.right_hand[1:])
+        self.left_hand = objects.add_empties(self.references, 0.005, ".L")
+        self.right_hand = objects.add_empties(self.references, 0.005, ".R")
+        
+        parent_l = objects.add_empty(0.025, "Hand.L")
+        parent_r = objects.add_empty(0.025, "Hand.R")
+        objects.set_parents(parent_l, self.left_hand)
+        objects.set_parents(parent_r, self.right_hand)
+        self.left_hand.append(parent_l)
+        self.right_hand.append(parent_r)
 
         objects.add_list_to_collection(self.col_name, self.left_hand)
         objects.add_list_to_collection(self.col_name, self.right_hand)

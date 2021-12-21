@@ -1,6 +1,6 @@
 import mediapipe as mp
 from bridge import events
-from bridge.receiver import cd_face
+from bridge.receiver import cd_face_quat as cd_face #cd_face
 from ml_detection.abstract_detector import RealtimeDetector
 from utils.open_cv import stream
 import importlib
@@ -11,7 +11,7 @@ importlib.reload(cd_face)
 class FaceDetector(RealtimeDetector):
     def image_detection(self):
         with self.solution.FaceMesh(
-                static_image_mode=True,
+                static_image_mode=False,
                 min_detection_confidence=0.7) as mp_lib:
             return self.exec_detection(mp_lib)
 
@@ -86,7 +86,7 @@ def init_test():
 if __name__ == '__main__':
     handler = init_test()
     image_detection(handler)
-    #stream_detection(handler)
+    # stream_detection(handler)
 
     del handler
 # endregion

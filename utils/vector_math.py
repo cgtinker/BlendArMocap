@@ -54,11 +54,26 @@ def get_vector_length(vec):
 def normalize_vector(vec):
     """ returns a normalized vector. """
     magnitude = get_vector_length(vec)
-    return Vector((
+    return (
         vec[0] / magnitude,
         vec[1] / magnitude,
         vec[2] / magnitude
-    ))
+    )
+
+
+def ignore_axis(vec, *args):
+    ignore = {
+        'X': 0,
+        'Y': 1,
+        'Z': 2,
+    }
+
+    for arg in args:
+        try:
+            vec[ignore[arg]] = 0
+        except KeyError:
+            print(arg, "axis not available")
+    return vec
 # endregion
 
 

@@ -7,7 +7,7 @@ from utils import vector_math
 class DataAssignment(ABC):
     data = None
     references = None
-    prev_rotation = None
+    prev_rotation = {}
     memory_stack = {}
 
     # region abstract methods
@@ -32,8 +32,10 @@ class DataAssignment(ABC):
         """ Translates and keyframes bpy empty objects. """
         try:
             for p in data:
-                target[p[0]].location = self.prep_vector(p[1])
-                target[p[0]].location = Vector((-p[1][0], p[1][2], -p[1][1]))
+                # target[p[0]].location = self.prep_vector(p[1])
+                # todo: fix data on receiving
+                # target[p[0]].location = Vector((-p[1][0], p[1][2], -p[1][1]))
+                target[p[0]].location = Vector((p[1]))
                 target[p[0]].keyframe_insert(data_path="location", frame=frame)
 
         except IndexError:
@@ -48,24 +50,23 @@ class DataAssignment(ABC):
         """ Translates and keyframes bpy empty objects. """
         try:
             for p in data:
+                target[p[0]].rotation_euler = p[1]
                 target[p[0]].rotation_euler = Euler((p[1][0], p[1][1], p[1][2]), 'XYZ')
                 target[p[0]].keyframe_insert(data_path="rotation_euler", frame=frame)
-
-            self.prev_rotation = data
+                self.prev_rotation[p[0]] = p[1]
         except IndexError:
             print("missing index!!!")
             pass
 
     def quart_to_euler_combat(self, quart, idx):
         """ Converts quart to euler rotation while comparing with previous rotation. """
-        if self.prev_rotation is not None:
-            combat = Euler(
-                (self.prev_rotation[idx][1][0],
-                 self.prev_rotation[idx][1][1],
-                 self.prev_rotation[idx][1][2]),
-                'XYZ')
-            return vector_math.to_euler(quart, combat, 'XYZ')
-        
+        if len(self.prev_rotation) > 0:
+            try:
+                combat = self.prev_rotation[idx]
+                return vector_math.to_euler(quart, combat, 'XYZ')
+            except KeyError:
+                print("invalid id to euler combat")
+                return vector_math.to_euler(quart)
         else:
             return vector_math.to_euler(quart)
 
