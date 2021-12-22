@@ -66,6 +66,9 @@ def seg_intersect(a1, a2, b1, b2):
     return (num / denom.astype(float)) * dist_b + b1
 
 
+
+
+
 def ignore_axis(vec, *args):
     """ null axis ['X', 'Y', 'Z'] of a given vector. """
     ignore = {

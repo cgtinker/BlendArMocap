@@ -1,6 +1,6 @@
 import mediapipe as mp
 from bridge import events
-from bridge.receiver import cd_face_quat as cd_face #cd_face
+from bridge.receiver import cd_face_drivers as cd_face
 from ml_detection.abstract_detector import RealtimeDetector
 from utils.open_cv import stream
 import importlib
@@ -28,8 +28,6 @@ class FaceDetector(RealtimeDetector):
 
     def initialize_model(self):
         self.solution = mp.solutions.face_mesh
-        self.drawing_utils = mp.solutions.drawing_utils
-        self.drawing_style = mp.solutions.drawing_styles
 
     def init_bpy_bridge(self):
         target = cd_face.BridgeFace()
@@ -54,8 +52,6 @@ class FaceDetector(RealtimeDetector):
             self.drawing_utils.draw_landmarks(
                 image=self.stream.frame,
                 landmark_list=face_landmarks,
-                # connections=self.solution.FACEMESH_TESSELATION,
-                # connection_drawing_spec=self.drawing_style.get_default_face_mesh_tesselation_style(),
                 connections=self.solution.FACEMESH_CONTOURS,
                 connection_drawing_spec=self.drawing_style.get_default_face_mesh_contours_style(),
                 landmark_drawing_spec=None)

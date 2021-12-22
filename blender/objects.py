@@ -96,10 +96,8 @@ def add_list_to_collection(name, objects):
 
 
 def add_obj_to_collection(name, m_object):
-    if collection_exists(name):
-        link_obj_to_collection(m_object, name)
-
-    create_collection(name, True)
+    if not collection_exists(name):
+        create_collection(name, True)
     link_obj_to_collection(m_object, name)
 
 

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from utils import log
 from mediapipe.framework.formats import landmark_pb2, classification_pb2
+from mediapipe import solutions
 
 
 class RealtimeDetector(ABC):
@@ -11,6 +12,10 @@ class RealtimeDetector(ABC):
 
     time_step = 4
     frame = 0
+
+    def __init__(self):
+        self.drawing_utils = solutions.drawing_utils
+        self.drawing_style = solutions.drawing_styles
 
     @abstractmethod
     def image_detection(self):

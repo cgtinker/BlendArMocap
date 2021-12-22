@@ -28,16 +28,25 @@ class DataAssignment(ABC):
     # endregion
 
     # region bpy object oriented
-    def translate(self, target, data, frame):
+    @staticmethod
+    def translate(target, data, frame):
         """ Translates and keyframes bpy empty objects. """
         try:
             for p in data:
-                # target[p[0]].location = self.prep_vector(p[1])
-                # todo: fix data on receiving
-                # target[p[0]].location = Vector((-p[1][0], p[1][2], -p[1][1]))
                 target[p[0]].location = Vector((p[1]))
                 target[p[0]].keyframe_insert(data_path="location", frame=frame)
 
+        except IndexError:
+            print("missing index!!!")
+            pass
+
+    @staticmethod
+    def scale(target, data, frame):
+        try:
+            for p in data:
+                print("SETTING SCALE:", p[0], p[1])
+                target[p[0]].scale = Vector((p[1]))
+                target[p[0]].keyframe_insert(data_path="scale", frame=frame)
         except IndexError:
             print("missing index!!!")
             pass
