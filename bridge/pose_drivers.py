@@ -1,15 +1,14 @@
-import utils.m_V
 from blender import objects
 from bridge import abs_assignment
-from utils import log, vector_math
 import numpy as np
 import importlib
+from utils import m_V, log
 
 importlib.reload(abs_assignment)
 
 
 class BridgePose(abs_assignment.DataAssignment):
-    def __init__(self):
+    def __init__(self, mode='realtime'):
         self.references = {
             0: "nose",
             1: "left_eye_inner",
@@ -48,7 +47,10 @@ class BridgePose(abs_assignment.DataAssignment):
 
         self.pose = []
         self.col_name = "Pose"
-        self.init_references()
+        self.rotation_data = None
+        # todo: add state
+        if mode != 'debug':
+            self.init_references()
 
     def init_references(self):
         # default empties
@@ -65,12 +67,12 @@ class BridgePose(abs_assignment.DataAssignment):
 
     def init_data(self):
         self.prepare_landmarks()
-        self.append_custom_location_data()
-        self.set_custom_rotation()
-        pass
+        self.shoulder_hip_location()
+        self.shoulder_hip_rotation()
 
     def update(self):
-        pass
+        self.set_position()
+        self.set_rotation()
 
     def set_position(self):
         """Keyframe the position of input data."""
@@ -81,24 +83,16 @@ class BridgePose(abs_assignment.DataAssignment):
             log.logger.error("VALUE ERROR WHILE ASSIGNING POSE POSITION")
 
     def set_rotation(self):
-        pass
+        self.euler_rotate(self.pose, self.rotation_data, self.frame)
 
-    def set_custom_rotation(self, frame):
+    def shoulder_hip_rotation(self):
         """ Creates custom rotation data for driving the rig. """
         # rotate custom shoulder center point from shoulder.R to shoulder.L
-        shoulder_rot = utils.m_V.rotate_towards(
-            self.prep_vector(
-                self.get_vector_by_entry(11)),
-            self.prep_vector(
-                self.get_vector_by_entry(12)))
+        shoulder_rot = m_V.rotate_towards(self.data[11][1], self.data[12][1])
         shoulder_rot = self.quart_to_euler_combat(shoulder_rot, 0)
 
         # rotate custom hip center point from hip.R to hip.L
-        hip_rot = utils.m_V.rotate_towards(
-            self.prep_vector(
-                self.get_vector_by_entry(23)),
-            self.prep_vector(
-                self.get_vector_by_entry(24)))
+        hip_rot = m_V.rotate_towards(self.data[23][1], self.data[24][1])
         hip_rot = self.quart_to_euler_combat(hip_rot, 1)
 
         # setup data format
@@ -107,17 +101,16 @@ class BridgePose(abs_assignment.DataAssignment):
             [34, [hip_rot[0], hip_rot[1], hip_rot[2]]]
         ]
 
-        self.euler_rotate(self.pose, data, frame)
+        self.rotation_data = data
 
-    def append_custom_location_data(self):
+    def shoulder_hip_location(self):
         """ Appending custom location data for driving the rig. """
-        shoulder_cp = vector_math.get_center_point(self.get_vector_by_entry(11), self.get_vector_by_entry(12))
-        self.data.append([33, [shoulder_cp[0], shoulder_cp[1], shoulder_cp[2]]])
+        shoulder_center = m_V.center_point(self.data[11][1], self.data[12][1])
+        self.data.append([33, [shoulder_center[0], shoulder_center[1], shoulder_center[2]]])
 
-        hip_cp = vector_math.get_center_point(self.get_vector_by_entry(23), self.get_vector_by_entry(24))
-        self.data.append([34, [hip_cp[0], hip_cp[1], hip_cp[2]]])
+        hip_center = m_V.center_point(self.data[23][1], self.data[24][1])
+        self.data.append([34, [hip_center[0], hip_center[1], hip_center[2]]])
 
     def prepare_landmarks(self):
         """ setting face mesh position to approximate origin """
-        self.data = [[idx, [-lmrk[0], lmrk[2], -lmrk[1]]] for idx, lmrk in self.data[:468]]
-        self.data = [[idx, np.array(lmrk) - np.array(self.pivot.loc)] for idx, lmrk in self.data[:468]]
+        self.data = [[idx, np.array([-lmrk[0], lmrk[2], -lmrk[1]])] for idx, lmrk in self.data]

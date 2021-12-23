@@ -1,8 +1,7 @@
 import mediapipe as mp
-from bridge import events
+from bridge import events, pose_drivers
 from ml_detection.abstract_detector import RealtimeDetector
 from utils.open_cv import stream
-from bridge.drivers import pose_drivers
 import importlib
 
 importlib.reload(pose_drivers)
@@ -35,7 +34,12 @@ class PoseDetector(RealtimeDetector):
         self.observer = events.BpyUpdateReceiver(target)
         self.listener = events.UpdateListener()
 
-    def init_debug_logs(self):
+    def init_driver_logs(self):
+        target = pose_drivers.BridgePose("debug")
+        self.observer = events.DriverDebug(target)
+        self.listener = events.UpdateListener()
+
+    def init_raw_data_printer(self):
         self.observer = events.UpdatePrinter()
         self.listener = events.UpdateListener()
 
@@ -72,7 +76,8 @@ def init_test():
 
     tracking_handler.stream = stream.Webcam()
     tracking_handler.initialize_model()
-    tracking_handler.init_debug_logs()
+    # tracking_handler.init_debug_logs()
+    tracking_handler.init_driver_logs()
     tracking_handler.listener.attach(tracking_handler.observer)
     return tracking_handler
 

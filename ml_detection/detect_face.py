@@ -1,6 +1,5 @@
 import mediapipe as mp
-from bridge import events
-from bridge.drivers import face_drivers
+from bridge import events, face_drivers
 from ml_detection.abstract_detector import RealtimeDetector
 from utils.open_cv import stream
 import importlib

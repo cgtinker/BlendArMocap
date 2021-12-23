@@ -149,6 +149,6 @@ class BridgeHand(abs_assignment.DataAssignment):
     @staticmethod
     def set_global_origin(data):
         if len(data) > 0:
-            data = data[0]
-            data = [[idx, np.array(lmrk) - np.array(data[0][1])] for idx, lmrk in data]
+            data = [[idx, np.array([-lmrk[0], lmrk[2], -lmrk[1]])] for idx, lmrk in data[0]]
+            data = [[idx, lmrk - data[0][1]] for idx, lmrk in data]
         return data
