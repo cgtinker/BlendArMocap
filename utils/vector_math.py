@@ -1,5 +1,5 @@
 import math
-from mathutils import Vector, Euler
+from mathutils import Vector
 import numpy as np
 
 
@@ -33,15 +33,6 @@ def get_direction_vec(vec_a, vec_b):
         vec_a[1] - vec_b[1],
         vec_a[2] - vec_b[2]
     ))
-
-
-def get_vector_distance(p_a, p_b):
-    """ return distance between two points. """
-    return math.sqrt(
-        (p_b[0] - p_a[0]) ** 2 +
-        (p_b[1] - p_a[1]) ** 2 +
-        (p_b[2] - p_a[2]) ** 2
-    )
 
 
 def get_vector_length(vec):
@@ -78,22 +69,6 @@ def ignore_axis(vec, *args):
 
 
 # region Rotation
-def rotate_towards(origin, destination, track='Z', up='Y'):
-    """ returns rotation from an origin to a destination. """
-    dir_vec = get_direction_vec(origin, destination)
-    dir_vec = dir_vec.normalized()
-    quart = dir_vec.to_track_quat(track, up)
-    return quart
-
-
-def to_euler(quart, combat=Euler(), space='XYZ', ):
-    euler = quart.to_euler(space, combat)
-    return euler
-
-
-def get_angle_between_vectors(vec_a, vec_b):
-    """ returns angle between two vectors. """
-    return vec_a.angle(vec_b)
 
 
 def look_at(origin, target):

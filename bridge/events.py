@@ -30,6 +30,17 @@ class UpdatePrinter(op.Observer):
         print(subject.data)
 
 
+class DriverDebug(op.Observer):
+    """ Doesnt apply data but usefull for debugging purposes. """
+    def __init__(self, _model):
+        self.model = _model
+
+    def update(self, subject: op.Listener) -> None:
+        self.model.data = subject.data
+        self.model.frame = subject.frame
+        self.model.init_data()
+
+
 class BpyUpdateReceiver(op.Observer):
     """ Updates empties in realtime via modal operator. """
     def __init__(self, _model):
@@ -37,8 +48,9 @@ class BpyUpdateReceiver(op.Observer):
 
     def update(self, subject: op.Listener) -> None:
         self.model.data = subject.data
-        self.model.set_position(subject.frame)
-        self.model.set_custom_rotation(subject.frame)
+        self.model.frame = subject.frame
+        self.model.init_data()
+        self.model.update()
 
 
 class MemoryUpdateReceiver(op.Observer):

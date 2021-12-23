@@ -1,13 +1,14 @@
+import utils.m_V
 from blender import objects
-from bridge.receiver import abstract_receiver
+from bridge import abs_assignment
 from utils import log, vector_math
+import numpy as np
 import importlib
-from mathutils import Vector
 
-importlib.reload(abstract_receiver)
+importlib.reload(abs_assignment)
 
 
-class BridgePose(abstract_receiver.DataAssignment):
+class BridgePose(abs_assignment.DataAssignment):
     def __init__(self):
         self.references = {
             0: "nose",
@@ -62,21 +63,30 @@ class BridgePose(abstract_receiver.DataAssignment):
         objects.set_parents(self.pose[len(self.pose)-1], self.pose[:len(self.pose)-1])
         objects.add_list_to_collection(self.col_name, self.pose)
 
-    def set_position(self, frame):
-        """Keyframe the position of input data."""
+    def init_data(self):
+        self.prepare_landmarks()
         self.append_custom_location_data()
+        self.set_custom_rotation()
+        pass
 
+    def update(self):
+        pass
+
+    def set_position(self):
+        """Keyframe the position of input data."""
         try:
-            self.translate(self.pose, self.data, frame)
+            self.translate(self.pose, self.data, self.frame)
 
         except IndexError:
             log.logger.error("VALUE ERROR WHILE ASSIGNING POSE POSITION")
 
+    def set_rotation(self):
+        pass
+
     def set_custom_rotation(self, frame):
         """ Creates custom rotation data for driving the rig. """
-        v = vector_math
         # rotate custom shoulder center point from shoulder.R to shoulder.L
-        shoulder_rot = v.rotate_towards(
+        shoulder_rot = utils.m_V.rotate_towards(
             self.prep_vector(
                 self.get_vector_by_entry(11)),
             self.prep_vector(
@@ -84,7 +94,7 @@ class BridgePose(abstract_receiver.DataAssignment):
         shoulder_rot = self.quart_to_euler_combat(shoulder_rot, 0)
 
         # rotate custom hip center point from hip.R to hip.L
-        hip_rot = v.rotate_towards(
+        hip_rot = utils.m_V.rotate_towards(
             self.prep_vector(
                 self.get_vector_by_entry(23)),
             self.prep_vector(
@@ -107,6 +117,7 @@ class BridgePose(abstract_receiver.DataAssignment):
         hip_cp = vector_math.get_center_point(self.get_vector_by_entry(23), self.get_vector_by_entry(24))
         self.data.append([34, [hip_cp[0], hip_cp[1], hip_cp[2]]])
 
-    def allocate_memory_b(self, idx, data):
-        """Store detection data in memory."""
-        self.memory_stack[f'{idx}'] = data
+    def prepare_landmarks(self):
+        """ setting face mesh position to approximate origin """
+        self.data = [[idx, [-lmrk[0], lmrk[2], -lmrk[1]]] for idx, lmrk in self.data[:468]]
+        self.data = [[idx, np.array(lmrk) - np.array(self.pivot.loc)] for idx, lmrk in self.data[:468]]

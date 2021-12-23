@@ -1,11 +1,11 @@
 import mediapipe as mp
 from bridge import events
-from bridge.receiver import cd_hand
+from bridge.drivers import hand_drivers
 from ml_detection.abstract_detector import RealtimeDetector
 from utils.open_cv import stream
 import importlib
 
-importlib.reload(cd_hand)
+importlib.reload(hand_drivers)
 
 
 class HandDetector(RealtimeDetector):
@@ -30,11 +30,11 @@ class HandDetector(RealtimeDetector):
 
     def initialize_model(self):
         self.solution = mp.solutions.hands
-        self.drawing_utils = mp.solutions.drawing_utils
-        self.drawing_style = mp.solutions.drawing_styles
 
     def init_bpy_bridge(self):
-        target = cd_hand.BridgeHand()
+        # TODO: SWITCH
+        target = hand_drivers.BridgeHand()
+        # target = cd_hand_empties.BridgeHand()
         self.observer = events.BpyUpdateReceiver(target)
         self.listener = events.UpdateListener()
 

@@ -1,11 +1,11 @@
 import mediapipe as mp
 from bridge import events
-from bridge.receiver import cd_face_drivers as cd_face
+from bridge.drivers import face_drivers
 from ml_detection.abstract_detector import RealtimeDetector
 from utils.open_cv import stream
 import importlib
 
-importlib.reload(cd_face)
+importlib.reload(face_drivers)
 
 
 class FaceDetector(RealtimeDetector):
@@ -30,11 +30,16 @@ class FaceDetector(RealtimeDetector):
         self.solution = mp.solutions.face_mesh
 
     def init_bpy_bridge(self):
-        target = cd_face.BridgeFace()
+        target = face_drivers.BridgeFace()
         self.observer = events.BpyUpdateReceiver(target)
         self.listener = events.UpdateListener()
 
-    def init_debug_logs(self):
+    def init_driver_logs(self):
+        target = face_drivers.BridgeFace("debug")
+        self.observer = events.DriverDebug(target)
+        self.listener = events.UpdateListener()
+
+    def init_raw_data_printer(self):
         self.observer = events.UpdatePrinter()
         self.listener = events.UpdateListener()
 
@@ -74,7 +79,7 @@ def init_test():
 
     tracking_handler.stream = stream.Webcam()
     tracking_handler.initialize_model()
-    tracking_handler.init_debug_logs()
+    tracking_handler.init_driver_logs()
     tracking_handler.listener.attach(tracking_handler.observer)
     return tracking_handler
 

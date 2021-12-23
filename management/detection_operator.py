@@ -2,13 +2,13 @@ import importlib
 
 import bpy
 
-from ml_detection import ml_hands, ml_pose, ml_face
+from ml_detection import detect_hands, detect_pose, detect_face
 from utils import log
 from utils.open_cv import stream
 
-importlib.reload(ml_hands)
-importlib.reload(ml_pose)
-importlib.reload(ml_face)
+importlib.reload(detect_hands)
+importlib.reload(detect_pose)
+importlib.reload(detect_face)
 
 
 class DetectionModalOperator(bpy.types.Operator):
@@ -21,9 +21,9 @@ class DetectionModalOperator(bpy.types.Operator):
     user = None
 
     handlers = {
-        "POSE": ml_pose.PoseDetector,
-        "HAND": ml_hands.HandDetector,
-        "FACE": ml_face.FaceDetector,
+        "POSE": detect_pose.PoseDetector,
+        "HAND": detect_hands.HandDetector,
+        "FACE": detect_face.FaceDetector,
         "HOLISTIC": ""
     }
 

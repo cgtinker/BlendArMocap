@@ -1,7 +1,8 @@
 import numpy as np
 import math
 from mathutils import Vector, Euler, Matrix
-from time import time
+
+import utils.m_V
 from utils import log
 import bpy
 """ RUNNING RUNNING RUNNING RUNNING RUNNING RUNNING RUNNING 
@@ -71,9 +72,9 @@ def main(frame):
     # convert to euler
     print("ne euler ok", euler_combat)
     if euler_combat is None:
-        euler_combat = quart.to_euler('XYZ')
+        euler_combat = utils.m_V.to_euler('XYZ')
     
-    euler = quart.to_euler('XYZ', euler_combat)
+    euler = utils.m_V.to_euler('XYZ', euler_combat)
     print("\neu:", euler, "com", euler_combat)
     euler_combat = euler
     
