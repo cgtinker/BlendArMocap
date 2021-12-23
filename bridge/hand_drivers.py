@@ -56,10 +56,9 @@ class BridgeHand(abs_assignment.DataAssignment):
     col_name = "Hands"
     col_diver = "Hand_Divers"
 
-    def __init__(self, mode='realtime'):
+    def __init__(self):
         self.right_driver = abs_assignment.CustomData()
         self.left_driver = abs_assignment.CustomData()
-        self.init_references()
 
     def init_references(self):
         """ generate empty objects for mapping. """

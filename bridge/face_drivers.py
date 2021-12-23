@@ -26,10 +26,6 @@ class BridgeFace(abs_assignment.DataAssignment):
 
         self.col_name = "Face"
 
-        if mode == 'debug':
-            return
-        self.init_references()
-
     def init_references(self):
         references = {}
         for i in range(468):

@@ -45,6 +45,7 @@ class BpyUpdateReceiver(op.Observer):
     """ Updates empties in realtime via modal operator. """
     def __init__(self, _model):
         self.model = _model
+        self.model.init_references()
 
     def update(self, subject: op.Listener) -> None:
         self.model.data = subject.data

@@ -34,7 +34,7 @@ class FaceDetector(RealtimeDetector):
         self.listener = events.UpdateListener()
 
     def init_driver_logs(self):
-        target = face_drivers.BridgeFace("debug")
+        target = face_drivers.BridgeFace()
         self.observer = events.DriverDebug(target)
         self.listener = events.UpdateListener()
 

@@ -8,7 +8,7 @@ importlib.reload(abs_assignment)
 
 
 class BridgePose(abs_assignment.DataAssignment):
-    def __init__(self, mode='realtime'):
+    def __init__(self):
         self.references = {
             0: "nose",
             1: "left_eye_inner",
@@ -49,8 +49,6 @@ class BridgePose(abs_assignment.DataAssignment):
         self.col_name = "Pose"
         self.rotation_data = None
         # todo: add state
-        if mode != 'debug':
-            self.init_references()
 
     def init_references(self):
         # default empties
