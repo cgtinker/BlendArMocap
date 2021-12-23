@@ -1,7 +1,9 @@
+import importlib
+
+import numpy as np
+
 from blender import objects
 from bridge import abs_assignment
-import numpy as np
-import importlib
 from utils import m_V, log
 
 importlib.reload(abs_assignment)
@@ -45,23 +47,24 @@ class BridgePose(abs_assignment.DataAssignment):
             32: "right_foot_index"
         }
 
+        self.pivot = abs_assignment.CustomData()
+        self.shoulder_center = abs_assignment.CustomData()
+        self.hip_center = abs_assignment.CustomData()
+
         self.pose = []
         self.col_name = "Pose"
-        self.rotation_data = None
-        # todo: add state
+        self.rotation_data = []
 
     def init_references(self):
         # default empties
         self.pose = objects.add_empties(self.references, 0.025)
 
-        # custom mapping references
-        self.pose.append(objects.add_empty(size=0.025, name="shoulder_center"))
-        self.pose.append(objects.add_empty(size=0.025, name="hip_center"))
-        self.pose.append(objects.add_empty(size=0.05, name="origin"))
-
-        # set parent for further mapping
-        objects.set_parents(self.pose[len(self.pose)-1], self.pose[:len(self.pose)-1])
-        objects.add_list_to_collection(self.col_name, self.pose)
+        self.init_bpy_driver_obj(
+            self.pivot, self.pose, 0.025, "origin_rot", "SPHERE", [0, 0, 0])
+        self.init_bpy_driver_obj(
+            self.shoulder_center, self.pose, 0.01, "shoulder_center", "CUBE", [0, 0, 0])
+        self.init_bpy_driver_obj(
+            self.hip_center, self.pose, 0.01, "hip_center", "CUBE", [0, 0, 0])
 
     def init_data(self):
         self.prepare_landmarks()
@@ -86,28 +89,28 @@ class BridgePose(abs_assignment.DataAssignment):
     def shoulder_hip_rotation(self):
         """ Creates custom rotation data for driving the rig. """
         # rotate custom shoulder center point from shoulder.R to shoulder.L
-        shoulder_rot = m_V.rotate_towards(self.data[11][1], self.data[12][1])
-        shoulder_rot = self.quart_to_euler_combat(shoulder_rot, 0)
+        self.shoulder_center.rot = m_V.rotate_towards(self.data[11][1], self.data[12][1])
+        self.shoulder_center.rot = self.quart_to_euler_combat(self.shoulder_center.rot, self.shoulder_center.idx)
 
         # rotate custom hip center point from hip.R to hip.L
-        hip_rot = m_V.rotate_towards(self.data[23][1], self.data[24][1])
-        hip_rot = self.quart_to_euler_combat(hip_rot, 1)
+        self.hip_center.rot = m_V.rotate_towards(self.data[23][1], self.data[24][1])
+        self.hip_center.rot = self.quart_to_euler_combat(self.hip_center.rot, self.hip_center.idx)
 
         # setup data format
         data = [
-            [33, [shoulder_rot[0], shoulder_rot[1], shoulder_rot[2]]],
-            [34, [hip_rot[0], hip_rot[1], hip_rot[2]]]
+            [self.shoulder_center.idx, self.shoulder_center.rot],
+            [self.hip_center.idx, self.hip_center.rot]
         ]
 
         self.rotation_data = data
 
     def shoulder_hip_location(self):
         """ Appending custom location data for driving the rig. """
-        shoulder_center = m_V.center_point(self.data[11][1], self.data[12][1])
-        self.data.append([33, [shoulder_center[0], shoulder_center[1], shoulder_center[2]]])
+        self.shoulder_center.loc = m_V.center_point(self.data[11][1], self.data[12][1])
+        self.data.append([self.shoulder_center.idx, self.shoulder_center.loc])
 
-        hip_center = m_V.center_point(self.data[23][1], self.data[24][1])
-        self.data.append([34, [hip_center[0], hip_center[1], hip_center[2]]])
+        self.hip_center.loc = m_V.center_point(self.data[23][1], self.data[24][1])
+        self.data.append([self.hip_center.idx, self.hip_center.loc])
 
     def prepare_landmarks(self):
         """ setting face mesh position to approximate origin """

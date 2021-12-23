@@ -67,11 +67,11 @@ class BridgeHand(abs_assignment.DataAssignment):
         objects.add_list_to_collection(self.col_name, self.left_hand)
         objects.add_list_to_collection(self.col_name, self.right_hand)
 
-        self.init_driver_obj(
+        self.init_bpy_driver_obj(
             self.right_driver, self.right_hand, 0.025, "right_hand", "CIRCLE", [.25, 0, 0],
             is_parent=True, children=self.right_hand)
 
-        self.init_driver_obj(
+        self.init_bpy_driver_obj(
             self.left_driver, self.left_hand, 0.025, "left_hand", "CIRCLE", [-.25, 0, 0],
             is_parent=True, children=self.left_hand)
 

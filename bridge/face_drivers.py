@@ -33,10 +33,10 @@ class BridgeFace(abs_assignment.DataAssignment):
         self.face = objects.add_empties(references, 0.005)
 
         # init face drivers
-        pivot = self.init_driver_obj(self.pivot, self.face, 0.025, "face_rotation", "SPHERE", [0, 0, 0])
-        mouth = self.init_driver_obj(self._mouth_driver, self.face, 0.025, "mouth_driver", "CIRCLE", [0, -.1, -.1])
-        l_eye = self.init_driver_obj(self.eye_driver_L, self.face, 0.01, "left_eye_driver", "CIRCLE", [-.05, -.05, .075])
-        r_eye = self.init_driver_obj(self.eye_driver_R, self.face, 0.01, "right_eye_driver", "CIRCLE", [.05, -.05, .075])
+        pivot = self.init_bpy_driver_obj(self.pivot, self.face, 0.025, "face_rotation", "SPHERE", [0, 0, 0])
+        mouth = self.init_bpy_driver_obj(self._mouth_driver, self.face, 0.025, "mouth_driver", "CIRCLE", [0, -.1, -.1])
+        l_eye = self.init_bpy_driver_obj(self.eye_driver_L, self.face, 0.01, "left_eye_driver", "CIRCLE", [-.05, -.05, .075])
+        r_eye = self.init_bpy_driver_obj(self.eye_driver_R, self.face, 0.01, "right_eye_driver", "CIRCLE", [.05, -.05, .075])
 
         # set driver start position
         drivers = [self.pivot, self._mouth_driver, self.eye_driver_R, self.eye_driver_L]

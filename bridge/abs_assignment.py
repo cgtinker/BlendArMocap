@@ -38,14 +38,14 @@ class DataAssignment(ABC):
 
     # region init helper
     @staticmethod
-    def init_driver_obj(driver: CustomData,
-                        ref_in_array: [],
-                        size: float = 0.005,
-                        name: str = "",
-                        style: str = "CUBE",
-                        position: [] = [0.0, 0.0, 0.0],
-                        is_parent: bool = False,
-                        children: [] = []):
+    def init_bpy_driver_obj(driver: CustomData,
+                            ref_in_array: [],
+                            size: float = 0.005,
+                            name: str = "",
+                            style: str = "CUBE",
+                            position: [] = [0.0, 0.0, 0.0],
+                            is_parent: bool = False,
+                            children: [] = []):
 
         driver.obj = objects.add_empty(size, name, style)
         driver.loc = position
@@ -82,6 +82,7 @@ class DataAssignment(ABC):
             pass
 
     def euler_rotate(self, target, data, frame):
+        print("\n\nf:", frame)
         """ Translates and keyframes bpy empty objects. """
         try:
             for p in data:
@@ -99,7 +100,7 @@ class DataAssignment(ABC):
                 combat = self.prev_rotation[idx]
                 return utils.m_V.to_euler(quart, combat, 'XYZ')
             except KeyError:
-                print("invalid id to euler combat")
+                print("invalid id to euler combat", idx, self.frame)
                 return utils.m_V.to_euler(quart)
         else:
             return utils.m_V.to_euler(quart)

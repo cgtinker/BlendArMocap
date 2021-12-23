@@ -35,7 +35,7 @@ class PoseDetector(RealtimeDetector):
         self.listener = events.UpdateListener()
 
     def init_driver_logs(self):
-        target = pose_drivers.BridgePose("debug")
+        target = pose_drivers.BridgePose()
         self.observer = events.DriverDebug(target)
         self.listener = events.UpdateListener()
 

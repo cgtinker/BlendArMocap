@@ -1,5 +1,5 @@
 from blender.rig import abstract_rig
-from utils import vector_math
+from utils import m_V
 
 
 class RigPose(abstract_rig.Rig):
@@ -49,11 +49,11 @@ class RigPose(abstract_rig.Rig):
     def get_alignment_points(self):
         r_low = self.get_bone(self.mapping["right_heel"])
         l_low = self.get_bone(self.mapping["left_heel"])
-        low_p = vector_math.get_center_point(r_low, l_low)
+        low_p = m_V.center_point(r_low, l_low)
 
         r_high = self.get_bone(self.mapping["right_shoulder"])
         l_high = self.get_bone(self.mapping["left_shoulder"])
-        high_p = vector_math.get_center_point(r_low, l_low)
+        high_p = m_V.center_point(r_low, l_low)
         return low_p, high_p
 
     def get_bone(self, name):
