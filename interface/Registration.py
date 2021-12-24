@@ -15,7 +15,7 @@ classes = (
     Properties.MyProperties,
 
     Operators.UI_detection_button,
-    Operators.UI_add_rig_button,
+    Operators.UI_transfer_anim_button,
     detection_operator.DetectionModalOperator,
 
     Panels.UI_PT_main_panel,

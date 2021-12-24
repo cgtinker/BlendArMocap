@@ -1,7 +1,10 @@
 from abc import ABC, abstractmethod
 from utils import log
-from mediapipe.framework.formats import landmark_pb2, classification_pb2
+from mediapipe.framework.formats import classification_pb2
 from mediapipe import solutions
+from time import time
+from math import ceil
+import bpy
 
 
 class RealtimeDetector(ABC):
@@ -10,12 +13,24 @@ class RealtimeDetector(ABC):
     solution = None
     drawing_utils, drawing_style, = None, None
 
+    start_time = 0.0
+    frame_rate = 25.0
     time_step = 4
     frame = 0
 
     def __init__(self):
         self.drawing_utils = solutions.drawing_utils
         self.drawing_style = solutions.drawing_styles
+        self.frame_rate = self.get_frame_rate()
+
+    @staticmethod
+    def get_frame_rate():
+        try:
+            fps = bpy.context.scene.m_cgtinker_mediapipe.enum_fps
+            fps = int(fps)
+        except AttributeError:
+            fps = 25
+        return fps
 
     @abstractmethod
     def image_detection(self):
@@ -44,6 +59,7 @@ class RealtimeDetector(ABC):
     def exec_detection(self, mp_lib):
         if not self.stream_updated():
             return {'PASS_THROUGH'}
+        self.start_time = time()
 
         # detect features in frame
         self.stream.frame.flags.writeable = False
@@ -58,13 +74,13 @@ class RealtimeDetector(ABC):
                 return {'CANCELLED'}
             return {'PASS_THROUGH'}
 
-        # update listeners
-        self.listener.data = self.process_detection_result(mp_res)
-        self.update_listeners()
-
         # draw results
         self.draw_result(self.stream, mp_res, self.drawing_utils)
         self.stream.draw()
+
+        # update listeners
+        self.listener.data = self.process_detection_result(mp_res)
+        self.update_listeners()
 
         # exit stream
         if self.stream.exit_stream():
@@ -79,7 +95,8 @@ class RealtimeDetector(ABC):
         return True
 
     def update_listeners(self):
-        self.frame += self.time_step
+        self.frame += ceil((time() - self.start_time) * self.frame_rate)
+        # self.frame += self.time_step
         self.listener.frame = self.frame
         self.listener.notify()
 

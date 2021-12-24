@@ -1,5 +1,4 @@
 import importlib
-
 import bpy
 
 from ml_detection import detect_hands, detect_pose, detect_face

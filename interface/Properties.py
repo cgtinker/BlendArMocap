@@ -8,19 +8,31 @@ class MyProperties(PropertyGroup):
     button_start_detection: StringProperty(
         name="",
         description="Detects features and record results in blender.",
-        default="Start Tracking"
+        default="Start Detection"
     )
 
-    button_add_rig: StringProperty(
+    button_transfer_animation: StringProperty(
         name="",
-        description="Adds an armature as target for detected results.",
-        default="Add Driver Rig"
+        description="Armature as target for detected results.",
+        default="Start Transfer"
     )
 
+    # DATA SELECTION
+    selected_rig: StringProperty(
+        name="",
+        description="Select an armature for animation transfer.",
+        default="Armature"
+    )
+
+    selected_driver_collection: StringProperty(
+        name="",
+        description="Select a collection of Divers.",
+        default="Drivers"
+    )
     # ENUMS
     # ("HOLISTIC", "Holistic", ""),
     enum_detection_type: EnumProperty(
-        name="",
+        name="Target",
         description="Select detection type for motion tracking.",
         items=(
             ("HAND", "Hands", ""),

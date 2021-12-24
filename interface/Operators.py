@@ -15,10 +15,10 @@ class UI_detection_button(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class UI_add_rig_button(bpy.types.Operator):
-    bl_label = "Add Rig"
-    bl_idname = "button.add_rig"
-    bl_description = "Add a rig for motion tracking transfer"
+class UI_transfer_anim_button(bpy.types.Operator):
+    bl_label = "Transfer Animation"
+    bl_idname = "button.transfer_animation"
+    bl_description = "Transfer driver animation to rig"
 
     def execute(self, context):
         input_manager.add_rig()

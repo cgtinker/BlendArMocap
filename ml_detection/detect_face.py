@@ -1,13 +1,14 @@
 import mediapipe as mp
 from bridge import events, face_drivers
-from ml_detection.abstract_detector import RealtimeDetector
+from ml_detection import abstract_detector
 from utils.open_cv import stream
 import importlib
 
 importlib.reload(face_drivers)
+importlib.reload(abstract_detector)
 
 
-class FaceDetector(RealtimeDetector):
+class FaceDetector(abstract_detector.RealtimeDetector):
     def image_detection(self):
         with self.solution.FaceMesh(
                 static_image_mode=False,
@@ -78,7 +79,8 @@ def init_test():
 
     tracking_handler.stream = stream.Webcam()
     tracking_handler.initialize_model()
-    tracking_handler.init_driver_logs()
+    # tracking_handler.init_driver_logs()
+    tracking_handler.init_raw_data_printer()
     tracking_handler.listener.attach(tracking_handler.observer)
     return tracking_handler
 

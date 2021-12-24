@@ -1,13 +1,14 @@
 import mediapipe as mp
 from bridge import events, pose_drivers
-from ml_detection.abstract_detector import RealtimeDetector
+from ml_detection import abstract_detector
 from utils.open_cv import stream
 import importlib
 
 importlib.reload(pose_drivers)
+importlib.reload(abstract_detector)
 
 
-class PoseDetector(RealtimeDetector):
+class PoseDetector(abstract_detector.RealtimeDetector):
     def image_detection(self):
         with self.solution.Pose(
                 static_image_mode=True,

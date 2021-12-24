@@ -1,13 +1,14 @@
 import mediapipe as mp
 from bridge import events, hand_drivers
-from ml_detection.abstract_detector import RealtimeDetector
+from ml_detection import abstract_detector
 from utils.open_cv import stream
 import importlib
 
 importlib.reload(hand_drivers)
+importlib.reload(abstract_detector)
 
 
-class HandDetector(RealtimeDetector):
+class HandDetector(abstract_detector.RealtimeDetector):
     def image_detection(self):
         with self.solution.Hands(
                 static_image_mode=True,

@@ -82,7 +82,6 @@ class DataAssignment(ABC):
             pass
 
     def euler_rotate(self, target, data, frame):
-        print("\n\nf:", frame)
         """ Translates and keyframes bpy empty objects. """
         try:
             for p in data:
@@ -90,7 +89,7 @@ class DataAssignment(ABC):
                 target[p[0]].keyframe_insert(data_path="rotation_euler", frame=frame)
                 self.prev_rotation[p[0]] = p[1]
         except IndexError:
-            print("missing index!!!")
+            print("missing euler_rotate index!!!")
             pass
 
     def quart_to_euler_combat(self, quart, idx):

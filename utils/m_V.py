@@ -9,9 +9,9 @@ from utils import log
 # region vector utils
 def vector_length(vector: np.array):
     """ returns the length of a given vector. """
-    # vec = np.sum(vector ** 2)
-    # return np.sqrt(vec)
-    return np.linalg.norm(vector, ord=1)
+    vec = np.sum(vector ** 2)
+    return np.sqrt(vec)
+    # return np.linalg.norm(vector, ord=1)
 
 
 def to_vector(origin: np.array, destination: np.array):
@@ -193,20 +193,22 @@ def generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
 def main():
     # testing for further updates
     tangent = np.array([0, 1, 0])
-    normal = np.array([0, 0, 1])
+    normal = np.array([0, 4, 1])
     binormal = np.array([1, 0, 0])
 
     matrix = np_genenerate_matrix(tangent, normal, binormal)
     loc, rot_matrix, scale = np_decompose_matrix(matrix)
+    print(matrix)
+    print("\nloc\n", loc, "\nrot\n", rot_matrix, "\nsca\n", scale)
 
 
 def np_genenerate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
     """ generate a numpy matrix at loc [0, 0, 0]. """
     matrix = np.array([
-        [tangent[0], tangent[1], tangent[2], 0],
-        [normal[0], normal[1], normal[2], 0],
-        [binormal[0], binormal[1], binormal[2], 0],
-        [0, 0, 0, 1]])
+        [tangent[0],    tangent[1],     tangent[2],     0],
+        [normal[0],     normal[1],      normal[2],      0],
+        [binormal[0],   binormal[1],    binormal[2],    0],
+        [0,             0,              0,              1]])
     return matrix
 
 
@@ -221,13 +223,16 @@ def np_decompose_matrix(matrix):
     sca = np.array([sx, sy, sz])
 
     # rotation -> divide first three column vectors by the scaling factors
-    # TODO: fix for negative scale and apply shear
+    # todo: fix for negative scale and apply shear
     c1 = matrix[:3, 0:1] / sx
     c2 = matrix[:3, 1:2] / sy
     c3 = matrix[:3, 2:3] / sz
+
+    # recreate matrix (loc = [0, 0, 0]
     rotation_matrix = np.array([np.append(col, [v]) for col, v in
                                 [[c1, 0], [c2, 0], [c3, 0], [loc, 1]]])
 
+    # todo: quaternion from rotation matrix
     return loc, rotation_matrix, sca
 
 
