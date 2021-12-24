@@ -4,7 +4,6 @@ from mediapipe.framework.formats import classification_pb2
 from mediapipe import solutions
 from time import time
 from math import ceil
-import bpy
 
 
 class RealtimeDetector(ABC):
@@ -14,23 +13,11 @@ class RealtimeDetector(ABC):
     drawing_utils, drawing_style, = None, None
 
     start_time = 0.0
-    frame_rate = 25.0
-    time_step = 4
     frame = 0
 
     def __init__(self):
         self.drawing_utils = solutions.drawing_utils
         self.drawing_style = solutions.drawing_styles
-        self.frame_rate = self.get_frame_rate()
-
-    @staticmethod
-    def get_frame_rate():
-        try:
-            fps = bpy.context.scene.m_cgtinker_mediapipe.enum_fps
-            fps = int(fps)
-        except AttributeError:
-            fps = 25
-        return fps
 
     @abstractmethod
     def image_detection(self):
@@ -95,8 +82,7 @@ class RealtimeDetector(ABC):
         return True
 
     def update_listeners(self):
-        self.frame += ceil((time() - self.start_time) * self.frame_rate)
-        # self.frame += self.time_step
+        self.frame += ceil((time() - self.start_time) * 30)
         self.listener.frame = self.frame
         self.listener.notify()
 

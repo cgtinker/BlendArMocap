@@ -29,7 +29,6 @@ class UI_PT_main_panel(ExpandedPanel, Panel):
         box = self.layout.box()
         box.label(text='Detect')
         box.row().prop(user, "webcam_input_device")
-        box.row().prop(user, "enum_fps")
         box.row().prop(user, "enum_detection_type")
         box.row().operator("button.detection_button", text=user.button_start_detection)
 
