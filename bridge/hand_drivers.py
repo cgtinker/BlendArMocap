@@ -14,34 +14,34 @@ importlib.reload(m_V)
 
 class BridgeHand(abs_assignment.DataAssignment):
     references = {
-        0: "WRIST",
-        1: "THUMB_CMC",
-        2: "THUMB_MCP",
-        3: "THUMP_IP",
-        4: "THUMB_TIP",
-        5: "INDEX_FINGER_MCP",
-        6: "INDEX_FINGER_PIP",
-        7: "INDEX_FINGER_DIP",
-        8: "INDEX_FINGER_TIP",
-        9: "MIDDLE_FINGER_MCP",
-        10: "MIDDLE_FINGER_PIP",
-        11: "MIDDLE_FINGER_DIP",
-        12: "MIDDLE_FINGER_TIP",
-        13: "RING_FINGER_MCP",
-        14: "RING_FINGER_PIP",
-        15: "RING_FINGER_DIP",
-        16: "RING_FINGER_TIP",
-        17: "PINKY_MCP",
-        18: "PINKY_PIP",
-        19: "PINKY_DIP",
-        20: "PINKY_TIP"
+        0:  "cgt_WRIST",
+        1:  "cgt_THUMB_CMC",
+        2:  "cgt_THUMB_MCP",
+        3:  "cgt_THUMP_IP",
+        4:  "cgt_THUMB_TIP",
+        5:  "cgt_INDEX_FINGER_MCP",
+        6:  "cgt_INDEX_FINGER_PIP",
+        7:  "cgt_INDEX_FINGER_DIP",
+        8:  "cgt_INDEX_FINGER_TIP",
+        9:  "cgt_MIDDLE_FINGER_MCP",
+        10: "cgt_MIDDLE_FINGER_PIP",
+        11: "cgt_MIDDLE_FINGER_DIP",
+        12: "cgt_MIDDLE_FINGER_TIP",
+        13: "cgt_RING_FINGER_MCP",
+        14: "cgt_RING_FINGER_PIP",
+        15: "cgt_RING_FINGER_DIP",
+        16: "cgt_RING_FINGER_TIP",
+        17: "cgt_PINKY_MCP",
+        18: "cgt_PINKY_PIP",
+        19: "cgt_PINKY_DIP",
+        20: "cgt_PINKY_TIP"
     }
     fingers = [
-        [5, 9],  # index finger
-        [9, 13],  # middle finger
-        [13, 17],  # ring finger
-        [17, 21],  # pinky
-        [1, 5]  # thumb
+        [5, 9],     # index finger
+        [9, 13],    # middle finger
+        [13, 17],   # ring finger
+        [17, 21],   # pinky
+        [1, 5]      # thumb
     ]
 
     # hands
@@ -53,8 +53,7 @@ class BridgeHand(abs_assignment.DataAssignment):
     left_angles, right_angles = None, None
 
     frame = 0
-    col_name = "Hands"
-    col_diver = "Hand_Divers"
+    col_name = "cgt_hands"
 
     def __init__(self):
         self.right_driver = abs_assignment.CustomData()
@@ -68,11 +67,11 @@ class BridgeHand(abs_assignment.DataAssignment):
         objects.add_list_to_collection(self.col_name, self.right_hand)
 
         self.init_bpy_driver_obj(
-            self.right_driver, self.right_hand, 0.025, "right_hand", "CIRCLE", [.25, 0, 0],
+            self.right_driver, self.right_hand, 0.025, "right_hand", self.col_name, "CIRCLE", [.25, 0, 0],
             is_parent=True, children=self.right_hand)
 
         self.init_bpy_driver_obj(
-            self.left_driver, self.left_hand, 0.025, "left_hand", "CIRCLE", [-.25, 0, 0],
+            self.left_driver, self.left_hand, 0.025, "left_hand", self.col_name, "CIRCLE", [-.25, 0, 0],
             is_parent=True, children=self.left_hand)
 
     def init_data(self):

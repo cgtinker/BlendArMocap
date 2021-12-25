@@ -1,6 +1,7 @@
 import importlib
 
 import numpy as np
+
 import utils.m_V
 from blender import objects
 from bridge import abs_assignment
@@ -24,19 +25,23 @@ class BridgeFace(abs_assignment.DataAssignment):
 
         self.rotation_data, self.driver_scale_data = None, None
 
-        self.col_name = "Face"
+        self.col_name = "cgt_face"
 
     def init_references(self):
         references = {}
         for i in range(468):
-            references[f'{i}'] = f"face_empty_{i}"
+            references[f'{i}'] = f"cgt_face_empty_{i}"
         self.face = objects.add_empties(references, 0.005)
 
         # init face drivers
-        pivot = self.init_bpy_driver_obj(self.pivot, self.face, 0.025, "face_rotation", "SPHERE", [0, 0, 0])
-        mouth = self.init_bpy_driver_obj(self._mouth_driver, self.face, 0.025, "mouth_driver", "CIRCLE", [0, -.1, -.1])
-        l_eye = self.init_bpy_driver_obj(self.eye_driver_L, self.face, 0.01, "left_eye_driver", "CIRCLE", [-.05, -.05, .075])
-        r_eye = self.init_bpy_driver_obj(self.eye_driver_R, self.face, 0.01, "right_eye_driver", "CIRCLE", [.05, -.05, .075])
+        pivot = self.init_bpy_driver_obj(
+            self.pivot, self.face, 0.025, "face_rotation", self.col_name, "SPHERE", [0, 0, 0])
+        mouth = self.init_bpy_driver_obj(
+            self._mouth_driver, self.face, 0.025, "mouth_driver", self.col_name, "CIRCLE", [0, -.1, -.1])
+        l_eye = self.init_bpy_driver_obj(
+            self.eye_driver_L, self.face, 0.01, "left_eye_driver", self.col_name, "CIRCLE", [-.05, -.05, .075])
+        r_eye = self.init_bpy_driver_obj(
+            self.eye_driver_R, self.face, 0.01, "right_eye_driver", self.col_name, "CIRCLE", [.05, -.05, .075])
 
         # set driver start position
         drivers = [self.pivot, self._mouth_driver, self.eye_driver_R, self.eye_driver_L]
@@ -70,7 +75,7 @@ class BridgeFace(abs_assignment.DataAssignment):
     def set_scale_driver_data(self):
         """ prepares mouth and eye driver data. """
         # setting up drivers
-        avg_scale = m_V.vector_length_2d(self.data[362][1], self.data[263][1], 'Z')     # eye dist as avg scale
+        avg_scale = m_V.vector_length_2d(self.data[362][1], self.data[263][1], 'Z')  # eye dist as avg scale
         self.mouth_driver(avg_scale)
         self.eye_driver(avg_scale)
 
@@ -83,14 +88,14 @@ class BridgeFace(abs_assignment.DataAssignment):
 
     def mouth_driver(self, avg_scale):
         """ get mouth driver scale data. """
-        mouth_w = self.average_length_at_scale(62, 292, avg_scale)   # mouth width
-        mouth_h = self.average_length_at_scale(13, 14, avg_scale)   # mouth height
+        mouth_w = self.average_length_at_scale(62, 292, avg_scale)  # mouth width
+        mouth_h = self.average_length_at_scale(13, 14, avg_scale)  # mouth height
         self._mouth_driver.sca = [mouth_w, 0.001, mouth_h]
 
     def eye_driver(self, avg_scale):
         """ get eye driver scale data. """
-        eye_l = self.average_length_at_scale(386, 374, avg_scale)   # left eye
-        eye_r = self.average_length_at_scale(159, 145, avg_scale)   # right eye
+        eye_l = self.average_length_at_scale(386, 374, avg_scale)  # left eye
+        eye_r = self.average_length_at_scale(159, 145, avg_scale)  # right eye
 
         self.eye_driver_L.sca = [1.5, 0.001, eye_l]
         self.eye_driver_R.sca = [1.5, 0.001, eye_r]
@@ -101,9 +106,9 @@ class BridgeFace(abs_assignment.DataAssignment):
         origin = np.array([0, 0, 0])
 
         # approximate perpendicular points to origin
-        forward_point = utils.m_V.center_point(np.array(self.data[1][1]), np.array(self.data[4][1]))    # nose
+        forward_point = utils.m_V.center_point(np.array(self.data[1][1]), np.array(self.data[4][1]))  # nose
         right_point = utils.m_V.center_point(np.array(self.data[447][1]), np.array(self.data[366][1]))  # temple.R
-        down_point = np.array(self.data[152][1])                                                  # chin
+        down_point = np.array(self.data[152][1])  # chin
 
         # direction vectors from imaginary origin
         normal = m_V.normalize(m_V.to_vector(origin, forward_point))
@@ -129,5 +134,5 @@ class BridgeFace(abs_assignment.DataAssignment):
     def approximate_pivot_location(self):
         """ approximate origin based on canonical face mesh geometry """
         right = utils.m_V.center_point(np.array(self.data[447][1]), np.array(self.data[366][1]))  # temple.R
-        left = utils.m_V.center_point(np.array(self.data[137][1]), np.array(self.data[227][1]))   # temple.L
-        self.pivot.loc = utils.m_V.center_point(right, left)                                      # approximate origin
+        left = utils.m_V.center_point(np.array(self.data[137][1]), np.array(self.data[227][1]))  # temple.L
+        self.pivot.loc = utils.m_V.center_point(right, left)  # approximate origin

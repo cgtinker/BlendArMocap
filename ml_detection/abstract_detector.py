@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
-from utils import log
 from mediapipe.framework.formats import classification_pb2
 from mediapipe import solutions
+
 from time import time
-from math import ceil
+from utils import log
+from blender import objects
 
 
 class RealtimeDetector(ABC):
@@ -13,11 +14,13 @@ class RealtimeDetector(ABC):
     drawing_utils, drawing_style, = None, None
 
     start_time = 0.0
-    frame = 0
+    frame = None
 
     def __init__(self):
         self.drawing_utils = solutions.drawing_utils
         self.drawing_style = solutions.drawing_styles
+        # todo: state
+        self.frame = objects.get_frame_start()
 
     @abstractmethod
     def image_detection(self):
@@ -82,7 +85,7 @@ class RealtimeDetector(ABC):
         return True
 
     def update_listeners(self):
-        self.frame += ceil((time() - self.start_time) * 30)
+        self.frame += int((time() - self.start_time) * 30)
         self.listener.frame = self.frame
         self.listener.notify()
 

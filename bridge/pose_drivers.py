@@ -12,39 +12,39 @@ importlib.reload(abs_assignment)
 class BridgePose(abs_assignment.DataAssignment):
     def __init__(self):
         self.references = {
-            0: "nose",
-            1: "left_eye_inner",
-            2: "left_eye",
-            3: "left_eye_outer",
-            4: "right_eye_inner",
-            5: "right_eye",
-            6: "right_eye_outer",
-            7: "left_ear",
-            8: "right_ear",
-            9: "mouth_left",
-            10: "mouth_right",
-            11: "left_shoulder",
-            12: "right_shoulder",
-            13: "left_elbow",
-            14: "right_elbow",
-            15: "left_wrist",
-            16: "right_wrist",
-            17: "left_pinky",
-            18: "right_pinky",
-            19: "left_index",
-            20: "right_index",
-            21: "left_thumb",
-            22: "right_thumb",
-            23: "left_hip",
-            24: "right_hip",
-            25: "left_knee",
-            26: "right_knee",
-            27: "left_ankle",
-            28: "right_ankle",
-            29: "left_heel",
-            30: "right_heel",
-            31: "left_foot_index",
-            32: "right_foot_index"
+            0:  "cgt_nose",
+            1:  "cgt_left_eye_inner",
+            2:  "cgt_left_eye",
+            3:  "cgt_left_eye_outer",
+            4:  "cgt_right_eye_inner",
+            5:  "cgt_right_eye",
+            6:  "cgt_right_eye_outer",
+            7:  "cgt_left_ear",
+            8:  "cgt_right_ear",
+            9:  "cgt_mouth_left",
+            10: "cgt_mouth_right",
+            11: "cgt_left_shoulder",
+            12: "cgt_right_shoulder",
+            13: "cgt_left_elbow",
+            14: "cgt_right_elbow",
+            15: "cgt_left_wrist",
+            16: "cgt_right_wrist",
+            17: "cgt_left_pinky",
+            18: "cgt_right_pinky",
+            19: "cgt_left_index",
+            20: "cgt_right_index",
+            21: "cgt_left_thumb",
+            22: "cgt_right_thumb",
+            23: "cgt_left_hip",
+            24: "cgt_right_hip",
+            25: "cgt_left_knee",
+            26: "cgt_right_knee",
+            27: "cgt_left_ankle",
+            28: "cgt_right_ankle",
+            29: "cgt_left_heel",
+            30: "cgt_right_heel",
+            31: "cgt_left_foot_index",
+            32: "cgt_right_foot_index"
         }
 
         self.pivot = abs_assignment.CustomData()
@@ -52,7 +52,7 @@ class BridgePose(abs_assignment.DataAssignment):
         self.hip_center = abs_assignment.CustomData()
 
         self.pose = []
-        self.col_name = "Pose"
+        self.col_name = "cgt_pose"
         self.rotation_data = []
 
     def init_references(self):
@@ -60,11 +60,11 @@ class BridgePose(abs_assignment.DataAssignment):
         self.pose = objects.add_empties(self.references, 0.025)
 
         self.init_bpy_driver_obj(
-            self.pivot, self.pose, 0.025, "origin_rot", "SPHERE", [0, 0, 0])
+            self.pivot, self.pose, 0.025, "origin_rot", self.col_name, "SPHERE", [0, 0, 0])
         self.init_bpy_driver_obj(
-            self.shoulder_center, self.pose, 0.01, "shoulder_center", "CUBE", [0, 0, 0])
+            self.shoulder_center, self.pose, 0.01, "shoulder_center", self.col_name, "CUBE", [0, 0, 0])
         self.init_bpy_driver_obj(
-            self.hip_center, self.pose, 0.01, "hip_center", "CUBE", [0, 0, 0])
+            self.hip_center, self.pose, 0.01, "hip_center", self.col_name, "CUBE", [0, 0, 0])
 
     def init_data(self):
         self.prepare_landmarks()

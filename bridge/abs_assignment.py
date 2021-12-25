@@ -18,6 +18,7 @@ class DataAssignment(ABC):
     references = None
     prev_rotation = {}
     memory_stack = {}
+    driver_col = "cgt_drivers"
 
     # region abstract methods
     @abstractmethod
@@ -42,6 +43,7 @@ class DataAssignment(ABC):
                             ref_in_array: [],
                             size: float = 0.005,
                             name: str = "",
+                            col_name: str = "cgt_drivers",
                             style: str = "CUBE",
                             position: [] = [0.0, 0.0, 0.0],
                             is_parent: bool = False,
@@ -54,7 +56,7 @@ class DataAssignment(ABC):
 
         ref_in_array.append(driver.obj)
         driver.idx = len(ref_in_array) - 1
-        objects.add_obj_to_collection("Drivers", driver.obj)
+        objects.add_obj_to_collection(col_name, driver.obj)
         return driver.obj
     # endregion
 

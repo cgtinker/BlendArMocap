@@ -9,11 +9,23 @@ def add_empties(data: dict, size, extension=""):
 
 
 def add_empty(size, name, display='ARROWS'):
+    ob = get_object_by_name(name)
+    if ob is not None:
+        return ob
+
     obj = bpy.data.objects.new(name, None)
     bpy.context.scene.collection.objects.link(obj)
     obj.empty_display_size = size
     obj.empty_display_type = display
     return obj
+
+
+def get_object_by_name(name):
+    try:
+        ob = bpy.data.objects[name]
+        return ob
+    except KeyError:
+        return None
 
 
 def add_camera(name):
@@ -102,9 +114,32 @@ def add_obj_to_collection(name, m_object):
 
 
 def link_obj_to_collection(m_object, name):
-    bpy.context.scene.collection.objects.unlink(m_object)
-    collection = bpy.data.collections.get(name)
-    collection.objects.link(m_object)
+    # todo: add proper fix
+    try:
+        bpy.context.scene.collection.objects.unlink(m_object)
+        collection = bpy.data.collections.get(name)
+        collection.objects.link(m_object)
+    except RuntimeError:
+        pass
+
+
+def get_child_collections(col_name):
+    """ returns array of child collection names or parent name if no children found. """
+    # attempt to get child collections
+    if collection_exists(col_name) and len(bpy.data.collections[col_name].children) > 0:
+        return [col.name for col in bpy.data.collections[col_name].children]
+    # if no children return active col name
+    else:
+        return [col_name]
+
+
+def get_objects_from_collection(col_name):
+    """ returns objects from collection. """
+    if collection_exists(col_name):
+        col = bpy.data.collections[col_name]
+        return [ob for ob in col.all_objects]
+    else:
+        return None
 # endregion
 
 
@@ -169,3 +204,8 @@ def add_copy_rotation_constraint(obj, target_obj, invert_y):
     if invert_y:
         constraint.invert_y = True
 # endregion
+
+
+def get_frame_start():
+    frame_start = bpy.context.scene.frame_start
+    return frame_start

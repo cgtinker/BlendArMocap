@@ -2,11 +2,9 @@ from utils import log
 from blender import abs_rigging
 import importlib
 
-importlib.reload(abs_rigging)
-
 
 class RigifyHands(abs_rigging.BpyRigging):
-    def __init__(self):
+    def __init__(self, armature, driver_objects):
         # tips naming convention in rigify has some flaws?
         self.references = {
             0: "hand_fk",
@@ -49,7 +47,7 @@ class RigifyHands(abs_rigging.BpyRigging):
             self.extension = ".L"
         elif ".R" in hand_empties[0]:
             self.extension = ".R"
-        
+
         for empty in hand_empties:
             # remove extension
             name = empty.name.replace(self.extension, "")
@@ -57,4 +55,6 @@ class RigifyHands(abs_rigging.BpyRigging):
                 self.relation_dict[self.get_reference_bone(name)] = empty
             except KeyError:
                 log.logger.Error("Driver empty does not exist: ", empty.name)
+
+importlib.reload(abs_rigging)
 

@@ -21,5 +21,5 @@ class UI_transfer_anim_button(bpy.types.Operator):
     bl_description = "Transfer driver animation to rig"
 
     def execute(self, context):
-        input_manager.add_rig()
+        input_manager.transfer_animation()
         return {'FINISHED'}
