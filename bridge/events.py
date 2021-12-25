@@ -24,7 +24,7 @@ class UpdateListener(op.Listener):
             observer.update(self)
 
 
-class UpdatePrinter(op.Observer):
+class PrintRawDataUpdate(op.Observer):
     """ Prints updated data for debugging. """
     def update(self, subject: op.Listener) -> None:
         print(subject.data)
@@ -63,4 +63,3 @@ class MemoryUpdateReceiver(op.Observer):
     def update(self, subject: op.Listener) -> None:
         self.idx += 1
         self.hand.allocate_memory(self.idx, subject.data)
-

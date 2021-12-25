@@ -34,12 +34,11 @@ class HandDetector(abstract_detector.RealtimeDetector):
     def init_bpy_bridge(self):
         # TODO: SWITCH
         target = hand_drivers.BridgeHand()
-        # target = cd_hand_empties.BridgeHand()
         self.observer = events.BpyUpdateReceiver(target)
         self.listener = events.UpdateListener()
 
     def init_debug_logs(self):
-        self.observer = events.UpdatePrinter()
+        self.observer = events.PrintRawDataUpdate()
         self.listener = events.UpdateListener()
 
     def process_detection_result(self, mp_res):

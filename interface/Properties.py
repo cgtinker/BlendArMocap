@@ -41,26 +41,6 @@ class MyProperties(PropertyGroup):
         )
     )
 
-    enum_fps: EnumProperty(
-        name="FPS",
-        description="Select Scene FPS",
-        items=(
-            ("24", "24", ""),
-            ("25", "25", ""),
-            ("30", "30", ""),
-            ("60", "60", "")
-        )
-    )
-
-    enum_synchronize: EnumProperty(
-        name="Update",
-        description="Select detection update type.",
-        items=(
-            ("SYNC", "synchronous", ""),
-            ("ASYNC", "asynchronous", "")
-        )
-    )
-
     # Integer Input
     webcam_input_device: IntProperty(
         name="Webcam Device Slot",
@@ -68,6 +48,14 @@ class MyProperties(PropertyGroup):
         min=0,
         max=4,
         default=0
+    )
+
+    key_frame_step: IntProperty(
+        name="Key Step",
+        description="Select keyframe step rate.",
+        min=1,
+        max=10,
+        default=4
     )
 
     data_path: StringProperty(

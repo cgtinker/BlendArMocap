@@ -41,7 +41,7 @@ class PoseDetector(abstract_detector.RealtimeDetector):
         self.listener = events.UpdateListener()
 
     def init_raw_data_printer(self):
-        self.observer = events.UpdatePrinter()
+        self.observer = events.PrintRawDataUpdate()
         self.listener = events.UpdateListener()
 
     def process_detection_result(self, mp_res):

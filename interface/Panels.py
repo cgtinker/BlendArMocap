@@ -30,6 +30,7 @@ class UI_PT_main_panel(ExpandedPanel, Panel):
         box.label(text='Detect')
         box.row().prop(user, "webcam_input_device")
         box.row().prop(user, "enum_detection_type")
+        box.row().prop(user, "key_frame_step")
         box.row().operator("button.detection_button", text=user.button_start_detection)
 
         # transfer animation

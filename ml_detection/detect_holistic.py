@@ -37,7 +37,7 @@ class HolisticDetector(abstract_detector.RealtimeDetector):
         self.listener = events.UpdateListener()
 
     def init_debug_logs(self):
-        self.observer = events.UpdatePrinter()
+        self.observer = events.PrintRawDataUpdate()
         self.listener = events.UpdateListener()
 
     def process_detection_result(self, mp_res):

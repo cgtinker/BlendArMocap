@@ -2,9 +2,8 @@ from abc import ABC, abstractmethod
 from mediapipe.framework.formats import classification_pb2
 from mediapipe import solutions
 
-from time import time
 from utils import log
-from blender import objects
+from management import input_manager
 
 
 class RealtimeDetector(ABC):
@@ -13,14 +12,15 @@ class RealtimeDetector(ABC):
     solution = None
     drawing_utils, drawing_style, = None, None
 
-    start_time = 0.0
+    key_step = 4
     frame = None
 
     def __init__(self):
         self.drawing_utils = solutions.drawing_utils
         self.drawing_style = solutions.drawing_styles
         # todo: state
-        self.frame = objects.get_frame_start()
+        self.frame = input_manager.get_frame_start()
+        self.key_step = input_manager.get_keyframe_step()
 
     @abstractmethod
     def image_detection(self):
@@ -49,7 +49,6 @@ class RealtimeDetector(ABC):
     def exec_detection(self, mp_lib):
         if not self.stream_updated():
             return {'PASS_THROUGH'}
-        self.start_time = time()
 
         # detect features in frame
         self.stream.frame.flags.writeable = False
@@ -85,7 +84,7 @@ class RealtimeDetector(ABC):
         return True
 
     def update_listeners(self):
-        self.frame += int((time() - self.start_time) * 30)
+        self.frame += self.key_step
         self.listener.frame = self.frame
         self.listener.notify()
 

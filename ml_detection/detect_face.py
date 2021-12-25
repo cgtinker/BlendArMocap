@@ -12,6 +12,7 @@ class FaceDetector(abstract_detector.RealtimeDetector):
     def image_detection(self):
         with self.solution.FaceMesh(
                 static_image_mode=False,
+                refine_landmarks=True,
                 min_detection_confidence=0.7) as mp_lib:
             return self.exec_detection(mp_lib)
 
@@ -40,7 +41,7 @@ class FaceDetector(abstract_detector.RealtimeDetector):
         self.listener = events.UpdateListener()
 
     def init_raw_data_printer(self):
-        self.observer = events.UpdatePrinter()
+        self.observer = events.PrintRawDataUpdate()
         self.listener = events.UpdateListener()
 
     def process_detection_result(self, mp_res):

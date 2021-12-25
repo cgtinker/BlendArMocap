@@ -27,3 +27,14 @@ def transfer_animation():
             col_mapping[col](armature, driver_objects)
         except KeyError:
             print("Collection mapping failed:", col)
+
+
+def get_keyframe_step():
+    user = bpy.context.scene.m_cgtinker_mediapipe
+    key_step = user.key_frame_step
+    return key_step
+
+
+def get_frame_start():
+    frame = objects.get_frame_start()
+    return frame
