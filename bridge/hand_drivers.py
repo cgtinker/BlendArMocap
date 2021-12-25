@@ -116,7 +116,7 @@ class BridgeHand(abs_assignment.DataAssignment):
 
             mcp, tip = self.fingers[idx]
             for angle_idx, finger_idx in enumerate(range(mcp, tip - 1)):
-                joint_angle = [finger_idx, Euler((angles[angle_idx], 0, 0))]
+                joint_angle = [finger_idx, Euler((0, 0, angles[angle_idx]))]
                 data.append(joint_angle)
 
         return data

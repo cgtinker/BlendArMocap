@@ -2,14 +2,8 @@ from abc import ABC, abstractmethod
 
 
 class BpyRigging(ABC):
-
-    @abstractmethod
-    def get_reference_bone(self, index):
-        """ get a bone by diver index """
-        pass
-
     @staticmethod
-    def add_constraint(bone, target):
+    def add_constraint(bone, target, idx):
         constraints = {
             0: "CAMERA_SOLVER",
             1: "FOLLOW_TRACK",
@@ -42,10 +36,12 @@ class BpyRigging(ABC):
         }
 
         constraint = bone.constraints.new(
-            type=constraints[8]
+            type=constraints[idx]
         )
 
         constraint.target = target
+        constraint.euler_order = 'YZX'
         constraint.influence = 1
+        constraint.mix_mode = 'ADD'
 
 

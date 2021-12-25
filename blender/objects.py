@@ -1,5 +1,4 @@
 import bpy
-from mathutils import Vector
 
 
 # region OBJECTS

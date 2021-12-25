@@ -1,60 +1,72 @@
 from utils import log
-from blender import abs_rigging
+from blender import abs_rigging, objects
 import importlib
+
+importlib.reload(abs_rigging)
+importlib.reload(objects)
 
 
 class RigifyHands(abs_rigging.BpyRigging):
     def __init__(self, armature, driver_objects):
-        # tips naming convention in rigify has some flaws?
         self.references = {
-            0: "hand_fk",
-            1: "thumb.01",
-            2: "thumb.02",
-            3: "thumb.03",
-            4: "thumb.01.L.001",
-            5: "f_index.01",
-            6: "f_index.02",
-            7: "f_index.03",
-            8: "f_index.01",
-            9: "f_middle.01",
-            10: "f_middle.02",
-            11: "f_middle.03",
-            12: "f_middle.01",
-            13: "f_ring.01",
-            14: "f_ring.02",
-            15: "f_ring.03",
-            16: "f_ring.01",
-            17: "f_pinky.01",
-            18: "f_pinky.02",
-            19: "f_pinky.03",
-            20: "f_pinky.01",
+            "cgt_WRIST":                "hand_fk",
+            "cgt_THUMB_CMC":            "thumb.01",
+            "cgt_THUMB_MCP":            "thumb.02",
+            "cgt_THUMP_IP":             "thumb.03",
+            "cgt_THUMB_TIP":            "thumb.01",
+            "cgt_INDEX_FINGER_MCP":     "f_index.01",
+            "cgt_INDEX_FINGER_PIP":     "f_index.02",
+            "cgt_INDEX_FINGER_DIP":     "f_index.03",
+            "cgt_INDEX_FINGER_TIP":     "f_index.01",
+            "cgt_MIDDLE_FINGER_MCP":    "f_middle.01",
+            "cgt_MIDDLE_FINGER_PIP":    "f_middle.02",
+            "cgt_MIDDLE_FINGER_DIP":    "f_middle.03",
+            "cgt_MIDDLE_FINGER_TIP":    "f_middle.01",
+            "cgt_RING_FINGER_MCP":      "f_ring.01",
+            "cgt_RING_FINGER_PIP":      "f_ring.02",
+            "cgt_RING_FINGER_DIP":      "f_ring.03",
+            "cgt_RING_FINGER_TIP":      "f_ring.01",
+            "cgt_PINKY_MCP":            "f_pinky.01",
+            "cgt_PINKY_PIP":            "f_pinky.02",
+            "cgt_PINKY_DIP":            "f_pinky.03",
+            "cgt_PINKY_TIP":            "f_pinky.01",
         }
 
         self.relation_dict = {}
         self.extension = ""
 
+        self.set_relation_dict(driver_objects)
+        self.apply_drivers(armature)
+
     def get_reference_bone(self, key):
+        """ get reference bone by driver empty name. """
         if "TIP" in key:
-            ref = self.references[key] + self.extension + ".001"
-            return ref
+            bone_name = self.references[key] + self.extension + ".001"
+            return bone_name
 
-        ref = self.references[key] + self.extension
-        return ref
+        bone_name = self.references[key] + self.extension
+        return bone_name
 
-    def set_relation_dict(self, hand_empties):
-        # left or right hand
-        if ".L" in hand_empties[0]:
-            self.extension = ".L"
-        elif ".R" in hand_empties[0]:
-            self.extension = ".R"
+    def set_relation_dict(self, driver_empties):
+        """ sets relation dict containing bone name and reference empty obj. """
+        for empty in driver_empties:
+            if ".L" in empty.name:
+                self.extension = ".L"
+            else:
+                self.extension = ".R"
 
-        for empty in hand_empties:
-            # remove extension
+            # remove extension from driver name
             name = empty.name.replace(self.extension, "")
             try:
-                self.relation_dict[self.get_reference_bone(name)] = empty
+                bone_name = self.get_reference_bone(name)
+                self.relation_dict[bone_name] = empty
+
             except KeyError:
-                log.logger.Error("Driver empty does not exist: ", empty.name)
+                print("driver empty does not exist:", empty.name)
+                # log.logger.Error("Driver empty does not exist: ", empty.name)
 
-importlib.reload(abs_rigging)
-
+    def apply_drivers(self, armature):
+        bones = objects.get_armature_bones(armature)
+        pose_bones = armature.pose.bones
+        for key, value in self.relation_dict.items():
+            self.add_constraint(pose_bones[key], value, 4)
