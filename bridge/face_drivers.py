@@ -32,7 +32,7 @@ class BridgeFace(abs_assignment.DataAssignment):
         for i in range(468):
             references[f'{i}'] = f"cgt_face_empty_{i}"
         self.face = objects.add_empties(references, 0.005)
-        objects.add_list_to_collection(self.col_name, self.face)
+        objects.add_list_to_collection(self.col_name, self.face, self.driver_col)
 
         # init face drivers
         pivot = self.init_bpy_driver_obj(

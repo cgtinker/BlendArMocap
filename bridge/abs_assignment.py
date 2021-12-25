@@ -38,8 +38,8 @@ class DataAssignment(ABC):
     # endregion
 
     # region init helper
-    @staticmethod
-    def init_bpy_driver_obj(driver: CustomData,
+    def init_bpy_driver_obj(self,
+                            driver: CustomData,
                             ref_in_array: [],
                             size: float = 0.005,
                             name: str = "",
@@ -56,7 +56,7 @@ class DataAssignment(ABC):
 
         ref_in_array.append(driver.obj)
         driver.idx = len(ref_in_array) - 1
-        objects.add_obj_to_collection(col_name, driver.obj)
+        objects.add_obj_to_collection(col_name, driver.obj, self.driver_col)
         return driver.obj
     # endregion
 

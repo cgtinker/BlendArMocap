@@ -63,8 +63,8 @@ class BridgeHand(abs_assignment.DataAssignment):
         """ generate empty objects for mapping. """
         self.left_hand = objects.add_empties(self.references, 0.005, ".L")
         self.right_hand = objects.add_empties(self.references, 0.005, ".R")
-        objects.add_list_to_collection(self.col_name, self.left_hand)
-        objects.add_list_to_collection(self.col_name, self.right_hand)
+        objects.add_list_to_collection(self.col_name, self.left_hand, self.driver_col)
+        objects.add_list_to_collection(self.col_name, self.right_hand, self.driver_col)
 
         self.init_bpy_driver_obj(
             self.right_driver, self.right_hand, 0.025, "right_hand", self.col_name, "CIRCLE", [.25, 0, 0],

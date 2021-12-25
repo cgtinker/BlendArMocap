@@ -65,32 +65,39 @@ def set_parent(parent, child):
 
 
 # region COLLECTIONS
-def hide_collection_viewport(name, status):
-    if collection_exists(name):
-        collection = bpy.data.collections.get(name)
+def hide_collection_viewport(col_name, status):
+    if collection_exists(col_name):
+        collection = bpy.data.collections.get(col_name)
         collection.hide_viewport = status
 
 
-def collection_exists(name):
-    for collection in bpy.data.collections:
-        if collection.name == name:
-            return True
-    return False
-
-
-def create_collection(name, link):
-    if collection_exists(name):
-        return False
+def collection_exists(col_name):
+    if bpy.data.collections.get(col_name) is not None:
+        return True
     else:
-        collection = bpy.data.collections.new(name)
+        return False
+
+
+def create_collection(col_name, parent_col, link=True):
+    if collection_exists(col_name):
+        return False
+
+    else:
+        collection = bpy.data.collections.new(col_name)
+
         if link:
-            bpy.context.scene.collection.children.link(collection)
+            if parent_col is None:
+                bpy.context.scene.collection.children.link(collection)
+            else:
+                create_collection(parent_col, None, True)
+                parent = bpy.data.collections.get(parent_col)
+                parent.children.link(collection)
         return True
 
 
-def remove_collection(name, remove_objects):
-    if collection_exists(name):
-        collection = bpy.data.collections.get(name)
+def remove_collection(col_name, remove_objects):
+    if collection_exists(col_name):
+        collection = bpy.data.collections.get(col_name)
         if collection:
             if remove_objects:
                 obs = [o for o in collection.objects if o.users == 1]
@@ -99,18 +106,18 @@ def remove_collection(name, remove_objects):
         bpy.data.collections.remove(collection)
 
 
-def add_list_to_collection(name, objects):
-    if not collection_exists(name):
-        create_collection(name, True)
+def add_list_to_collection(col_name, objects, parent_col=None, link=True):
+    if not collection_exists(col_name):
+        create_collection(col_name, parent_col, link)
 
     for o in objects:
-        link_obj_to_collection(o, name)
+        link_obj_to_collection(o, col_name)
 
 
-def add_obj_to_collection(name, m_object):
-    if not collection_exists(name):
-        create_collection(name, True)
-    link_obj_to_collection(m_object, name)
+def add_obj_to_collection(col_name, m_object, parent_col=None, link=True):
+    if not collection_exists(col_name):
+        create_collection(col_name, parent_col, link)
+    link_obj_to_collection(m_object, col_name)
 
 
 def link_obj_to_collection(m_object, name):

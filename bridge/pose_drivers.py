@@ -58,7 +58,7 @@ class BridgePose(abs_assignment.DataAssignment):
     def init_references(self):
         # default empties
         self.pose = objects.add_empties(self.references, 0.025)
-        objects.add_list_to_collection(self.col_name, self.pose)
+        objects.add_list_to_collection(self.col_name, self.pose, self.driver_col)
 
         self.init_bpy_driver_obj(
             self.pivot, self.pose, 0.025, "origin_rot", self.col_name, "SPHERE", [0, 0, 0])
