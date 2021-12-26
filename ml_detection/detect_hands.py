@@ -80,8 +80,8 @@ def init_test():
 
 if __name__ == '__main__':
     handler = init_test()
-    image_detection(handler)
-    # stream_detection(handler)
+    #image_detection(handler)
+    stream_detection(handler)
 
     del handler
 # endregion

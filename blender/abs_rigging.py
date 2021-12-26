@@ -1,47 +1,55 @@
-from abc import ABC, abstractmethod
+from abc import ABC
+
+
+def copy_rotation(constraint, target):
+    constraint.target = target
+    constraint.euler_order = 'XYZ'
+    constraint.influence = 1
+    constraint.mix_mode = 'ADD'
+    constraint.owner_space = 'LOCAL'
 
 
 class BpyRigging(ABC):
-    @staticmethod
-    def add_constraint(bone, target, idx):
-        constraints = {
-            0: "CAMERA_SOLVER",
-            1: "FOLLOW_TRACK",
-            2: "OBJECT_SOLVER",
-            3: "COPY_LOCATION",
-            4: "COPY_ROTATION",
-            5: "COPY_SCALE",
-            6: "COPY_TRANSFORMS",
-            7: "LIMIT_DISTANCE",
-            8: "LIMIT_LOCATION",
-            9: "LIMIT_ROTATION",
-            10: "LIMIT_SCALE",
-            11: "MAINTAIN_VOLUME",
-            12: "TRANSFORM",
-            13: "TRANSFORM_CACHE",
-            14: "CLAMP_TO",
-            15: "DAMPED_TRACK",
-            16: "IK",
-            17: "LOCKED_TRACK",
-            18: "SPLINE_IK",
-            19: "STRETCH_TO",
-            20: "TRACK_TO",
-            21: "ACTION",
-            22: "ARMATURE",
-            23: "CHILD_OF",
-            24: "FLOOR",
-            25: "FOLLOW_PATH",
-            26: "PIVOT",
-            27: "SHRINKWRAP"
-        }
+    constraint_mapping = {
+        "CAMERA_SOLVER": 0,
+        "FOLLOW_TRACK": 1,
+        "OBJECT_SOLVER": 2,
+        "COPY_LOCATION": 3,
+        "COPY_ROTATION": copy_rotation,
+        "COPY_SCALE": 5,
+        "COPY_TRANSFORMS": 6,
+        "LIMIT_DISTANCE": 7,
+        "LIMIT_LOCATION": 8,
+        "LIMIT_ROTATION": 9,
+        "LIMIT_SCALE": 10,
+        "MAINTAIN_VOLUME": 11,
+        "TRANSFORM": 12,
+        "TRANSFORM_CACHE": 13,
+        "CLAMP_TO": 14,
+        "DAMPED_TRACK": 15,
+        "IK": 16,
+        "LOCKED_TRACK": 17,
+        "SPLINE_IK": 18,
+        "STRETCH_TO": 19,
+        "TRACK_TO": 20,
+        "ACTION": 21,
+        "ARMATURE": 22,
+        "CHILD_OF": 23,
+        "FLOOR": 24,
+        "FOLLOW_PATH": 25,
+        "PIVOT": 26,
+        "SHRINKWRAP": 27
+    }
 
-        constraint = bone.constraints.new(
-            type=constraints[idx]
+    def add_constraint(self, bone, target, constraint):
+        constraints = [c for c in bone.constraints]
+
+        for c in constraints:
+            bone.constraints.remove(c)  # Remove constraint
+
+        m_constraint = bone.constraints.new(
+            type=constraint
         )
-
-        constraint.target = target
-        constraint.euler_order = 'YZX'
-        constraint.influence = 1
-        constraint.mix_mode = 'ADD'
+        self.constraint_mapping[constraint](m_constraint, target)
 
 

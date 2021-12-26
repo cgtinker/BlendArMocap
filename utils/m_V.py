@@ -91,8 +91,8 @@ def joint_angles(vertices, joints):
 def joint_angle(vertices, joint):
     """ returns angle between joint. """
     angle = angle_between(
-        vertices[joint[1]] - vertices[joint[0]],
-        vertices[joint[2]] - vertices[joint[1]])
+        to_vector(vertices[joint[0]], vertices[joint[1]]),
+        to_vector(vertices[joint[1]], vertices[joint[2]]))
     return angle
 
 

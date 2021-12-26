@@ -69,4 +69,4 @@ class RigifyHands(abs_rigging.BpyRigging):
         bones = objects.get_armature_bones(armature)
         pose_bones = armature.pose.bones
         for key, value in self.relation_dict.items():
-            self.add_constraint(pose_bones[key], value, 4)
+            self.add_constraint(pose_bones[key], value, 'COPY_ROTATION')

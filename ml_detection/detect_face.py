@@ -81,7 +81,7 @@ def init_test():
     tracking_handler.stream = stream.Webcam()
     tracking_handler.initialize_model()
     # tracking_handler.init_driver_logs()
-    tracking_handler.init_raw_data_printer()
+    # tracking_handler.init_raw_data_printer()
     tracking_handler.listener.attach(tracking_handler.observer)
     return tracking_handler
 

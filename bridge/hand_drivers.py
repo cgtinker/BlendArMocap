@@ -55,24 +55,12 @@ class BridgeHand(abs_assignment.DataAssignment):
     frame = 0
     col_name = "cgt_hands"
 
-    def __init__(self):
-        self.right_driver = abs_assignment.CustomData()
-        self.left_driver = abs_assignment.CustomData()
-
     def init_references(self):
         """ generate empty objects for mapping. """
         self.left_hand = objects.add_empties(self.references, 0.005, ".L")
         self.right_hand = objects.add_empties(self.references, 0.005, ".R")
         objects.add_list_to_collection(self.col_name, self.left_hand, self.driver_col)
         objects.add_list_to_collection(self.col_name, self.right_hand, self.driver_col)
-
-        self.init_bpy_driver_obj(
-            self.right_driver, self.right_hand, 0.025, "right_hand", self.col_name, "CIRCLE", [.25, 0, 0],
-            is_parent=True, children=self.right_hand)
-
-        self.init_bpy_driver_obj(
-            self.left_driver, self.left_hand, 0.025, "left_hand", self.col_name, "CIRCLE", [-.25, 0, 0],
-            is_parent=True, children=self.left_hand)
 
     def init_data(self):
         self.left_hand_data, self.right_hand_data = self.landmarks_to_hands(list(zip(self.data[0], self.data[1])))
@@ -116,7 +104,7 @@ class BridgeHand(abs_assignment.DataAssignment):
 
             mcp, tip = self.fingers[idx]
             for angle_idx, finger_idx in enumerate(range(mcp, tip - 1)):
-                joint_angle = [finger_idx, Euler((0, 0, angles[angle_idx]))]
+                joint_angle = [finger_idx, Euler((angles[angle_idx], 0, 0))]
                 data.append(joint_angle)
 
         return data
@@ -126,9 +114,9 @@ class BridgeHand(abs_assignment.DataAssignment):
         if hand == []:
             return None
 
-        origin = hand[0][1]
+        origin = hand[0][1]     # [0, 0, 0]
         fingers = [[hand[idx][1] for idx in range(finger[0], finger[1])] for finger in self.fingers]
-        fingers = [np.array([origin] + finger) for finger in fingers]
+        fingers = [np.array([origin] + finger) for finger in fingers]   # add origin to finger
 
         joints = [[0, 1, 2], [1, 2, 3], [2, 3, 4]]
         finger_angles = [m_V.joint_angles(finger, joints) for finger in fingers]
@@ -136,8 +124,8 @@ class BridgeHand(abs_assignment.DataAssignment):
 
     def landmarks_to_hands(self, hand_data):
         """ determines where the data belongs to """
-        left_hand = [data[0] for data in hand_data if data[1][1] is True]
-        right_hand = [data[0] for data in hand_data if data[1][1] is False]
+        left_hand = [data[0] for data in hand_data if data[1][1] is False]
+        right_hand = [data[0] for data in hand_data if data[1][1] is True]
 
         left_hand = self.set_global_origin(left_hand)
         right_hand = self.set_global_origin(right_hand)
