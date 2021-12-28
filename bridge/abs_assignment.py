@@ -83,6 +83,21 @@ class DataAssignment(ABC):
             print("missing index!!!")
             pass
 
+    @staticmethod
+    def quaternion_rotate(target, data, frame):
+        """ Translates and keyframes bpy empty objects. """
+        print("t", target)
+        print("d", data)
+        print("f", frame)
+        print("\n")
+        try:
+            for p in data:
+                target[p[0]].quaternion_rotate = p[1]
+                target[p[0]].keyframe_insert(data_path="quaternion_rotate", frame=frame)
+        except IndexError:
+            print("missing quat_euler_rotate index!!!")
+            pass
+
     def euler_rotate(self, target, data, frame):
         """ Translates and keyframes bpy empty objects. """
         try:

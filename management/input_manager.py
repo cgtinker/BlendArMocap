@@ -33,8 +33,11 @@ def transfer_animation():
 
 
 def get_keyframe_step():
-    user = bpy.context.scene.m_cgtinker_mediapipe
-    key_step = user.key_frame_step
+    try:
+        user = bpy.context.scene.m_cgtinker_mediapipe
+        key_step = user.key_frame_step
+    except AttributeError:
+        return 4
     return key_step
 
 

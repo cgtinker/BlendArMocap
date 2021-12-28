@@ -213,5 +213,8 @@ def add_copy_rotation_constraint(obj, target_obj, invert_y):
 
 
 def get_frame_start():
-    frame_start = bpy.context.scene.frame_start
+    try:
+        frame_start = bpy.context.scene.frame_start
+    except AttributeError:
+        return 0
     return frame_start

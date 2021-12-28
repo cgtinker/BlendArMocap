@@ -38,6 +38,8 @@ class HandDetector(abstract_detector.RealtimeDetector):
         self.listener = events.UpdateListener()
 
     def init_debug_logs(self):
+        target = hand_drivers.BridgeHand()
+        # self.observer = events.DriverDebug(target)
         self.observer = events.PrintRawDataUpdate()
         self.listener = events.UpdateListener()
 
@@ -80,8 +82,8 @@ def init_test():
 
 if __name__ == '__main__':
     handler = init_test()
-    #image_detection(handler)
-    stream_detection(handler)
+    image_detection(handler)
+    # stream_detection(handler)
 
     del handler
 # endregion

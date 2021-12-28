@@ -9,7 +9,7 @@ importlib.reload(objects)
 class RigifyHands(abs_rigging.BpyRigging):
     def __init__(self, armature, driver_objects):
         self.references = {
-            "cgt_WRIST":                "hand_fk",
+            "cgt_WRIST":                "hand_ik",
             "cgt_THUMB_CMC":            "thumb.01",
             "cgt_THUMB_MCP":            "thumb.02",
             "cgt_THUMP_IP":             "thumb.03",

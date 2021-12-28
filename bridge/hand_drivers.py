@@ -1,7 +1,7 @@
 import importlib
 
 import numpy as np
-from mathutils import Euler
+from mathutils import Euler, Quaternion
 
 from blender import objects
 from bridge import abs_assignment
@@ -14,16 +14,16 @@ importlib.reload(m_V)
 
 class BridgeHand(abs_assignment.DataAssignment):
     references = {
-        0:  "cgt_WRIST",
-        1:  "cgt_THUMB_CMC",
-        2:  "cgt_THUMB_MCP",
-        3:  "cgt_THUMP_IP",
-        4:  "cgt_THUMB_TIP",
-        5:  "cgt_INDEX_FINGER_MCP",
-        6:  "cgt_INDEX_FINGER_PIP",
-        7:  "cgt_INDEX_FINGER_DIP",
-        8:  "cgt_INDEX_FINGER_TIP",
-        9:  "cgt_MIDDLE_FINGER_MCP",
+        0: "cgt_WRIST",
+        1: "cgt_THUMB_CMC",
+        2: "cgt_THUMB_MCP",
+        3: "cgt_THUMP_IP",
+        4: "cgt_THUMB_TIP",
+        5: "cgt_INDEX_FINGER_MCP",
+        6: "cgt_INDEX_FINGER_PIP",
+        7: "cgt_INDEX_FINGER_DIP",
+        8: "cgt_INDEX_FINGER_TIP",
+        9: "cgt_MIDDLE_FINGER_MCP",
         10: "cgt_MIDDLE_FINGER_PIP",
         11: "cgt_MIDDLE_FINGER_DIP",
         12: "cgt_MIDDLE_FINGER_TIP",
@@ -37,11 +37,11 @@ class BridgeHand(abs_assignment.DataAssignment):
         20: "cgt_PINKY_TIP"
     }
     fingers = [
-        [5, 9],     # index finger
-        [9, 13],    # middle finger
-        [13, 17],   # ring finger
-        [17, 21],   # pinky
-        [1, 5]      # thumb
+        [5, 9],  # index finger
+        [9, 13],  # middle finger
+        [13, 17],  # ring finger
+        [17, 21],  # pinky
+        [1, 5]  # thumb
     ]
 
     # hands
@@ -73,11 +73,22 @@ class BridgeHand(abs_assignment.DataAssignment):
         # updated angle to joint references before applying
         self.left_angles = self.prepare_rotation_data(self.left_angles)
         self.right_angles = self.prepare_rotation_data(self.right_angles)
+
+        # using bpy matrix
+        left_hand_rot = self.global_hand_rotation(self.left_hand_data)
+        if left_hand_rot != None:
+            self.left_angles.append(left_hand_rot)
+
+        right_hand_rot = self.global_hand_rotation(self.right_hand_data)
+        if right_hand_rot != None:
+            self.right_angles.append(right_hand_rot)
+
         self.set_rotation()
 
     def set_position(self):
         """ keyframe the input data."""
-        for hand in [[self.left_hand, self.left_hand_data], [self.right_hand, self.right_hand_data]]:
+        for hand in [[self.left_hand, self.left_hand_data],
+                     [self.right_hand, self.right_hand_data]]:
             try:
                 self.translate(hand[0], hand[1], self.frame)
             except IndexError:
@@ -85,7 +96,8 @@ class BridgeHand(abs_assignment.DataAssignment):
 
     def set_rotation(self):
         """ keyframe custom angle data """
-        for hand in [[self.left_hand, self.left_angles], [self.right_hand, self.right_angles]]:
+        for hand in [[self.left_hand, self.left_angles],
+                     [self.right_hand, self.right_angles]]:
             try:
                 self.euler_rotate(hand[0], hand[1], self.frame)
             except IndexError:
@@ -114,13 +126,57 @@ class BridgeHand(abs_assignment.DataAssignment):
         if hand == []:
             return None
 
-        origin = hand[0][1]     # [0, 0, 0]
+        origin = hand[0][1]  # [0, 0, 0]
         fingers = [[hand[idx][1] for idx in range(finger[0], finger[1])] for finger in self.fingers]
-        fingers = [np.array([origin] + finger) for finger in fingers]   # add origin to finger
+        fingers = [np.array([origin] + finger) for finger in fingers]  # add origin to finger
 
         joints = [[0, 1, 2], [1, 2, 3], [2, 3, 4]]
         finger_angles = [m_V.joint_angles(finger, joints) for finger in fingers]
         return finger_angles
+
+    def global_hand_rotation(self, hand):
+        if hand == []:
+            return None
+
+        # generate triangle
+        vertices = np.array(
+            [hand[0][1],
+             hand[5][1],
+             hand[17][1]])
+        connections = np.array([[0, 1, 2]])
+
+        # normal from triangle
+        normal, norm = m_V.create_normal_array(vertices, connections)
+        normal = m_V.normalize(normal[0])
+
+        # origin to palm center
+        tangent = m_V.normalize(m_V.to_vector(
+            hand[0][1],
+            m_V.center_point(hand[5][1], hand[17][1])
+        ))
+
+        # palm dir
+        binormal = m_V.normalize(m_V.to_vector(
+            hand[5][1],
+            hand[17][1]
+        ))
+        """
+        normal = "FORWARD"
+        tangent = "RIGHT"
+        binormal = "DOWN"
+        """
+        # TODO: SET QUARTERNION ROTATION
+        # generate matrix to solve quart
+        matrix = m_V.generate_matrix(binormal, normal, tangent)
+        loc, quart, sca = m_V.decompose_matrix(matrix)
+        # euler = self.quart_to_euler_combat(quart, 0)
+        # hand_rotation = ([0, euler])
+
+        # return hand_rotation
+        # just tmp
+        hand_rotation = ([0, Quaternion(quart)])
+        # (target, data, frame):
+        self.quaternion_rotate(self.left_hand, [hand_rotation], self.frame)
 
     def landmarks_to_hands(self, hand_data):
         """ determines where the data belongs to """
