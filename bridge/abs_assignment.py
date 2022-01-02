@@ -86,34 +86,30 @@ class DataAssignment(ABC):
     @staticmethod
     def quaternion_rotate(target, data, frame):
         """ Translates and keyframes bpy empty objects. """
-        print("t", target)
-        print("d", data)
-        print("f", frame)
-        print("\n")
         try:
             for p in data:
-                target[p[0]].quaternion_rotate = p[1]
-                target[p[0]].keyframe_insert(data_path="quaternion_rotate", frame=frame)
+                target[p[0]].rotation_quaternion = p[1]
+                target[p[0]].keyframe_insert(data_path="rotation_quaternion", frame=frame)
         except IndexError:
             print("missing quat_euler_rotate index!!!")
             pass
 
-    def euler_rotate(self, target, data, frame):
+    def euler_rotate(self, target, data, frame, idx_offset=0):
         """ Translates and keyframes bpy empty objects. """
         try:
             for p in data:
                 target[p[0]].rotation_euler = p[1]
                 target[p[0]].keyframe_insert(data_path="rotation_euler", frame=frame)
-                self.prev_rotation[p[0]] = p[1]
+                self.prev_rotation[p[0]+idx_offset] = p[1]
         except IndexError:
             print("missing euler_rotate index!!!")
             pass
 
-    def quart_to_euler_combat(self, quart, idx):
+    def quart_to_euler_combat(self, quart, idx, idx_offset=0):
         """ Converts quart to euler rotation while comparing with previous rotation. """
         if len(self.prev_rotation) > 0:
             try:
-                combat = self.prev_rotation[idx]
+                combat = self.prev_rotation[idx+idx_offset]
                 return utils.m_V.to_euler(quart, combat, 'XYZ')
             except KeyError:
                 print("invalid id to euler combat", idx, self.frame)

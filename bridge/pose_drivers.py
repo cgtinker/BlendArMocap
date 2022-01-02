@@ -5,6 +5,7 @@ import numpy as np
 from blender import objects
 from bridge import abs_assignment
 from utils import m_V, log
+from mathutils import Euler
 
 importlib.reload(abs_assignment)
 
@@ -68,12 +69,14 @@ class BridgePose(abs_assignment.DataAssignment):
             self.hip_center, self.pose, 0.01, "hip_center", self.col_name, "CUBE", [0, 0, 0])
 
     def init_data(self):
+        self.rotation_data = []
         self.prepare_landmarks()
         self.shoulder_hip_location()
         self.shoulder_hip_rotation()
+        self.arm_angles()
+        self.leg_angles()
 
     def update(self):
-        print("UPDATEING")
         self.set_position()
         self.set_rotation()
 
@@ -87,6 +90,51 @@ class BridgePose(abs_assignment.DataAssignment):
 
     def set_rotation(self):
         self.euler_rotate(self.pose, self.rotation_data, self.frame)
+
+    def arm_angles(self):
+        """ Get arm rotation data for driving the rig. """
+        left_shoulder_rot = m_V.rotate_towards(self.data[11][1], self.data[13][1])
+        right_shoulder_rot = m_V.rotate_towards(self.data[12][1], self.data[14][1])
+
+        left_shoulder_rot = self.quart_to_euler_combat(left_shoulder_rot, 11)
+        right_shoulder_rot = self.quart_to_euler_combat(right_shoulder_rot, 11)
+
+        left_elbow_rot = m_V.rotate_towards(self.data[13][1], self.data[15][1])
+        right_elbow_rot = m_V.rotate_towards(self.data[14][1], self.data[16][1])
+
+        left_elbow_rot = self.quart_to_euler_combat(left_elbow_rot, 13)
+        right_elbow_rot = self.quart_to_euler_combat(right_elbow_rot, 14)
+        print("try set arm", self.frame)
+        data = [
+            [11, left_shoulder_rot],
+            [12, right_shoulder_rot],
+            [13, left_elbow_rot],
+            [14, right_elbow_rot]
+        ]
+
+        for d in data:
+            self.rotation_data.append(d)
+
+    def leg_angles(self):
+        """ Get leg rotation data for driving the rig. """
+        left_hip_rot = m_V.rotate_towards(self.data[23][1], self.data[25][1])
+        right_hip_rot = m_V.rotate_towards(self.data[24][1], self.data[26][1])
+
+        left_hip_rot = self.quart_to_euler_combat(left_hip_rot, 23)
+        right_hip_rot = self.quart_to_euler_combat(right_hip_rot, 24)
+
+        left_knee_rot = m_V.angle_between(self.data[25][1], self.data[27][1])
+        right_knee_rot = m_V.angle_between(self.data[26][1], self.data[28][1])
+
+        data = [
+            [23, left_hip_rot],
+            [24, right_hip_rot],
+            [25, Euler((left_knee_rot, 0, 0))],
+            [26, Euler((right_knee_rot, 0, 0))]
+        ]
+
+        for d in data:
+            self.rotation_data.append(d)
 
     def shoulder_hip_rotation(self):
         """ Creates custom rotation data for driving the rig. """
@@ -104,7 +152,8 @@ class BridgePose(abs_assignment.DataAssignment):
             [self.hip_center.idx, self.hip_center.rot]
         ]
 
-        self.rotation_data = data
+        for d in data:
+            self.rotation_data.append(d)
 
     def shoulder_hip_location(self):
         """ Appending custom location data for driving the rig. """

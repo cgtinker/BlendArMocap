@@ -2,6 +2,7 @@ import importlib
 
 import numpy as np
 from mathutils import Euler, Quaternion
+from math import pi
 
 from blender import objects
 from bridge import abs_assignment
@@ -75,11 +76,11 @@ class BridgeHand(abs_assignment.DataAssignment):
         self.right_angles = self.prepare_rotation_data(self.right_angles)
 
         # using bpy matrix
-        left_hand_rot = self.global_hand_rotation(self.left_hand_data)
+        left_hand_rot = self.global_hand_rotation(self.left_hand_data, 0, "L")
         if left_hand_rot != None:
             self.left_angles.append(left_hand_rot)
 
-        right_hand_rot = self.global_hand_rotation(self.right_hand_data)
+        right_hand_rot = self.global_hand_rotation(self.right_hand_data, 100, "R") # offset for euler combat
         if right_hand_rot != None:
             self.right_angles.append(right_hand_rot)
 
@@ -96,10 +97,11 @@ class BridgeHand(abs_assignment.DataAssignment):
 
     def set_rotation(self):
         """ keyframe custom angle data """
-        for hand in [[self.left_hand, self.left_angles],
-                     [self.right_hand, self.right_angles]]:
+        # [hand drivers, hand angles, euler combat idx offset]
+        for hand in [[self.left_hand, self.left_angles, 0],
+                     [self.right_hand, self.right_angles, 100]]:
             try:
-                self.euler_rotate(hand[0], hand[1], self.frame)
+                self.euler_rotate(hand[0], hand[1], self.frame, hand[2])
             except IndexError:
                 pass
 
@@ -110,10 +112,12 @@ class BridgeHand(abs_assignment.DataAssignment):
         if angle_data is None:
             return data
 
+        # every angle targets finger join
         for idx, angles in enumerate(angle_data):
             if angles is None:
                 break
 
+            # finger joint idx
             mcp, tip = self.fingers[idx]
             for angle_idx, finger_idx in enumerate(range(mcp, tip - 1)):
                 joint_angle = [finger_idx, Euler((angles[angle_idx], 0, 0))]
@@ -134,9 +138,11 @@ class BridgeHand(abs_assignment.DataAssignment):
         finger_angles = [m_V.joint_angles(finger, joints) for finger in fingers]
         return finger_angles
 
-    def global_hand_rotation(self, hand):
+    def global_hand_rotation(self, hand, combat_idx_offset=0, orientation="R"):
         if hand == []:
             return None
+
+        palm_center = m_V.center_point(hand[5][1], hand[17][1])
 
         # generate triangle
         vertices = np.array(
@@ -152,7 +158,7 @@ class BridgeHand(abs_assignment.DataAssignment):
         # origin to palm center
         tangent = m_V.normalize(m_V.to_vector(
             hand[0][1],
-            m_V.center_point(hand[5][1], hand[17][1])
+            palm_center
         ))
 
         # palm dir
@@ -160,23 +166,21 @@ class BridgeHand(abs_assignment.DataAssignment):
             hand[5][1],
             hand[17][1]
         ))
-        """
-        normal = "FORWARD"
-        tangent = "RIGHT"
-        binormal = "DOWN"
-        """
-        # TODO: SET QUARTERNION ROTATION
-        # generate matrix to solve quart
-        matrix = m_V.generate_matrix(binormal, normal, tangent)
-        loc, quart, sca = m_V.decompose_matrix(matrix)
-        # euler = self.quart_to_euler_combat(quart, 0)
-        # hand_rotation = ([0, euler])
 
-        # return hand_rotation
-        # just tmp
-        hand_rotation = ([0, Quaternion(quart)])
-        # (target, data, frame):
-        self.quaternion_rotate(self.left_hand, [hand_rotation], self.frame)
+        # todo: misses combat
+        # rotation from matrix
+        matrix = m_V.generate_matrix(normal, tangent, binormal)
+        loc, quart, sca = m_V.decompose_matrix(matrix)
+
+        # euler = self.quart_to_euler_combat(quart, 0, combat_idx_offset)
+        euler = m_V.to_euler(quart)
+        if orientation == "R":
+            euler = Euler((euler[0] - pi * .5, euler[2] + pi * .5, euler[1]))
+        else:
+            euler = Euler((euler[0] - pi * .5, euler[2]-pi*.5, euler[1]))
+
+        hand_rotation = ([0, euler])
+        return hand_rotation
 
     def landmarks_to_hands(self, hand_data):
         """ determines where the data belongs to """
