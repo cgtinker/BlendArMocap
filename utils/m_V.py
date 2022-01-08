@@ -59,6 +59,23 @@ def remove_axis(vectors, *args):
     return res
 
 
+def null_axis(vectors, *args):
+    """ delete one axis to calculate 2d intersection point """
+    axis = {
+        "X": 0,
+        "Y": 1,
+        "Z": 2
+    }
+    res = []
+
+    for vec in vectors:
+        tmp = [v for v in vec]
+        for arg in args:
+            tmp[axis[arg]] = 0
+        res.append(tmp)
+
+    return res
+
 # endregion
 # endregion
 
