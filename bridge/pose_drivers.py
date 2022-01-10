@@ -65,6 +65,7 @@ class BridgePose(abs_assignment.DataAssignment):
         self.pose = []
         self.col_name = "cgt_pose"
         self.rotation_data = []
+        self.scale_data = []
 
     def init_references(self):
         # default empties
@@ -78,16 +79,34 @@ class BridgePose(abs_assignment.DataAssignment):
 
     def init_data(self):
         self.rotation_data = []
+        self.scale_data = []
+        self.average_rig_scale()
         # self.prepare_landmarks()
         # self.shoulder_hip_location()
         # self.shoulder_hip_rotation()
         # self.arm_angles()
-        self.test_arm_angles()
+        # self.test_arm_angles()
         # self.leg_angles()
+
+    def average_rig_scale(self):
+        avg_lengths = []
+        for vertices in self.arms:
+            # setup a joint [0, 0+2] for the arm vertices to get vector distances
+            joints = [[self.data[vertex][1], self.data[vertex + 2][1]] for vertex in range(vertices[0], vertices[1] - 2, 2)]
+            vertex_lengths = [m_V.get_vector_distance(joint[0], joint[1]) for joint in joints]
+
+            # average lengths
+            avg_length = sum(vertex_lengths) / len(vertex_lengths)
+            avg_lengths.append(avg_length)
+
+        avg_length = sum(avg_lengths) / len(avg_lengths)
+        self.scale_data.append([11, [1, 1, avg_length]])
+        self.scale_data.append([12, [1, 1, avg_length]])
 
     def update(self):
         # self.set_position()
-        self.set_rotation()
+        # self.set_rotation()
+        self.set_scale()
 
     def set_position(self):
         """Keyframe the position of input data."""
@@ -98,7 +117,11 @@ class BridgePose(abs_assignment.DataAssignment):
             log.logger.error("VALUE ERROR WHILE ASSIGNING POSE POSITION")
 
     def set_rotation(self):
-        self.euler_rotate(self.pose, self.rotation_data, self.frame)
+        # self.euler_rotate(self.pose, self.rotation_data, self.frame)
+        pass
+
+    def set_scale(self):
+        self.scale(self.pose, self.scale_data, self.frame)
 
     def arm_rot(self):
         origin = np.array([0, 0, 0])
@@ -255,66 +278,76 @@ class BridgePose(abs_assignment.DataAssignment):
         self.data = [[idx, np.array([-lmrk[0], lmrk[2], -lmrk[1]])] for idx, lmrk in self.data]
 
     def test_arm_angles(self):
-        print("\n")
-        origin = self.data[13][1]
-        origin_left = self.data[11][1]
-        origin_right = self.data[12][1]
         # get arms (shoulder / elbow / wrist) x-rot
-        arms_x = self.get_joint_segments(self.arms, [1, 0, 1], [[origin_left, origin_right]])
-        arms_z = self.get_joint_segments(self.arms, [0, 1, 1], [[origin_left, origin_right]])
-        print(arms_x, "arm x result")
-        print(arms_z, "arm z result")
+        arms_x, arms_z = self.get_joint_segments(self.arms, [[1, 0, 1], [0, 1, 1]],
+                                                 [self.data[11][1], self.data[12][1]])
+
         # joints for calculating angles
         joints = [[0, 1, 2], [1, 2, 3]]
-        x_angles = [m_V.joint_angles(seg_x, joints) for seg_x in arms_x]
-        print("angles x", x_angles)
-
-        z_angles = [m_V.joint_angles(seg_x, joints) for seg_x in arms_z]
-        print("yy", z_angles)
+        x_angles = m_V.joint_angles(arms_x, joints)
+        z_angles = m_V.joint_angles(arms_z, joints)
 
         # setup formatting
-        # x_angles, z_angles, self.arms,
-        self.format_arm_angle_data(
+        angle_data = self.old_format(
             x_angles, z_angles, self.arms,
-            [[11, [0, 0, 0]],
-             [13, [-.25, 0, 0]],
-             [14, [-.25, 0, 0]
-              ]])
+            [#[11, [0, 0, -.0], [0, 0, 1]]
+             #[12, [0, 0, 0], [1.5, 0, 0]]
+             #[13, [0, 0, 0], [1, 1, 0]],
+             #[14, [-.25, 0, 0]]
+             ])
 
-    def get_joint_segments(self, joints, axis=[1, 1, 1], origin=[[0, 0, 0], [0, 0, 0]]):
+    def get_joint_segments(self, joints, axis=[[1, 1, 1], [1, 1, 1]], origin=[[0, 0, 0], [0, 0, 0]]):
         """ required input: tuple containing joint start and end, axis to track, origin.
          returns an array containing bones - axis can be nulled using the axis """
-        print("get joint segments input", joints, axis, origin)
-        joint_segments = [[
-            [np.array(origin[origin_idx] + [self.data[idx][1][1] * axis[0],
-                                            self.data[idx][1][1] * axis[1],
-                                            self.data[idx][1][1] * axis[2]])]
-            for idx in range(joint[0], joint[1], 2)]
-            for origin_idx, joint in enumerate(joints)]
-        # TODO: add origin as first bone, dont add it to existing. offsetting not required.
-        return joint_segments
+        joint_segments_x = []
+        joint_segments_y = []
 
-    def format_arm_angle_data(self, angle_data_x, angle_data_y, target, offset):
-        if offset is None:
-            offset = [[0, 0, 0]]
+        def get_joint_segments(joint_range, joint_origin, axis):
+            segments = [joint_origin]
+            for idx in range(joint_range[0], joint_range[1], 2):
+                joint_segment = np.array([self.data[idx][1][0] * axis[0],
+                                          self.data[idx][1][1] * axis[1],
+                                          self.data[idx][1][2] * axis[2]])
+                segments.append(joint_segment)
+            return segments
+
+        for index, joint in enumerate(joints):
+            segments = get_joint_segments(joint, np.array(
+                [origin[index][0] * axis[index][0],
+                 origin[index][1] * axis[index][1],
+                 origin[index][2] * axis[index][2]]), axis[index])
+            if index == 0:
+                joint_segments_x = segments
+
+            elif index == 1:
+                joint_segments_y = segments
+
+        return joint_segments_x, joint_segments_y
+
+    def old_format(self, angle_data_x, angle_data_y, target, offset=[[0, [0, 0, 0], [1, 1, 1]]]):
         if angle_data_x is None or angle_data_y is None:
             return []
 
         # assign every angle data to the bone joint
         angle_data = [[angle_data_x[idx], angle_data_y[idx]] for idx, _ in enumerate(angle_data_x)]
 
+        def apply_offset(joint_seg_idx):
+            for angle_offset in offset:
+                if joint_seg_idx == angle_offset[0]:
+                    joint_angle = [joint_seg_idx, self.offset_euler(
+                        [angles[0]*angle_offset[2][0],
+                         0,
+                         angles[1] * angle_offset[2][2]
+                         ], angle_offset[1])]
+                    self.rotation_data.append(joint_angle)
+
+        def assign_angles_to_joints(joint_target):
+            start, end = joint_target
+            for joint_seg in range(start, end - 1, 2):
+                apply_offset(joint_seg)
+
         # set the angle data
         for idx, angles in enumerate(angle_data):
             if angles[0] == None or angles[1] == None:
                 break
-
-            # get start and end idx of the landmarks defining the joint
-            start, end = target[idx]
-            for angle_idx, arm_seg_idx in enumerate(range(start, end - 1, 2)):
-                # add the offsets to the rotation
-                for m_idx, oc in enumerate(offset):
-                    joint_angle = self.offset_euler(Euler((angles[0][angle_idx], 0, 0)), oc[1])
-                    # angles[0][angle_idx] + pi * oc[1][0],
-                    # 0 + pi * oc[1][1],
-                    # angles[1][angle_idx] + pi * oc[1][2],
-                    self.rotation_data.append(joint_angle)
+            assign_angles_to_joints(target[idx])
