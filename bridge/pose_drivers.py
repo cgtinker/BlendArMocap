@@ -100,8 +100,8 @@ class BridgePose(abs_assignment.DataAssignment):
             avg_lengths.append(avg_length)
 
         avg_length = sum(avg_lengths) / len(avg_lengths)
-        self.scale_data.append([11, [1, 1, avg_length]])
-        self.scale_data.append([12, [1, 1, avg_length]])
+        self.scale_data.append([15, [1, 1, avg_length]])
+        self.scale_data.append([16, [1, 1, avg_length]])
 
     def update(self):
         # self.set_position()
