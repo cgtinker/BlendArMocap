@@ -19,9 +19,9 @@ def add_driver(obj, target, prop, dataPath,
     ''' Add driver to obj prop (at index), driven by target dataPath '''
 
     if index != -1:
-        driver = obj.driver_add(prop, index).driver
+        driver = obj.driver_add(prop, index).arm_driver
     else:
-        driver = obj.driver_add(prop).driver
+        driver = obj.driver_add(prop).arm_driver
 
     variable = driver.variables.new()
     variable.name = prop

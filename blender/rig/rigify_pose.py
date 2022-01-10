@@ -10,7 +10,7 @@ importlib.reload(abs_rigging)
 
 
 class DriverType(Enum):
-    driver = 0
+    arm_driver = 0
     constraint = 1
 
 
@@ -32,7 +32,8 @@ class RigPose(abs_rigging.BpyRigging):
         self.extension = ""
 
         self.method_mapping = {
-            DriverType.driver: self.add_driver_batch,
+            # todo: arm specific driver method
+            DriverType.arm_driver: self.add_driver_batch,
             DriverType.constraint: self.add_constraint
         }
 
@@ -49,22 +50,36 @@ class RigPose(abs_rigging.BpyRigging):
 
         self.references = {
             "cgt_left_shoulder": [
-                DriverType.driver, [
-                        "Test_Empty", "location", "scale",
+                DriverType.arm_driver, [
+                        None, "location", "scale",
                         ["scale.z", "scale.z", "scale.z"],
                         ["", "", ""]
-                    ]],
+                    ]
+            ],
 
             "cgt_left_wrist": [
-                DriverType.driver, [
-                    "Test_Empty", "location", "location",
+                DriverType.arm_driver, [
+                    "cgt_hand_ik_driver", "location", "location",
                     ["location.x", "location.y", "location.z"],
                     [f"{self.avg_arm_length}/(scale) *",
                      f"{self.avg_arm_length}/(scale) *",
-                     f"{self.avg_arm_length}/(scale) *"]
-                ]],
+                     f"1 + {self.avg_arm_length}/(scale) *"]
+                ]
+            ],
+
+            "cgt_left_elbow": [
+                DriverType.arm_driver, [
+                    "cgt_forearm_ik_driver", "location", "location",
+                    ["location.x", "location.y", "location.z"],
+                    [f"{self.avg_arm_length}/(scale) *",
+                     f"{self.avg_arm_length}/(scale) *",
+                     f"1+{self.avg_arm_length}/(scale) *"]
+                ]
+            ],
+
             "hip_center": [DriverType.constraint, ["hips", "COPY_ROTATION"]],
             "shoulder_center": [DriverType.constraint, ["chest", "COPY_ROTATION"]],
+            "cgt_forearm_ik_driver": [DriverType.constraint, ["forearm_tweak.R", "COPY_LOCATION"]]
         }
 
         self.set_relation_dict(driver_objects)
@@ -78,8 +93,20 @@ class RigPose(abs_rigging.BpyRigging):
                 driver_obj = driver_objects[idx]
                 driver_type = self.references[ref][0]
 
-                relation = MappingRelation(driver_obj, driver_type, self.references[ref][1])
-                self.relation_mapping_lst.append(relation)
+                if ref == "cgt_left_shoulder":
+                    # shoulder driver is required multiple times
+                    references = self.references[ref][1]
+                    references[0] = "cgt_hand_ik_driver"
+                    relation = MappingRelation(driver_obj, driver_type, references)
+                    self.relation_mapping_lst.append(relation)
+
+                    references[0] = "cgt_forearm_ik_driver"
+                    relation = MappingRelation(driver_obj, driver_type, references)
+                    self.relation_mapping_lst.append(relation)
+
+                else:
+                    relation = MappingRelation(driver_obj, driver_type, self.references[ref][1])
+                    self.relation_mapping_lst.append(relation)
             else:
                 print("Mapping failed for", ref, "in rigify_pose")
 
@@ -89,7 +116,7 @@ class RigPose(abs_rigging.BpyRigging):
         for driver in self.relation_mapping_lst:
             values = driver.values[0]
 
-            if driver.driver_type == DriverType.driver:
+            if driver.driver_type == DriverType.arm_driver:
                 target = objects.get_object_by_name(values[0])
 
                 # add_driver_batch(driver_target, driver_source, prop_source, prop_target, data_path, func)
