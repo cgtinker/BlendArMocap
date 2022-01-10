@@ -93,6 +93,9 @@ class BpyRigging(ABC):
     @staticmethod
     def add_driver(target_obj, driver_obj, prop, prop_target,
                    dataPath, index=-1, func=''):
+        print("FUNC:", func, type(func))
+        print("RECEIVED DATA TO ADD:", target_obj, driver_obj, prop, prop_target,
+                   dataPath, index, func)
         ''' Add driver to obj prop (at index), driven by target dataPath '''
 
         if index != -1:
@@ -132,68 +135,3 @@ class BpyRigging(ABC):
 
             arm_joints.append(joint)
         return arm_joints
-
-
-class BpyDriver:
-    props = {
-        'loc': 'location',
-        'rot': 'rotation',
-        'sca': 'scale'
-    }
-
-    axis = {
-        'x': '.x',
-        'y': '.y',
-        'z': '.z'
-    }
-
-    driver_target = None
-    driver_source = None
-    prop_source = ""
-    prop_target = ""
-    data_path = None
-    func = None
-
-    def __init__(self, driver_target: object, driver_source: object,
-                 prop_source: str, prop_target: str, data_path: list, func: list):
-        self.driver_target = driver_target
-        self.driver_source = driver_source
-        self.prop_source = self.props[prop_source]
-        self.prop_target = self.props[prop_target]
-        self.data_path = [self.prop_target + self.axis[prop_axis] for prop_axis in data_path]
-        self.func = func
-
-    def add_driver_batch(self):
-        if self.func is None:
-            func = ['', '', '']
-
-        for i in range(3):
-            self.add_driver(
-                self.data_path[i], i, self.func[i])
-
-    def add_driver(self, data_path, index=-1, func=''):
-        ''' Add driver to obj prop (at index), driven by target dataPath '''
-
-        if index != -1:
-            driver = self.driver_target.driver_add(self.prop_source, index).driver
-        else:
-            driver = self.driver_target.driver_add(self.prop_source).driver
-
-        variable = driver.variables.new()
-        variable.name = self.prop_target
-        variable.targets[0].id = self.driver_source
-        variable.targets[0].data_path = data_path
-
-        driver.expression = func + "(" + variable.name + ")" if func else variable.name
-
-
-def main():
-    driver = BpyDriver("target", "source", "sca", "sca", ["x", "y", "z"], ["", "", ""])
-    driver.target = "target"
-    driver.source = "source"
-    driver.prop_source = "sca"
-    driver.prop_target = "sca"
-
-
-if __name__ == '__main__':
-    main()
