@@ -14,6 +14,13 @@ def copy_rotation(constraint, target, *args):
     constraint.owner_space = 'LOCAL'
 
 
+def copy_location(constraint, target, *args):
+    print("copy location", constraint, target, args)
+    constraint.target = target
+    constraint.influence = 1
+    constraint.owner_space = 'POSE'
+
+
 def add_driver(obj, target, prop, dataPath,
                index=-1, negative=False, func=''):
     ''' Add driver to obj prop (at index), driven by target dataPath '''
@@ -41,7 +48,7 @@ class BpyRigging(ABC):
         "CAMERA_SOLVER": 0,
         "FOLLOW_TRACK": 1,
         "OBJECT_SOLVER": 2,
-        "COPY_LOCATION": 3,
+        "COPY_LOCATION": copy_location,
         "COPY_ROTATION": copy_rotation,
         "COPY_SCALE": 5,
         "COPY_TRANSFORMS": 6,
@@ -93,9 +100,6 @@ class BpyRigging(ABC):
     @staticmethod
     def add_driver(target_obj, driver_obj, prop, prop_target,
                    dataPath, index=-1, func=''):
-        print("FUNC:", func, type(func))
-        print("RECEIVED DATA TO ADD:", target_obj, driver_obj, prop, prop_target,
-                   dataPath, index, func)
         ''' Add driver to obj prop (at index), driven by target dataPath '''
 
         if index != -1:
