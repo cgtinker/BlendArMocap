@@ -128,9 +128,9 @@ class BridgePose(abs_assignment.DataAssignment):
         return avg_length
 
     def update(self):
-        self.set_position()
+        #self.set_position()
         self.set_rotation()
-        self.set_scale()
+        #self.set_scale()
 
     def set_position(self):
         """Keyframe the position of input data."""
@@ -157,38 +157,48 @@ class BridgePose(abs_assignment.DataAssignment):
         return rotation
 
     def try_get_euler(self, quart_rotation, offset: [], prev_rot_idx: int):
-        print("try get euler", offset, prev_rot_idx, self.frame)
         try:
             m_rot = m_V.to_euler(
                 quart_rotation,
 
                 Euler((
-                    self.prev_rotation[prev_rot_idx][0] + pi * offset[0],
-                    self.prev_rotation[prev_rot_idx][1] + pi * offset[1],
-                    self.prev_rotation[prev_rot_idx][2] + pi * offset[2],
+                    self.prev_rotation[prev_rot_idx][0] - pi * offset[0],
+                    self.prev_rotation[prev_rot_idx][1] - pi * offset[1],
+                    self.prev_rotation[prev_rot_idx][2] - pi * offset[2],
                 ))
             )
         except KeyError:
             m_rot = m_V.to_euler(quart_rotation)
-        print(m_rot)
+            print(m_rot)
         return m_rot
 
     def torso_rotation(self):
         # approximate perpendicular points to origin
-        hip_center = m_V.center_point(np.array(self.data[23][1]), np.array(self.data[24][1]))     # hip center
-        forward = np.cross(hip_center, self.data[23][1])  # forward
-        right_hip = np.array(self.data[24][1])  # right hip
+        hip_center = m_V.center_point(np.array(self.data[23][1]), np.array(self.data[24][1]))
+        right_hip = np.array(self.data[24][1])
         shoulder_center = m_V.center_point(np.array(self.data[11][1]), np.array(self.data[12][1]))
 
+        vertices = np.array(
+            [self.data[23][1],
+             self.data[24][1],
+             shoulder_center])
+        connections = np.array([[0, 1, 2]])
+
+        normal, norm = m_V.create_normal_array(vertices, connections)
+
         # direction vectors from imaginary origin
-        normal = m_V.normalize(m_V.to_vector(hip_center, forward))
         tangent = m_V.normalize(m_V.to_vector(hip_center, right_hip))
+        normal = m_V.normalize(normal[0])
         binormal = m_V.normalize(m_V.to_vector(hip_center, shoulder_center))
 
         # generate matrix to decompose it and access quaternion rotation
-        matrix = m_V.generate_matrix(tangent, normal, binormal)
+        matrix = m_V.generate_matrix(tangent, binormal, normal)
         loc, quart, scale = m_V.decompose_matrix(matrix)
-        euler = self.quart_to_euler_combat(quart, 23)
+
+        offset = [-.5, 0, 0]
+        euler = self.try_get_euler(quart, offset, 23)
+        euler = self.offset_euler(euler, offset)
+
         self.hip_center.rot = euler
 
     # todo use above method
@@ -197,10 +207,10 @@ class BridgePose(abs_assignment.DataAssignment):
         # rotate custom shoulder center point from shoulder.R to shoulder.L
         # self.shoulder_center.rot = m_V.rotate_towards(self.data[11][1], self.data[12][1])
         # rotate custom hip center point from hip.R to hip.L
-        self.hip_center.rot = m_V.rotate_towards(self.data[23][1], self.data[24][1])
-        print("rot", self.hip_center.rot, self.shoulder_center.rot)
-        # todo: add combat euler
-        self.hip_center.rot = m_V.to_euler(self.hip_center.rot)
+        # self.hip_center.rot = m_V.rotate_towards(self.data[23][1], self.data[24][1])
+        # print("rot", self.hip_center.rot, self.shoulder_center.rot)
+        # # todo: add combat euler
+        # self.hip_center.rot = m_V.to_euler(self.hip_center.rot)
         #self.shoulder_center.rot = m_V.to_euler(self.shoulder_center.rot)
 
         # offset rotations
@@ -208,17 +218,16 @@ class BridgePose(abs_assignment.DataAssignment):
         # self.shoulder_center.rot = Euler((r[0], r[1], r[2]))
         # self.shoulder_center.rot = Euler((r[0] - pi * .5, r[1], r[2] - pi * .5))
 
-        r = self.hip_center.rot
-        self.hip_center.rot = Euler((r[0], r[1], r[2]))
-        self.hip_center.rot = Euler((r[0] - pi * .5, r[1], r[2] - pi * .5))
+        # r = self.hip_center.rot
+        # self.hip_center.rot = Euler((r[0], r[1], r[2]))
+        # self.hip_center.rot = Euler((r[0] - pi * .5, r[1], r[2] - pi * .5))
         # set torso rotation
-        #self.torso_rotation()
+        self.torso_rotation()
         # setup data format
         data = [
             # [self.shoulder_center.idx, self.shoulder_center.rot],
             [23, self.hip_center.rot]
         ]
-        print(data)
         for d in data:
             self.rotation_data.append(d)
 
