@@ -18,7 +18,7 @@ class RigPose(abs_rigging.BpyRigging):
         self.relation_mapping_lst = []
         self.method_mapping = {
             # todo: arm specific driver method
-            DriverType.arm_driver: self.add_driver_batch,
+            DriverType.limb_driver: self.add_driver_batch,
             DriverType.constraint: self.add_constraint
         }
 
@@ -58,50 +58,50 @@ class RigPose(abs_rigging.BpyRigging):
         self.references = {
             # DRIVERS
             # arms
-            "cgt_left_shoulder": [DriverType.arm_driver, self.driver_z_sca2loc_attr()],
+            "cgt_left_shoulder": [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
             "cgt_left_wrist": [
-                DriverType.arm_driver,
+                DriverType.limb_driver,
                 self.driver_loc2loc_sca_attr("cgt_left_hand_ik_driver",
                                              self.left_arm_offset,
                                              self.avg_arm_length)
             ],
             "cgt_left_elbow": [
-                DriverType.arm_driver,
+                DriverType.limb_driver,
                 self.driver_loc2loc_sca_attr("cgt_left_forearm_ik_driver",
                                              self.left_arm_offset,
                                              self.avg_arm_length)
             ],
-            "cgt_right_shoulder": [DriverType.arm_driver, self.driver_z_sca2loc_attr()],
-            "cgt_right_wrist": [DriverType.arm_driver,
+            "cgt_right_shoulder": [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
+            "cgt_right_wrist": [DriverType.limb_driver,
                                 self.driver_loc2loc_sca_attr("cgt_right_hand_ik_driver",
                                                              self.right_arm_offset,
                                                              self.avg_arm_length)
                                 ],
-            "cgt_right_elbow": [DriverType.arm_driver,
+            "cgt_right_elbow": [DriverType.limb_driver,
                                 self.driver_loc2loc_sca_attr("cgt_right_forearm_ik_driver",
                                                              self.right_arm_offset,
                                                              self.avg_arm_length)
                                 ],
 
             # legs
-            "cgt_left_hip": [DriverType.arm_driver, self.driver_z_sca2loc_attr()],
-            "cgt_left_knee": [DriverType.arm_driver,
+            "cgt_left_hip": [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
+            "cgt_left_knee": [DriverType.limb_driver,
                               self.driver_loc2loc_sca_attr("cgt_left_shin_ik_driver",
                                                            self.left_leg_offset,
                                                            self.avg_leg_length)
                               ],
-            "cgt_left_ankle": [DriverType.arm_driver,
+            "cgt_left_ankle": [DriverType.limb_driver,
                                self.driver_loc2loc_sca_attr("cgt_left_foot_ik_driver",
                                                             self.left_leg_offset,
                                                             self.avg_leg_length)
                                ],
-            "cgt_right_hip": [DriverType.arm_driver, self.driver_z_sca2loc_attr()],
-            "cgt_right_knee": [DriverType.arm_driver,
+            "cgt_right_hip": [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
+            "cgt_right_knee": [DriverType.limb_driver,
                                self.driver_loc2loc_sca_attr("cgt_right_shin_ik_driver",
                                                             self.right_leg_offset,
                                                             self.avg_leg_length)
                                ],
-            "cgt_right_ankle": [DriverType.arm_driver,
+            "cgt_right_ankle": [DriverType.limb_driver,
                                 self.driver_loc2loc_sca_attr("cgt_right_foot_ik_driver",
                                                              self.right_leg_offset,
                                                              self.avg_leg_length)
@@ -165,10 +165,9 @@ class RigPose(abs_rigging.BpyRigging):
         for driver in self.relation_mapping_lst:
             values = driver.values[0]
 
-            if driver.driver_type == DriverType.arm_driver:
+            if driver.driver_type == DriverType.limb_driver:
                 target = objects.get_object_by_name(values[0])
 
-                # add_driver_batch(driver_target, driver_source, prop_source, prop_target, data_path, func)
                 add_driver_batch = self.method_mapping[driver.driver_type]
                 add_driver_batch(target, driver.source, values[1], values[2], values[3], values[4])
 
@@ -176,7 +175,7 @@ class RigPose(abs_rigging.BpyRigging):
                 if values[0] in pose_bone_names:
                     idx = pose_bone_names.index(values[0])
                     pose_bone = self.pose_bones[idx]
-                    # add_constraint(bone, target, constraint)
+
                     add_constraint = self.method_mapping[driver.driver_type]
                     add_constraint(pose_bone, driver.source, values[1])
 
@@ -193,10 +192,17 @@ class RigPose(abs_rigging.BpyRigging):
 
     @staticmethod
     def get_location_offset(pose_bones, bone_name, target):
+        # remove constraint before calc offset
+        for constraint in pose_bones[bone_name].constraints:
+            if constraint.type == "COPY_LOCATION":
+                pose_bones[bone_name].constraints.remove(constraint)
+
+        # calc offset
         bone_pos = pose_bones[bone_name].head
         ob = objects.get_object_by_name(target)
         tar = ob.location
         offset = bone_pos - tar
+
         return offset
 
     def driver_loc2loc_sca_attr(self, driver_target, offset, avg_length):
@@ -211,7 +217,7 @@ class RigPose(abs_rigging.BpyRigging):
 
 
 class DriverType(Enum):
-    arm_driver = 0
+    limb_driver = 0
     constraint = 1
 
 

@@ -26,9 +26,9 @@ def add_driver(obj, target, prop, dataPath,
     ''' Add driver to obj prop (at index), driven by target dataPath '''
 
     if index != -1:
-        driver = obj.driver_add(prop, index).arm_driver
+        driver = obj.driver_add(prop, index).limb_driver
     else:
-        driver = obj.driver_add(prop).arm_driver
+        driver = obj.driver_add(prop).limb_driver
 
     variable = driver.variables.new()
     variable.name = prop
@@ -91,11 +91,18 @@ class BpyRigging(ABC):
 
     def add_driver_batch(self, driver_target, driver_source,
                          prop_source, prop_target, data_path, func=None):
-        if func is None:
-            func = ['', '', '']
+        # check if custom prop has been added to the driver
+        added = self.set_custom_property(driver_target, prop_target, True)
 
-        for i in range(3):
-            self.add_driver(driver_target, driver_source, prop_source, prop_target, data_path[i], i, func[i])
+        if added is True:
+            if func is None:
+                func = ['', '', '']
+
+            # add driver
+            for i in range(3):
+                self.add_driver(driver_target, driver_source, prop_source, prop_target, data_path[i], i, func[i])
+        else:
+            print("driver cannot be applied to same ob twice", driver_target.name)
 
     @staticmethod
     def add_driver(target_obj, driver_obj, prop, prop_target,
@@ -113,6 +120,22 @@ class BpyRigging(ABC):
         variable.targets[0].data_path = dataPath
 
         driver.expression = func + "(" + variable.name + ")" if func else variable.name
+
+    def set_custom_property(self, target_obj, prop_name, prop):
+        if self.get_custom_property(target_obj, prop_name) == None:
+            target_obj[prop_name] = prop
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def get_custom_property(target_obj, prop_name):
+        try:
+            value = target_obj[prop_name]
+        except KeyError:
+            value = None
+
+        return value
 
     def get_average_scale(self, joint_bones, pose_bones):
         """ requires an array of joints names [[bone_a, bone_b], []... ] and pose bones.
