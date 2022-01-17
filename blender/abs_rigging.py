@@ -80,7 +80,8 @@ class BpyRigging(ABC):
 
         # removing previously added constraints
         for c in constraints:
-            bone.constraints.remove(c)
+            if c.name == constraint:
+                bone.constraints.remove(c)
 
         # adding a new constraint
         m_constraint = bone.constraints.new(
@@ -91,6 +92,7 @@ class BpyRigging(ABC):
 
     def add_driver_batch(self, driver_target, driver_source,
                          prop_source, prop_target, data_path, func=None):
+        """ Add driver to object on x-y-z axis. """
         # check if custom prop has been added to the driver
         added = self.set_custom_property(driver_target, prop_target, True)
 

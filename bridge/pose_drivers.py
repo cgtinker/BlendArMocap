@@ -98,9 +98,9 @@ class BridgePose(abs_assignment.DataAssignment):
     def init_data(self):
         self.rotation_data = []
         self.scale_data = []
-        self.prepare_landmarks()
+        #self.prepare_landmarks()
 
-        self.average_rig_scale()
+        #self.average_rig_scale()
         self.shoulder_hip_location()
         self.shoulder_hip_rotation()
 
@@ -173,33 +173,52 @@ class BridgePose(abs_assignment.DataAssignment):
         print(m_rot)
         return m_rot
 
+    def torso_rotation(self):
+        # approximate perpendicular points to origin
+        hip_center = m_V.center_point(np.array(self.data[23][1]), np.array(self.data[24][1]))     # hip center
+        forward = np.cross(hip_center, self.data[23][1])  # forward
+        right_hip = np.array(self.data[24][1])  # right hip
+        shoulder_center = m_V.center_point(np.array(self.data[11][1]), np.array(self.data[12][1]))
+
+        # direction vectors from imaginary origin
+        normal = m_V.normalize(m_V.to_vector(hip_center, forward))
+        tangent = m_V.normalize(m_V.to_vector(hip_center, right_hip))
+        binormal = m_V.normalize(m_V.to_vector(hip_center, shoulder_center))
+
+        # generate matrix to decompose it and access quaternion rotation
+        matrix = m_V.generate_matrix(tangent, normal, binormal)
+        loc, quart, scale = m_V.decompose_matrix(matrix)
+        euler = self.quart_to_euler_combat(quart, 23)
+        self.hip_center.rot = euler
+
     # todo use above method
     def shoulder_hip_rotation(self):
         """ Creates custom rotation data for driving the rig. """
         # rotate custom shoulder center point from shoulder.R to shoulder.L
-        self.shoulder_center.rot = m_V.rotate_towards(self.data[11][1], self.data[12][1])
+        # self.shoulder_center.rot = m_V.rotate_towards(self.data[11][1], self.data[12][1])
         # rotate custom hip center point from hip.R to hip.L
         self.hip_center.rot = m_V.rotate_towards(self.data[23][1], self.data[24][1])
-
+        print("rot", self.hip_center.rot, self.shoulder_center.rot)
         # todo: add combat euler
         self.hip_center.rot = m_V.to_euler(self.hip_center.rot)
-        self.shoulder_center.rot = m_V.to_euler(self.shoulder_center.rot)
+        #self.shoulder_center.rot = m_V.to_euler(self.shoulder_center.rot)
 
         # offset rotations
-        r = self.shoulder_center.rot
-        self.shoulder_center.rot = Euler((r[0], r[1], r[2]))
-        self.shoulder_center.rot = Euler((r[0] - pi * .5, r[1], r[2] - pi * .5))
+        # r = self.shoulder_center.rot
+        # self.shoulder_center.rot = Euler((r[0], r[1], r[2]))
+        # self.shoulder_center.rot = Euler((r[0] - pi * .5, r[1], r[2] - pi * .5))
 
         r = self.hip_center.rot
         self.hip_center.rot = Euler((r[0], r[1], r[2]))
         self.hip_center.rot = Euler((r[0] - pi * .5, r[1], r[2] - pi * .5))
-
+        # set torso rotation
+        #self.torso_rotation()
         # setup data format
         data = [
-            [self.shoulder_center.idx, self.shoulder_center.rot],
-            [self.hip_center.idx, self.hip_center.rot]
+            # [self.shoulder_center.idx, self.shoulder_center.rot],
+            [23, self.hip_center.rot]
         ]
-
+        print(data)
         for d in data:
             self.rotation_data.append(d)
 

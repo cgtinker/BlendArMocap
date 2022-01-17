@@ -70,7 +70,7 @@ class DataAssignment(ABC):
                 target[p[0]].keyframe_insert(data_path="location", frame=frame)
 
         except IndexError:
-            print("missing index!!!")
+            print("missing translation index at", frame)
             pass
 
     @staticmethod
@@ -80,7 +80,7 @@ class DataAssignment(ABC):
                 target[p[0]].scale = Vector((p[1]))
                 target[p[0]].keyframe_insert(data_path="scale", frame=frame)
         except IndexError:
-            print("missing index!!!")
+            print("missing scale index at", data, frame)
             pass
 
     @staticmethod
@@ -91,7 +91,7 @@ class DataAssignment(ABC):
                 target[p[0]].rotation_quaternion = p[1]
                 target[p[0]].keyframe_insert(data_path="rotation_quaternion", frame=frame)
         except IndexError:
-            print("missing quat_euler_rotate index!!!")
+            print("missing quat_euler_rotate index", data, frame)
             pass
 
     def euler_rotate(self, target, data, frame, idx_offset=0):
@@ -102,7 +102,7 @@ class DataAssignment(ABC):
                 target[p[0]].keyframe_insert(data_path="rotation_euler", frame=frame)
                 self.prev_rotation[p[0]+idx_offset] = p[1]
         except IndexError:
-            print("missing euler_rotate index!!!")
+            print("missing euler_rotate index at", data, frame)
             pass
 
     def quart_to_euler_combat(self, quart, idx, idx_offset=0):
