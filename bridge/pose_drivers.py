@@ -99,10 +99,14 @@ class BridgePose(abs_assignment.DataAssignment):
         self.rotation_data = []
         self.scale_data = []
         #self.prepare_landmarks()
-
         #self.average_rig_scale()
-        self.shoulder_hip_location()
+        #self.shoulder_hip_location()
         self.shoulder_hip_rotation()
+
+    def update(self):
+        #self.set_position()
+        self.set_rotation()
+        #self.set_scale()
 
     def average_rig_scale(self):
         avg_arm_length = self.get_joint_chain_length(self.arms)
@@ -126,11 +130,6 @@ class BridgePose(abs_assignment.DataAssignment):
             avg_lengths.append(avg_length)
         avg_length = sum(avg_lengths) / len(avg_lengths)
         return avg_length
-
-    def update(self):
-        #self.set_position()
-        self.set_rotation()
-        #self.set_scale()
 
     def set_position(self):
         """Keyframe the position of input data."""
@@ -201,31 +200,36 @@ class BridgePose(abs_assignment.DataAssignment):
 
         self.hip_center.rot = euler
 
+    def shoulder_rotation(self):
+        shoulder_center = m_V.center_point(self.data[11][1], self.data[12][1])
+        shoulder_rotation = m_V.rotate_towards(shoulder_center, self.data[12][1], 'Z')
+
+        hip_center = m_V.center_point(self.data[23][1], self.data[24][1])
+        hip_rotation = m_V.rotate_towards(hip_center, self.data[24][1], 'Z')
+
+        offset = [0, 0, 0]
+        shoulder_euler = self.try_get_euler(shoulder_rotation, offset, 7)
+        shoulder_rot = self.offset_euler(shoulder_euler, offset)
+
+        offset = [0, 0, 0]
+        hip_euler = self.try_get_euler(hip_rotation, offset, 8)
+        hip_rot = self.offset_euler(hip_euler, offset)
+
+        euler = Euler((shoulder_rot[0] - hip_rot[0],
+                       shoulder_rot[1] - hip_rot[1],
+                       shoulder_rot[2] - hip_rot[2]))
+
+        return euler
+
     # todo use above method
     def shoulder_hip_rotation(self):
         """ Creates custom rotation data for driving the rig. """
-        # rotate custom shoulder center point from shoulder.R to shoulder.L
-        # self.shoulder_center.rot = m_V.rotate_towards(self.data[11][1], self.data[12][1])
-        # rotate custom hip center point from hip.R to hip.L
-        # self.hip_center.rot = m_V.rotate_towards(self.data[23][1], self.data[24][1])
-        # print("rot", self.hip_center.rot, self.shoulder_center.rot)
-        # # todo: add combat euler
-        # self.hip_center.rot = m_V.to_euler(self.hip_center.rot)
-        #self.shoulder_center.rot = m_V.to_euler(self.shoulder_center.rot)
-
-        # offset rotations
-        # r = self.shoulder_center.rot
-        # self.shoulder_center.rot = Euler((r[0], r[1], r[2]))
-        # self.shoulder_center.rot = Euler((r[0] - pi * .5, r[1], r[2] - pi * .5))
-
-        # r = self.hip_center.rot
-        # self.hip_center.rot = Euler((r[0], r[1], r[2]))
-        # self.hip_center.rot = Euler((r[0] - pi * .5, r[1], r[2] - pi * .5))
-        # set torso rotation
+        shoulder_rot = self.shoulder_rotation()
         self.torso_rotation()
+
         # setup data format
         data = [
-            # [self.shoulder_center.idx, self.shoulder_center.rot],
+            [11, shoulder_rot],
             [23, self.hip_center.rot]
         ]
         for d in data:

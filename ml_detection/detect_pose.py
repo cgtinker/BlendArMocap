@@ -3,15 +3,19 @@ from bridge import events, pose_drivers
 from ml_detection import abstract_detector
 from utils.open_cv import stream
 import importlib
-
+import ssl
 importlib.reload(pose_drivers)
 importlib.reload(abstract_detector)
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 
 class PoseDetector(abstract_detector.RealtimeDetector):
     def image_detection(self):
+        # BlazePose GHUM 3D
         with self.solution.Pose(
                 static_image_mode=True,
+                model_complexity=2,
                 min_detection_confidence=0.7) as mp_lib:
             return self.exec_detection(mp_lib)
 
