@@ -78,9 +78,14 @@ class BpyRigging(ABC):
     def add_constraint(self, bone, target, constraint):
         constraints = [c for c in bone.constraints]
 
-        # removing previously added constraints
+        # removing previously added constraints if types match
         for c in constraints:
-            if c.name == constraint:
+            # setup correct syntax for comparison
+            constraint_name = c.name
+            constraint_name = constraint_name.replace(" ", "_")
+            constraint_name = constraint_name.upper()
+            # remove match
+            if constraint_name == constraint:
                 bone.constraints.remove(c)
 
         # adding a new constraint

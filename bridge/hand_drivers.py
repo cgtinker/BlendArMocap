@@ -106,19 +106,20 @@ class BridgeHand(abs_assignment.DataAssignment):
                 pass
 
     def prepare_rotation_data(self, angle_data):
-        """ prepare data format before applying keyframe """
+        """ prepare data formatting for applying keyframe """
         data = []
-
+        # check if contains agnles
         if angle_data is None:
             return data
 
-        # every angle targets finger join
+        # every angle targets a finger joint
         for idx, angles in enumerate(angle_data):
             if angles is None:
                 break
 
-            # finger joint idx
+            # finger start & end idx
             mcp, tip = self.fingers[idx]
+            # iter over every finger joint
             for angle_idx, finger_idx in enumerate(range(mcp, tip - 1)):
                 joint_angle = [finger_idx, Euler((angles[angle_idx], 0, 0))]
                 data.append(joint_angle)
@@ -130,10 +131,12 @@ class BridgeHand(abs_assignment.DataAssignment):
         if hand == []:
             return None
 
+        # get all finger vertex positions and add the origin
         origin = hand[0][1]  # [0, 0, 0]
         fingers = [[hand[idx][1] for idx in range(finger[0], finger[1])] for finger in self.fingers]
         fingers = [np.array([origin] + finger) for finger in fingers]  # add origin to finger
 
+        # setup joints to calc finger angles
         joints = [[0, 1, 2], [1, 2, 3], [2, 3, 4]]
         finger_angles = [m_V.joint_angles(finger, joints) for finger in fingers]
         return finger_angles
@@ -167,17 +170,24 @@ class BridgeHand(abs_assignment.DataAssignment):
             hand[17][1]
         ))
 
-        # todo: misses combat
         # rotation from matrix
         matrix = m_V.generate_matrix(normal, tangent, binormal)
         loc, quart, sca = m_V.decompose_matrix(matrix)
 
         # euler = self.quart_to_euler_combat(quart, 0, combat_idx_offset)
-        euler = m_V.to_euler(quart)
+        # euler = m_V.to_euler(quart)
+
         if orientation == "R":
-            euler = Euler((euler[0] - pi * .5, euler[2] + pi * .5, euler[1]))
+            # euler = Euler((euler[0] - pi * .5, euler[2] + pi * .5, euler[1]))
+            offset = [-.5, .5, 0]
+            euler = self.try_get_euler(quart, offset, combat_idx_offset)
+            euler = self.offset_euler(euler, offset)
+
         else:
-            euler = Euler((euler[0] - pi * .5, euler[2]-pi*.5, euler[1]))
+            offset = [-.5, -.5, 0]
+            euler = self.try_get_euler(quart, offset, combat_idx_offset)
+            euler = self.offset_euler(euler, offset)
+            # euler = Euler((euler[0] - pi * .5, euler[2]-pi*.5, euler[1]))
 
         hand_rotation = ([0, euler])
         return hand_rotation

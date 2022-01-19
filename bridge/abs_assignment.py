@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-import utils.m_V
-from mathutils import Vector
+from utils import m_V
+from mathutils import Vector, Euler
+from math import pi
 from blender import objects
 
 
@@ -110,10 +111,37 @@ class DataAssignment(ABC):
         if len(self.prev_rotation) > 0:
             try:
                 combat = self.prev_rotation[idx+idx_offset]
-                return utils.m_V.to_euler(quart, combat, 'XYZ')
+                return m_V.to_euler(quart, combat, 'XYZ')
             except KeyError:
                 print("invalid id to euler combat", idx, self.frame)
-                return utils.m_V.to_euler(quart)
+                return m_V.to_euler(quart)
         else:
-            return utils.m_V.to_euler(quart)
+            return m_V.to_euler(quart)
+
+    @staticmethod
+    def offset_euler(euler, offset: []):
+        rotation = Euler((
+            euler[0] + pi * offset[0],
+            euler[1] + pi * offset[1],
+            euler[2] + pi * offset[2],
+        ))
+        return rotation
+
+    def try_get_euler(self, quart_rotation, offset: [], prev_rot_idx: int):
+        try:
+            m_rot = m_V.to_euler(
+                quart_rotation,
+
+                Euler((
+                    self.prev_rotation[prev_rot_idx][0] - pi * offset[0],
+                    self.prev_rotation[prev_rot_idx][1] - pi * offset[1],
+                    self.prev_rotation[prev_rot_idx][2] - pi * offset[2],
+                ))
+            )
+        except KeyError:
+            m_rot = m_V.to_euler(quart_rotation)
+            print(m_rot)
+        return m_rot
+
     # endregion
+

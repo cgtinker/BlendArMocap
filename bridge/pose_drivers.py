@@ -88,25 +88,33 @@ class BridgePose(abs_assignment.DataAssignment):
         self.init_bpy_driver_obj(
             self.hip_center, self.pose, 0.01, "hip_center", self.col_name, "SPHERE", [0, 0, 0])
 
-        self.init_bpy_driver_obj(
-            self.hip_center, self.pose, 0.01, "", self.col_name, "SPHERE", [0, 0, 0])
-        self.init_bpy_driver_obj(
-            self.shoulder_center, self.pose, 0.01, "", self.col_name, "SPHERE", [0, 0, 0])
-        self.init_bpy_driver_obj(
-            self.hip_center, self.pose, 0.01, "", self.col_name, "SPHERE", [0, 0, 0])
-
     def init_data(self):
         self.rotation_data = []
         self.scale_data = []
-        #self.prepare_landmarks()
-        #self.average_rig_scale()
-        #self.shoulder_hip_location()
+        self.prepare_landmarks()
+        self.average_rig_scale()
+        self.shoulder_hip_location()
         self.shoulder_hip_rotation()
 
     def update(self):
-        #self.set_position()
+        self.set_position()
         self.set_rotation()
-        #self.set_scale()
+        self.set_scale()
+
+    def set_position(self):
+        """Keyframe the position of input data."""
+        try:
+            self.translate(self.pose, self.data, self.frame)
+
+        except IndexError:
+            log.logger.error("VALUE ERROR WHILE ASSIGNING POSE POSITION")
+
+    def set_rotation(self):
+        self.euler_rotate(self.pose, self.rotation_data, self.frame)
+        pass
+
+    def set_scale(self):
+        self.scale(self.pose, self.scale_data, self.frame)
 
     def average_rig_scale(self):
         avg_arm_length = self.get_joint_chain_length(self.arms)
@@ -131,58 +139,20 @@ class BridgePose(abs_assignment.DataAssignment):
         avg_length = sum(avg_lengths) / len(avg_lengths)
         return avg_length
 
-    def set_position(self):
-        """Keyframe the position of input data."""
-        try:
-            self.translate(self.pose, self.data, self.frame)
-
-        except IndexError:
-            log.logger.error("VALUE ERROR WHILE ASSIGNING POSE POSITION")
-
-    def set_rotation(self):
-        self.euler_rotate(self.pose, self.rotation_data, self.frame)
-        pass
-
-    def set_scale(self):
-        self.scale(self.pose, self.scale_data, self.frame)
-
-    @staticmethod
-    def offset_euler(euler, offset: []):
-        rotation = Euler((
-            euler[0] + pi * offset[0],
-            euler[1] + pi * offset[1],
-            euler[2] + pi * offset[2],
-        ))
-        return rotation
-
-    def try_get_euler(self, quart_rotation, offset: [], prev_rot_idx: int):
-        try:
-            m_rot = m_V.to_euler(
-                quart_rotation,
-
-                Euler((
-                    self.prev_rotation[prev_rot_idx][0] - pi * offset[0],
-                    self.prev_rotation[prev_rot_idx][1] - pi * offset[1],
-                    self.prev_rotation[prev_rot_idx][2] - pi * offset[2],
-                ))
-            )
-        except KeyError:
-            m_rot = m_V.to_euler(quart_rotation)
-            print(m_rot)
-        return m_rot
-
     def torso_rotation(self):
         # approximate perpendicular points to origin
         hip_center = m_V.center_point(np.array(self.data[23][1]), np.array(self.data[24][1]))
         right_hip = np.array(self.data[24][1])
         shoulder_center = m_V.center_point(np.array(self.data[11][1]), np.array(self.data[12][1]))
 
+        # generate triangle
         vertices = np.array(
             [self.data[23][1],
              self.data[24][1],
              shoulder_center])
         connections = np.array([[0, 1, 2]])
 
+        # get normal from triangle
         normal, norm = m_V.create_normal_array(vertices, connections)
 
         # direction vectors from imaginary origin
@@ -195,42 +165,44 @@ class BridgePose(abs_assignment.DataAssignment):
         loc, quart, scale = m_V.decompose_matrix(matrix)
 
         offset = [-.5, 0, 0]
-        euler = self.try_get_euler(quart, offset, 23)
+        euler = self.try_get_euler(quart, offset, self.hip_center.index)
         euler = self.offset_euler(euler, offset)
 
-        self.hip_center.rot = euler
+        return euler
 
     def shoulder_rotation(self):
+        # rotation from shoulder center to shoulder.R
         shoulder_center = m_V.center_point(self.data[11][1], self.data[12][1])
         shoulder_rotation = m_V.rotate_towards(shoulder_center, self.data[12][1], 'Z')
 
+        # rotation from hip center to hip.R
         hip_center = m_V.center_point(self.data[23][1], self.data[24][1])
         hip_rotation = m_V.rotate_towards(hip_center, self.data[24][1], 'Z')
 
+        # chance to offset result / rotation may not be keyframed
         offset = [0, 0, 0]
         shoulder_euler = self.try_get_euler(shoulder_rotation, offset, 7)
         shoulder_rot = self.offset_euler(shoulder_euler, offset)
 
-        offset = [0, 0, 0]
         hip_euler = self.try_get_euler(hip_rotation, offset, 8)
         hip_rot = self.offset_euler(hip_euler, offset)
 
+        # offset between hip & shoulder rot = real shoulder rot
         euler = Euler((shoulder_rot[0] - hip_rot[0],
                        shoulder_rot[1] - hip_rot[1],
                        shoulder_rot[2] - hip_rot[2]))
 
         return euler
 
-    # todo use above method
     def shoulder_hip_rotation(self):
         """ Creates custom rotation data for driving the rig. """
-        shoulder_rot = self.shoulder_rotation()
-        self.torso_rotation()
+        self.shoulder_center.rot = self.shoulder_rotation()
+        self.hip_center.rot = self.torso_rotation()
 
         # setup data format
         data = [
-            [11, shoulder_rot],
-            [23, self.hip_center.rot]
+            [self.shoulder_center.idx, self.shoulder_center.rot],
+            [self.hip_center.idx, self.hip_center.rot]
         ]
         for d in data:
             self.rotation_data.append(d)

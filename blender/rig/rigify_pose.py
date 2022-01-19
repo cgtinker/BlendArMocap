@@ -109,7 +109,7 @@ class RigPose(abs_rigging.BpyRigging):
 
             # CONSTRAINTS
             # def rots
-            "hip_center": [DriverType.constraint, ["hips", "COPY_ROTATION"]],
+            "hip_center": [DriverType.constraint, ["torso", "COPY_ROTATION"]],
             "shoulder_center": [DriverType.constraint, ["chest", "COPY_ROTATION"]],
             # arms (mapped mirrored)
             "cgt_left_hand_ik_driver": [DriverType.constraint, ["hand_ik.R", "COPY_LOCATION"]],
@@ -117,10 +117,11 @@ class RigPose(abs_rigging.BpyRigging):
             "cgt_left_forearm_ik_driver": [DriverType.constraint, ["forearm_tweak.R", "COPY_LOCATION"]],
             "cgt_right_forearm_ik_driver": [DriverType.constraint, ["forearm_tweak.L", "COPY_LOCATION"]],
             # legs (mapped mirrored)
-            "cgt_right_foot_ik_driver": [DriverType.constraint, ["foot_ik.L", "COPY_LOCATION"]],
-            "cgt_left_foot_ik_driver": [DriverType.constraint, ["foot_ik.R", "COPY_LOCATION"]],
-            "cgt_left_shin_ik_driver": [DriverType.constraint, ["shin_tweak.R", "COPY_LOCATION"]],
-            "cgt_right_shin_ik_driver": [DriverType.constraint, ["shin_tweak.L", "COPY_LOCATION"]],
+            # legs disables as they introduce major drifting issues
+            # "cgt_right_foot_ik_driver": [DriverType.constraint, ["foot_ik.L", "COPY_LOCATION"]],
+            # "cgt_left_foot_ik_driver": [DriverType.constraint, ["foot_ik.R", "COPY_LOCATION"]],
+            # "cgt_left_shin_ik_driver": [DriverType.constraint, ["shin_tweak.R", "COPY_LOCATION"]],
+            # "cgt_right_shin_ik_driver": [DriverType.constraint, ["shin_tweak.L", "COPY_LOCATION"]],
         }
 
         # setup relations between rig and drivers, then apply the drivers to the rig
