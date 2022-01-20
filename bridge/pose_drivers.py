@@ -53,10 +53,14 @@ class BridgePose(abs_assignment.DataAssignment):
             34: "cgt_right_forearm_ik_driver",
             35: "cgt_left_hand_ik_driver",
             36: "cgt_right_hand_ik_driver",
-            37: "cgt_right_foot_ik_driver",
-            38: "cgt_left_foot_ik_driver",
-            39: "cgt_left_shin_ik_driver",
-            40: "cgt_right_shin_ik_driver"
+
+            37: "cgt_left_index_ik_driver",
+            38: "cgt_right_index_ik_driver",
+
+            39: "cgt_right_foot_ik_driver",
+            40: "cgt_left_foot_ik_driver",
+            41: "cgt_left_shin_ik_driver",
+            42: "cgt_right_shin_ik_driver"
         }
 
         self.arms = [
