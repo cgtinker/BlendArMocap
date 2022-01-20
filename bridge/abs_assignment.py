@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from utils import m_V
 from mathutils import Vector, Euler
 from math import pi
-from blender import objects
+from blender.utils import objects
 
 
 class CustomData:

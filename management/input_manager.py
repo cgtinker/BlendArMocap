@@ -1,5 +1,5 @@
 import bpy
-from blender import objects
+from blender.utils import objects
 from blender.rig import rigify_hands, rigify_pose
 import importlib
 

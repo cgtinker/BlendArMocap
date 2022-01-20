@@ -3,7 +3,7 @@ import importlib
 import numpy as np
 
 import utils.m_V
-from blender import objects
+from blender.utils import objects
 from bridge import abs_assignment
 from utils import m_V
 

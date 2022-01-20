@@ -1,10 +1,9 @@
 import importlib
-from math import pi
 
 import numpy as np
 from mathutils import Euler
 
-from blender import objects
+from blender.utils import objects
 from bridge import abs_assignment
 from utils import m_V, log
 
@@ -165,7 +164,7 @@ class BridgePose(abs_assignment.DataAssignment):
         loc, quart, scale = m_V.decompose_matrix(matrix)
 
         offset = [-.5, 0, 0]
-        euler = self.try_get_euler(quart, offset, self.hip_center.index)
+        euler = self.try_get_euler(quart, offset, self.hip_center.idx)
         euler = self.offset_euler(euler, offset)
 
         return euler

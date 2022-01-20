@@ -6,75 +6,44 @@ from utils import m_V
 importlib.reload(m_V)
 
 
-def copy_rotation(constraint, target, *args):
-    constraint.target = target
-    constraint.euler_order = 'XYZ'
-    constraint.influence = 1
-    constraint.mix_mode = 'ADD'
-    constraint.owner_space = 'LOCAL'
-
-
-def copy_location(constraint, target, *args):
-    print("copy location", constraint, target, args)
-    constraint.target = target
-    constraint.influence = 1
-    constraint.owner_space = 'POSE'
-
-
-def add_driver(obj, target, prop, dataPath,
-               index=-1, negative=False, func=''):
-    ''' Add driver to obj prop (at index), driven by target dataPath '''
-
-    if index != -1:
-        driver = obj.driver_add(prop, index).limb_driver
-    else:
-        driver = obj.driver_add(prop).limb_driver
-
-    variable = driver.variables.new()
-    variable.name = prop
-    variable.targets[0].id = target
-    variable.targets[0].data_path = dataPath
-
-    driver.expression = func + "(" + variable.name + ")" if func else variable.name
-    driver.expression = driver.expression if not negative else "-1 * " + driver.expression
-
-
 class BpyRigging(ABC):
     driver_mapping = {
         "shoulder_distance": ("scale", "position")
     }
 
-    constraint_mapping = {
-        "CAMERA_SOLVER": 0,
-        "FOLLOW_TRACK": 1,
-        "OBJECT_SOLVER": 2,
-        "COPY_LOCATION": copy_location,
-        "COPY_ROTATION": copy_rotation,
-        "COPY_SCALE": 5,
-        "COPY_TRANSFORMS": 6,
-        "LIMIT_DISTANCE": 7,
-        "LIMIT_LOCATION": 8,
-        "LIMIT_ROTATION": 9,
-        "LIMIT_SCALE": 10,
-        "MAINTAIN_VOLUME": 11,
-        "TRANSFORM": 12,
-        "TRANSFORM_CACHE": 13,
-        "CLAMP_TO": 14,
-        "DAMPED_TRACK": 15,
-        "IK": 16,
-        "LOCKED_TRACK": 17,
-        "SPLINE_IK": 18,
-        "STRETCH_TO": 19,
-        "TRACK_TO": 20,
-        "ACTION": 21,
-        "ARMATURE": 22,
-        "CHILD_OF": 23,
-        "FLOOR": 24,
-        "FOLLOW_PATH": 25,
-        "PIVOT": 26,
-        "SHRINKWRAP": 27,
-    }
+    def __init__(self):
+        self.constraint_mapping = {
+            "CAMERA_SOLVER": 0,
+            "FOLLOW_TRACK": 1,
+            "OBJECT_SOLVER": 2,
+            "COPY_LOCATION": self.copy_location,
+            "COPY_ROTATION": self.copy_rotation,
+            "COPY_SCALE": 5,
+            "COPY_TRANSFORMS": 6,
+            "LIMIT_DISTANCE": 7,
+            "LIMIT_LOCATION": 8,
+            "LIMIT_ROTATION": 9,
+            "LIMIT_SCALE": 10,
+            "MAINTAIN_VOLUME": 11,
+            "TRANSFORM": 12,
+            "TRANSFORM_CACHE": 13,
+            "CLAMP_TO": 14,
+            "DAMPED_TRACK": self.damped_track,
+            "IK": 16,
+            "LOCKED_TRACK": 17,
+            "SPLINE_IK": 18,
+            "STRETCH_TO": 19,
+            "TRACK_TO": 20,
+            "ACTION": 21,
+            "ARMATURE": 22,
+            "CHILD_OF": 23,
+            "FLOOR": 24,
+            "FOLLOW_PATH": 25,
+            "PIVOT": 26,
+            "SHRINKWRAP": 27,
+        }
 
+    # region constraints
     def add_constraint(self, bone, target, constraint):
         constraints = [c for c in bone.constraints]
 
@@ -95,6 +64,29 @@ class BpyRigging(ABC):
         # set the constraint type and execute its custom method
         self.constraint_mapping[constraint](m_constraint, target)
 
+    @staticmethod
+    def copy_rotation(constraint, target, *args):
+        constraint.target = target
+        constraint.euler_order = 'XYZ'
+        constraint.influence = 1
+        constraint.mix_mode = 'ADD'
+        constraint.owner_space = 'LOCAL'
+
+    @staticmethod
+    def copy_location(constraint, target, *args):
+        constraint.target = target
+        constraint.influence = 1
+        constraint.owner_space = 'POSE'
+
+    @staticmethod
+    def damped_track(constraint, target, *args):
+        constraint.target = target
+        constraint.influence = 1
+        constraint.track_axis = 'TRACK_Y'
+        constraint.owner_space = 'POSE'
+    # endregion
+
+    # region driver
     def add_driver_batch(self, driver_target, driver_source,
                          prop_source, prop_target, data_path, func=None):
         """ Add driver to object on x-y-z axis. """
@@ -128,6 +120,9 @@ class BpyRigging(ABC):
 
         driver.expression = func + "(" + variable.name + ")" if func else variable.name
 
+    # endregion
+
+    # region custom properties
     def set_custom_property(self, target_obj, prop_name, prop):
         if self.get_custom_property(target_obj, prop_name) == None:
             target_obj[prop_name] = prop
@@ -143,7 +138,9 @@ class BpyRigging(ABC):
             value = None
 
         return value
+    # endregion
 
+    # region bone length
     def get_average_scale(self, joint_bones, pose_bones):
         """ requires an array of joints names [[bone_a, bone_b], []... ] and pose bones.
             returns the average length of the connected bones. """
@@ -169,3 +166,4 @@ class BpyRigging(ABC):
 
             arm_joints.append(joint)
         return arm_joints
+    # endregion

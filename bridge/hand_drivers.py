@@ -1,10 +1,9 @@
 import importlib
 
 import numpy as np
-from mathutils import Euler, Quaternion
-from math import pi
+from mathutils import Euler
 
-from blender import objects
+from blender.utils import objects
 from bridge import abs_assignment
 from utils import m_V
 
@@ -165,29 +164,28 @@ class BridgeHand(abs_assignment.DataAssignment):
         ))
 
         # palm dir
+        # binormal = m_V.normalize(m_V.to_vector(
+        #     hand[5][1],
+        #     hand[17][1]
+        # ))
         binormal = m_V.normalize(m_V.to_vector(
-            hand[5][1],
+            palm_center,
             hand[17][1]
         ))
-
         # rotation from matrix
+        #matrix = m_V.generate_matrix(normal, tangent, binormal)
         matrix = m_V.generate_matrix(normal, tangent, binormal)
         loc, quart, sca = m_V.decompose_matrix(matrix)
 
-        # euler = self.quart_to_euler_combat(quart, 0, combat_idx_offset)
-        # euler = m_V.to_euler(quart)
-
         if orientation == "R":
-            # euler = Euler((euler[0] - pi * .5, euler[2] + pi * .5, euler[1]))
-            offset = [-.5, .5, 0]
+            offset = [0, 0, 0]
             euler = self.try_get_euler(quart, offset, combat_idx_offset)
             euler = self.offset_euler(euler, offset)
 
         else:
-            offset = [-.5, -.5, 0]
+            offset = [0, 0, 0]
             euler = self.try_get_euler(quart, offset, combat_idx_offset)
             euler = self.offset_euler(euler, offset)
-            # euler = Euler((euler[0] - pi * .5, euler[2]-pi*.5, euler[1]))
 
         hand_rotation = ([0, euler])
         return hand_rotation

@@ -1,5 +1,5 @@
-from utils import log
-from blender import abs_rigging, objects
+from blender.rig import abs_rigging
+from blender.utils import objects
 import importlib
 
 importlib.reload(abs_rigging)

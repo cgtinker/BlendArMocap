@@ -1,4 +1,4 @@
-from blender import abs_rigging
+from blender.rig import abs_rigging
 
 
 class RigPose(abs_rigging.BpyRigging):

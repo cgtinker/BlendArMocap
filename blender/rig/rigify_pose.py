@@ -1,7 +1,8 @@
 import importlib
 from enum import Enum
 
-from blender import objects, abs_rigging
+from blender.rig import abs_rigging
+from blender.utils import objects
 from utils import m_V
 
 importlib.reload(m_V)
