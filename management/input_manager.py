@@ -1,10 +1,11 @@
 import bpy
 from blender.utils import objects
-from blender.rig import rigify_hands, rigify_pose
+from blender.rig import rigify_hands, rigify_pose, rigify_face
 import importlib
 
 importlib.reload(rigify_hands)
 importlib.reload(rigify_pose)
+importlib.reload(rigify_face)
 
 
 def start_detection():
@@ -14,8 +15,8 @@ def start_detection():
 def transfer_animation():
     col_mapping = {
         "cgt_hands": rigify_hands.RigifyHands,
-        "cgt_face": rigify_hands.RigifyHands,
-        "cgt_pose": rigify_pose.RigPose
+        "cgt_face": rigify_face.RigifyFace,
+        "cgt_pose": rigify_pose.RigifyPose
     }
 
     user = bpy.context.scene.m_cgtinker_mediapipe

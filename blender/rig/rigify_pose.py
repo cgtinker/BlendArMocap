@@ -1,52 +1,45 @@
-import importlib
-from enum import Enum
-
 from blender.rig import abs_rigging
+from blender.rig.abs_rigging import DriverType, MappingRelation
 from blender.utils import objects
 from utils import m_V
 
+import importlib
 importlib.reload(m_V)
 importlib.reload(objects)
 importlib.reload(abs_rigging)
 
 
-class RigPose(abs_rigging.BpyRigging):
-    # todo: set ik_fk for driver bones
-    # bpy.context.object.pose.bones["thigh_parent.R"]["IK_FK"] = 0
-    # bpy.context.object.pose.bones["thigh_parent.R"]["IK_Stretch"] = 0
+class RigifyPose(abs_rigging.BpyRigging):
+    arm_bones = [
+        # left arm
+        ["upper_arm_fk.L", "forearm_fk.L"],
+        ["forearm_fk.L", "hand_fk.L"],
+        # right arm
+        ["upper_arm_fk.R", "forearm_fk.R"],
+        ["forearm_fk.R", "hand_fk.R"],
+    ]
+
+    leg_bones = [
+        # right left
+        ["thigh_ik.R", "shin_tweak.R"],
+        ["shin_tweak.R", "foot_ik.R"],
+        # left leg
+        ["thigh_ik.L", "shin_tweak.L"],
+        ["shin_tweak.L", "foot_ik.L"]
+    ]
 
     def __init__(self, armature, driver_objects: list):
+        self.pose_bones = armature.pose.bones
+        # storing relation between rigify rig and driver rig in an array (drivers may be used multiple times)
         self.relation_mapping_lst = []
         self.method_mapping = {
-            # todo: arm specific driver method
             DriverType.limb_driver: self.add_driver_batch,
             DriverType.constraint: self.add_constraint
         }
 
-        self.pose_bones = armature.pose.bones
-        self.arm_bones = [
-            ["upper_arm_fk.L", "forearm_fk.L"],
-            ["forearm_fk.L", "hand_fk.L"],
-
-            ["upper_arm_fk.R", "forearm_fk.R"],
-            ["forearm_fk.R", "hand_fk.R"],
-        ]
-        self.leg_bones = [
-            ["thigh_ik.R", "shin_tweak.R"],
-            ["shin_tweak.R", "foot_ik.R"],
-            ["thigh_ik.R", "shin_tweak.R"],
-            ["shin_tweak.L", "foot_ik.L"]
-        ]
-
-        # offsets and avg data based on rigify rig
-        self.avg_arm_length = self.get_average_scale(self.arm_bones, self.pose_bones)
-        self.avg_leg_length = self.get_average_scale(self.leg_bones, self.pose_bones)
-
-        self.left_arm_offset = self.get_location_offset(self.pose_bones, "upper_arm_ik.L", "cgt_right_shoulder")
-        self.right_arm_offset = self.get_location_offset(self.pose_bones, "upper_arm_ik.R", "cgt_left_shoulder")
-
-        self.left_leg_offset = self.get_location_offset(self.pose_bones, "thigh_ik.L", "cgt_right_hip")
-        self.right_leg_offset = self.get_location_offset(self.pose_bones, "thigh_ik.R", "cgt_left_hip")
+        # offsets and avg data based on rigify input rig
+        self.avg_arm_length, self.avg_leg_length = self.get_avg_limb_length()
+        self.left_arm_offset, self.right_arm_offset, self.left_leg_offset, self.right_leg_offset = self.get_limb_offsets()
 
         # mapping for drivers with multiple users
         self.multi_user_driver_dict = {
@@ -61,86 +54,49 @@ class RigPose(abs_rigging.BpyRigging):
             # region DRIVERS
             # region arms
             "cgt_left_shoulder": [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
-            "cgt_left_wrist": [
-                DriverType.limb_driver,
-                self.driver_loc2loc_sca_attr("cgt_left_hand_ik_driver",
-                                             self.left_arm_offset,
-                                             self.avg_arm_length)
-            ],
-            "cgt_left_elbow": [
-                DriverType.limb_driver,
-                self.driver_loc2loc_sca_attr("cgt_left_forearm_ik_driver",
-                                             self.left_arm_offset,
-                                             self.avg_arm_length)
-            ],
-            "cgt_left_index": [
-                DriverType.limb_driver,
-                self.driver_loc2loc_sca_attr("cgt_left_index_ik_driver",
-                                             self.left_arm_offset,
-                                             self.avg_arm_length)
-            ],
+            "cgt_left_wrist": self.arm_ik_driver_props("cgt_left_hand_ik_driver", self.left_arm_offset),
+            "cgt_left_elbow": self.arm_ik_driver_props("cgt_left_forearm_ik_driver", self.left_arm_offset),
+            "cgt_left_index": self.arm_ik_driver_props("cgt_left_index_ik_driver", self.left_arm_offset),
 
             "cgt_right_shoulder": [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
-            "cgt_right_wrist": [DriverType.limb_driver,
-                                self.driver_loc2loc_sca_attr("cgt_right_hand_ik_driver",
-                                                             self.right_arm_offset,
-                                                             self.avg_arm_length)
-                                ],
-            "cgt_right_elbow": [DriverType.limb_driver,
-                                self.driver_loc2loc_sca_attr("cgt_right_forearm_ik_driver",
-                                                             self.right_arm_offset,
-                                                             self.avg_arm_length)
-                                ],
-            "cgt_right_index": [
-                DriverType.limb_driver,
-                self.driver_loc2loc_sca_attr("cgt_right_index_ik_driver",
-                                             self.left_arm_offset,
-                                             self.avg_arm_length)
-            ],
+            "cgt_right_wrist": self.arm_ik_driver_props("cgt_right_hand_ik_driver", self.right_arm_offset),
+            "cgt_right_elbow": self.arm_ik_driver_props("cgt_right_forearm_ik_driver", self.right_arm_offset),
+            "cgt_right_index": self.arm_ik_driver_props("cgt_right_index_ik_driver", self.right_arm_offset),
+
             # endregion
             # region legs
             "cgt_left_hip": [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
-            "cgt_left_knee": [DriverType.limb_driver,
-                              self.driver_loc2loc_sca_attr("cgt_left_shin_ik_driver",
-                                                           self.left_leg_offset,
-                                                           self.avg_leg_length)
-                              ],
-            "cgt_left_ankle": [DriverType.limb_driver,
-                               self.driver_loc2loc_sca_attr("cgt_left_foot_ik_driver",
-                                                            self.left_leg_offset,
-                                                            self.avg_leg_length)
-                               ],
+            "cgt_left_knee": self.leg_ik_driver_props("cgt_left_shin_ik_driver", self.left_leg_offset),
+            "cgt_left_ankle": self.leg_ik_driver_props("cgt_left_foot_ik_driver", self.left_leg_offset),
+
             "cgt_right_hip": [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
-            "cgt_right_knee": [DriverType.limb_driver,
-                               self.driver_loc2loc_sca_attr("cgt_right_shin_ik_driver",
-                                                            self.right_leg_offset,
-                                                            self.avg_leg_length)
-                               ],
-            "cgt_right_ankle": [DriverType.limb_driver,
-                                self.driver_loc2loc_sca_attr("cgt_right_foot_ik_driver",
-                                                             self.right_leg_offset,
-                                                             self.avg_leg_length)
-                                ],
+            "cgt_right_knee": self.leg_ik_driver_props("cgt_right_shin_ik_driver", self.right_leg_offset),
+            "cgt_right_ankle": self.leg_ik_driver_props("cgt_right_foot_ik_driver", self.right_leg_offset),
             # endregion
             # endregion
 
             # region CONSTRAINTS
-            # def rots
+            # region basic constraints
             "hip_center": [DriverType.constraint, ["torso", "COPY_ROTATION"]],
             "shoulder_center": [DriverType.constraint, ["chest", "COPY_ROTATION"]],
-            # arms (mapped mirrored)
+            # endregion
+
+            # region arms (mapped mirrored)
             "cgt_left_hand_ik_driver": [DriverType.constraint, ["hand_ik.R", "COPY_LOCATION"]],
             "cgt_right_hand_ik_driver": [DriverType.constraint, ["hand_ik.L", "COPY_LOCATION"]],
             "cgt_left_forearm_ik_driver": [DriverType.constraint, ["forearm_tweak.R", "COPY_LOCATION"]],
             "cgt_right_forearm_ik_driver": [DriverType.constraint, ["forearm_tweak.L", "COPY_LOCATION"]],
             "cgt_left_index_ik_driver": [DriverType.constraint, ["hand_ik.R", "DAMPED_TRACK"]],
             "cgt_right_index_ik_driver": [DriverType.constraint, ["hand_ik.L", "DAMPED_TRACK"]],
-            # legs (mapped mirrored)
+            # endregion
+
+            # region legs (mapped mirrored)
             # legs disables as they introduce major drifting issues
             # "cgt_right_foot_ik_driver": [DriverType.constraint, ["foot_ik.L", "COPY_LOCATION"]],
             # "cgt_left_foot_ik_driver": [DriverType.constraint, ["foot_ik.R", "COPY_LOCATION"]],
             # "cgt_left_shin_ik_driver": [DriverType.constraint, ["shin_tweak.R", "COPY_LOCATION"]],
             # "cgt_right_shin_ik_driver": [DriverType.constraint, ["shin_tweak.L", "COPY_LOCATION"]],
+            # endregion
             # endregion
         }
 
@@ -150,7 +106,6 @@ class RigPose(abs_rigging.BpyRigging):
 
     # region rig driver relation setup
     def set_relation_dict(self, driver_objects: list):
-        # setting driver target for multi users
         driver_names = [obj.name for obj in driver_objects]
 
         # dict containing drivers and required params
@@ -162,9 +117,9 @@ class RigPose(abs_rigging.BpyRigging):
 
                 # multi user driver (scale driver)
                 if ref in self.multi_user_driver_dict:
-                    references = self.references[ref][1]
+                    references = self.references[ref][1]    # driver properties
                     for t, driver_target in enumerate(self.multi_user_driver_dict[ref]):
-                        refs = references.copy()  # copy refs to avoid overwrites
+                        refs = references.copy()    # copy driver properties to avoid overwrites
                         refs[0] = driver_target
                         rel = MappingRelation(driver_obj, driver_type, refs)
                         self.relation_mapping_lst.append(rel)
@@ -180,7 +135,6 @@ class RigPose(abs_rigging.BpyRigging):
 
     # region apply drivers
     def apply_drivers(self):
-        # TODO: Purge already available drivers before adding drivers
         pose_bone_names = [bone.name for bone in self.pose_bones]
 
         for driver in self.relation_mapping_lst:
@@ -203,6 +157,36 @@ class RigPose(abs_rigging.BpyRigging):
     # endregion
 
     # region driver setup
+
+    def arm_ik_driver_props(self, driver_target, offset):
+        return [
+            DriverType.limb_driver,
+            self.driver_loc2loc_sca_attr(driver_target,
+                                         offset,
+                                         self.avg_arm_length)
+        ]
+
+    def leg_ik_driver_props(self, driver_target, offset):
+        return [
+            DriverType.limb_driver,
+            self.driver_loc2loc_sca_attr(driver_target,
+                                         offset,
+                                         self.avg_arm_length)
+        ]
+
+    def get_avg_limb_length(self):
+        avg_arm_length = self.get_average_scale(self.arm_bones, self.pose_bones)
+        avg_leg_length = self.get_average_scale(self.leg_bones, self.pose_bones)
+        return avg_arm_length, avg_leg_length
+
+    def get_limb_offsets(self):
+        left_arm_offset = self.get_location_offset(self.pose_bones, "upper_arm_ik.L", "cgt_right_shoulder")
+        right_arm_offset = self.get_location_offset(self.pose_bones, "upper_arm_ik.R", "cgt_left_shoulder")
+
+        left_leg_offset = self.get_location_offset(self.pose_bones, "thigh_ik.L", "cgt_right_hip")
+        right_leg_offset = self.get_location_offset(self.pose_bones, "thigh_ik.R", "cgt_left_hip")
+        return left_arm_offset, right_arm_offset, left_leg_offset, right_leg_offset
+
     @staticmethod
     def driver_z_sca2loc_attr():
         attribute = [
@@ -212,21 +196,7 @@ class RigPose(abs_rigging.BpyRigging):
         return attribute
 
     @staticmethod
-    def get_location_offset(pose_bones, bone_name, target):
-        # remove constraint before calc offset
-        for constraint in pose_bones[bone_name].constraints:
-            if constraint.type == "COPY_LOCATION":
-                pose_bones[bone_name].constraints.remove(constraint)
-
-        # calc offset
-        bone_pos = pose_bones[bone_name].head
-        ob = objects.get_object_by_name(target)
-        tar = ob.location
-        offset = bone_pos - tar
-
-        return offset
-
-    def driver_loc2loc_sca_attr(self, driver_target, offset, avg_length):
+    def driver_loc2loc_sca_attr(driver_target, offset, avg_length):
         attribute = [
             driver_target, "location", "location",
             ["location.x", "location.y", "location.z"],
@@ -235,19 +205,3 @@ class RigPose(abs_rigging.BpyRigging):
              f"{offset[2]}+{avg_length}/(scale) *"]]
         return attribute
     # endregion
-
-
-class DriverType(Enum):
-    limb_driver = 0
-    constraint = 1
-
-
-class MappingRelation:
-    source = None
-    values = None
-    diver_type = None
-
-    def __init__(self, source, driver_type: DriverType, *args):
-        self.source = source
-        self.driver_type = driver_type
-        self.values = args

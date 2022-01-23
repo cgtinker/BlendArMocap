@@ -8,6 +8,7 @@ importlib.reload(objects)
 
 class RigifyHands(abs_rigging.BpyRigging):
     def __init__(self, armature, driver_objects):
+        # driver to rigify rig transfer name references
         self.references = {
             "cgt_WRIST":                "hand_ik",
             "cgt_THUMB_CMC":            "thumb.01",
@@ -32,39 +33,42 @@ class RigifyHands(abs_rigging.BpyRigging):
             "cgt_PINKY_TIP":            "f_pinky.01",
         }
 
+        # storing relations between rigify and driver rig (left / right hand)
         self.relation_dict = {}
-        self.extension = ""
-
         self.set_relation_dict(driver_objects)
+        # finally applying the drivers
         self.apply_drivers(armature)
 
-    def get_reference_bone(self, key):
+    def get_reference_bone(self, key, extension):
         """ get reference bone by driver empty name. """
         if "TIP" in key:
-            bone_name = self.references[key] + self.extension + ".001"
+            # rigify finger tip has .001 extension (whyever..)
+            bone_name = self.references[key] + extension + ".001"
             return bone_name
 
-        bone_name = self.references[key] + self.extension
+        bone_name = self.references[key] + extension
         return bone_name
 
     def set_relation_dict(self, driver_empties):
         """ sets relation dict containing bone name and reference empty obj. """
         for empty in driver_empties:
+            # can be left / right hand
             if ".L" in empty.name:
-                self.extension = ".L"
+                extension = ".L"
             else:
-                self.extension = ".R"
+                extension = ".R"
 
             # remove extension from driver name
-            name = empty.name.replace(self.extension, "")
+            name = empty.name.replace(extension, "")
             try:
-                bone_name = self.get_reference_bone(name)
+                bone_name = self.get_reference_bone(name, extension)
                 self.relation_dict[bone_name] = empty
 
             except KeyError:
                 print("driver empty does not exist:", empty.name)
                 # log.logger.Error("Driver empty does not exist: ", empty.name)
 
+    # hand angles just require rotation constraints for remapping
     def apply_drivers(self, armature):
         bones = objects.get_armature_bones(armature)
         pose_bones = armature.pose.bones

@@ -1,43 +1,23 @@
 import importlib
 from abc import ABC
-
+from dataclasses import dataclass
+from blender.rig.utils import constraints
+from blender.utils import objects
 from utils import m_V
+from enum import Enum
 
 importlib.reload(m_V)
-
-
-def copy_rotation(constraint, target, *args):
-    constraint.target = target
-    constraint.euler_order = 'XYZ'
-    constraint.influence = 1
-    constraint.mix_mode = 'ADD'
-    constraint.owner_space = 'LOCAL'
-
-
-def copy_location(constraint, target, *args):
-    constraint.target = target
-    constraint.influence = 1
-    constraint.owner_space = 'POSE'
-
-
-def damped_track(constraint, target, *args):
-    constraint.target = target
-    constraint.influence = 1
-    constraint.track_axis = 'TRACK_Y'
-    constraint.owner_space = 'POSE'
+importlib.reload(constraints)
 
 
 class BpyRigging(ABC):
-    driver_mapping = {
-        "shoulder_distance": ("scale", "position")
-    }
-
     constraint_mapping = {
         "CAMERA_SOLVER": 0,
         "FOLLOW_TRACK": 1,
         "OBJECT_SOLVER": 2,
-        "COPY_LOCATION": copy_location,
-        "COPY_ROTATION": copy_rotation,
+        "COPY_LOCATION": constraints.copy_location,
+        "COPY_LOCATION_OFFSET": constraints.copy_location_offset,
+        "COPY_ROTATION": constraints.copy_rotation,
         "COPY_SCALE": 5,
         "COPY_TRANSFORMS": 6,
         "LIMIT_DISTANCE": 7,
@@ -48,7 +28,7 @@ class BpyRigging(ABC):
         "TRANSFORM": 12,
         "TRANSFORM_CACHE": 13,
         "CLAMP_TO": 14,
-        "DAMPED_TRACK": damped_track,
+        "DAMPED_TRACK": constraints.damped_track,
         "IK": 16,
         "LOCKED_TRACK": 17,
         "SPLINE_IK": 18,
@@ -67,6 +47,7 @@ class BpyRigging(ABC):
     def add_constraint(self, bone, target, constraint):
         constraints = [c for c in bone.constraints]
 
+        # overwriting constraint by
         # removing previously added constraints if types match
         for c in constraints:
             # setup correct syntax for comparison
@@ -77,13 +58,18 @@ class BpyRigging(ABC):
             if constraint_name == constraint:
                 bone.constraints.remove(c)
 
-        # adding a new constraint
-        m_constraint = bone.constraints.new(
-            type=constraint
-        )
-        # set the constraint type and execute its custom method
-        self.constraint_mapping[constraint](m_constraint, target)
+        try:
+            # adding a new constraint
+            m_constraint = bone.constraints.new(
+                type=constraint
+            )
+            self.constraint_mapping[constraint](m_constraint, target)
+
+        except TypeError:
+            # call custom method with bone
+            self.constraint_mapping[constraint](bone, target)
     # endregion
+
 
     # region driver
     def add_driver_batch(self, driver_target, driver_source,
@@ -139,6 +125,21 @@ class BpyRigging(ABC):
         return value
     # endregion
 
+    @staticmethod
+    def get_location_offset(pose_bones, bone_name, target):
+        # remove constraint before calc offset
+        for constraint in pose_bones[bone_name].constraints:
+            if constraint.type == "COPY_LOCATION":
+                pose_bones[bone_name].constraints.remove(constraint)
+
+        # calc offset
+        bone_pos = pose_bones[bone_name].head
+        ob = objects.get_object_by_name(target)
+        tar = ob.location
+        offset = bone_pos - tar
+
+        return offset
+
     # region bone length
     def get_average_scale(self, joint_bones, pose_bones):
         """ requires an array of joints names [[bone_a, bone_b], []... ] and pose bones.
@@ -166,3 +167,21 @@ class BpyRigging(ABC):
             arm_joints.append(joint)
         return arm_joints
     # endregion
+
+
+class DriverType(Enum):
+    limb_driver = 0
+    constraint = 1
+    face_driver = 2
+
+
+@dataclass(repr=True)
+class MappingRelation:
+    source: object
+    values: list
+    driver_type: Enum
+
+    def __init__(self, source, driver_type: DriverType, *args):
+        self.source = source
+        self.driver_type = driver_type
+        self.values = args

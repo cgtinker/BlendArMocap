@@ -22,7 +22,6 @@ class BridgeFace(abs_assignment.DataAssignment):
         self._mouth_driver = abs_assignment.CustomData()
         self.eye_driver_L = abs_assignment.CustomData()
         self.eye_driver_R = abs_assignment.CustomData()
-
         self.rotation_data, self.driver_scale_data = None, None
 
         self.col_name = "cgt_face"
@@ -34,6 +33,9 @@ class BridgeFace(abs_assignment.DataAssignment):
         self.face = objects.add_empties(references, 0.005)
         objects.add_list_to_collection(self.col_name, self.face, self.driver_col)
 
+        mapping_driver = ["right_eye_driver_T", "right_eye_driver_B", "left_eye_driver_T", "left_eye_driver_B",
+                          "mouth_driver_T", "mouth_driver_B", "mouth_driver_R", "mouth_driver_L"]
+
         # init face drivers
         pivot = self.init_bpy_driver_obj(
             self.pivot, self.face, 0.025, "face_rotation", self.col_name, "SPHERE", [0, 0, 0])
@@ -43,6 +45,10 @@ class BridgeFace(abs_assignment.DataAssignment):
             self.eye_driver_L, self.face, 0.01, "left_eye_driver", self.col_name, "CIRCLE", [-.05, -.05, .075])
         r_eye = self.init_bpy_driver_obj(
             self.eye_driver_R, self.face, 0.01, "right_eye_driver", self.col_name, "CIRCLE", [.05, -.05, .075])
+
+        for name in mapping_driver:
+            self.init_bpy_driver_obj(
+                abs_assignment.CustomData(), self.face, 0.01, name, self.col_name, "SPHERE", [0, 0, 0])
 
         # set driver start position
         drivers = [self.pivot, self._mouth_driver, self.eye_driver_R, self.eye_driver_L]
