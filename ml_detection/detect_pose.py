@@ -1,5 +1,6 @@
 import mediapipe as mp
-from bridge import events, pose_drivers
+from bridge import pose_drivers
+from bridge import events
 from ml_detection import abstract_detector
 from utils.open_cv import stream
 import importlib

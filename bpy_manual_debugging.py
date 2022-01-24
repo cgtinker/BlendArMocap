@@ -43,7 +43,7 @@ main_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'module')
 sys.path.append(main_dir)
 
 from utils import log
-from interface import Registration
+from blender.interface import Registration
 import importlib
 
 importlib.reload(log)
@@ -51,7 +51,7 @@ importlib.reload(Registration)
 
 
 def register():
-    Registration.register()
+    Registration.manual_test_registration()
 
 
 def unregister():

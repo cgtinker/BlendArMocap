@@ -2,16 +2,8 @@ import numpy as np
 import math
 from mathutils import Vector, Euler, Matrix
 
-import utils.m_V
-from utils import log
+from utils import log, m_V
 import bpy
-""" RUNNING RUNNING RUNNING RUNNING RUNNING RUNNING RUNNING 
-    RUNNING RUNNING RUNNING RUNNING RUNNING RUNNING RUNNING 
-    RUNNING RUNNING RUNNING RUNNING RUNNING RUNNING RUNNING 
-    RUNNING RUNNING RUNNING RUNNING RUNNING RUNNING RUNNING 
-    RUNNING RUNNING RUNNING RUNNING RUNNING RUNNING RUNNING 
-    RUNNING RUNNING RUNNING RUNNING RUNNING RUNNING RUNNING 
-    RUNNING RUNNING RUNNING RUNNING RUNNING RUNNING RUNNING """
 
 euler_combat = None
 
@@ -72,9 +64,9 @@ def main(frame):
     # convert to euler
     print("ne euler ok", euler_combat)
     if euler_combat is None:
-        euler_combat = utils.m_V.to_euler('XYZ')
+        euler_combat = m_V.to_euler('XYZ')
     
-    euler = utils.m_V.to_euler('XYZ', euler_combat)
+    euler = m_V.to_euler('XYZ', euler_combat)
     print("\neu:", euler, "com", euler_combat)
     euler_combat = euler
     
@@ -160,12 +152,13 @@ def seg_intersect(a1,a2, b1,b2) :
     num = np.dot(dist_ap, dist_p)
     return (num / denom.astype(float))*dist_b + b1
 
+"""
 # todo: requires funcs
 def normal_angle(up, normal):
     Axis = normalize_vector(cross(up, normal))
     Angle = acos(dot(up, normal))
     return Angle
-
+"""
 
 # region quaternion
 def rot_angle_to_quaternion(theta, vector):

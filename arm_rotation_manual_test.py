@@ -1,5 +1,4 @@
 import bpy
-import numpy as np
 import importlib
 from utils import m_V
 from bridge import pose_drivers

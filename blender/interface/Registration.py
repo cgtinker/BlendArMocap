@@ -1,15 +1,18 @@
+import importlib
+
 import bpy
 from bpy.props import PointerProperty
-from interface import Properties, Operators, Panels
-from management import detection_operator
 from bpy.utils import register_class
 
+from blender.interface import Preferences
+from blender.interface import Properties, Panels, Operators
+from management import detection_operator
 
-import importlib
 importlib.reload(Operators)
 importlib.reload(Panels)
 importlib.reload(Properties)
 importlib.reload(detection_operator)
+importlib.reload(Preferences)
 
 classes = (
     Properties.MyProperties,
@@ -21,18 +24,24 @@ classes = (
     Panels.UI_PT_main_panel,
 )
 
+preference_classes = (Panels.UI_PT_warning_panel,
+                      Preferences.EXAMPLE_OT_install_dependencies,
+                      Preferences.EXAMPLE_preferences)
+
 
 def register():
-    for m_class in classes:
-        print(m_class)
+    for m_class in preference_classes:
         register_class(m_class)
-    print("attempt to register pointer")
+
+
+def manual_test_registration():
+    for m_class in classes:
+        register_class(m_class)
     bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=Properties.MyProperties)
 
 
 def unregister():
     from bpy.utils import unregister_class
     for m_class in reversed(classes):
-        print(m_class)
         unregister_class(m_class)
     del bpy.types.Scene.m_cgtinker_mediapipe

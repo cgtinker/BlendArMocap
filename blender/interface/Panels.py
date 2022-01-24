@@ -1,5 +1,13 @@
+import importlib
+
 import bpy
 from bpy.types import Panel
+
+from blender.interface import install_dependencies
+from blender.interface import Preferences
+
+importlib.reload(install_dependencies)
+importlib.reload(Preferences)
 
 
 class DefaultPanel:
@@ -50,3 +58,32 @@ class UI_PT_main_panel(ExpandedPanel, Panel):
                                         text="Armature")
 
         box.row(align=True).operator("button.transfer_animation", text=user.button_transfer_animation)
+
+
+class UI_PT_warning_panel(ExpandedPanel, Panel):
+    bl_label = "BlendArMocap Warning"
+    bl_idname = "OBJECT_PT_warning_panel"
+
+    @classmethod
+    def poll(self, context):
+        return not install_dependencies.dependencies_installed
+
+    def draw(self, context):
+        layout = self.layout
+
+        lines = [f"Please install the missing dependencies for blendarmocap.",
+                 f"1. Open the preferences (Edit > Preferences > Add-ons).",
+                 f"2. Search for the blendarmocap add-on.",
+                 f"3. Open the details section of the add-on.",
+                 f"4. Click on the \"{Preferences.EXAMPLE_OT_install_dependencies.bl_label}\" button.",
+                 f"   This will download and install the missing Python packages, if Blender has the required",
+                 f"   permissions.",
+                 f"If you're attempting to run the add-on from the text editor, you won't see the options described",
+                 f"above. Please install the add-on properly through the preferences.",
+                 f"1. Open the add-on preferences (Edit > Preferences > Add-ons).",
+                 f"2. Press the \"Install\" button.",
+                 f"3. Search for the add-on file.",
+                 f"4. Confirm the selection by pressing the \"Install Add-on\" button in the file browser."]
+
+        for line in lines:
+            layout.label(text=line)

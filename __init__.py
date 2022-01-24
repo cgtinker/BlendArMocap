@@ -29,7 +29,7 @@ bl_info = {
 }
 
 from utils import log
-from interface import Registration
+from blender.interface import Registration
 import importlib
 
 importlib.reload(log)

@@ -1,6 +1,7 @@
 import bpy
 from blender.utils import objects
-from blender.rig import rigify_hands, rigify_pose, rigify_face
+from blender.rig import rigify_hands, rigify_face
+from blender.rig import rigify_pose
 import importlib
 
 importlib.reload(rigify_hands)

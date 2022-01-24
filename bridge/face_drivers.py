@@ -2,7 +2,6 @@ import importlib
 
 import numpy as np
 
-import utils.m_V
 from blender.utils import objects
 from bridge import abs_assignment
 from utils import m_V
@@ -113,8 +112,8 @@ class BridgeFace(abs_assignment.DataAssignment):
         origin = np.array([0, 0, 0])
 
         # approximate perpendicular points to origin
-        forward_point = utils.m_V.center_point(np.array(self.data[1][1]), np.array(self.data[4][1]))  # nose
-        right_point = utils.m_V.center_point(np.array(self.data[447][1]), np.array(self.data[366][1]))  # temple.R
+        forward_point = m_V.center_point(np.array(self.data[1][1]), np.array(self.data[4][1]))  # nose
+        right_point = m_V.center_point(np.array(self.data[447][1]), np.array(self.data[366][1]))  # temple.R
         down_point = np.array(self.data[152][1])  # chin
 
         # direction vectors from imaginary origin
@@ -123,8 +122,8 @@ class BridgeFace(abs_assignment.DataAssignment):
         binormal = m_V.normalize(m_V.to_vector(origin, down_point))
 
         # generate matrix to decompose it and access quaternion rotation
-        matrix = utils.m_V.generate_matrix(tangent, normal, binormal)
-        loc, quart, scale = utils.m_V.decompose_matrix(matrix)
+        matrix = m_V.generate_matrix(tangent, normal, binormal)
+        loc, quart, scale = m_V.decompose_matrix(matrix)
         self.pivot.rot = quart
 
     def average_length_at_scale(self, p1, p2, scale):
@@ -140,6 +139,6 @@ class BridgeFace(abs_assignment.DataAssignment):
 
     def approximate_pivot_location(self):
         """ approximate origin based on canonical face mesh geometry """
-        right = utils.m_V.center_point(np.array(self.data[447][1]), np.array(self.data[366][1]))  # temple.R
-        left = utils.m_V.center_point(np.array(self.data[137][1]), np.array(self.data[227][1]))  # temple.L
-        self.pivot.loc = utils.m_V.center_point(right, left)  # approximate origin
+        right = m_V.center_point(np.array(self.data[447][1]), np.array(self.data[366][1]))  # temple.R
+        left = m_V.center_point(np.array(self.data[137][1]), np.array(self.data[227][1]))  # temple.L
+        self.pivot.loc = m_V.center_point(right, left)  # approximate origin
