@@ -9,7 +9,7 @@ dependencies = (Dependency(module="mediapipe", package=None, name=None),
                Dependency(module="opencv-python", package=None, name="cv2"))
 
 
-# global dependencies_installed
+global dependencies_installed
 dependencies_installed = False
 
 

@@ -28,30 +28,38 @@ bl_info = {
     "category": "Development"
 }
 
-import bpy
 import os
 import sys
 
+import bpy
+
 # getting access to the current dir - necessary to access blender file location
-blend_dir = os.path.dirname(bpy.data.filepath)
-if blend_dir not in sys.path:
-    sys.path.append(blend_dir)
+try:
+    blend_dir = os.path.dirname(bpy.data.filepath)
+    if blend_dir not in sys.path:
+        sys.path.append(blend_dir)
 
-# append sys path to dir
-main_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'module')
-sys.path.append(main_dir)
+    # append sys path to dir
+    main_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'module')
+    sys.path.append(main_dir)
+    print("MANUAL ADDON INITIALIZATION")
 
+except AttributeError:
+    print("RUNNING MANUAL DEBUGGING IN EDITOR")
 
 from utils import log
 from blender.interface import Registration
+import CONST
 import importlib
 
 importlib.reload(log)
 importlib.reload(Registration)
+importlib.reload(CONST)
 
 
 def register():
-    Registration.manual_test_registration()
+    pass
+    # Registration.manual_test_registration()
 
 
 def unregister():

@@ -31,26 +31,11 @@ bl_info = {
 import importlib
 import os
 import sys
-import bpy
 
-
-mode = "debugging"
-if mode == "debugging":
-    # getting access to the current dir - necessary to access blender file location
-    blend_dir = os.path.dirname(bpy.data.filepath)
-    if blend_dir not in sys.path:
-        sys.path.append(blend_dir)
-
-    # append sys path to dir
-    main_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'module')
-    sys.path.append(main_dir)
-
-elif mode == "release":
-    script_file = os.path.realpath(__file__)
-    directory = os.path.dirname(script_file)
-    if directory not in sys.path:
-       sys.path.append(directory)
-
+script_file = os.path.realpath(__file__)
+directory = os.path.dirname(script_file)
+if directory not in sys.path:
+    sys.path.append(directory)
 
 from blender.interface import Registration
 from utils import log
@@ -68,5 +53,5 @@ def unregister():
 
 
 if __name__ == '__main__':
-    # log.init_logger()
+    log.init_logger()
     register()

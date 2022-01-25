@@ -2,9 +2,7 @@ import importlib
 import subprocess
 
 import bpy
-from bpy.props import PointerProperty
 
-from blender.interface import Properties
 from blender.interface import install_dependencies, Registration
 
 importlib.reload(install_dependencies)
@@ -20,7 +18,6 @@ class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
 
     @classmethod
     def poll(self, context):
-        print("DEPENDCIES INSTALLED", install_dependencies.dependencies_installed)
         # Deactivate when dependencies have been installed
         return not install_dependencies.dependencies_installed
 
@@ -36,12 +33,7 @@ class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
             return {"CANCELLED"}
 
         install_dependencies.dependencies_installed = True
-
-        # Register the panels, operators, etc. since dependencies are installed
-        #for cls in Registration.classes:
-        #    bpy.utils.register_class(cls)
-
-        #bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=Properties.MyProperties)
+        Registration.register_user_interface()
 
         return {"FINISHED"}
 
