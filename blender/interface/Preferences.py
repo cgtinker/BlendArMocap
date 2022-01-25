@@ -10,8 +10,8 @@ from blender.interface import install_dependencies, Registration
 importlib.reload(install_dependencies)
 
 
-class EXAMPLE_OT_install_dependencies(bpy.types.Operator):
-    bl_idname = "example.install_dependencies"
+class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
+    bl_idname = "button.install_dependencies"
     bl_label = "Install dependencies"
     bl_description = ("Downloads and installs the required python packages for this add-on. "
                       "Internet connection is required. Blender may have to be started with "
@@ -20,8 +20,9 @@ class EXAMPLE_OT_install_dependencies(bpy.types.Operator):
 
     @classmethod
     def poll(self, context):
+        print("DEPENDCIES INSTALLED", install_dependencies.dependencies_installed)
         # Deactivate when dependencies have been installed
-        return not dependencies_installed
+        return not install_dependencies.dependencies_installed
 
     def execute(self, context):
         try:
@@ -34,21 +35,21 @@ class EXAMPLE_OT_install_dependencies(bpy.types.Operator):
             self.report({"ERROR"}, str(err))
             return {"CANCELLED"}
 
-        global dependencies_installed
-        dependencies_installed = True
+        install_dependencies.dependencies_installed = True
 
         # Register the panels, operators, etc. since dependencies are installed
-        for cls in Registration.classes:
-            bpy.utils.register_class(cls)
+        #for cls in Registration.classes:
+        #    bpy.utils.register_class(cls)
 
-        bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=Properties.MyProperties)
+        #bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=Properties.MyProperties)
 
         return {"FINISHED"}
 
 
 class EXAMPLE_preferences(bpy.types.AddonPreferences):
-    bl_idname = __name__
+    # TODO: fix package name
+    bl_idname = "mediapipetests"
 
     def draw(self, context):
         layout = self.layout
-        layout.operator(EXAMPLE_OT_install_dependencies.bl_idname, icon="CONSOLE")
+        layout.operator(PREFERENCES_OT_install_dependencies_button.bl_idname, icon="CONSOLE")

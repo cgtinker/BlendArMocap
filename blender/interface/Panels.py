@@ -75,7 +75,7 @@ class UI_PT_warning_panel(ExpandedPanel, Panel):
                  f"1. Open the preferences (Edit > Preferences > Add-ons).",
                  f"2. Search for the blendarmocap add-on.",
                  f"3. Open the details section of the add-on.",
-                 f"4. Click on the \"{Preferences.EXAMPLE_OT_install_dependencies.bl_label}\" button.",
+                 f"4. Click on the \"{Preferences.PREFERENCES_OT_install_dependencies_button.bl_label}\" button.",
                  f"   This will download and install the missing Python packages, if Blender has the required",
                  f"   permissions.",
                  f"If you're attempting to run the add-on from the text editor, you won't see the options described",

@@ -5,9 +5,11 @@ import importlib
 from collections import namedtuple
 
 Dependency = namedtuple("Dependency", ["module", "package", "name"])
-dependencies = (Dependency(module="opencv-python", package=None, name=None),
-                Dependency(module="mediapipe", package=None, name=None))
+dependencies = (Dependency(module="mediapipe", package=None, name=None),
+               Dependency(module="opencv-python", package=None, name="cv2"))
 
+
+# global dependencies_installed
 dependencies_installed = False
 
 
@@ -25,9 +27,10 @@ def import_module(module_name, global_name=None, reload=True):
 
     if global_name in globals():
         importlib.reload(globals()[global_name])
+
     else:
         # Attempt to import the module and assign it to globals dictionary.
-        globals()[global_name] = importlib.import_module(module_name)
+        globals()[global_name] = importlib.import_module(global_name)
 
 
 def install_pip():
