@@ -1,16 +1,18 @@
 import cv2
 import time
 
-
 class Webcam:
     def __init__(self,
                  camera_index: int = 0,
                  title: str = "ml tracking",
                  width: int = 1920,
                  height: int = 1080):
-
         self.capture = cv2.VideoCapture(camera_index)
+
         time.sleep(1.000)
+        if not self.capture.isOpened():
+            raise IOError("Cannot open webcam")
+
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, width)
         self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
         self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)

@@ -69,7 +69,7 @@ class DetectionModalOperator(bpy.types.Operator):
             rt_event = self.tracking_handler.image_detection()
             return rt_event
 
-        if event.type == 'Q':
+        if event.type in {'RIGHTMOUSE', 'ESC', 'Q'}:
             return self.cancel(context)
 
         return {'PASS_THROUGH'}
