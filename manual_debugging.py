@@ -49,12 +49,10 @@ except AttributeError:
 
 from utils import log
 from blender.interface import registration
-import CONST
 import importlib
 
 importlib.reload(log)
 importlib.reload(registration)
-importlib.reload(CONST)
 
 
 def register():

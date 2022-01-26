@@ -15,6 +15,19 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+bl_info = {
+    "name": "BlendArMocap",
+    "description": "Mediapipe implementation for Blender 2.9+.",
+    "author": "cgtinker",
+    "version": (1, 0, 0),
+    "blender": (2, 90, 0),
+    "location": "3D View > Tool",
+    "warning": "",
+    "wiki_url": "",
+    "tracker_url": "",
+    "category": "Development"
+}
+
 import importlib
 import os
 import sys
@@ -26,24 +39,9 @@ if directory not in sys.path:
 
 from blender.interface import registration
 from utils import log
-import CONST
 
 importlib.reload(registration)
 importlib.reload(log)
-importlib.reload(CONST)
-
-bl_info = {
-    "name": CONST.ADDON_NAME,
-    "description": "Mediapipe implementation for Blender 2.9+.",
-    "author": "cgtinker",
-    "version": (1, 0, 0),
-    "blender": (2, 90, 0),
-    "location": "3D View > Tool",
-    "warning": "",
-    "wiki_url": "",
-    "tracker_url": "",
-    "category": "Development"
-}
 
 
 def register():
