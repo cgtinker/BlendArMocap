@@ -5,7 +5,7 @@ Blender has to be started with **elevated permissions** in order to install the 
 Internet connection is required to install the required packages. To access the webcam feed blender has to be started with elevated permissions.<br><br>
 
 
-###Starting Blender with elevated permissions<br>
+### Starting Blender with elevated permissions<br>
 
 **Windows**<br>
 Right-click the blender application and choose: "Run as administrator"<br>
@@ -27,7 +27,7 @@ Once the add-on packages are installed and your terminal has the permission to a
 BlendArMocap uses _opencv_ to access the users webcam and _mediapipe_ by google to preform **hand, face** and **pose detection** in blender.
 The detected data can be used to drive a rigify rig.<br>
 
-###Transferable data to rigify rigs
+### Transferable data to rigify rigs
 **Hands**<br>
 - Hand rotation
 - Finger x-angles
@@ -44,7 +44,7 @@ The detected data can be used to drive a rigify rig.<br>
 - Shoulder rotation
 - Hip rotation
 
-###Detection
+### Detection<br>
 **Webcam Device Slot**<br>
 If you have multiple webcam device you may have to change the integer value until you find the device you want to use. <br>
 Defaults the Webcam Device Slot should be **0**.
@@ -81,7 +81,7 @@ _May not change the bone names._<br>
 Transfers detection results from the collection to the rigify rig.<br>
 Once the transfer is applied, new recording will be applied instantly to the rig.<br>
 
-##License
+## License
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
