@@ -4,16 +4,18 @@ import bpy
 from bpy.types import Panel
 
 from blender.interface import install_dependencies
-from blender.interface import Preferences
+from blender.interface import ui_preferences
+import CONST
 
+importlib.reload(CONST)
 importlib.reload(install_dependencies)
-importlib.reload(Preferences)
+importlib.reload(ui_preferences)
 
 
 class DefaultPanel:
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "BlendArMocap"
+    bl_category = CONST.ADDON_NAME
     bl_context = "objectmode"
     bl_options = {"DEFAULT_CLOSED"}
 
@@ -21,13 +23,13 @@ class DefaultPanel:
 class ExpandedPanel:
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "BlendArMocap"
+    bl_category = CONST.ADDON_NAME
     bl_context = "objectmode"
     bl_options = {"HEADER_LAYOUT_EXPAND"}
 
 
 class UI_PT_main_panel(ExpandedPanel, Panel):
-    bl_label = "BlendArMocap"
+    bl_label = CONST.ADDON_NAME
     bl_idname = "OBJECT_PT_main_panel"
 
     def draw(self, context):
@@ -61,7 +63,7 @@ class UI_PT_main_panel(ExpandedPanel, Panel):
 
 
 class UI_PT_warning_panel(ExpandedPanel, Panel):
-    bl_label = "BlendArMocap Warning"
+    bl_label = CONST.ADDON_NAME
     bl_idname = "OBJECT_PT_warning_panel"
 
     @classmethod
@@ -71,19 +73,13 @@ class UI_PT_warning_panel(ExpandedPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        lines = [f"Please install the missing dependencies for blendarmocap.",
+        lines = [f"Please install the missing dependencies for \"{CONST.ADDON_NAME}\".",
                  f"1. Open the preferences (Edit > Preferences > Add-ons).",
-                 f"2. Search for the blendarmocap add-on.",
+                 f"2. Search for the \"{CONST.ADDON_NAME}\" add-on.",
                  f"3. Open the details section of the add-on.",
-                 f"4. Click on the \"{Preferences.PREFERENCES_OT_install_dependencies_button.bl_label}\" button.",
+                 f"4. Click on the \"{ui_preferences.PREFERENCES_OT_install_dependencies_button.bl_label}\" button.",
                  f"   This will download and install the missing Python packages, if Blender has the required",
-                 f"   permissions.",
-                 f"If you're attempting to run the add-on from the text editor, you won't see the options described",
-                 f"above. Please install the add-on properly through the preferences.",
-                 f"1. Open the add-on preferences (Edit > Preferences > Add-ons).",
-                 f"2. Press the \"Install\" button.",
-                 f"3. Search for the add-on file.",
-                 f"4. Confirm the selection by pressing the \"Install Add-on\" button in the file browser."]
+                 f"   permissions."]
 
         for line in lines:
             layout.label(text=line)

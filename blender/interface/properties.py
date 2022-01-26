@@ -54,7 +54,7 @@ class MyProperties(PropertyGroup):
         name="Key Step",
         description="Select keyframe step rate.",
         min=1,
-        max=10,
+        max=12,
         default=4
     )
 

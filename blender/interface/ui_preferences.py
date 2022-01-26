@@ -3,9 +3,13 @@ import subprocess
 
 import bpy
 
-from blender.interface import install_dependencies, Registration
+from blender.interface import install_dependencies, registration
+import CONST
+
 
 importlib.reload(install_dependencies)
+importlib.reload(registration)
+importlib.reload(CONST)
 
 
 class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
@@ -18,11 +22,12 @@ class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
 
     @classmethod
     def poll(self, context):
-        # Deactivate when dependencies have been installed
+        # Deactivate install button when dependencies have been installed
         return not install_dependencies.dependencies_installed
 
     def execute(self, context):
         try:
+            # try to install dependencies
             install_dependencies.install_pip()
             for dependency in install_dependencies.dependencies:
                 install_dependencies.install_and_import_module(module_name=dependency.module,
@@ -32,15 +37,15 @@ class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
             self.report({"ERROR"}, str(err))
             return {"CANCELLED"}
 
+        # register user interface after installing dependencies
         install_dependencies.dependencies_installed = True
-        Registration.register_user_interface()
+        registration.register_user_interface()
 
         return {"FINISHED"}
 
 
 class EXAMPLE_preferences(bpy.types.AddonPreferences):
-    # TODO: fix package name
-    bl_idname = "mediapipetests"
+    bl_idname = CONST.PACKAGE
 
     def draw(self, context):
         layout = self.layout

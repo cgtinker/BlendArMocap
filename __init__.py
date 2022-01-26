@@ -15,8 +15,25 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import importlib
+import os
+import sys
+
+script_file = os.path.realpath(__file__)
+directory = os.path.dirname(script_file)
+if directory not in sys.path:
+    sys.path.append(directory)
+
+from blender.interface import registration
+from utils import log
+import CONST
+
+importlib.reload(registration)
+importlib.reload(log)
+importlib.reload(CONST)
+
 bl_info = {
-    "name": "BpyMediapipe",
+    "name": CONST.ADDON_NAME,
     "description": "Mediapipe implementation for Blender 2.9+.",
     "author": "cgtinker",
     "version": (1, 0, 0),
@@ -28,28 +45,13 @@ bl_info = {
     "category": "Development"
 }
 
-import importlib
-import os
-import sys
-
-script_file = os.path.realpath(__file__)
-directory = os.path.dirname(script_file)
-if directory not in sys.path:
-    sys.path.append(directory)
-
-from blender.interface import Registration
-from utils import log
-
-importlib.reload(Registration)
-importlib.reload(log)
-
 
 def register():
-    Registration.register()
+    registration.register()
 
 
 def unregister():
-    Registration.unregister()
+    registration.unregister()
 
 
 if __name__ == '__main__':
