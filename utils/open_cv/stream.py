@@ -1,4 +1,5 @@
 import cv2
+import time
 
 
 class Webcam:
@@ -9,6 +10,7 @@ class Webcam:
                  height: int = 1080):
 
         self.capture = cv2.VideoCapture(camera_index)
+        time.sleep(1.000)
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, width)
         self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
         self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)

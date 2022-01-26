@@ -15,7 +15,7 @@ importlib.reload(install_dependencies)
 
 
 def get_classes():
-    from management import detection_operator
+    from blender import detection_operator
     importlib.reload(detection_operator)
 
     classes = (
