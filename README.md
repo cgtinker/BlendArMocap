@@ -64,7 +64,7 @@ When pressing the _Start Detection_ button a window will open containing the web
 The detection results are recorded in Blender at runtime. You can modify the recording start point by changing the keyframe start in Blender.<br>
 May deactivate the rig when detecting if you have transfer animation results already.
 
-###Animation Transfer<br>
+### Animation Transfer<br>
 The detection results can be transferred to a generated _rigify_ rig.<br>
 The _new rigify face_ is **not** supported yet.<br>
 
