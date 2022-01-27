@@ -1,4 +1,7 @@
 # BlendArMocap <br>
+BlendArMocap is a Blender add-on to preform Hand, Face and Pose Detection in Blender using just a Webcam. 
+The detected data can be easily transferred to rifigy rigs. <br>
+
 
 ## Setup Instructions<br>
 Blender has to be started with **elevated permissions** in order to install the required packages _opencv_ and _mediapipe_ via the add-ons preferences. 
@@ -46,7 +49,7 @@ The detected data can be used to drive a rigify rig.<br>
 
 ### Detection<br>
 **Webcam Device Slot**<br>
-If you have multiple webcam device you may have to change the integer value until you find the device you want to use. <br>
+If you have multiple webcam devices you may have to change the integer value until you find the device you want to use. <br>
 Defaults the Webcam Device Slot should be **0**.
 
 **Key Step**<br>
@@ -60,9 +63,9 @@ Select the detection target:
 - Pose
 
 **Start Detection**<br>
-When pressing the _Start Detection_ button a window will open containing the webcam feed and detection results.
-The detection results are recorded in Blender at runtime. You can modify the recording start point by changing the keyframe start in Blender.<br>
-May deactivate the rig when detecting if you have transfer animation results already.
+When pressing the _Start Detection_ button a window will open which contains the webcam feed and detection results.
+The detection results are recorded in Blender at runtime. You can modify the recording starting point by changing the keyframe start in Blender.<br>
+May deactivate the rig while detecting if you have transferred animation results previously.
 
 ### Animation Transfer<br>
 The detection results can be transferred to a generated _rigify_ rig.<br>
@@ -70,16 +73,16 @@ The _new rigify face_ is **not** supported yet.<br>
 
 **Drivers**<br>
 Select the driver collection you want to transfer.<br>
-You can select the parent, or just the collection containing the drivers on your choice.<br>
-_May not change the collection names not the empty objects names._<br>
+You can select the parent, or just the collection containing the drivers of your choice.<br>
+_May not change the collection names nor the empty objects names._<br>
 
 **Rig**<br>
 Select the generated rigify rig you want to transfer to.<br>
-_May not change the bone names._<br>
+_May not change the bone names of the rigify rig._<br>
 
 **Start Transfer**<br>
-Transfers detection results from the collection to the rigify rig.<br>
-Once the transfer is applied, new recording will be applied instantly to the rig.<br>
+Transfers detection results from the selected collection to the rigify rig.<br>
+Once the transfer has taken place, new recordings will be applied instantly to the rig.<br>
 
 ## License
     This program is free software: you can redistribute it and/or modify
