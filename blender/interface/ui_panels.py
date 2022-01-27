@@ -30,7 +30,7 @@ class ExpandedPanel:
 
 class UI_PT_main_panel(ExpandedPanel, Panel):
     bl_label = CONST.ADDON_NAME
-    bl_idname = "OBJECT_PT_main_panel"
+    bl_idname = "OBJECT_PT_cgt_main_panel"
 
     def draw(self, context):
         user = context.scene.m_cgtinker_mediapipe
@@ -41,7 +41,8 @@ class UI_PT_main_panel(ExpandedPanel, Panel):
         box.row().prop(user, "webcam_input_device")
         box.row().prop(user, "key_frame_step")
         box.row().prop(user, "enum_detection_type")
-        box.row().operator("button.detection_button", text=user.button_start_detection)
+        # box.row().operator("button.detection_button", text=user.button_start_detection)
+        box.row().operator("wm.cgt_feature_detection_operator", text=user.button_start_detection)
 
         # transfer animation
         box = self.layout.box()
@@ -59,7 +60,7 @@ class UI_PT_main_panel(ExpandedPanel, Panel):
                                         search_property="armatures",
                                         text="Armature")
 
-        box.row(align=True).operator("button.transfer_animation", text=user.button_transfer_animation)
+        box.row(align=True).operator("button.cgt_transfer_animation_button", text=user.button_transfer_animation)
 
 
 class UI_PT_warning_panel(ExpandedPanel, Panel):

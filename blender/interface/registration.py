@@ -2,9 +2,10 @@ import importlib
 
 import bpy
 from bpy.props import PointerProperty
-from bpy.utils import register_class
+from bpy.utils import register_class, unregister_class
 
-from blender.interface import properties, ui_panels, ui_operators, install_dependencies, ui_preferences
+from blender.interface import properties, ui_panels, ui_operators, install_dependencies, ui_preferences, \
+    detection_operator
 from utils import log
 
 importlib.reload(ui_operators)
@@ -13,20 +14,18 @@ importlib.reload(properties)
 importlib.reload(ui_preferences)
 importlib.reload(install_dependencies)
 importlib.reload(log)
+importlib.reload(detection_operator)
 
 
 def get_classes():
-    from blender import detection_operator
-    importlib.reload(detection_operator)
-
     classes = (
         properties.MyProperties,
 
-        ui_operators.UI_detection_button,
+        # ui_operators.UI_detection_button,
         ui_operators.UI_transfer_anim_button,
-        detection_operator.DetectionModalOperator,
+        detection_operator.WM_modal_detection_operator,
 
-        ui_panels.UI_PT_main_panel,
+        ui_panels.UI_PT_main_panel
     )
     return classes
 
@@ -39,40 +38,52 @@ def get_preferences():
 
 
 def register():
+    log.logger.info('REGISTERING BLENDARMOCAP')
+
     for m_class in get_preferences():
         register_class(m_class)
 
     try:
+        log.logger.debug('TRY ACCESS INSTALLED DEPENDENCIES')
         for dependency in install_dependencies.dependencies:
+            log.logger.debug(str(dependency))
             install_dependencies.import_module(module_name=dependency.module, global_name=dependency.name)
         install_dependencies.dependencies_installed = True
+        # register interface
+        register_user_interface()
+
     except ModuleNotFoundError:
         # Don't register other panels, ui_operators etc.
+        log.logger.error('REGISTRATION FAILED: MODULE NOT FOUND')
         return
-
-    register_user_interface()
 
 
 def register_user_interface():
+    log.logger.info("REGISTER BLENDARMOCAP INTERFACE")
     for cls in get_classes():
-        register_class(cls)
-    bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=properties.MyProperties)
-
-
-def manual_test_registration():
-    for cls in get_classes():
+        log.logger.debug(str(cls))
         register_class(cls)
     bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=properties.MyProperties)
 
 
 def unregister():
-    from bpy.utils import unregister_class
-
+    log.logger.info("UNREGISTER BLENDARMOCAP")
     for cls in get_preferences():
+        log.logger.debug(str(cls))
         unregister_class(cls)
 
     if install_dependencies.dependencies_installed:
+        log.logger.info("UNREGISTER BLENDARMOCAP WITH ACTIVE DEPENDENCIES")
         classes = get_classes()
         for cls in reversed(classes):
+            log.logger.debug(str(cls))
             unregister_class(cls)
-        del bpy.types.Scene.m_cgtinker_mediapipe
+
+    del bpy.types.Scene.m_cgtinker_mediapipe
+
+
+def manual_test_registration():
+    for cls in get_classes():
+        log.logger.debug(str(cls))
+        register_class(cls)
+    bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=properties.MyProperties)

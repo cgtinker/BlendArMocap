@@ -1,30 +1,34 @@
 import importlib
+
 import bpy
 
 from ml_detection import detect_hands, detect_pose, detect_face
 from utils import log
-from utils.open_cv import stream
 
 importlib.reload(detect_hands)
 importlib.reload(detect_pose)
 importlib.reload(detect_face)
 
 
-class DetectionModalOperator(bpy.types.Operator):
-    """Operator which runs its self from a timer"""
-    bl_idname = "wm.feature_detection_modal"
-    bl_label = "Detection Modal"
+class WM_modal_detection_operator(bpy.types.Operator):
+    bl_label = "Feature Detection Operator"
+    bl_idname = "wm.cgt_feature_detection_operator"
+    bl_description = "Detect solution in Stream."
 
     _timer = None
     tracking_handler = None
     user = None
 
-    handlers = {
-        "POSE": detect_pose.PoseDetector,
-        "HAND": detect_hands.HandDetector,
-        "FACE": detect_face.FaceDetector,
-        "HOLISTIC": ""
-    }
+    @staticmethod
+    def set_detection_type(detection_type):
+        handlers = {
+            "POSE": detect_pose.PoseDetector,
+            "HAND": detect_hands.HandDetector,
+            "FACE": detect_face.FaceDetector,
+            "HOLISTIC": ""
+        }
+
+        return handlers[detection_type]
 
     def execute(self, context):
         log.logger.info("RUNNING MP AS TIMER DETECTION MODAL")
@@ -34,7 +38,8 @@ class DetectionModalOperator(bpy.types.Operator):
         try:
             self.user = context.scene.m_cgtinker_mediapipe
             detection_type = self.user.enum_detection_type
-        except Exception:
+        except AttributeError:
+            log.logger.error("CGT USER NOT FOUND")
             self.user = None
 
         # initialize the detection
@@ -47,14 +52,19 @@ class DetectionModalOperator(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
     def init_detector(self, detection_type='HAND'):
-        self.tracking_handler = self.handlers[detection_type]()
+        from utils.open_cv import stream
+        importlib.reload(stream)
+
+        log.logger.info(f"INITIALIZING {detection_type} DETECTION")
+
+        self.tracking_handler = self.set_detection_type(detection_type)()
 
         # default camera index if add-on is not registered
         camera_index = 0
         if self.user is not None:
             camera_index = self.user.webcam_input_device
 
-        # init tracking handler vars
+        # init tracking handler targets
         self.tracking_handler.stream = stream.Webcam(camera_index=camera_index)
         self.tracking_handler.initialize_model()
         self.tracking_handler.init_bpy_bridge()
@@ -68,6 +78,7 @@ class DetectionModalOperator(bpy.types.Operator):
         if event.type == "TIMER":
             rt_event = self.tracking_handler.image_detection()
             return rt_event
+            pass
 
         if event.type in {'RIGHTMOUSE', 'ESC', 'Q'}:
             return self.cancel(context)
@@ -79,5 +90,5 @@ class DetectionModalOperator(bpy.types.Operator):
 
         wm = context.window_manager
         wm.event_timer_remove(self._timer)
-        log.logger.info("CANCELLED")
+        log.logger.info("CANCELLED DETECTION")
         return {'CANCELLED'}

@@ -13,7 +13,7 @@ importlib.reload(CONST)
 
 
 class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
-    bl_idname = "button.install_dependencies"
+    bl_idname = "button.cgt_install_dependencies"
     bl_label = "Install dependencies"
     bl_description = ("Downloads and installs the required python packages for this add-on. "
                       "Internet connection is required. Blender may have to be started with "

@@ -18,9 +18,6 @@ class RigifyFace(BpyRigging):
     def __init__(self, armature, driver_objects: list):
         self.pose_bones = armature.pose.bones
 
-        eye_offsets = self.get_bone_location_offsets(self.eye_bone_names, self.eye_driver_names)
-        mouth_offsets = self.get_bone_location_offsets(self.mouth_bone_names, self.mouth_driver_names)
-
         eye_distances = self.get_bone_distances(self.eye_bone_names)
         mouth_distances = self.get_bone_distances(self.mouth_bone_names)
 
