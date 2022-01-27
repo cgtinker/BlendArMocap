@@ -32,7 +32,6 @@ class HandDetector(abstract_detector.RealtimeDetector):
         self.solution = mp.solutions.hands
 
     def init_bpy_bridge(self):
-        # TODO: SWITCH
         target = hand_drivers.BridgeHand()
         self.observer = events.BpyUpdateReceiver(target)
         self.listener = events.UpdateListener()

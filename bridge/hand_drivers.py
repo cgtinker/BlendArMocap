@@ -164,16 +164,12 @@ class BridgeHand(abs_assignment.DataAssignment):
         ))
 
         # palm dir
-        # binormal = m_V.normalize(m_V.to_vector(
-        #     hand[5][1],
-        #     hand[17][1]
-        # ))
         binormal = m_V.normalize(m_V.to_vector(
             palm_center,
             hand[17][1]
         ))
+
         # rotation from matrix
-        #matrix = m_V.generate_matrix(normal, tangent, binormal)
         matrix = m_V.generate_matrix(normal, tangent, binormal)
         loc, quart, sca = m_V.decompose_matrix(matrix)
 

@@ -3,13 +3,15 @@ import importlib
 import bpy
 from bpy.types import Panel
 
+import CONST
 from blender.interface import install_dependencies
 from blender.interface import ui_preferences
-import CONST
+from management import input_manager
 
 importlib.reload(CONST)
 importlib.reload(install_dependencies)
 importlib.reload(ui_preferences)
+importlib.reload(input_manager)
 
 
 class DefaultPanel:
@@ -41,7 +43,6 @@ class UI_PT_main_panel(ExpandedPanel, Panel):
         box.row().prop(user, "webcam_input_device")
         box.row().prop(user, "key_frame_step")
         box.row().prop(user, "enum_detection_type")
-        # box.row().operator("button.detection_button", text=user.button_start_detection)
         box.row().operator("wm.cgt_feature_detection_operator", text=user.button_start_detection)
 
         # transfer animation
@@ -84,3 +85,13 @@ class UI_PT_warning_panel(ExpandedPanel, Panel):
 
         for line in lines:
             layout.label(text=line)
+
+
+class UI_transfer_anim_button(bpy.types.Operator):
+    bl_label = "Transfer Animation"
+    bl_idname = "button.cgt_transfer_animation_button"
+    bl_description = "Transfer driver animation to rig"
+
+    def execute(self, context):
+        input_manager.transfer_animation()
+        return {'FINISHED'}

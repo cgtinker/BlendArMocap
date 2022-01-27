@@ -4,11 +4,11 @@ import bpy
 from bpy.props import PointerProperty
 from bpy.utils import register_class, unregister_class
 
-from blender.interface import properties, ui_panels, ui_operators, install_dependencies, ui_preferences, \
+import blender.interface.ui_panels
+from blender.interface import properties, ui_panels, install_dependencies, ui_preferences, \
     detection_operator
 from utils import log
 
-importlib.reload(ui_operators)
 importlib.reload(ui_panels)
 importlib.reload(properties)
 importlib.reload(ui_preferences)
@@ -18,11 +18,11 @@ importlib.reload(detection_operator)
 
 
 def get_classes():
+    # getting classes to avoid loading possibly unavailable packages
     classes = (
         properties.MyProperties,
 
-        # ui_operators.UI_detection_button,
-        ui_operators.UI_transfer_anim_button,
+        blender.interface.ui_panels.UI_transfer_anim_button,
         detection_operator.WM_modal_detection_operator,
 
         ui_panels.UI_PT_main_panel

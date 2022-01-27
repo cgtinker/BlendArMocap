@@ -9,10 +9,6 @@ importlib.reload(rigify_pose)
 importlib.reload(rigify_face)
 
 
-def start_detection():
-    bpy.ops.wm.feature_detection_operator('EXEC_DEFAULT')
-
-
 def transfer_animation():
     col_mapping = {
         "cgt_hands": rigify_hands.RigifyHands,

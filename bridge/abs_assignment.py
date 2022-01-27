@@ -1,8 +1,15 @@
+import importlib
 from abc import ABC, abstractmethod
-from utils import m_V
-from mathutils import Vector, Euler
 from math import pi
+
+from mathutils import Vector, Euler
+
 from blender.utils import objects
+from utils import m_V, log
+
+importlib.reload(objects)
+importlib.reload(m_V)
+importlib.reload(log)
 
 
 class CustomData:
@@ -36,6 +43,7 @@ class DataAssignment(ABC):
     def update(self):
         """ updates every mp solution received. """
         pass
+
     # endregion
 
     # region init helper
@@ -59,6 +67,7 @@ class DataAssignment(ABC):
         driver.idx = len(ref_in_array) - 1
         objects.add_obj_to_collection(col_name, driver.obj, self.driver_col)
         return driver.obj
+
     # endregion
 
     # region bpy object oriented
@@ -71,7 +80,7 @@ class DataAssignment(ABC):
                 target[p[0]].keyframe_insert(data_path="location", frame=frame)
 
         except IndexError:
-            print("missing translation index at", frame)
+            log.logger.warning(f"missing translation index at {frame}")
             pass
 
     @staticmethod
@@ -81,7 +90,7 @@ class DataAssignment(ABC):
                 target[p[0]].scale = Vector((p[1]))
                 target[p[0]].keyframe_insert(data_path="scale", frame=frame)
         except IndexError:
-            print("missing scale index at", data, frame)
+            log.logger.warning(f"missing scale index at {data}, {frame}")
             pass
 
     @staticmethod
@@ -92,7 +101,7 @@ class DataAssignment(ABC):
                 target[p[0]].rotation_quaternion = p[1]
                 target[p[0]].keyframe_insert(data_path="rotation_quaternion", frame=frame)
         except IndexError:
-            print("missing quat_euler_rotate index", data, frame)
+            log.logger.warning(f"missing quat_euler_rotate index {data}, {frame}")
             pass
 
     def euler_rotate(self, target, data, frame, idx_offset=0):
@@ -101,19 +110,19 @@ class DataAssignment(ABC):
             for p in data:
                 target[p[0]].rotation_euler = p[1]
                 target[p[0]].keyframe_insert(data_path="rotation_euler", frame=frame)
-                self.prev_rotation[p[0]+idx_offset] = p[1]
+                self.prev_rotation[p[0] + idx_offset] = p[1]
         except IndexError:
-            print("missing euler_rotate index at", data, frame)
+            log.logger.warning(f"missing euler_rotate index at {data}, {frame}")
             pass
 
     def quart_to_euler_combat(self, quart, idx, idx_offset=0):
         """ Converts quart to euler rotation while comparing with previous rotation. """
         if len(self.prev_rotation) > 0:
             try:
-                combat = self.prev_rotation[idx+idx_offset]
+                combat = self.prev_rotation[idx + idx_offset]
                 return m_V.to_euler(quart, combat, 'XYZ')
             except KeyError:
-                print("invalid id to euler combat", idx, self.frame)
+                log.logger.warning(f"invalid id to euler combat {idx}, {self.frame}")
                 return m_V.to_euler(quart)
         else:
             return m_V.to_euler(quart)
@@ -140,8 +149,8 @@ class DataAssignment(ABC):
             )
         except KeyError:
             m_rot = m_V.to_euler(quart_rotation)
-            print(m_rot)
+            log.logger.warning(f"invalid id to euler combat {m_rot}, {self.frame}")
+
         return m_rot
 
     # endregion
-
