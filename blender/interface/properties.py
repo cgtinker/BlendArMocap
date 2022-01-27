@@ -1,3 +1,4 @@
+# Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import bpy
 from bpy.props import StringProperty, EnumProperty, IntProperty
 from bpy.types import PropertyGroup

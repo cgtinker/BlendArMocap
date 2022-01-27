@@ -1,3 +1,5 @@
+# Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
+
 import math
 
 import numpy as np
@@ -75,6 +77,7 @@ def null_axis(vectors, *args):
         res.append(tmp)
 
     return res
+
 
 # endregion
 # endregion
@@ -222,10 +225,10 @@ def main():
 def np_genenerate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
     """ generate a numpy matrix at loc [0, 0, 0]. """
     matrix = np.array([
-        [tangent[0],    tangent[1],     tangent[2],     0],
-        [normal[0],     normal[1],      normal[2],      0],
-        [binormal[0],   binormal[1],    binormal[2],    0],
-        [0,             0,              0,              1]])
+        [tangent[0], tangent[1], tangent[2], 0],
+        [normal[0], normal[1], normal[2], 0],
+        [binormal[0], binormal[1], binormal[2], 0],
+        [0, 0, 0, 1]])
     return matrix
 
 

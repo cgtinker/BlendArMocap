@@ -1,3 +1,4 @@
+# Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 from blender.rig import abs_rigging
 from blender.utils import objects
 import importlib

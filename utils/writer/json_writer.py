@@ -1,3 +1,4 @@
+# Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import json
 import sys
 

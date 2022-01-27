@@ -1,3 +1,4 @@
+# Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import importlib
 from abc import ABC
 from dataclasses import dataclass

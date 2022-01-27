@@ -1,3 +1,4 @@
+# Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import mediapipe as mp
 from bridge import pose_drivers
 from bridge import events

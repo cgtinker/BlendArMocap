@@ -1,3 +1,4 @@
+# Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import bpy
 from blender.utils import objects
 from blender.rig import rigify_hands, rigify_face

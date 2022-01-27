@@ -1,4 +1,5 @@
-# thanks @robertguetzkow
+# Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
+# thanks @robertguetzkow for baseline
 import os
 import sys
 import subprocess

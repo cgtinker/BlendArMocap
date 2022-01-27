@@ -23,8 +23,8 @@ bl_info = {
     "blender": (2, 90, 0),
     "location": "3D View > Tool",
     "warning": "",
-    "wiki_url": "",
-    "tracker_url": "",
+    "wiki_url": "https://github.com/cgtinker/BlendArMocap",
+    "tracker_url": "https://github.com/cgtinker/BlendArMocap/issues",
     "category": "Development"
 }
 

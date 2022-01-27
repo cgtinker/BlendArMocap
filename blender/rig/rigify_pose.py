@@ -1,3 +1,4 @@
+# Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 from blender.rig import abs_rigging
 from blender.rig.abs_rigging import DriverType, MappingRelation
 from blender.utils import objects

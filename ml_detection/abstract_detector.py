@@ -1,3 +1,4 @@
+# Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 from abc import ABC, abstractmethod
 from mediapipe.framework.formats import classification_pb2
 from mediapipe import solutions
