@@ -1,10 +1,11 @@
 import importlib
 from abc import ABC
 from dataclasses import dataclass
+from enum import Enum
+
 from blender.rig.utils import constraints
 from blender.utils import objects
 from utils import m_V
-from enum import Enum
 
 importlib.reload(m_V)
 importlib.reload(constraints)
@@ -68,8 +69,8 @@ class BpyRigging(ABC):
         except TypeError:
             # call custom method with bone
             self.constraint_mapping[constraint](bone, target)
-    # endregion
 
+    # endregion
 
     # region driver
     def add_driver_batch(self, driver_target, driver_source,
@@ -123,6 +124,7 @@ class BpyRigging(ABC):
             value = None
 
         return value
+
     # endregion
 
     @staticmethod

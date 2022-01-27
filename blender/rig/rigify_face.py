@@ -54,7 +54,7 @@ class RigifyFace(BpyRigging):
             # region constraints
             "right_eye_driver_T": [DriverType.constraint, ["lid.T.R.002", "COPY_LOCATION_OFFSET"]],
             "right_eye_driver_B": [DriverType.constraint, ["lid.B.R.002", "COPY_LOCATION_OFFSET"]],
-            
+
             "left_eye_driver_T": [DriverType.constraint, ["lid.T.L.002", "COPY_LOCATION_OFFSET"]],
             "left_eye_driver_B": [DriverType.constraint, ["lid.B.L.002", "COPY_LOCATION_OFFSET"]],
 
@@ -63,7 +63,10 @@ class RigifyFace(BpyRigging):
 
             "mouth_driver_L": [DriverType.constraint, ["lips.R", "COPY_LOCATION_OFFSET"]],
             "mouth_driver_R": [DriverType.constraint, ["lips.L", "COPY_LOCATION_OFFSET"]],
+            
             "face_rotation": [DriverType.constraint, ["head", "COPY_ROTATION"]],
+            "chin_rotation": [DriverType.constraint, ["jaw_master", "COPY_ROTATION"]],
+
             # endregion
         }
 
@@ -103,10 +106,6 @@ class RigifyFace(BpyRigging):
             else:
                 log.logger.debug(f"Mapping failed for {reference_name} in rigify_face")
 
-        print("MAPPING RELATIONS")
-        for r in self.relation_mapping_lst:
-            print(r)
-
     def apply_drivers(self):
         pose_bone_names = [bone.name for bone in self.pose_bones]
 
@@ -133,7 +132,7 @@ class RigifyFace(BpyRigging):
             "",
             f"-{avg_distance}*.2*",
         ]
-        attribute = self.get_driver_attribute(target, self.get_target_axis("Z"), functions)
+        attribute = self.get_loc_sca_driver_attribute(target, self.get_target_axis("Z"), functions)
         return attribute
 
     def eye_top_down_dir_driver_attr(self, target, avg_distance):
@@ -142,37 +141,43 @@ class RigifyFace(BpyRigging):
             "",
             f"-{avg_distance}*.8+{avg_distance}*",
         ]
-        attribute = self.get_driver_attribute(target, self.get_target_axis("Z"), functions)
+        attribute = self.get_loc_sca_driver_attribute(target, self.get_target_axis("Z"), functions)
         return attribute
     # endregion
 
     # region mouth
+    def get_mouth_driver_attr(self, driver_attr, target, avg_distance):
+        mouth_attr_dict = {
+            "up": [".3", "Z"],
+            "down": ["-.3", "Z"],
+            "left": [".05", "X"],
+            "right": ["-.05", "X"]
+        }
+        factor, axis = mouth_attr_dict[driver_attr]
+        return self.mouth_scale_driver_attr(target, avg_distance, factor, axis)
+
     def mouth_up_dir_driver_attr(self, target, avg_distance):
-        attribute = self.mouth_scale_driver_attr(target, avg_distance, ".5", "Z")
-        return attribute
+        return self.get_mouth_driver_attr("up", target, avg_distance)
 
     def mouth_down_dir_driver_attr(self, target, avg_distance):
-        attribute = self.mouth_scale_driver_attr(target, avg_distance, "-.5", "Z")
-        return attribute
+        return self.get_mouth_driver_attr("down", target, avg_distance)
 
     def mouth_left_dir_driver_attr(self, target, avg_distance):
-        attribute = self.mouth_scale_driver_attr(target, avg_distance, ".05", "X")
-        return attribute
+        return self.get_mouth_driver_attr("left", target, avg_distance)
 
     def mouth_right_dir_driver_attr(self, target, avg_distance):
-        attribute = self.mouth_scale_driver_attr(target, avg_distance, "-.05", "X")
-        return attribute
+        return self.get_mouth_driver_attr("right", target, avg_distance)
 
-    def mouth_scale_driver_attr(self, target, avg_distance, operator, axis):
+    def mouth_scale_driver_attr(self, target, avg_distance, factor, axis):
         functions = []
         for tar_axis in ["X", "Y", "Z"]:
             if tar_axis == axis:
-                func = f"{avg_distance}*{operator}*"
+                func = f"{avg_distance}*{factor}*"
             else:
                 func = ""
             functions.append(func)
 
-        attribute = self.get_driver_attribute(target, self.get_target_axis(axis), functions)
+        attribute = self.get_loc_sca_driver_attribute(target, self.get_target_axis(axis), functions)
         return attribute
 
     # endregion
@@ -189,7 +194,7 @@ class RigifyFace(BpyRigging):
         return target_axis
 
     @staticmethod
-    def get_driver_attribute(target, target_axis, functions):
+    def get_loc_sca_driver_attribute(target, target_axis, functions):
         attribute = [
             target, "location", "scale",
             target_axis,

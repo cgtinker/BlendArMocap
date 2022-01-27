@@ -43,15 +43,15 @@ from utils import log
 importlib.reload(registration)
 importlib.reload(log)
 
-log.init_logger()
-
 
 def register():
+    log.init_logger()
     registration.register()
 
 
 def unregister():
     registration.unregister()
+    log.remove_logger()
 
 
 if __name__ == '__main__':

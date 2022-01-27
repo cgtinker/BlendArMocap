@@ -2,7 +2,7 @@ import logging
 
 
 logger = logging.getLogger("app")
-
+ch = None
 
 class CustomFormatter(logging.Formatter):
     '''Logging Formatter to add colors and count warning / errors'''
@@ -26,6 +26,10 @@ class CustomFormatter(logging.Formatter):
         log_fmt = self.FORMATS.get(record.levelno)
         _formatter = logging.Formatter(log_fmt)
         return _formatter.format(record)
+
+
+def remove_logger():
+    logger.removeHandler(ch)
 
 
 def init_logger(mode="debug") -> logging.Logger:
@@ -53,6 +57,7 @@ def init_logger(mode="debug") -> logging.Logger:
         logger.addHandler(fh)
 
     # create console handler with a higher log level
+    global ch
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG)
     ch.setFormatter(CustomFormatter())
