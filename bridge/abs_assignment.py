@@ -1,4 +1,3 @@
-# Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 from abc import ABC, abstractmethod
 from utils import m_V
 from mathutils import Vector, Euler

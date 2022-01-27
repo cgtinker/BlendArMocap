@@ -1,4 +1,3 @@
-# Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import importlib
 
 import bpy
@@ -6,13 +5,14 @@ from bpy.props import PointerProperty
 from bpy.utils import register_class
 
 from blender.interface import properties, ui_panels, ui_operators, install_dependencies, ui_preferences
-
+from utils import log
 
 importlib.reload(ui_operators)
 importlib.reload(ui_panels)
 importlib.reload(properties)
 importlib.reload(ui_preferences)
 importlib.reload(install_dependencies)
+importlib.reload(log)
 
 
 def get_classes():
@@ -55,14 +55,12 @@ def register():
 
 def register_user_interface():
     for cls in get_classes():
-        print(str(cls))
         register_class(cls)
     bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=properties.MyProperties)
 
 
 def manual_test_registration():
     for cls in get_classes():
-        print(str(cls))
         register_class(cls)
     bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=properties.MyProperties)
 
@@ -72,11 +70,9 @@ def unregister():
 
     for cls in get_preferences():
         unregister_class(cls)
-        print(str(cls))
 
     if install_dependencies.dependencies_installed:
         classes = get_classes()
         for cls in reversed(classes):
-            print(str(cls))
             unregister_class(cls)
         del bpy.types.Scene.m_cgtinker_mediapipe

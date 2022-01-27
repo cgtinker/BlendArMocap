@@ -1,5 +1,3 @@
-# Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
-
 import math
 
 import numpy as np

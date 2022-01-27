@@ -15,16 +15,17 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+
 bl_info = {
-    "name": "ml_rt_detector",
-    "description": "desc",
+    "name": "BlendArMocap",
+    "description": "Mediapipe implementation for Blender 2.9+.",
     "author": "cgtinker",
     "version": (1, 0, 0),
     "blender": (2, 90, 0),
     "location": "3D View > Tool",
     "warning": "",
-    "wiki_url": "",
-    "tracker_url": "",
+    "wiki_url": "https://github.com/cgtinker/BlendArMocap",
+    "tracker_url": "https://github.com/cgtinker/BlendArMocap/issues",
     "category": "Development"
 }
 

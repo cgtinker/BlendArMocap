@@ -1,4 +1,3 @@
-# Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import mediapipe as mp
 from bridge import events, face_drivers
 from ml_detection import abstract_detector

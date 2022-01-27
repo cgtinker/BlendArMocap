@@ -1,4 +1,3 @@
-# Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 def copy_rotation(constraint, target, *args):
     constraint.target = target

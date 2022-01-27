@@ -1,4 +1,3 @@
-# Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 from __future__ import annotations
 
 from bridge import observer_pattern as op
