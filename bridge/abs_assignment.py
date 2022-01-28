@@ -6,7 +6,9 @@ from mathutils import Vector, Euler
 
 from blender.utils import objects
 from utils import m_V, log
+import CONST
 
+importlib.reload(CONST)
 importlib.reload(objects)
 importlib.reload(m_V)
 importlib.reload(log)
@@ -26,7 +28,7 @@ class DataAssignment(ABC):
     references = None
     prev_rotation = {}
     memory_stack = {}
-    driver_col = "cgt_drivers"
+    driver_col = CONST.COLLECTIONS.drivers.value
 
     # region abstract methods
     @abstractmethod
@@ -52,15 +54,19 @@ class DataAssignment(ABC):
                             ref_in_array: [],
                             size: float = 0.005,
                             name: str = "",
-                            col_name: str = "cgt_drivers",
+                            col_name: str = CONST.COLLECTIONS.drivers.value,
                             style: str = "CUBE",
-                            position: [] = [0.0, 0.0, 0.0],
+                            position: [] = None,
                             is_parent: bool = False,
-                            children: [] = []):
+                            children: [] = None):
 
         driver.obj = objects.add_empty(size, name, style)
+        if position is None:
+            position = [0, 0, 0]
         driver.loc = position
         if is_parent:
+            if children is None:
+                children = []
             objects.set_parents(driver.obj, children)
 
         ref_in_array.append(driver.obj)

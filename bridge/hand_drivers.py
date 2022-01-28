@@ -16,27 +16,27 @@ importlib.reload(CONST)
 
 class BridgeHand(abs_assignment.DataAssignment):
     references = {
-        0: CONST.Hand.wrist.value,
-        1: CONST.Hand.thumb_cmc.value,
-        2: CONST.Hand.thumb_mcp.value,
-        3: CONST.Hand.thumb_ip.value,
-        4: CONST.Hand.thumb_tip.value,
-        5: CONST.Hand.index_finger_mcp.value,
-        6: CONST.Hand.index_finger_pip.value,
-        7: CONST.Hand.index_finger_dip.value,
-        8: CONST.Hand.index_finger_tip.value,
-        9: CONST.Hand.middle_finger_mcp.value,
-        10: CONST.Hand.middle_finger_pip.value,
-        11: CONST.Hand.middle_finger_dip.value,
-        12: CONST.Hand.middle_finger_tip.value,
-        13: CONST.Hand.ring_finger_mcp.value,
-        14: CONST.Hand.ring_finger_pip.value,
-        15: CONST.Hand.ring_finger_dip.value,
-        16: CONST.Hand.ring_finger_tip.value,
-        17: CONST.Hand.pinky_mcp.value,
-        18: CONST.Hand.pinky_pip.value,
-        19: CONST.Hand.pinky_dip.value,
-        20: CONST.Hand.pinky_tip.value,
+        0: CONST.HAND.wrist.value,
+        1: CONST.HAND.thumb_cmc.value,
+        2: CONST.HAND.thumb_mcp.value,
+        3: CONST.HAND.thumb_ip.value,
+        4: CONST.HAND.thumb_tip.value,
+        5: CONST.HAND.index_finger_mcp.value,
+        6: CONST.HAND.index_finger_pip.value,
+        7: CONST.HAND.index_finger_dip.value,
+        8: CONST.HAND.index_finger_tip.value,
+        9: CONST.HAND.middle_finger_mcp.value,
+        10: CONST.HAND.middle_finger_pip.value,
+        11: CONST.HAND.middle_finger_dip.value,
+        12: CONST.HAND.middle_finger_tip.value,
+        13: CONST.HAND.ring_finger_mcp.value,
+        14: CONST.HAND.ring_finger_pip.value,
+        15: CONST.HAND.ring_finger_dip.value,
+        16: CONST.HAND.ring_finger_tip.value,
+        17: CONST.HAND.pinky_mcp.value,
+        18: CONST.HAND.pinky_pip.value,
+        19: CONST.HAND.pinky_dip.value,
+        20: CONST.HAND.pinky_tip.value,
     }
     fingers = [
         [5, 9],  # index finger
@@ -55,7 +55,7 @@ class BridgeHand(abs_assignment.DataAssignment):
     left_angles, right_angles = None, None
 
     frame = 0
-    col_name = CONST.Hand.collection.value
+    col_name = CONST.COLLECTIONS.hands.value
 
     def init_references(self):
         """ generate empty objects for mapping. """

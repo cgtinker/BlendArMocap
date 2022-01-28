@@ -17,33 +17,28 @@ class BridgeFace(abs_assignment.DataAssignment):
     def __init__(self):
         self.face = []
 
-        # Drivers
-        self.pivot = abs_assignment.CustomData()
         self._mouth_driver = abs_assignment.CustomData()
-        # eye
-        self.eye_driver_L = abs_assignment.CustomData()
-        self.eye_driver_R = abs_assignment.CustomData()
-        # eyebrows
-        self.eyebrow_L = abs_assignment.CustomData()
-        self.eyebrow_R = abs_assignment.CustomData()
-        # head / chin
-        self.chin_driver = abs_assignment.CustomData()
+        self.pivot, self.chin_driver = abs_assignment.CustomData(), abs_assignment.CustomData()
+        self.eye_driver_L, self.eye_driver_R = abs_assignment.CustomData(), abs_assignment.CustomData()
+        self.eyebrow_L, self.eyebrow_R = abs_assignment.CustomData(), abs_assignment.CustomData()
+
         self.rotation_data, self.driver_scale_data = None, None
 
-        self.col_name = CONST.Face.collection.value
+        self.col_name = CONST.COLLECTIONS.face.value
 
     def init_references(self):
         references = {}
         for i in range(468):
-            references[f'{i}'] = f"{CONST.Face.face.value}{i}"
+            references[f'{i}'] = f"{CONST.FACE.face.value}{i}"
         self.face = objects.add_empties(references, 0.005)
         objects.add_list_to_collection(self.col_name, self.face, self.driver_col)
-        mapping_driver = [CONST.Face.right_eye_t.value, CONST.Face.right_eye_b.value,
-                          CONST.Face.left_eye_t.value, CONST.Face.left_eye_b.value,
-                          CONST.Face.mouth_t.value, CONST.Face.mouth_b.value,
-                          CONST.Face.mouth_r.value, CONST.Face.mouth_l.value,
-                          CONST.Face.eyebrow_in_l.value, CONST.Face.eyebrow_mid_l.value, CONST.Face.eyebrow_out_l.value,
-                          CONST.Face.eyebrow_in_r.value, CONST.Face.eyebrow_mid_r.value, CONST.Face.eyebrow_out_r.value
+
+        mapping_driver = [CONST.FACE.right_eye_t.value, CONST.FACE.right_eye_b.value,
+                          CONST.FACE.left_eye_t.value, CONST.FACE.left_eye_b.value,
+                          CONST.FACE.mouth_t.value, CONST.FACE.mouth_b.value,
+                          CONST.FACE.mouth_r.value, CONST.FACE.mouth_l.value,
+                          CONST.FACE.eyebrow_in_l.value, CONST.FACE.eyebrow_mid_l.value, CONST.FACE.eyebrow_out_l.value,
+                          CONST.FACE.eyebrow_in_r.value, CONST.FACE.eyebrow_mid_r.value, CONST.FACE.eyebrow_out_r.value
                           ]
 
         [self.init_bpy_driver_obj(
@@ -51,13 +46,13 @@ class BridgeFace(abs_assignment.DataAssignment):
             for name in mapping_driver]
 
         drivers_array = [
-            [self.pivot, 0.025, CONST.Face.head.value, "SPHERE", [0, 0, 0]],
-            [self._mouth_driver, 0.025, CONST.Face.mouth.value, "CIRCLE", [0, -.1, -.1]],
-            [self.eye_driver_L, .01, CONST.Face.left_eye.value, "CIRCLE", [-.05, -.05, .075]],
-            [self.eye_driver_R, .01, CONST.Face.right_eye.value, "CIRCLE", [.05, .05, .075]],
-            [self.chin_driver, .01, CONST.Face.chin.value, "SPHERE", [.0, -.05, -.25]],
-            [self.eyebrow_L, .01, CONST.Face.left_eyebrow.value, "CUBE", [.05, 0, .1]],
-            [self.eyebrow_R, .01, CONST.Face.right_eyebrow.value, "CUBE", [-.05, 0, .1]]
+            [self.pivot, 0.025, CONST.FACE.head.value, "SPHERE", [0, 0, 0]],
+            [self._mouth_driver, 0.025, CONST.FACE.mouth.value, "CIRCLE", [0, -.1, -.1]],
+            [self.eye_driver_L, .01, CONST.FACE.left_eye.value, "CIRCLE", [-.05, -.05, .075]],
+            [self.eye_driver_R, .01, CONST.FACE.right_eye.value, "CIRCLE", [.05, .05, .075]],
+            [self.chin_driver, .01, CONST.FACE.chin.value, "SPHERE", [.0, -.05, -.25]],
+            [self.eyebrow_L, .01, CONST.FACE.left_eyebrow.value, "CUBE", [.05, 0, .1]],
+            [self.eyebrow_R, .01, CONST.FACE.right_eyebrow.value, "CUBE", [-.05, 0, .1]]
         ]
         # init driver objects
         [self.init_bpy_driver_obj(e[0], self.face, e[1], e[2], self.col_name, e[3], e[4]) for e in drivers_array]

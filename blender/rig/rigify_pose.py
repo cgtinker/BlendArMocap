@@ -1,10 +1,13 @@
 import importlib
 
+import CONST
+
 from blender.rig import abs_rigging
 from blender.rig.abs_rigging import DriverType, MappingRelation
 from blender.utils import objects
 from utils import m_V
 
+importlib.reload(CONST)
 importlib.reload(m_V)
 importlib.reload(objects)
 importlib.reload(abs_rigging)
@@ -20,11 +23,15 @@ class RigifyPose(abs_rigging.BpyRigging):
         ["forearm_fk.R", "hand_fk.R"],
     ]
 
-    arm_driver_names = [["cgt_left_shoulder", "cgt_left_elbow"],
-                        ["cgt_left_elbow", "cgt_left_index"],
-                        ["cgt_right_shoulder", "cgt_right_elbow"],
-                        ["cgt_right_elbow", "cgt_right_index"]]
-
+    arm_driver_names = [[CONST.POSE.left_shoulder.value, CONST.POSE.left_elbow.value],
+                        [CONST.POSE.left_elbow.value, CONST.POSE.left_index.value],
+                        [CONST.POSE.right_shoulder.value, CONST.POSE.right_elbow.value],
+                        [CONST.POSE.right_elbow.value, CONST.POSE.right_index.value]]
+    # arm_driver_names = [["cgt_left_shoulder", "cgt_left_elbow"],
+    #                     ["cgt_left_elbow", "cgt_left_index"],
+    #                     ["cgt_right_shoulder", "cgt_right_elbow"],
+    #                     ["cgt_right_elbow", "cgt_right_index"]]
+    #
     leg_bones = [
         # right left
         ["thigh_ik.R", "shin_tweak.R"],
@@ -49,52 +56,55 @@ class RigifyPose(abs_rigging.BpyRigging):
 
         # mapping for drivers with multiple users
         self.multi_user_driver_dict = {
-            "cgt_left_shoulder": ["cgt_left_hand_ik_driver", "cgt_left_forearm_ik_driver", "cgt_left_index_ik_driver"],
-            "cgt_right_shoulder": ["cgt_right_hand_ik_driver", "cgt_right_forearm_ik_driver",
-                                   "cgt_right_index_ik_driver"],
-            "cgt_left_hip": ["cgt_left_shin_ik_driver", "cgt_left_foot_ik_driver"],
-            "cgt_right_hip": ["cgt_right_shin_ik_driver", "cgt_right_foot_ik_driver"]
+            CONST.POSE.left_shoulder.value: [CONST.POSE.left_hand_ik.value,
+                                             CONST.POSE.left_forearm_ik.value,
+                                             CONST.POSE.left_index_ik.value],
+            CONST.POSE.right_shoulder.value: [CONST.POSE.right_hand_ik.value,
+                                              CONST.POSE.right_forearm_ik.value,
+                                              CONST.POSE.right_index_ik.value],
+            CONST.POSE.left_hip.value: [CONST.POSE.left_shin_ik.value, CONST.POSE.left_foot_ik.value],
+            CONST.POSE.right_hip.value: [CONST.POSE.right_shin_ik.value, CONST.POSE.right_foot_ik.value]
         }
 
         # references for setting drivers and constraints
         self.references = {
             # region DRIVERS
             # region arms
-            "cgt_left_shoulder": [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
-            "cgt_left_wrist": self.arm_ik_driver_props("cgt_left_hand_ik_driver", self.left_arm_offset),
-            "cgt_left_elbow": self.arm_ik_driver_props("cgt_left_forearm_ik_driver", self.left_arm_offset),
-            "cgt_left_index": self.arm_ik_driver_props("cgt_left_index_ik_driver", self.left_arm_offset),
+            CONST.POSE.left_shoulder.value: [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
+            CONST.POSE.left_wrist.value: self.arm_ik_driver_props(CONST.POSE.left_hand_ik.value, self.left_arm_offset),
+            CONST.POSE.left_elbow.value: self.arm_ik_driver_props(CONST.POSE.left_forearm_ik.value, self.left_arm_offset),
+            CONST.POSE.left_index.value: self.arm_ik_driver_props(CONST.POSE.left_index_ik.value, self.left_arm_offset),
 
-            "cgt_right_shoulder": [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
-            "cgt_right_wrist": self.arm_ik_driver_props("cgt_right_hand_ik_driver", self.right_arm_offset),
-            "cgt_right_elbow": self.arm_ik_driver_props("cgt_right_forearm_ik_driver", self.right_arm_offset),
-            "cgt_right_index": self.arm_ik_driver_props("cgt_right_index_ik_driver", self.right_arm_offset),
+            CONST.POSE.right_shoulder.value: [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
+            CONST.POSE.right_wrist.value: self.arm_ik_driver_props(CONST.POSE.right_hand_ik.value, self.right_arm_offset),
+            CONST.POSE.right_elbow.value: self.arm_ik_driver_props(CONST.POSE.right_forearm_ik.value, self.right_arm_offset),
+            CONST.POSE.right_index.value: self.arm_ik_driver_props(CONST.POSE.right_index_ik.value, self.right_arm_offset),
 
             # endregion
             # region legs
-            "cgt_left_hip": [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
-            "cgt_left_knee": self.leg_ik_driver_props("cgt_left_shin_ik_driver", self.left_leg_offset),
-            "cgt_left_ankle": self.leg_ik_driver_props("cgt_left_foot_ik_driver", self.left_leg_offset),
+            CONST.POSE.left_hip.value: [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
+            CONST.POSE.left_knee.value: self.leg_ik_driver_props(CONST.POSE.left_shin_ik.value, self.left_leg_offset),
+            CONST.POSE.left_ankle.value: self.leg_ik_driver_props(CONST.POSE.left_foot_ik.value, self.left_leg_offset),
 
-            "cgt_right_hip": [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
-            "cgt_right_knee": self.leg_ik_driver_props("cgt_right_shin_ik_driver", self.right_leg_offset),
-            "cgt_right_ankle": self.leg_ik_driver_props("cgt_right_foot_ik_driver", self.right_leg_offset),
+            CONST.POSE.right_hip.value: [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
+            CONST.POSE.right_knee.value: self.leg_ik_driver_props(CONST.POSE.right_shin_ik.value, self.right_leg_offset),
+            CONST.POSE.right_ankle.value: self.leg_ik_driver_props(CONST.POSE.right_foot_ik.value, self.right_leg_offset),
             # endregion
             # endregion
 
             # region CONSTRAINTS
             # region basic constraints
-            "hip_center": [DriverType.constraint, ["torso", "COPY_ROTATION"]],
-            "shoulder_center": [DriverType.constraint, ["chest", "COPY_ROTATION"]],
+            CONST.POSE.hip_center.value: [DriverType.constraint, ["torso", "COPY_ROTATION"]],
+            CONST.POSE.shoulder_center.value: [DriverType.constraint, ["chest", "COPY_ROTATION"]],
             # endregion
 
             # region arms (mapped mirrored)
-            "cgt_left_hand_ik_driver": [DriverType.constraint, ["hand_ik.R", "COPY_LOCATION"]],
-            "cgt_right_hand_ik_driver": [DriverType.constraint, ["hand_ik.L", "COPY_LOCATION"]],
-            "cgt_left_forearm_ik_driver": [DriverType.constraint, ["forearm_tweak.R", "COPY_LOCATION"]],
-            "cgt_right_forearm_ik_driver": [DriverType.constraint, ["forearm_tweak.L", "COPY_LOCATION"]],
-            "cgt_left_index_ik_driver": [DriverType.constraint, ["hand_ik.R", "DAMPED_TRACK"]],
-            "cgt_right_index_ik_driver": [DriverType.constraint, ["hand_ik.L", "DAMPED_TRACK"]],
+            CONST.POSE.left_hand_ik.value: [DriverType.constraint, ["hand_ik.R", "COPY_LOCATION"]],
+            CONST.POSE.right_hand_ik.value: [DriverType.constraint, ["hand_ik.L", "COPY_LOCATION"]],
+            CONST.POSE.left_forearm_ik.value: [DriverType.constraint, ["forearm_tweak.R", "COPY_LOCATION"]],
+            CONST.POSE.right_forearm_ik.value: [DriverType.constraint, ["forearm_tweak.L", "COPY_LOCATION"]],
+            CONST.POSE.left_index_ik.value: [DriverType.constraint, ["hand_ik.R", "DAMPED_TRACK"]],
+            CONST.POSE.right_index_ik.value: [DriverType.constraint, ["hand_ik.L", "DAMPED_TRACK"]],
             # endregion
 
             # region legs (mapped mirrored)
@@ -187,11 +197,11 @@ class RigifyPose(abs_rigging.BpyRigging):
         return avg_arm_length, avg_leg_length
 
     def get_limb_offsets(self):
-        left_arm_offset = self.get_location_offset(self.pose_bones, "upper_arm_ik.L", "cgt_right_shoulder")
-        right_arm_offset = self.get_location_offset(self.pose_bones, "upper_arm_ik.R", "cgt_left_shoulder")
+        left_arm_offset = self.get_location_offset(self.pose_bones, "upper_arm_ik.L", CONST.POSE.right_shoulder.value)
+        right_arm_offset = self.get_location_offset(self.pose_bones, "upper_arm_ik.R", CONST.POSE.left_shoulder.value)
 
-        left_leg_offset = self.get_location_offset(self.pose_bones, "thigh_ik.L", "cgt_right_hip")
-        right_leg_offset = self.get_location_offset(self.pose_bones, "thigh_ik.R", "cgt_left_hip")
+        left_leg_offset = self.get_location_offset(self.pose_bones, "thigh_ik.L", CONST.POSE.right_hip.value)
+        right_leg_offset = self.get_location_offset(self.pose_bones, "thigh_ik.R", CONST.POSE.left_hip.value)
         return left_arm_offset, right_arm_offset, left_leg_offset, right_leg_offset
 
     @staticmethod
