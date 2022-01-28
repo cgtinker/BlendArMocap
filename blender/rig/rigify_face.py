@@ -1,8 +1,9 @@
-from blender.rig.abs_rigging import DriverType, MappingRelation, BpyRigging
-from utils import log
-from blender.utils import objects
-
 import importlib
+
+from blender.rig.abs_rigging import DriverType, MappingRelation, BpyRigging
+from blender.utils import objects
+from utils import log
+
 importlib.reload(objects)
 
 
@@ -15,11 +16,22 @@ class RigifyFace(BpyRigging):
     mouth_bone_names = [["lip.T", "lip.B"], ["lips.R", "lips.L"]]
     mouth_driver_names = [["mouth_driver_T", "mouth_driver_B"], ["mouth_driver_R", "mouth_driver_L"]]
 
+    eyebrow_bone_names = [
+        ["brow.T.R.003", "DEF-forehead.R"], ["brow.T.R.002", "DEF-forehead.R.001"],
+        ["brow.T.R.001", "DEF-forehead.R.002"],
+
+        ["brow.T.L.003", "DEF-forehead.L"], ["brow.T.L.002", "DEF-forehead.L.001"],
+        ["brow.T.L.001", "DEF-forehead.L.002"]]
+    eyebrow_driver_names = [
+        "eyebrow_in_l", "eyebrow_mid_l", "eyebrow_out_l",
+        "eyebrow_in_r", "eyebrow_mid_r", "eyebrow_out_r"]
+
     def __init__(self, armature, driver_objects: list):
         self.pose_bones = armature.pose.bones
 
         eye_distances = self.get_bone_distances(self.eye_bone_names)
         mouth_distances = self.get_bone_distances(self.mouth_bone_names)
+        eyebrow_distances = self.get_bone_distances(self.eyebrow_bone_names)
 
         self.method_mapping = {
             DriverType.limb_driver: self.add_driver_batch,
@@ -31,7 +43,6 @@ class RigifyFace(BpyRigging):
             "right_eye_driver": [
                 [self.eye_driver_names[0][0], eye_distances[0], self.eye_top_down_dir_driver_attr],
                 [self.eye_driver_names[0][1], eye_distances[0], self.eye_up_dir_driver_attr]],
-
             "left_eye_driver": [
                 [self.eye_driver_names[1][0], eye_distances[1], self.eye_top_down_dir_driver_attr],
                 [self.eye_driver_names[1][1], eye_distances[1], self.eye_up_dir_driver_attr]],
@@ -41,17 +52,37 @@ class RigifyFace(BpyRigging):
                 [self.mouth_driver_names[0][1], mouth_distances[0], self.mouth_down_dir_driver_attr],
                 [self.mouth_driver_names[1][0], mouth_distances[1], self.mouth_left_dir_driver_attr],
                 [self.mouth_driver_names[1][1], mouth_distances[1], self.mouth_right_dir_driver_attr]
-            ]
+            ],
+
+            "left_eyebrow_driver": [
+                [self.eyebrow_driver_names[0], eyebrow_distances[0], self.eyebrow_driver_attr],
+                [self.eyebrow_driver_names[1], eyebrow_distances[1], self.eyebrow_driver_attr],
+                [self.eyebrow_driver_names[2], eyebrow_distances[2], self.eyebrow_driver_attr],
+            ],
+            "right_eyebrow_driver": [
+                [self.eyebrow_driver_names[3], eyebrow_distances[3], self.eyebrow_driver_attr],
+                [self.eyebrow_driver_names[4], eyebrow_distances[4], self.eyebrow_driver_attr],
+                [self.eyebrow_driver_names[5], eyebrow_distances[5], self.eyebrow_driver_attr],
+            ],
         }
 
         self.references = {
             # region main drivers
-            "mouth_driver": [DriverType.face_driver, self.mouth_up_dir_driver_attr],
-            "left_eye_driver": [DriverType.face_driver, self.mouth_up_dir_driver_attr],
-            "right_eye_driver": [DriverType.face_driver, self.mouth_up_dir_driver_attr],
+            "mouth_driver": [DriverType.face_driver],
+            "left_eye_driver": [DriverType.face_driver],
+            "right_eye_driver": [DriverType.face_driver],
+            "right_eyebrow_driver": [DriverType.face_driver],
+            "left_eyebrow_driver": [DriverType.face_driver],
             # endregion
 
             # region constraints
+            "eyebrow_in_l": [DriverType.constraint, [self.eyebrow_bone_names[0][0], "COPY_LOCATION_OFFSET"]],
+            # "eyebrow_mid_l":    [DriverType.constraint, [self.eyebrow_bone_names[1][0],    "COPY_LOCATION_OFFSET"]],
+            "eyebrow_out_l": [DriverType.constraint, [self.eyebrow_bone_names[2][0], "COPY_LOCATION_OFFSET"]],
+            "eyebrow_in_r": [DriverType.constraint, [self.eyebrow_bone_names[3][0], "COPY_LOCATION_OFFSET"]],
+            # "eyebrow_mid_r":    [DriverType.constraint, [self.eyebrow_bone_names[4][0],    "COPY_LOCATION_OFFSET"]],
+            "eyebrow_out_r": [DriverType.constraint, [self.eyebrow_bone_names[5][0], "COPY_LOCATION_OFFSET"]],
+
             "right_eye_driver_T": [DriverType.constraint, ["lid.T.R.002", "COPY_LOCATION_OFFSET"]],
             "right_eye_driver_B": [DriverType.constraint, ["lid.B.R.002", "COPY_LOCATION_OFFSET"]],
 
@@ -63,10 +94,9 @@ class RigifyFace(BpyRigging):
 
             "mouth_driver_L": [DriverType.constraint, ["lips.R", "COPY_LOCATION_OFFSET"]],
             "mouth_driver_R": [DriverType.constraint, ["lips.L", "COPY_LOCATION_OFFSET"]],
-            
+
             "face_rotation": [DriverType.constraint, ["head", "COPY_ROTATION"]],
             "chin_rotation": [DriverType.constraint, ["jaw_master", "COPY_ROTATION"]],
-
             # endregion
         }
 
@@ -118,6 +148,7 @@ class RigifyFace(BpyRigging):
                 add_driver_batch(target, driver.source, values[1], values[2], values[3], values[4])
 
             elif driver.driver_type == DriverType.constraint:
+                print(driver)
                 if values[0] in pose_bone_names:
                     idx = pose_bone_names.index(values[0])
                     pose_bone = self.pose_bones[idx]
@@ -125,24 +156,31 @@ class RigifyFace(BpyRigging):
                     add_constraint = self.method_mapping[driver.driver_type]
                     add_constraint(pose_bone, driver.source, values[1])
 
+    def eyebrow_driver_attr(self, target, avg_distance):
+        axis = "Z"
+        axis_dict = {
+            "in": "X",
+            "mid": "Y",
+            "out": "Z"
+        }
+        # check if target contains name (driver vals are mapped to specific axis)
+        axis = [v for k, v in axis_dict.items() if k in target][0]
+        functions = ["", "", f"{avg_distance}*.2*"]
+        attribute = self.get_loc_sca_driver_attribute(target, ["", "", "scale." + axis.lower()], functions)
+        print(target, attribute)
+        return attribute
+
     # region eyes
     def eye_up_dir_driver_attr(self, target, avg_distance):
-        functions = [
-            "",
-            "",
-            f"-{avg_distance}*.2*",
-        ]
+        functions = ["", "", f"-{avg_distance}*.25*"]
         attribute = self.get_loc_sca_driver_attribute(target, self.get_target_axis("Z"), functions)
         return attribute
 
     def eye_top_down_dir_driver_attr(self, target, avg_distance):
-        functions = [
-            "",
-            "",
-            f"-{avg_distance}*.8+{avg_distance}*",
-        ]
+        functions = ["", "", f"-{avg_distance}*.65+{avg_distance}*"]
         attribute = self.get_loc_sca_driver_attribute(target, self.get_target_axis("Z"), functions)
         return attribute
+
     # endregion
 
     # region mouth
@@ -184,6 +222,7 @@ class RigifyFace(BpyRigging):
 
     @staticmethod
     def get_target_axis(axis):
+        """target only a specifc scale axis"""
         target_axis = []
         for tar_axis in ["X", "Y", "Z"]:
             if tar_axis == axis:

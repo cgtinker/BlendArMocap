@@ -20,8 +20,13 @@ class BridgeFace(abs_assignment.DataAssignment):
         # Drivers
         self.pivot = abs_assignment.CustomData()
         self._mouth_driver = abs_assignment.CustomData()
+        # eye
         self.eye_driver_L = abs_assignment.CustomData()
         self.eye_driver_R = abs_assignment.CustomData()
+        # eyebrows
+        self.eyebrow_L = abs_assignment.CustomData()
+        self.eyebrow_R = abs_assignment.CustomData()
+        # head / chin
         self.chin_driver = abs_assignment.CustomData()
         self.rotation_data, self.driver_scale_data = None, None
 
@@ -34,33 +39,33 @@ class BridgeFace(abs_assignment.DataAssignment):
         self.face = objects.add_empties(references, 0.005)
         objects.add_list_to_collection(self.col_name, self.face, self.driver_col)
 
-        mapping_driver = ["right_eye_driver_T", "right_eye_driver_B", "left_eye_driver_T", "left_eye_driver_B",
-                          "mouth_driver_T", "mouth_driver_B", "mouth_driver_R", "mouth_driver_L"]
+        mapping_driver = ["right_eye_driver_T", "right_eye_driver_B",
+                          "left_eye_driver_T", "left_eye_driver_B",
+                          "mouth_driver_T", "mouth_driver_B",
+                          "mouth_driver_R", "mouth_driver_L",
+                          "eyebrow_in_l", "eyebrow_mid_l", "eyebrow_out_l",
+                          "eyebrow_in_r", "eyebrow_mid_r", "eyebrow_out_r"]
+
+        [self.init_bpy_driver_obj(
+            abs_assignment.CustomData(), self.face, 0.01, name, self.col_name, "SPHERE", [0, 0, 0])
+            for name in mapping_driver]
 
         # init face driver objects for mapping relative scale and rotations
-        pivot = self.init_bpy_driver_obj(
-            self.pivot, self.face, 0.025, "face_rotation", self.col_name, "SPHERE", [0, 0, 0])
-        mouth = self.init_bpy_driver_obj(
-            self._mouth_driver, self.face, 0.025, "mouth_driver", self.col_name, "CIRCLE", [0, -.1, -.1])
-        l_eye = self.init_bpy_driver_obj(
-            self.eye_driver_L, self.face, 0.01, "left_eye_driver", self.col_name, "CIRCLE", [-.05, -.05, .075])
-        r_eye = self.init_bpy_driver_obj(
-            self.eye_driver_R, self.face, 0.01, "right_eye_driver", self.col_name, "CIRCLE", [.05, -.05, .075])
-        chin = self.init_bpy_driver_obj(
-            self.chin_driver, self.face, 0.01, "chin_rotation", self.col_name, "SPHERE", [.0, -.05, -.25])
+        drivers_array = [
+            [self.pivot, 0.025, "face_rotation", "SPHERE", [0, 0, 0]],
+            [self._mouth_driver, 0.025, "mouth_driver", "CIRCLE", [0, -.1, -.1]],
+            [self.eye_driver_L, .01, "left_eye_driver", "CIRCLE", [-.05, -.05, .075]],
+            [self.eye_driver_R, .01, "right_eye_driver", "CIRCLE", [.05, .05, .075]],
+            [self.chin_driver, .01, "chin_rotation", "SPHERE", [.0, -.05, -.25]],
+            [self.eyebrow_L, .01, "right_eyebrow_driver", "CUBE", [.05, 0, .1]],
+            [self.eyebrow_R, .01, "left_eyebrow_driver", "CUBE", [-.05, 0, .1]]
+        ]
+        # init driver objects
+        [self.init_bpy_driver_obj(e[0], self.face, e[1], e[2], self.col_name, e[3], e[4]) for e in drivers_array]
 
-        # drivers for future rig transfer
-        for name in mapping_driver:
-            self.init_bpy_driver_obj(
-                abs_assignment.CustomData(), self.face, 0.01, name, self.col_name, "SPHERE", [0, 0, 0])
-
-        # set driver start position
-        drivers = [self.pivot, self._mouth_driver, self.eye_driver_R, self.eye_driver_L, self.chin_driver]
-        data = [[driver.idx, driver.loc] for driver in drivers]
+        # set source position
+        data = [[e[0].idx, e[4]] for e in drivers_array]
         self.translate(self.face, data, 0)
-
-        # parent drivers
-        objects.set_parents(pivot, [mouth, l_eye, r_eye])
 
     def init_data(self):
         self.data = self.data[0]  # unnecessary nesting in raw data
@@ -88,12 +93,15 @@ class BridgeFace(abs_assignment.DataAssignment):
         avg_scale = m_V.vector_length_2d(self.data[362][1], self.data[263][1], 'Z')  # eye dist as avg scale
         self.mouth_driver(avg_scale)
         self.eye_driver(avg_scale)
+        self.eyebrow_drivers(avg_scale)
 
         # prep data
         self.driver_scale_data = [
             [self._mouth_driver.idx, self._mouth_driver.sca],
             [self.eye_driver_L.idx, self.eye_driver_L.sca],
-            [self.eye_driver_R.idx, self.eye_driver_R.sca]
+            [self.eye_driver_R.idx, self.eye_driver_R.sca],
+            [self.eyebrow_L.idx, self.eyebrow_L.sca],
+            [self.eyebrow_R.idx, self.eyebrow_R.sca]
         ]
 
     def mouth_driver(self, avg_scale):
@@ -109,6 +117,19 @@ class BridgeFace(abs_assignment.DataAssignment):
 
         self.eye_driver_L.sca = [1.5, 0.001, eye_l]
         self.eye_driver_R.sca = [1.5, 0.001, eye_r]
+
+    def eyebrow_drivers(self, avg_scale):
+        eyebrow_in_l = self.average_length_at_scale(285, 388, avg_scale)
+        eyebrow_mid_l = self.average_length_at_scale(295, 297, avg_scale)
+        eyebrow_out_l = self.average_length_at_scale(282, 332, avg_scale)
+
+        eyebrow_in_r = self.average_length_at_scale(55, 109, avg_scale)
+        eyebrow_mid_r = self.average_length_at_scale(65, 67, avg_scale)
+        eyebrow_out_r = self.average_length_at_scale(52, 103, avg_scale)
+
+        self.eyebrow_L.sca = [eyebrow_in_l, eyebrow_mid_l, eyebrow_out_l]
+        self.eyebrow_R.sca = [eyebrow_in_r, eyebrow_mid_r, eyebrow_out_r]
+
     # endregion
 
     def set_rotation_driver_data(self):
