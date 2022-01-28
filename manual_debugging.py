@@ -57,7 +57,6 @@ importlib.reload(registration)
 
 
 def register():
-    pass
     registration.manual_test_registration()
 
 

@@ -54,7 +54,7 @@ def register():
 
     except ModuleNotFoundError:
         # Don't register other panels, ui_operators etc.
-        log.logger.error('REGISTRATION FAILED: MODULE NOT FOUND')
+        log.logger.warning('REGISTRATION FAILED: MODULE NOT FOUND')
         return
 
 
@@ -68,9 +68,9 @@ def register_user_interface():
 
 def unregister():
     log.logger.info("UNREGISTER BLENDARMOCAP")
-    for cls in get_preferences():
-        log.logger.debug(str(cls))
-        unregister_class(cls)
+    #for cls in get_preferences():
+    #    log.logger.debug(str(cls))
+    #    unregister_class(cls)
 
     if install_dependencies.dependencies_installed:
         log.logger.info("UNREGISTER BLENDARMOCAP WITH ACTIVE DEPENDENCIES")
@@ -79,7 +79,7 @@ def unregister():
             log.logger.debug(str(cls))
             unregister_class(cls)
 
-    del bpy.types.Scene.m_cgtinker_mediapipe
+        del bpy.types.Scene.m_cgtinker_mediapipe
 
 
 def manual_test_registration():

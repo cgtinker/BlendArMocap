@@ -2,12 +2,7 @@ import importlib
 
 import bpy
 
-from ml_detection import detect_hands, detect_pose, detect_face
 from utils import log
-
-importlib.reload(detect_hands)
-importlib.reload(detect_pose)
-importlib.reload(detect_face)
 
 
 class WM_modal_detection_operator(bpy.types.Operator):
@@ -21,6 +16,12 @@ class WM_modal_detection_operator(bpy.types.Operator):
 
     @staticmethod
     def set_detection_type(detection_type):
+        from ml_detection import detect_hands, detect_pose, detect_face
+
+        importlib.reload(detect_hands)
+        importlib.reload(detect_pose)
+        importlib.reload(detect_face)
+
         handlers = {
             "POSE": detect_pose.PoseDetector,
             "HAND": detect_hands.HandDetector,
