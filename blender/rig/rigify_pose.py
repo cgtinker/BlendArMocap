@@ -1,9 +1,10 @@
+import importlib
+
 from blender.rig import abs_rigging
 from blender.rig.abs_rigging import DriverType, MappingRelation
 from blender.utils import objects
 from utils import m_V
 
-import importlib
 importlib.reload(m_V)
 importlib.reload(objects)
 importlib.reload(abs_rigging)
@@ -18,6 +19,11 @@ class RigifyPose(abs_rigging.BpyRigging):
         ["upper_arm_fk.R", "forearm_fk.R"],
         ["forearm_fk.R", "hand_fk.R"],
     ]
+
+    arm_driver_names = [["cgt_left_shoulder", "cgt_left_elbow"],
+                        ["cgt_left_elbow", "cgt_left_index"],
+                        ["cgt_right_shoulder", "cgt_right_elbow"],
+                        ["cgt_right_elbow", "cgt_right_index"]]
 
     leg_bones = [
         # right left
@@ -44,7 +50,8 @@ class RigifyPose(abs_rigging.BpyRigging):
         # mapping for drivers with multiple users
         self.multi_user_driver_dict = {
             "cgt_left_shoulder": ["cgt_left_hand_ik_driver", "cgt_left_forearm_ik_driver", "cgt_left_index_ik_driver"],
-            "cgt_right_shoulder": ["cgt_right_hand_ik_driver", "cgt_right_forearm_ik_driver", "cgt_right_index_ik_driver"],
+            "cgt_right_shoulder": ["cgt_right_hand_ik_driver", "cgt_right_forearm_ik_driver",
+                                   "cgt_right_index_ik_driver"],
             "cgt_left_hip": ["cgt_left_shin_ik_driver", "cgt_left_foot_ik_driver"],
             "cgt_right_hip": ["cgt_right_shin_ik_driver", "cgt_right_foot_ik_driver"]
         }
@@ -117,9 +124,9 @@ class RigifyPose(abs_rigging.BpyRigging):
 
                 # multi user driver (scale driver)
                 if ref in self.multi_user_driver_dict:
-                    references = self.references[ref][1]    # driver properties
+                    references = self.references[ref][1]  # driver properties
                     for t, driver_target in enumerate(self.multi_user_driver_dict[ref]):
-                        refs = references.copy()    # copy driver properties to avoid overwrites
+                        refs = references.copy()  # copy driver properties to avoid overwrites
                         refs[0] = driver_target
                         rel = MappingRelation(driver_obj, driver_type, refs)
                         self.relation_mapping_lst.append(rel)
@@ -171,12 +178,12 @@ class RigifyPose(abs_rigging.BpyRigging):
             DriverType.limb_driver,
             self.driver_loc2loc_sca_attr(driver_target,
                                          offset,
-                                         self.avg_arm_length)
+                                         self.avg_leg_length)
         ]
 
     def get_avg_limb_length(self):
-        avg_arm_length = self.get_average_scale(self.arm_bones, self.pose_bones)
-        avg_leg_length = self.get_average_scale(self.leg_bones, self.pose_bones)
+        avg_arm_length = self.get_average_joint_bone_length(self.arm_bones, self.pose_bones)
+        avg_leg_length = self.get_average_joint_bone_length(self.leg_bones, self.pose_bones)
         return avg_arm_length, avg_leg_length
 
     def get_limb_offsets(self):

@@ -3,19 +3,19 @@ import importlib
 import numpy as np
 from mathutils import Euler
 
+import CONST
 from blender.utils import objects
 from bridge import abs_assignment
 from utils import m_V
 
 importlib.reload(m_V)
 importlib.reload(abs_assignment)
+importlib.reload(CONST)
 
 
 class BridgeFace(abs_assignment.DataAssignment):
     def __init__(self):
         self.face = []
-        self.pinned_rotation = None
-        self.first_time = True
 
         # Drivers
         self.pivot = abs_assignment.CustomData()
@@ -30,35 +30,34 @@ class BridgeFace(abs_assignment.DataAssignment):
         self.chin_driver = abs_assignment.CustomData()
         self.rotation_data, self.driver_scale_data = None, None
 
-        self.col_name = "cgt_face"
+        self.col_name = CONST.Face.collection.value
 
     def init_references(self):
         references = {}
         for i in range(468):
-            references[f'{i}'] = f"cgt_face_empty_{i}"
+            references[f'{i}'] = f"{CONST.Face.face.value}{i}"
         self.face = objects.add_empties(references, 0.005)
         objects.add_list_to_collection(self.col_name, self.face, self.driver_col)
-
-        mapping_driver = ["right_eye_driver_T", "right_eye_driver_B",
-                          "left_eye_driver_T", "left_eye_driver_B",
-                          "mouth_driver_T", "mouth_driver_B",
-                          "mouth_driver_R", "mouth_driver_L",
-                          "eyebrow_in_l", "eyebrow_mid_l", "eyebrow_out_l",
-                          "eyebrow_in_r", "eyebrow_mid_r", "eyebrow_out_r"]
+        mapping_driver = [CONST.Face.right_eye_t.value, CONST.Face.right_eye_b.value,
+                          CONST.Face.left_eye_t.value, CONST.Face.left_eye_b.value,
+                          CONST.Face.mouth_t.value, CONST.Face.mouth_b.value,
+                          CONST.Face.mouth_r.value, CONST.Face.mouth_l.value,
+                          CONST.Face.eyebrow_in_l.value, CONST.Face.eyebrow_mid_l.value, CONST.Face.eyebrow_out_l.value,
+                          CONST.Face.eyebrow_in_r.value, CONST.Face.eyebrow_mid_r.value, CONST.Face.eyebrow_out_r.value
+                          ]
 
         [self.init_bpy_driver_obj(
             abs_assignment.CustomData(), self.face, 0.01, name, self.col_name, "SPHERE", [0, 0, 0])
             for name in mapping_driver]
 
-        # init face driver objects for mapping relative scale and rotations
         drivers_array = [
-            [self.pivot, 0.025, "face_rotation", "SPHERE", [0, 0, 0]],
-            [self._mouth_driver, 0.025, "mouth_driver", "CIRCLE", [0, -.1, -.1]],
-            [self.eye_driver_L, .01, "left_eye_driver", "CIRCLE", [-.05, -.05, .075]],
-            [self.eye_driver_R, .01, "right_eye_driver", "CIRCLE", [.05, .05, .075]],
-            [self.chin_driver, .01, "chin_rotation", "SPHERE", [.0, -.05, -.25]],
-            [self.eyebrow_L, .01, "right_eyebrow_driver", "CUBE", [.05, 0, .1]],
-            [self.eyebrow_R, .01, "left_eyebrow_driver", "CUBE", [-.05, 0, .1]]
+            [self.pivot, 0.025, CONST.Face.head.value, "SPHERE", [0, 0, 0]],
+            [self._mouth_driver, 0.025, CONST.Face.mouth.value, "CIRCLE", [0, -.1, -.1]],
+            [self.eye_driver_L, .01, CONST.Face.left_eye.value, "CIRCLE", [-.05, -.05, .075]],
+            [self.eye_driver_R, .01, CONST.Face.right_eye.value, "CIRCLE", [.05, .05, .075]],
+            [self.chin_driver, .01, CONST.Face.chin.value, "SPHERE", [.0, -.05, -.25]],
+            [self.eyebrow_L, .01, CONST.Face.left_eyebrow.value, "CUBE", [.05, 0, .1]],
+            [self.eyebrow_R, .01, CONST.Face.right_eyebrow.value, "CUBE", [-.05, 0, .1]]
         ]
         # init driver objects
         [self.init_bpy_driver_obj(e[0], self.face, e[1], e[2], self.col_name, e[3], e[4]) for e in drivers_array]
@@ -150,8 +149,7 @@ class BridgeFace(abs_assignment.DataAssignment):
         nose_dir_z, chin_dir_z = m_V.null_axis([nose_dir, chin_dir], 'X')
         nose_dir_x, chin_dir_x = m_V.null_axis([nose_dir, chin_dir], 'Z')
 
-        z_angle = m_V.angle_between(nose_dir_z, chin_dir_z) * 1.65
-        x_angle = m_V.angle_between(nose_dir_x, chin_dir_x)
+        z_angle = m_V.angle_between(nose_dir_z, chin_dir_z) * 1.8
 
         chin_rotation = m_V.rotate_towards(self.data[152][1], self.data[6][1], 'Y', 'Z')
         self.chin_driver.rot = Euler((z_angle, 0, 0))
@@ -176,7 +174,7 @@ class BridgeFace(abs_assignment.DataAssignment):
         loc, quart, scale = m_V.decompose_matrix(matrix)
         self.pivot.rot = quart
 
-    # region utilies
+    # region utils
     def average_length_at_scale(self, p1, p2, scale):
         """ get length of 2d vector and normalize by 1d scale """
         length = m_V.vector_length_2d(self.data[p1][1], self.data[p2][1], 'Z')

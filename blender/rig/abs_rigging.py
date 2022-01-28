@@ -143,15 +143,29 @@ class BpyRigging(ABC):
         return offset
 
     # region bone length
-    def get_average_scale(self, joint_bones, pose_bones):
-        """ requires an array of joints names [[bone_a, bone_b], []... ] and pose bones.
-            returns the average length of the connected bones. """
-        arm_joints = self.get_joints(joint_bones, pose_bones)
+    def get_average_joint_empty_length(self, joint_empty_names):
+        # get_empty_positions
+        joints = []
+        for joint_names in joint_empty_names:
+            joint_locations = [objects.get_object_by_name(name).location for name in joint_names]
+            joints.append(joint_locations)
+        avg_dist = self.get_average_length(joints)
+        return avg_dist
+
+    @staticmethod
+    def get_average_length(joint_array):
         distances = []
-        for joint in arm_joints:
+        for joint in joint_array:
             dist = m_V.get_vector_distance(joint[0], joint[1])
             distances.append(dist)
         avg_dist = sum(distances) / len(distances)
+        return avg_dist
+
+    def get_average_joint_bone_length(self, joint_bone_names, pose_bones):
+        """ requires an array of joints names [[bone_a, bone_b], []... ] and pose bones.
+            returns the average length of the connected bones. """
+        joints = self.get_joints(joint_bone_names, pose_bones)
+        avg_dist = self.get_average_length(joints)
         return avg_dist
 
     @staticmethod

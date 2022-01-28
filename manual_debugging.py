@@ -66,5 +66,5 @@ def unregister():
 
 
 if __name__ == '__main__':
-    log.init_logger()
+    #log.init_logger()
     register()

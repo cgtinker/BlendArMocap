@@ -3,6 +3,7 @@ import importlib
 import numpy as np
 from mathutils import Euler
 
+import CONST
 from blender.utils import objects
 from bridge import abs_assignment
 from utils import m_V
@@ -10,31 +11,32 @@ from utils import m_V
 importlib.reload(objects)
 importlib.reload(abs_assignment)
 importlib.reload(m_V)
+importlib.reload(CONST)
 
 
 class BridgeHand(abs_assignment.DataAssignment):
     references = {
-        0: "cgt_WRIST",
-        1: "cgt_THUMB_CMC",
-        2: "cgt_THUMB_MCP",
-        3: "cgt_THUMP_IP",
-        4: "cgt_THUMB_TIP",
-        5: "cgt_INDEX_FINGER_MCP",
-        6: "cgt_INDEX_FINGER_PIP",
-        7: "cgt_INDEX_FINGER_DIP",
-        8: "cgt_INDEX_FINGER_TIP",
-        9: "cgt_MIDDLE_FINGER_MCP",
-        10: "cgt_MIDDLE_FINGER_PIP",
-        11: "cgt_MIDDLE_FINGER_DIP",
-        12: "cgt_MIDDLE_FINGER_TIP",
-        13: "cgt_RING_FINGER_MCP",
-        14: "cgt_RING_FINGER_PIP",
-        15: "cgt_RING_FINGER_DIP",
-        16: "cgt_RING_FINGER_TIP",
-        17: "cgt_PINKY_MCP",
-        18: "cgt_PINKY_PIP",
-        19: "cgt_PINKY_DIP",
-        20: "cgt_PINKY_TIP"
+        0: CONST.Hand.wrist.value,
+        1: CONST.Hand.thumb_cmc.value,
+        2: CONST.Hand.thumb_mcp.value,
+        3: CONST.Hand.thumb_ip.value,
+        4: CONST.Hand.thumb_tip.value,
+        5: CONST.Hand.index_finger_mcp.value,
+        6: CONST.Hand.index_finger_pip.value,
+        7: CONST.Hand.index_finger_dip.value,
+        8: CONST.Hand.index_finger_tip.value,
+        9: CONST.Hand.middle_finger_mcp.value,
+        10: CONST.Hand.middle_finger_pip.value,
+        11: CONST.Hand.middle_finger_dip.value,
+        12: CONST.Hand.middle_finger_tip.value,
+        13: CONST.Hand.ring_finger_mcp.value,
+        14: CONST.Hand.ring_finger_pip.value,
+        15: CONST.Hand.ring_finger_dip.value,
+        16: CONST.Hand.ring_finger_tip.value,
+        17: CONST.Hand.pinky_mcp.value,
+        18: CONST.Hand.pinky_pip.value,
+        19: CONST.Hand.pinky_dip.value,
+        20: CONST.Hand.pinky_tip.value,
     }
     fingers = [
         [5, 9],  # index finger
@@ -53,7 +55,7 @@ class BridgeHand(abs_assignment.DataAssignment):
     left_angles, right_angles = None, None
 
     frame = 0
-    col_name = "cgt_hands"
+    col_name = CONST.Hand.collection.value
 
     def init_references(self):
         """ generate empty objects for mapping. """
@@ -63,12 +65,10 @@ class BridgeHand(abs_assignment.DataAssignment):
         objects.add_list_to_collection(self.col_name, self.right_hand, self.driver_col)
 
     def init_data(self):
+        """ prepares data before setting """
         self.left_hand_data, self.right_hand_data = self.landmarks_to_hands(list(zip(self.data[0], self.data[1])))
         self.left_angles = self.finger_angles(self.left_hand_data)
         self.right_angles = self.finger_angles(self.right_hand_data)
-
-    def update(self):
-        self.set_position()
 
         # updated angle to joint references before applying
         self.left_angles = self.prepare_rotation_data(self.left_angles)
@@ -79,10 +79,13 @@ class BridgeHand(abs_assignment.DataAssignment):
         if left_hand_rot != None:
             self.left_angles.append(left_hand_rot)
 
-        right_hand_rot = self.global_hand_rotation(self.right_hand_data, 100, "R") # offset for euler combat
+        right_hand_rot = self.global_hand_rotation(self.right_hand_data, 100, "R")  # offset for euler combat
         if right_hand_rot != None:
             self.right_angles.append(right_hand_rot)
 
+    def update(self):
+        """ applies gathered data to references """
+        self.set_position()
         self.set_rotation()
 
     def set_position(self):
@@ -126,7 +129,7 @@ class BridgeHand(abs_assignment.DataAssignment):
         return data
 
     def finger_angles(self, hand):
-        """ get finger joint angles of target hand """
+        """ get finger joint x-angles of target hand """
         if hand == []:
             return None
 
@@ -141,6 +144,7 @@ class BridgeHand(abs_assignment.DataAssignment):
         return finger_angles
 
     def global_hand_rotation(self, hand, combat_idx_offset=0, orientation="R"):
+        """calculates approximate hand rotation. """
         if hand == []:
             return None
 
@@ -173,21 +177,15 @@ class BridgeHand(abs_assignment.DataAssignment):
         matrix = m_V.generate_matrix(normal, tangent, binormal)
         loc, quart, sca = m_V.decompose_matrix(matrix)
 
-        if orientation == "R":
-            offset = [0, 0, 0]
-            euler = self.try_get_euler(quart, offset, combat_idx_offset)
-            euler = self.offset_euler(euler, offset)
-
-        else:
-            offset = [0, 0, 0]
-            euler = self.try_get_euler(quart, offset, combat_idx_offset)
-            euler = self.offset_euler(euler, offset)
+        offset = [0, 0, 0]
+        euler = self.try_get_euler(quart, offset, combat_idx_offset)
+        euler = self.offset_euler(euler, offset)
 
         hand_rotation = ([0, euler])
         return hand_rotation
 
     def landmarks_to_hands(self, hand_data):
-        """ determines where the data belongs to """
+        """ determines to which hand the landmark data belongs """
         left_hand = [data[0] for data in hand_data if data[1][1] is False]
         right_hand = [data[0] for data in hand_data if data[1][1] is True]
 
@@ -198,6 +196,7 @@ class BridgeHand(abs_assignment.DataAssignment):
 
     @staticmethod
     def set_global_origin(data):
+        """ sets global origin of landmarks to wrist """
         if len(data) > 0:
             data = [[idx, np.array([-lmrk[0], lmrk[2], -lmrk[1]])] for idx, lmrk in data[0]]
             data = [[idx, lmrk - data[0][1]] for idx, lmrk in data]

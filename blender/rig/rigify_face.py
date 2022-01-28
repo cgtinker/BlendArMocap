@@ -33,12 +33,14 @@ class RigifyFace(BpyRigging):
         mouth_distances = self.get_bone_distances(self.mouth_bone_names)
         eyebrow_distances = self.get_bone_distances(self.eyebrow_bone_names)
 
+        # types for mapping
         self.method_mapping = {
             DriverType.limb_driver: self.add_driver_batch,
             DriverType.constraint: self.add_constraint,
             DriverType.face_driver: self.add_driver_batch
         }
 
+        # drivers are getting used multiple times
         self.multi_user_driver_dict = {
             "right_eye_driver": [
                 [self.eye_driver_names[0][0], eye_distances[0], self.eye_top_down_dir_driver_attr],
@@ -66,6 +68,7 @@ class RigifyFace(BpyRigging):
             ],
         }
 
+        # mapping may contains multi user drivers
         self.references = {
             # region main drivers
             "mouth_driver": [DriverType.face_driver],
@@ -76,12 +79,12 @@ class RigifyFace(BpyRigging):
             # endregion
 
             # region constraints
-            "eyebrow_in_l": [DriverType.constraint, [self.eyebrow_bone_names[0][0], "COPY_LOCATION_OFFSET"]],
-            # "eyebrow_mid_l":    [DriverType.constraint, [self.eyebrow_bone_names[1][0],    "COPY_LOCATION_OFFSET"]],
-            "eyebrow_out_l": [DriverType.constraint, [self.eyebrow_bone_names[2][0], "COPY_LOCATION_OFFSET"]],
-            "eyebrow_in_r": [DriverType.constraint, [self.eyebrow_bone_names[3][0], "COPY_LOCATION_OFFSET"]],
-            # "eyebrow_mid_r":    [DriverType.constraint, [self.eyebrow_bone_names[4][0],    "COPY_LOCATION_OFFSET"]],
-            "eyebrow_out_r": [DriverType.constraint, [self.eyebrow_bone_names[5][0], "COPY_LOCATION_OFFSET"]],
+            #"eyebrow_in_l": [DriverType.constraint, [self.eyebrow_bone_names[0][0], "COPY_LOCATION_OFFSET"]],
+            #"eyebrow_mid_l":    [DriverType.constraint, [self.eyebrow_bone_names[1][0],    "COPY_LOCATION_OFFSET"]],
+            #"eyebrow_out_l": [DriverType.constraint, [self.eyebrow_bone_names[2][0], "COPY_LOCATION_OFFSET"]],
+            #"eyebrow_in_r": [DriverType.constraint, [self.eyebrow_bone_names[3][0], "COPY_LOCATION_OFFSET"]],
+            #"eyebrow_mid_r":    [DriverType.constraint, [self.eyebrow_bone_names[4][0],    "COPY_LOCATION_OFFSET"]],
+            #"eyebrow_out_r": [DriverType.constraint, [self.eyebrow_bone_names[5][0], "COPY_LOCATION_OFFSET"]],
 
             "right_eye_driver_T": [DriverType.constraint, ["lid.T.R.002", "COPY_LOCATION_OFFSET"]],
             "right_eye_driver_B": [DriverType.constraint, ["lid.B.R.002", "COPY_LOCATION_OFFSET"]],
@@ -252,7 +255,7 @@ class RigifyFace(BpyRigging):
     def get_bone_distances(self, bone_pairs):
         distances = []
         for pair in bone_pairs:
-            avg_scale = self.get_average_scale([pair], self.pose_bones)
+            avg_scale = self.get_average_joint_bone_length([pair], self.pose_bones)
             distances.append(avg_scale)
 
         return distances

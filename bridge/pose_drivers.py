@@ -3,64 +3,115 @@ import importlib
 import numpy as np
 from mathutils import Euler
 
+import CONST
 from blender.utils import objects
 from bridge import abs_assignment
 from utils import m_V, log
 
 importlib.reload(abs_assignment)
+importlib.reload(CONST)
 
 
 class BridgePose(abs_assignment.DataAssignment):
     def __init__(self):
+        # self.references = {
+        #    # MEDIAPIPE DEFAULTS
+        #    0: "cgt_nose",
+        #    1: "cgt_left_eye_inner",
+        #    2: "cgt_left_eye",
+        #    3: "cgt_left_eye_outer",
+        #    4: "cgt_right_eye_inner",
+        #    5: "cgt_right_eye",
+        #    6: "cgt_right_eye_outer",
+        #    7: "cgt_left_ear",
+        #    8: "cgt_right_ear",
+        #    9: "cgt_mouth_left",
+        #    10: "cgt_mouth_right",
+        #    11: "cgt_left_shoulder",
+        #    12: "cgt_right_shoulder",
+        #    13: "cgt_left_elbow",
+        #    14: "cgt_right_elbow",
+        #    15: "cgt_left_wrist",
+        #    16: "cgt_right_wrist",
+        #    17: "cgt_left_pinky",
+        #    18: "cgt_right_pinky",
+        #    19: "cgt_left_index",
+        #    20: "cgt_right_index",
+        #    21: "cgt_left_thumb",
+        #    22: "cgt_right_thumb",
+        #    23: "cgt_left_hip",
+        #    24: "cgt_right_hip",
+        #    25: "cgt_left_knee",
+        #    26: "cgt_right_knee",
+        #    27: "cgt_left_ankle",
+        #    28: "cgt_right_ankle",
+        #    29: "cgt_left_heel",
+        #    30: "cgt_right_heel",
+        #    31: "cgt_left_foot_index",
+        #    32: "cgt_right_foot_index",
+
+        #    # DRIVERS
+        #    33: "cgt_left_forearm_ik_driver",
+        #    34: "cgt_right_forearm_ik_driver",
+        #    35: "cgt_left_hand_ik_driver",
+        #    36: "cgt_right_hand_ik_driver",
+
+        #    37: "cgt_left_index_ik_driver",
+        #    38: "cgt_right_index_ik_driver",
+
+        #    39: "cgt_right_foot_ik_driver",
+        #    40: "cgt_left_foot_ik_driver",
+        #    41: "cgt_left_shin_ik_driver",
+        #    42: "cgt_right_shin_ik_driver"
+        # }
         self.references = {
             # MEDIAPIPE DEFAULTS
-            0: "cgt_nose",
-            1: "cgt_left_eye_inner",
-            2: "cgt_left_eye",
-            3: "cgt_left_eye_outer",
-            4: "cgt_right_eye_inner",
-            5: "cgt_right_eye",
-            6: "cgt_right_eye_outer",
-            7: "cgt_left_ear",
-            8: "cgt_right_ear",
-            9: "cgt_mouth_left",
-            10: "cgt_mouth_right",
-            11: "cgt_left_shoulder",
-            12: "cgt_right_shoulder",
-            13: "cgt_left_elbow",
-            14: "cgt_right_elbow",
-            15: "cgt_left_wrist",
-            16: "cgt_right_wrist",
-            17: "cgt_left_pinky",
-            18: "cgt_right_pinky",
-            19: "cgt_left_index",
-            20: "cgt_right_index",
-            21: "cgt_left_thumb",
-            22: "cgt_right_thumb",
-            23: "cgt_left_hip",
-            24: "cgt_right_hip",
-            25: "cgt_left_knee",
-            26: "cgt_right_knee",
-            27: "cgt_left_ankle",
-            28: "cgt_right_ankle",
-            29: "cgt_left_heel",
-            30: "cgt_right_heel",
-            31: "cgt_left_foot_index",
-            32: "cgt_right_foot_index",
+            0: CONST.Pose.nose.value,
+            1: CONST.Pose.left_eye_inner.value,
+            2: CONST.Pose.left_eye.value,
+            3: CONST.Pose.left_eye_outer.value,
+            4: CONST.Pose.right_eye_inner.value,
+            5: CONST.Pose.right_eye.value,
+            6: CONST.Pose.right_eye_outer.value,
+            7: CONST.Pose.left_ear.value,
+            8: CONST.Pose.right_ear.value,
+            9: CONST.Pose.mouth_left.value,
+            10: CONST.Pose.mouth_right.value,
+            11: CONST.Pose.left_shoulder.value,
+            12: CONST.Pose.right_shoulder.value,
+            13: CONST.Pose.left_elbow.value,
+            14: CONST.Pose.right_elbow.value,
+            15: CONST.Pose.left_wrist.value,
+            16: CONST.Pose.right_wrist.value,
+            17: CONST.Pose.left_pinky.value,
+            18: CONST.Pose.right_pinky.value,
+            19: CONST.Pose.left_index.value,
+            20: CONST.Pose.right_index.value,
+            21: CONST.Pose.left_thumb.value,
+            22: CONST.Pose.right_thumb.value,
+            23: CONST.Pose.left_hip.value,
+            24: CONST.Pose.right_hip.value,
+            25: CONST.Pose.left_knee.value,
+            26: CONST.Pose.right_knee.value,
+            27: CONST.Pose.left_ankle.value,
+            28: CONST.Pose.right_ankle.value,
+            29: CONST.Pose.left_heel.value,
+            30: CONST.Pose.right_heel.value,
+            31: CONST.Pose.left_foot_index.value,
+            32: CONST.Pose.right_foot_index.value,
 
             # DRIVERS
-            33: "cgt_left_forearm_ik_driver",
-            34: "cgt_right_forearm_ik_driver",
-            35: "cgt_left_hand_ik_driver",
-            36: "cgt_right_hand_ik_driver",
+            33: CONST.Pose.left_forearm_ik.value,
+            34: CONST.Pose.right_forearm_ik.value,
+            35: CONST.Pose.left_hand_ik.value,
+            36: CONST.Pose.right_hand_ik.value,
 
-            37: "cgt_left_index_ik_driver",
-            38: "cgt_right_index_ik_driver",
-
-            39: "cgt_right_foot_ik_driver",
-            40: "cgt_left_foot_ik_driver",
-            41: "cgt_left_shin_ik_driver",
-            42: "cgt_right_shin_ik_driver"
+            37: CONST.Pose.left_index_ik.value,
+            38: CONST.Pose.right_index_ik.value,
+            39: CONST.Pose.right_foot_ik.value,
+            40: CONST.Pose.left_foot_ik.value,
+            41: CONST.Pose.left_shin_ik.value,
+            42: CONST.Pose.right_shin_ik.value,
         }
 
         self.arms = [
@@ -77,7 +128,7 @@ class BridgePose(abs_assignment.DataAssignment):
         self.hip_center = abs_assignment.CustomData()
 
         self.pose = []
-        self.col_name = "cgt_pose"
+        self.col_name = CONST.Pose.collection.value,
         self.rotation_data = []
         self.scale_data = []
 
@@ -133,7 +184,8 @@ class BridgePose(abs_assignment.DataAssignment):
         avg_lengths = []
         for vertices in joint_chain:
             # setup a joint [0, 0+2] for the arm vertices to get vector distances
-            joints = [[self.data[vertex][1], self.data[vertex + 2][1]] for vertex in range(vertices[0], vertices[1] - 2, 2)]
+            joints = [[self.data[vertex][1], self.data[vertex + 2][1]] for vertex in
+                      range(vertices[0], vertices[1] - 2, 2)]
             vertex_lengths = [m_V.get_vector_distance(joint[0], joint[1]) for joint in joints]
 
             # average lengths
