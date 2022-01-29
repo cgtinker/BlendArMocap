@@ -45,7 +45,7 @@ importlib.reload(log)
 
 
 def register():
-    log.init_logger("release")
+    log.init_logger("info")
     registration.register()
 
 

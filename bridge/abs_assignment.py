@@ -155,7 +155,7 @@ class DataAssignment(ABC):
             )
         except KeyError:
             m_rot = m_V.to_euler(quart_rotation)
-            log.logger.warning(f"invalid id to euler combat {m_rot}, {self.frame}")
+            log.logger.debug(f"invalid id to euler combat {m_rot}, {self.frame}")
 
         return m_rot
 
