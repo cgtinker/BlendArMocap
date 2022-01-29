@@ -68,9 +68,9 @@ def register_user_interface():
 
 def unregister():
     log.logger.info("UNREGISTER BLENDARMOCAP")
-    #for cls in get_preferences():
-    #    log.logger.debug(str(cls))
-    #    unregister_class(cls)
+    for cls in get_preferences():
+        log.logger.debug(str(cls))
+        unregister_class(cls)
 
     if install_dependencies.dependencies_installed:
         log.logger.info("UNREGISTER BLENDARMOCAP WITH ACTIVE DEPENDENCIES")

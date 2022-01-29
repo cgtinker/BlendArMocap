@@ -79,7 +79,6 @@ class WM_modal_detection_operator(bpy.types.Operator):
         if event.type == "TIMER":
             rt_event = self.tracking_handler.image_detection()
             return rt_event
-            pass
 
         if event.type in {'RIGHTMOUSE', 'ESC', 'Q'}:
             return self.cancel(context)
@@ -88,7 +87,6 @@ class WM_modal_detection_operator(bpy.types.Operator):
 
     def cancel(self, context):
         del self.tracking_handler
-
         wm = context.window_manager
         wm.event_timer_remove(self._timer)
         log.logger.info("CANCELLED DETECTION")

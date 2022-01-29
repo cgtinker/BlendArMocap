@@ -4,11 +4,11 @@ import time
 class Webcam:
     def __init__(self,
                  camera_index: int = 0,
-                 title: str = "ml tracking",
-                 width: int = 1920,
-                 height: int = 1080):
-        self.capture = cv2.VideoCapture(camera_index)
+                 title: str = "Stream Detection",
+                 width: int = 640,
+                 height: int = 480):
 
+        self.capture = cv2.VideoCapture(camera_index)
         time.sleep(1.000)
         if not self.capture.isOpened():
             raise IOError("Cannot open webcam")
