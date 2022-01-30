@@ -2,6 +2,10 @@
 BlendArMocap is a Blender add-on to preform Hand, Face and Pose Detection in Blender using just a Webcam. 
 The detected data can be easily transferred to rifigy rigs. <br>
 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=pji6IHNCnAk
+" target="_blank"><img src="http://img.youtube.com/vi/pji6IHNCnAk/0.jpg" 
+alt="" width="240" height="180" border="10" /></a>
+
 
 ## Setup Instructions<br>
 Blender has to be started with **elevated permissions** in order to install the required packages _opencv_ and _mediapipe_ via the add-ons preferences. 
@@ -66,6 +70,7 @@ Select the detection target:
 When pressing the _Start Detection_ button a window will open which contains the webcam feed and detection results.
 The detection results are recorded in Blender at runtime. You can modify the recording starting point by changing the keyframe start in Blender.<br>
 May deactivate the rig while detecting if you have transferred animation results previously.
+To finish the recording press 'Q', 'ESC' or the 'RIGHT MOUSE BUTTON'.
 
 ### Animation Transfer<br>
 The detection results can be transferred to a generated _rigify_ rig.<br>
@@ -83,6 +88,7 @@ _May not change the bone names of the rigify rig._<br>
 **Start Transfer**<br>
 Transfers detection results from the selected collection to the rigify rig.<br>
 Once the transfer has taken place, new recordings will be applied instantly to the rig.<br>
+So there is no need to transfer twice.<br>
 
 ## License
     This program is free software: you can redistribute it and/or modify
