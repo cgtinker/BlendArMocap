@@ -30,14 +30,15 @@ def get_classes():
 
 
 def get_preferences():
-    log.logger.info('CALLED BLENDARMOCAP PREFS')
     preference_classes = (ui_preferences.PREFERENCES_OT_install_dependencies_button,
-                          ui_preferences.EXAMPLE_preferences,
+                          ui_preferences.BLENDARMOCAP_preferences,
                           ui_panels.UI_PT_warning_panel)
     return preference_classes
 
 
 def register():
+    log.logger.debug('REGISTERING BLENDARMOCAP')
+
     for m_class in get_preferences():
         log.logger.debug(str(m_class))
         register_class(m_class)
