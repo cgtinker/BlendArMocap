@@ -19,7 +19,7 @@ bl_info = {
     "name": "BlendArMocap",
     "description": "Mediapipe implementation for Blender 2.9+.",
     "author": "cgtinker",
-    "version": (1, 0, 0),
+    "version": (1, 0, 1),
     "blender": (2, 90, 0),
     "location": "3D View > Tool",
     "warning": "",
