@@ -32,7 +32,7 @@ def get_classes():
 
 def get_preferences():
     preference_classes = (ui_preferences.PREFERENCES_OT_install_dependencies_button,
-                          ui_preferences.BLENDARMOCAP_preferences,
+                          ui_preferences.EXAMPLE_preferences,
                           ui_panels.UI_PT_warning_panel)
     return preference_classes
 
