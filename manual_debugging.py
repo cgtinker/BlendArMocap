@@ -15,7 +15,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-
+"""
 bl_info = {
     "name": "BlendArMocap",
     "description": "Mediapipe implementation for Blender 2.9+.",
@@ -67,3 +67,4 @@ def unregister():
 if __name__ == '__main__':
     # log.init_logger()
     register()
+"""
