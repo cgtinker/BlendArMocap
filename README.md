@@ -90,6 +90,58 @@ Transfers detection results from the selected collection to the rigify rig.<br>
 Once the transfer has taken place, new recordings will be applied instantly to the rig.<br>
 So there is no need to transfer twice.<br>
 
+
+###Data Assignment<br>
+
+| Driver Source     | Constraint type | Rigify Pose Bone | 
+|-------------------|-----------------|------------------|
+| hip_center        | copy rotation   | torso            |
+| shoulder_center   | copy rotation   | chest            | 
+| left_hand_ik      | copy location   | hand_ik.R        | 
+| right_hand_ik     | copy location   | hand_ik.L        | 
+| left_forearm_ik   | copy location   | forearm_tweak.L  | 
+| right_forearm_ik  | copy location   | forearm_tweak.R  | 
+| left_index_ik     | copy location   | hand_ik.R        | 
+| right_index_ik    | copy location   | hand_ik.L        |
+
+| Hand Driver Source | Constraint type | Rigify Hand Bone |
+|--------------------|-----------------|------------------|
+| wrist              | copy rotation   | hand_ik          |
+| thumb_cmc          | copy rotation   | thumb.01         |
+| thumb_mcp          | copy rotation   | thumb.02         |
+| thumb_ip           | copy rotation   | thumb.03         |
+| thumb_tip          | copy rotation   | thumb.01         |
+| index_finger_mcp   | copy rotation   | f_index.01       |
+| index_finger_pip   | copy rotation   | f_index.02       |
+| index_finger_dip   | copy rotation   | f_index.03       |
+| index_finger_tip   | copy rotation   | f_index.01       |
+| middle_finger_mcp  | copy rotation   | f_middle.01      |
+| middle_finger_pip  | copy rotation   | f_middle.02      |
+| middle_finger_dip  | copy rotation   | f_middle.03      |
+| middle_finger_tip  | copy rotation   | f_middle.01      |
+| ring_finger_mcp    | copy rotation   | f_ring.01        |
+| ring_finger_pip    | copy rotation   | f_ring.02        |
+| ring_finger_dip    | copy rotation   | f_ring.03        |
+| ring_finger_tip    | copy rotation   | f_ring.01        |
+| pinky_mcp          | copy rotation   | f_pinky.01       |
+| pinky_pip          | copy rotation   | f_pinky.02       |
+| pinky_dip          | copy rotation   | f_pinky.03       |
+| pinky_tip          | copy rotation   | f_pinky.01       |
+
+| Face Driver Source | Constraint type | Rigify Face Bone |
+|--------------------|-----------------|------------------|
+| head               | copy rotation   | head             |
+| chin               | copy rotation   | jaw_master       |
+| right_eye_t        | copy location   | lid.T.R.002      |
+| right_eye_b        | copy location   | lid.B.R.002      |
+| left_eye_t         | copy location   | lid.T.L.002      |
+| left_eye_b         | copy location   | lid.B.L.002      |
+| mouth_t            | copy location   | lip.T            |
+| mouth_b            | copy location   | lip.B            |
+| mouth_l            | copy location   | lips.R           |
+| mouth_r            | copy location   | lips.L           |
+
+
 ## License
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

@@ -2,4 +2,5 @@ import cv2
 
 
 class Movie(object):
-    pass
+    path = ""
+    cap = cv2.VideoCapture(path)
