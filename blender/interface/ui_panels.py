@@ -41,7 +41,7 @@ class UI_PT_main_panel(ExpandedPanel, Panel):
         box = self.layout.box()
         box.label(text='Detect')
         box.row().prop(user, "webcam_input_device")
-        box.row().prop(user, "data_path")
+        # box.row().prop(user, "data_path")
         box.row().prop(user, "key_frame_step")
         box.row().prop(user, "enum_detection_type")
         box.row().operator("wm.cgt_feature_detection_operator", text=user.button_start_detection)

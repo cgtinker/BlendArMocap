@@ -41,6 +41,7 @@ def register():
     log.logger.info('REGISTERING BLENDARMOCAP')
 
     for m_class in get_preferences():
+        log.logger.debug(str(m_class))
         register_class(m_class)
 
     try:
