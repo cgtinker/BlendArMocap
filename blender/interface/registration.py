@@ -6,7 +6,7 @@ from bpy.utils import register_class, unregister_class
 
 import blender.interface.ui_panels
 from blender.interface import properties, ui_panels, install_dependencies, ui_preferences, \
-    detection_operator
+    stream_detection_operator
 from utils import log
 
 importlib.reload(ui_panels)
@@ -14,7 +14,7 @@ importlib.reload(properties)
 importlib.reload(ui_preferences)
 importlib.reload(install_dependencies)
 importlib.reload(log)
-importlib.reload(detection_operator)
+importlib.reload(stream_detection_operator)
 
 
 def get_classes():
@@ -23,7 +23,7 @@ def get_classes():
         properties.MyProperties,
 
         blender.interface.ui_panels.UI_transfer_anim_button,
-        detection_operator.WM_modal_detection_operator,
+        stream_detection_operator.WM_modal_detection_operator,
 
         ui_panels.UI_PT_main_panel
     )
@@ -32,7 +32,7 @@ def get_classes():
 
 def get_preferences():
     preference_classes = (ui_preferences.PREFERENCES_OT_install_dependencies_button,
-                          ui_preferences.EXAMPLE_preferences,
+                          ui_preferences.BLENDARMOCAP_preferences,
                           ui_panels.UI_PT_warning_panel)
     return preference_classes
 

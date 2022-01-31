@@ -44,7 +44,7 @@ class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class EXAMPLE_preferences(bpy.types.AddonPreferences):
+class BLENDARMOCAP_preferences(bpy.types.AddonPreferences):
     bl_idname = CONST.PACKAGE
 
     def draw(self, context):
