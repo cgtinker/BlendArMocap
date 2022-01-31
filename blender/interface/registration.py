@@ -31,9 +31,11 @@ def get_classes():
 
 
 def get_preferences():
+    log.logger.debug("CALLED PREFS")
     preference_classes = (ui_preferences.PREFERENCES_OT_install_dependencies_button,
                           ui_preferences.EXAMPLE_preferences,
                           ui_panels.UI_PT_warning_panel)
+    print(preference_classes)
     return preference_classes
 
 
