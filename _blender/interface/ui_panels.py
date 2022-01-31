@@ -3,12 +3,12 @@ import importlib
 import bpy
 from bpy.types import Panel
 
-import CONST
-from blender.interface import install_dependencies
-from blender.interface import ui_preferences
+import m_CONST
+from _blender.interface import install_dependencies
+from _blender.interface import ui_preferences
 from management import input_manager
 
-importlib.reload(CONST)
+importlib.reload(m_CONST)
 importlib.reload(install_dependencies)
 importlib.reload(ui_preferences)
 importlib.reload(input_manager)
@@ -17,7 +17,7 @@ importlib.reload(input_manager)
 class DefaultPanel:
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = CONST.ADDON_NAME
+    bl_category = m_CONST.ADDON_NAME
     bl_context = "objectmode"
     bl_options = {"DEFAULT_CLOSED"}
 
@@ -25,13 +25,13 @@ class DefaultPanel:
 class ExpandedPanel:
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = CONST.ADDON_NAME
+    bl_category = m_CONST.ADDON_NAME
     bl_context = "objectmode"
     bl_options = {"HEADER_LAYOUT_EXPAND"}
 
 
 class UI_PT_main_panel(ExpandedPanel, Panel):
-    bl_label = CONST.ADDON_NAME
+    bl_label = m_CONST.ADDON_NAME
     bl_idname = "OBJECT_PT_cgt_main_panel"
 
     def draw(self, context):
@@ -66,7 +66,7 @@ class UI_PT_main_panel(ExpandedPanel, Panel):
 
 
 class UI_PT_warning_panel(ExpandedPanel, Panel):
-    bl_label = CONST.ADDON_NAME
+    bl_label = m_CONST.ADDON_NAME
     bl_idname = "OBJECT_PT_warning_panel"
 
     @classmethod
@@ -76,9 +76,9 @@ class UI_PT_warning_panel(ExpandedPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        lines = [f"Please install the missing dependencies for \"{CONST.ADDON_NAME}\".",
+        lines = [f"Please install the missing dependencies for \"{m_CONST.ADDON_NAME}\".",
                  f"1. Open the preferences (Edit > Preferences > Add-ons).",
-                 f"2. Search for the \"{CONST.ADDON_NAME}\" add-on.",
+                 f"2. Search for the \"{m_CONST.ADDON_NAME}\" add-on.",
                  f"3. Open the details section of the add-on.",
                  f"4. Click on the \"{ui_preferences.PREFERENCES_OT_install_dependencies_button.bl_label}\" button.",
                  f"   This will download and install the missing Python packages, if Blender has the required",

@@ -3,13 +3,13 @@ import subprocess
 
 import bpy
 
-from blender.interface import install_dependencies, registration
-import CONST
+from _blender.interface import install_dependencies, ui_registration
+import m_CONST
 
 
 importlib.reload(install_dependencies)
-importlib.reload(registration)
-importlib.reload(CONST)
+importlib.reload(ui_registration)
+importlib.reload(m_CONST)
 
 
 class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
@@ -39,14 +39,15 @@ class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
 
         # register user interface after installing dependencies
         install_dependencies.dependencies_installed = True
-        registration.register_user_interface()
+        ui_registration.register_user_interface()
 
         return {"FINISHED"}
 
 
 class EXAMPLE_preferences(bpy.types.AddonPreferences):
-    bl_idname = CONST.PACKAGE
-
+    bl_idname = m_CONST.PACKAGE
+    print("CURRENT PACKAGE NAME", m_CONST.PACKAGE)
+    
     def draw(self, context):
         layout = self.layout
         layout.operator(PREFERENCES_OT_install_dependencies_button.bl_idname, icon="CONSOLE")

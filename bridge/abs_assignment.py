@@ -4,11 +4,11 @@ from math import pi
 
 from mathutils import Vector, Euler
 
-from blender.utils import objects
+from _blender.utils import objects
 from utils import m_V, log
-import CONST
+import m_CONST
 
-importlib.reload(CONST)
+importlib.reload(m_CONST)
 importlib.reload(objects)
 importlib.reload(m_V)
 importlib.reload(log)
@@ -28,7 +28,7 @@ class DataAssignment(ABC):
     references = None
     prev_rotation = {}
     memory_stack = {}
-    driver_col = CONST.COLLECTIONS.drivers.value
+    driver_col = m_CONST.COLLECTIONS.drivers.value
 
     # region abstract methods
     @abstractmethod
@@ -54,7 +54,7 @@ class DataAssignment(ABC):
                             ref_in_array: [],
                             size: float = 0.005,
                             name: str = "",
-                            col_name: str = CONST.COLLECTIONS.drivers.value,
+                            col_name: str = m_CONST.COLLECTIONS.drivers.value,
                             style: str = "CUBE",
                             position: [] = None,
                             is_parent: bool = False,

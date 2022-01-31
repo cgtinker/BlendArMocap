@@ -4,8 +4,7 @@ import bpy
 from bpy.props import PointerProperty
 from bpy.utils import register_class, unregister_class
 
-import blender.interface.ui_panels
-from blender.interface import properties, ui_panels, install_dependencies, ui_preferences, \
+from _blender.interface import properties, ui_panels, install_dependencies, ui_preferences, \
     stream_detection_operator
 from utils import log
 
@@ -22,7 +21,7 @@ def get_classes():
     classes = (
         properties.MyProperties,
 
-        blender.interface.ui_panels.UI_transfer_anim_button,
+        ui_panels.UI_transfer_anim_button,
         stream_detection_operator.WM_modal_detection_operator,
 
         ui_panels.UI_PT_main_panel
@@ -31,17 +30,14 @@ def get_classes():
 
 
 def get_preferences():
-    log.logger.debug("CALLED PREFS")
+    log.logger.info('CALLED BLENDARMOCAP PREFS')
     preference_classes = (ui_preferences.PREFERENCES_OT_install_dependencies_button,
                           ui_preferences.EXAMPLE_preferences,
                           ui_panels.UI_PT_warning_panel)
-    print(preference_classes)
     return preference_classes
 
 
 def register():
-    log.logger.info('REGISTERING BLENDARMOCAP')
-
     for m_class in get_preferences():
         log.logger.debug(str(m_class))
         register_class(m_class)

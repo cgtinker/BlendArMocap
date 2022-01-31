@@ -3,8 +3,8 @@ from abc import ABC
 from dataclasses import dataclass
 from enum import Enum
 
-from blender.rig.utils import constraints
-from blender.utils import objects
+from _blender.rig.utils import constraints
+from _blender.utils import objects
 from utils import m_V
 
 importlib.reload(m_V)

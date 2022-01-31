@@ -1,41 +1,41 @@
 import importlib
 
-import CONST
-from blender.rig import abs_rigging
-from blender.utils import objects
+import m_CONST
+from _blender.rig import abs_rigging
+from _blender.utils import objects
 from utils import log
 
 importlib.reload(log)
 importlib.reload(abs_rigging)
 importlib.reload(objects)
-importlib.reload(CONST)
+importlib.reload(m_CONST)
 
 
 class RigifyHands(abs_rigging.BpyRigging):
     def __init__(self, armature, driver_objects):
         # driver to rigify rig transfer name references
         self.references = {
-            CONST.HAND.wrist.value: "hand_ik",
-            CONST.HAND.thumb_cmc.value: "thumb.01",
-            CONST.HAND.thumb_mcp.value: "thumb.02",
-            CONST.HAND.thumb_ip.value: "thumb.03",
-            CONST.HAND.thumb_tip.value: "thumb.01",
-            CONST.HAND.index_finger_mcp.value: "f_index.01",
-            CONST.HAND.index_finger_pip.value: "f_index.02",
-            CONST.HAND.index_finger_dip.value: "f_index.03",
-            CONST.HAND.index_finger_tip.value: "f_index.01",
-            CONST.HAND.middle_finger_mcp.value: "f_middle.01",
-            CONST.HAND.middle_finger_pip.value: "f_middle.02",
-            CONST.HAND.middle_finger_dip.value: "f_middle.03",
-            CONST.HAND.middle_finger_tip.value: "f_middle.01",
-            CONST.HAND.ring_finger_mcp.value: "f_ring.01",
-            CONST.HAND.ring_finger_pip.value: "f_ring.02",
-            CONST.HAND.ring_finger_dip.value: "f_ring.03",
-            CONST.HAND.ring_finger_tip.value: "f_ring.01",
-            CONST.HAND.pinky_mcp.value: "f_pinky.01",
-            CONST.HAND.pinky_pip.value: "f_pinky.02",
-            CONST.HAND.pinky_dip.value: "f_pinky.03",
-            CONST.HAND.pinky_tip.value: "f_pinky.01",
+            m_CONST.HAND.wrist.value: "hand_ik",
+            m_CONST.HAND.thumb_cmc.value: "thumb.01",
+            m_CONST.HAND.thumb_mcp.value: "thumb.02",
+            m_CONST.HAND.thumb_ip.value: "thumb.03",
+            m_CONST.HAND.thumb_tip.value: "thumb.01",
+            m_CONST.HAND.index_finger_mcp.value: "f_index.01",
+            m_CONST.HAND.index_finger_pip.value: "f_index.02",
+            m_CONST.HAND.index_finger_dip.value: "f_index.03",
+            m_CONST.HAND.index_finger_tip.value: "f_index.01",
+            m_CONST.HAND.middle_finger_mcp.value: "f_middle.01",
+            m_CONST.HAND.middle_finger_pip.value: "f_middle.02",
+            m_CONST.HAND.middle_finger_dip.value: "f_middle.03",
+            m_CONST.HAND.middle_finger_tip.value: "f_middle.01",
+            m_CONST.HAND.ring_finger_mcp.value: "f_ring.01",
+            m_CONST.HAND.ring_finger_pip.value: "f_ring.02",
+            m_CONST.HAND.ring_finger_dip.value: "f_ring.03",
+            m_CONST.HAND.ring_finger_tip.value: "f_ring.01",
+            m_CONST.HAND.pinky_mcp.value: "f_pinky.01",
+            m_CONST.HAND.pinky_pip.value: "f_pinky.02",
+            m_CONST.HAND.pinky_dip.value: "f_pinky.03",
+            m_CONST.HAND.pinky_tip.value: "f_pinky.01",
         }
 
         # storing relations between rigify and driver rig (left / right hand)
@@ -73,7 +73,7 @@ class RigifyHands(abs_rigging.BpyRigging):
                 log.logger.Error("Driver empty does not exist: ", empty.name)
 
     def apply_drivers(self, armature):
-        # hand angles just require rotation constraints for remapping
+        # hand angles just require rotation m_CONSTraints for remapping
         pose_bones = armature.pose.bones
         for key, value in self.relation_dict.items():
-            self.add_constraint(pose_bones[key], value, 'COPY_ROTATION')
+            self.add_m_CONSTraint(pose_bones[key], value, 'COPY_ROTATION')

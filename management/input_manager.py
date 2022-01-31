@@ -2,12 +2,12 @@ import importlib
 
 import bpy
 
-import CONST
-from blender.rig import rigify_hands, rigify_face, rigify_pose
-from blender.utils import objects
+import m_CONST
+from _blender.rig import rigify_hands, rigify_face, rigify_pose
+from _blender.utils import objects
 from utils import log
 
-importlib.reload(CONST)
+importlib.reload(m_CONST)
 importlib.reload(rigify_hands)
 importlib.reload(rigify_pose)
 importlib.reload(rigify_face)
@@ -16,9 +16,9 @@ importlib.reload(log)
 
 def transfer_animation():
     col_mapping = {
-        CONST.COLLECTIONS.hands.value: rigify_hands.RigifyHands,
-        CONST.COLLECTIONS.face.value: rigify_face.RigifyFace,
-        CONST.COLLECTIONS.pose.value: rigify_pose.RigifyPose
+        m_CONST.COLLECTIONS.hands.value: rigify_hands.RigifyHands,
+        m_CONST.COLLECTIONS.face.value: rigify_face.RigifyFace,
+        m_CONST.COLLECTIONS.pose.value: rigify_pose.RigifyPose
     }
 
     user = bpy.context.scene.m_cgtinker_mediapipe

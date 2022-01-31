@@ -32,25 +32,26 @@ import importlib
 import os
 import sys
 
+
 script_file = os.path.realpath(__file__)
 directory = os.path.dirname(script_file)
 if directory not in sys.path:
     sys.path.append(directory)
 
-from blender.interface import registration
 from utils import log
+from _blender.interface import ui_registration
 
-importlib.reload(registration)
+importlib.reload(ui_registration)
 importlib.reload(log)
 
 
 def register():
     log.init_logger("debug")
-    registration.register()
+    ui_registration.register()
 
 
 def unregister():
-    registration.unregister()
+    ui_registration.unregister()
     log.remove_logger()
 
 

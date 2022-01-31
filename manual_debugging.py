@@ -49,19 +49,19 @@ except AttributeError:
     print("RUNNING MANUAL DEBUGGING IN EDITOR")
 
 from utils import log
-from blender.interface import registration
+from _blender.interface import ui_registration
 import importlib
 
 importlib.reload(log)
-importlib.reload(registration)
+importlib.reload(ui_registration)
 
 
 def register():
-    registration.manual_test_registration()
+    ui_registration.manual_test_registration()
 
 
 def unregister():
-    registration.unregister()
+    ui_registration.unregister()
 
 
 if __name__ == '__main__':
