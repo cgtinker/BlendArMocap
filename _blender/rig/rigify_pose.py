@@ -163,13 +163,13 @@ class RigifyPose(abs_rigging.BpyRigging):
                 add_driver_batch = self.method_mapping[driver.driver_type]
                 add_driver_batch(target, driver.source, values[1], values[2], values[3], values[4])
 
-            elif driver.driver_type == DriverType.m_CONSTraint:
+            elif driver.driver_type == DriverType.constraint:
                 if values[0] in pose_bone_names:
                     idx = pose_bone_names.index(values[0])
                     pose_bone = self.pose_bones[idx]
 
-                    add_m_CONSTraint = self.method_mapping[driver.driver_type]
-                    add_m_CONSTraint(pose_bone, driver.source, values[1])
+                    add_constraint = self.method_mapping[driver.driver_type]
+                    add_constraint(pose_bone, driver.source, values[1])
 
     # endregion
 
