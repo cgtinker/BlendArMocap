@@ -47,7 +47,7 @@ class RigifyPose(abs_rigging.BpyRigging):
         self.relation_mapping_lst = []
         self.method_mapping = {
             DriverType.limb_driver: self.add_driver_batch,
-            DriverType.m_CONSTraint: self.add_m_CONSTraint
+            DriverType.constraint: self.add_constraint
         }
 
         # offsets and avg data based on rigify input rig
@@ -94,17 +94,17 @@ class RigifyPose(abs_rigging.BpyRigging):
 
             # region m_CONSTRAINTS
             # region basic m_CONSTraints
-            m_CONST.POSE.hip_center.value: [DriverType.m_CONSTraint, ["torso", "COPY_ROTATION"]],
-            m_CONST.POSE.shoulder_center.value: [DriverType.m_CONSTraint, ["chest", "COPY_ROTATION"]],
+            m_CONST.POSE.hip_center.value: [DriverType.constraint, ["torso", "COPY_ROTATION"]],
+            m_CONST.POSE.shoulder_center.value: [DriverType.constraint, ["chest", "COPY_ROTATION"]],
             # endregion
 
             # region arms (mapped mirrored)
-            m_CONST.POSE.left_hand_ik.value: [DriverType.m_CONSTraint, ["hand_ik.R", "COPY_LOCATION"]],
-            m_CONST.POSE.right_hand_ik.value: [DriverType.m_CONSTraint, ["hand_ik.L", "COPY_LOCATION"]],
-            m_CONST.POSE.left_forearm_ik.value: [DriverType.m_CONSTraint, ["forearm_tweak.R", "COPY_LOCATION"]],
-            m_CONST.POSE.right_forearm_ik.value: [DriverType.m_CONSTraint, ["forearm_tweak.L", "COPY_LOCATION"]],
-            m_CONST.POSE.left_index_ik.value: [DriverType.m_CONSTraint, ["hand_ik.R", "DAMPED_TRACK"]],
-            m_CONST.POSE.right_index_ik.value: [DriverType.m_CONSTraint, ["hand_ik.L", "DAMPED_TRACK"]],
+            m_CONST.POSE.left_hand_ik.value: [DriverType.constraint, ["hand_ik.R", "COPY_LOCATION"]],
+            m_CONST.POSE.right_hand_ik.value: [DriverType.constraint, ["hand_ik.L", "COPY_LOCATION"]],
+            m_CONST.POSE.left_forearm_ik.value: [DriverType.constraint, ["forearm_tweak.R", "COPY_LOCATION"]],
+            m_CONST.POSE.right_forearm_ik.value: [DriverType.constraint, ["forearm_tweak.L", "COPY_LOCATION"]],
+            m_CONST.POSE.left_index_ik.value: [DriverType.constraint, ["hand_ik.R", "DAMPED_TRACK"]],
+            m_CONST.POSE.right_index_ik.value: [DriverType.constraint, ["hand_ik.L", "DAMPED_TRACK"]],
             # endregion
 
             # region legs (mapped mirrored)

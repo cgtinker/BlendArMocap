@@ -76,4 +76,4 @@ class RigifyHands(abs_rigging.BpyRigging):
         # hand angles just require rotation m_CONSTraints for remapping
         pose_bones = armature.pose.bones
         for key, value in self.relation_dict.items():
-            self.add_m_CONSTraint(pose_bones[key], value, 'COPY_ROTATION')
+            self.add_constraint(pose_bones[key], value, 'COPY_ROTATION')
