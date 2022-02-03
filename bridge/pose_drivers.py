@@ -88,7 +88,8 @@ class BridgePose(abs_assignment.DataAssignment):
         objects.add_list_to_collection(self.col_name, self.pose, self.driver_col)
 
         self.init_bpy_driver_obj(
-            self.shoulder_center, self.pose, 0.01, m_CONST.POSE.shoulder_center.value, self.col_name, "SPHERE", [0, 0, 0])
+            self.shoulder_center, self.pose, 0.01, m_CONST.POSE.shoulder_center.value, self.col_name, "SPHERE",
+            [0, 0, 0])
         self.init_bpy_driver_obj(
             self.hip_center, self.pose, 0.01, m_CONST.POSE.hip_center.value, self.col_name, "SPHERE", [0, 0, 0])
 
@@ -121,28 +122,78 @@ class BridgePose(abs_assignment.DataAssignment):
         self.scale(self.pose, self.scale_data, self.frame)
 
     def average_rig_scale(self):
-        avg_arm_length = self.get_joint_chain_length(self.arms)
-        self.scale_data.append([11, [1, 1, avg_arm_length]])
-        self.scale_data.append([12, [1, 1, avg_arm_length]])
+        self.arm_chain_lengths()
+        self.leg_chain_lengths()
 
-        avg_leg_lengths = self.get_joint_chain_length(self.legs)
-        self.scale_data.append([23, [1, 1, avg_leg_lengths]])
-        self.scale_data.append([24, [1, 1, avg_leg_lengths]])
+        # avg_arm_length = self.get_joint_chain_length(self.arms)
+        # self.scale_data.append([11, [1, 1, avg_arm_length]])
+        # self.scale_data.append([12, [1, 1, avg_arm_length]])
+        # avg_leg_lengths = self.get_joint_chain_length(self.legs)
+        # self.scale_data.append([23, [1, 1, avg_leg_lengths]])
+        # self.scale_data.append([24, [1, 1, avg_leg_lengths]])
 
-    def get_joint_chain_length(self, joint_chain):
-        """ get length of joint chain """
-        avg_lengths = []
-        for vertices in joint_chain:
-            # setup a joint [0, 0+2] for the arm vertices to get vector distances
-            joints = [[self.data[vertex][1], self.data[vertex + 2][1]] for vertex in
-                      range(vertices[0], vertices[1] - 2, 2)]
-            vertex_lengths = [m_V.get_vector_distance(joint[0], joint[1]) for joint in joints]
+    def leg_chain_lengths(self):
+        """ every segment changes length individually during the tracking process """
+        # 23: left_hip, 25: left_knee, 29: left_heel, 27: left_ankle
+        left_upper_leg_length = m_V.get_vector_distance(self.data[23][1], self.data[25][1])
+        left_lower_leg_length = m_V.get_vector_distance(self.data[25][1], self.data[27][1])
+        left_foot_length = m_V.get_vector_distance(self.data[27][1], self.data[29][1])
 
-            # average lengths
-            avg_length = sum(vertex_lengths) / len(vertex_lengths)
-            avg_lengths.append(avg_length)
-        avg_length = sum(avg_lengths) / len(avg_lengths)
-        return avg_length
+        # 24: right_hip, 26: right_knee, 28: right_ankle, 30: right_heel
+        right_upper_leg_length = m_V.get_vector_distance(self.data[24][1], self.data[26][1])
+        right_lower_leg_length = m_V.get_vector_distance(self.data[26][1], self.data[28][1])
+        right_foot_length = m_V.get_vector_distance(self.data[28][1], self.data[30][1])
+
+        data = [
+            [23, [1, 1, left_upper_leg_length]],
+            [24, [1, 1, right_upper_leg_length]],
+            [25, [1, 1, left_lower_leg_length]],
+            [26, [1, 1, right_lower_leg_length]],
+            [27, [1, 1, left_foot_length]],
+            [28, [1, 1, right_foot_length]]
+        ]
+
+        for d in data:
+            self.scale_data.append(d)
+
+    def arm_chain_lengths(self):
+        """ every segment changes length individually during the tracking process """
+        # 11: left_shoulder, 13: left_elbow, 15: left_wrist, 19: left_index
+        right_upper_arm_length = m_V.get_vector_distance(self.data[12][1], self.data[14][1])
+        right_forearm_length = m_V.get_vector_distance(self.data[14][1], self.data[16][1])
+        right_wrist_length = m_V.get_vector_distance(self.data[16][1], self.data[20][1])
+
+        # 12: right_shoulder, 14: right_elbow, 16: right_wrist, 20: right_index
+        left_upper_arm_length = m_V.get_vector_distance(self.data[11][1], self.data[13][1])
+        left_forearm_length = m_V.get_vector_distance(self.data[13][1], self.data[15][1])
+        left_wrist_length = m_V.get_vector_distance(self.data[15][1], self.data[19][1])
+
+        data = [
+            [11, [1, 1, left_upper_arm_length]],
+            [12, [1, 1, right_upper_arm_length]],
+            [13, [1, 1, left_forearm_length]],
+            [14, [1, 1, right_forearm_length]],
+            [15, [1, 1, left_wrist_length]],
+            [16, [1, 1, right_wrist_length]]
+        ]
+
+        for d in data:
+            self.scale_data.append(d)
+
+    # def get_joint_chain_length(self, joint_chain):
+    #     """ get length of joint chain """
+    #     avg_lengths = []
+    #     for vertices in joint_chain:
+    #         # setup a joint [0, 0+2] for the arm vertices to get vector distances
+    #         joints = [[self.data[vertex][1], self.data[vertex + 2][1]] for vertex in
+    #                   range(vertices[0], vertices[1] - 2, 2)]
+    #         vertex_lengths = [m_V.get_vector_distance(joint[0], joint[1]) for joint in joints]
+
+    #         # average lengths
+    #         avg_length = sum(vertex_lengths) / len(vertex_lengths)
+    #         avg_lengths.append(avg_length)
+    #     avg_length = sum(avg_lengths) / len(avg_lengths)
+    #     return avg_length
 
     def torso_rotation(self):
         # approximate perpendicular points to origin
