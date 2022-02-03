@@ -61,7 +61,7 @@ def register():
 
 
 def unregister():
-    ui_registration.unregister()
+    ui_registration.manual_unregistration()
 
 
 if __name__ == '__main__':

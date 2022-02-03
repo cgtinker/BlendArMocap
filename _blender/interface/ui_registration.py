@@ -82,7 +82,18 @@ def unregister():
         del bpy.types.Scene.m_cgtinker_mediapipe
 
 
+def manual_unregistration():
+    print("UNREGISTER")
+    classes = get_classes()
+    for cls in reversed(classes):
+        log.logger.debug(str(cls))
+        unregister_class(cls)
+
+    del bpy.types.Scene.m_cgtinker_mediapipe
+
+
 def manual_test_registration():
+    print("REGISTERING")
     for cls in get_classes():
         log.logger.debug(str(cls))
         register_class(cls)

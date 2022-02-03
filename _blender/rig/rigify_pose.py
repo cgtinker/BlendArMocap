@@ -17,20 +17,24 @@ class RigifyPose(abs_rigging.BpyRigging):
         # left arm
         ["upper_arm_fk.L", "forearm_fk.L"],
         ["forearm_fk.L", "hand_fk.L"],
+        ["hand_fk.L", "f_middle.01_master.L"],
         # right arm
         ["upper_arm_fk.R", "forearm_fk.R"],
         ["forearm_fk.R", "hand_fk.R"],
+        ["hand_fk.R", "f_middle.01_master.R"]
+
     ]
+    left_upper_arm_length, left_fore_arm_length, left_wrist_length = .0, .0, .0
+    right_upper_arm_length, right_fore_arm_length, right_wrist_length = .0, .0, .0
+
+    left_shoulder_offset, left_elbow_offset, left_wrist_offset = .0, .0, .0
+    right_shoulder_offset, right_elbow_offset, right_wrist_offset = .0, .0, .0
 
     arm_driver_names = [[m_CONST.POSE.left_shoulder.value, m_CONST.POSE.left_elbow.value],
                         [m_CONST.POSE.left_elbow.value, m_CONST.POSE.left_index.value],
                         [m_CONST.POSE.right_shoulder.value, m_CONST.POSE.right_elbow.value],
                         [m_CONST.POSE.right_elbow.value, m_CONST.POSE.right_index.value]]
-    # arm_driver_names = [["cgt_left_shoulder", "cgt_left_elbow"],
-    #                     ["cgt_left_elbow", "cgt_left_index"],
-    #                     ["cgt_right_shoulder", "cgt_right_elbow"],
-    #                     ["cgt_right_elbow", "cgt_right_index"]]
-    #
+
     leg_bones = [
         # right left
         ["thigh_ik.R", "shin_tweak.R"],
@@ -46,67 +50,66 @@ class RigifyPose(abs_rigging.BpyRigging):
         self.relation_mapping_lst = []
         self.method_mapping = {
             DriverType.limb_driver: self.add_driver_batch,
+            DriverType.arm_driver: self.add_driver_batch,
             DriverType.constraint: self.add_constraint
         }
 
         # offsets and avg data based on rigify input rig
-        self.avg_arm_length, self.avg_leg_length = self.get_avg_limb_length()
-        self.left_arm_offset, self.right_arm_offset, self.left_leg_offset, self.right_leg_offset = self.get_limb_offsets()
+        # self.avg_arm_length, self.avg_leg_length = self.get_avg_limb_length()
+        self.set_arm_joint_lengths()
+        self.get_arm_offsets()
 
         # mapping for drivers with multiple users
         self.multi_user_driver_dict = {
-            m_CONST.POSE.left_shoulder.value: [
-                m_CONST.POSE.left_hand_ik.value,
-                m_CONST.POSE.left_forearm_ik.value,
-                m_CONST.POSE.left_index_ik.value],
-
-            m_CONST.POSE.right_shoulder.value: [
-                m_CONST.POSE.right_hand_ik.value,
-                m_CONST.POSE.right_forearm_ik.value,
-                m_CONST.POSE.right_index_ik.value],
-
             m_CONST.POSE.left_hip.value: [m_CONST.POSE.left_shin_ik.value, m_CONST.POSE.left_foot_ik.value],
             m_CONST.POSE.right_hip.value: [m_CONST.POSE.right_shin_ik.value, m_CONST.POSE.right_foot_ik.value]
         }
-
+        """
+        m_CONST.POSE.left_hand_ik.value,
+        m_CONST.POSE.left_forearm_ik.value,
+        m_CONST.POSE.left_index_ik.value
+        """
         # references for setting drivers and m_CONSTraints
         self.references = {
             # region DRIVERS
             # region arms
-            m_CONST.POSE.left_shoulder.value: [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
-            m_CONST.POSE.left_wrist.value: self.arm_ik_driver_props(m_CONST.POSE.left_hand_ik.value,
-                                                                    self.left_arm_offset),
-            m_CONST.POSE.left_elbow.value: self.arm_ik_driver_props(m_CONST.POSE.left_forearm_ik.value,
-                                                                    self.left_arm_offset),
-            m_CONST.POSE.left_index.value: self.arm_ik_driver_props(m_CONST.POSE.left_index_ik.value,
-                                                                    self.left_arm_offset),
+            # left arm
 
-            m_CONST.POSE.right_shoulder.value: [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
-            m_CONST.POSE.right_wrist.value: self.arm_ik_driver_props(m_CONST.POSE.right_hand_ik.value,
-                                                                     self.right_arm_offset),
-            m_CONST.POSE.right_elbow.value: self.arm_ik_driver_props(m_CONST.POSE.right_forearm_ik.value,
-                                                                     self.right_arm_offset),
-            m_CONST.POSE.right_index.value: self.arm_ik_driver_props(m_CONST.POSE.right_index_ik.value,
-                                                                     self.right_arm_offset),
+            m_CONST.POSE.left_elbow.value: self.set_ik_driver_props(
+                m_CONST.POSE.left_forearm_ik.value,
+                self.left_shoulder_offset,
+                self.left_upper_arm_length
+            ),
+            m_CONST.POSE.left_wrist.value: self.set_ik_driver_props(
+                m_CONST.POSE.left_hand_ik.value,
+                self.left_elbow_offset,
+                self.left_wrist_length
+            ),
+            m_CONST.POSE.left_index.value: self.set_ik_driver_props(
+                m_CONST.POSE.left_index_ik.value,
+                self.left_wrist_offset,
+                self.left_wrist_length
+            ),
 
-            # endregion
-            # region legs
-            m_CONST.POSE.left_hip.value: [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
-            m_CONST.POSE.left_knee.value: self.leg_ik_driver_props(m_CONST.POSE.left_shin_ik.value,
-                                                                   self.left_leg_offset),
-            m_CONST.POSE.left_ankle.value: self.leg_ik_driver_props(m_CONST.POSE.left_foot_ik.value,
-                                                                    self.left_leg_offset),
-
-            m_CONST.POSE.right_hip.value: [DriverType.limb_driver, self.driver_z_sca2loc_attr()],
-            m_CONST.POSE.right_knee.value: self.leg_ik_driver_props(m_CONST.POSE.right_shin_ik.value,
-                                                                    self.right_leg_offset),
-            m_CONST.POSE.right_ankle.value: self.leg_ik_driver_props(m_CONST.POSE.right_foot_ik.value,
-                                                                     self.right_leg_offset),
-            # endregion
-            # endregion
+            # right arm
+            m_CONST.POSE.right_elbow.value: self.set_ik_driver_props(
+                m_CONST.POSE.right_forearm_ik.value,
+                self.right_shoulder_offset,
+                self.right_upper_arm_length
+            ),
+            m_CONST.POSE.right_wrist.value: self.set_ik_driver_props(
+                m_CONST.POSE.right_hand_ik.value,
+                self.right_elbow_offset,
+                self.right_wrist_length
+            ),
+            m_CONST.POSE.right_index.value: self.set_ik_driver_props(
+                m_CONST.POSE.right_index_ik.value,
+                self.right_wrist_offset,
+                self.left_wrist_length
+            ),
 
             # region m_CONSTRAINTS
-            # region basic m_CONSTraints
+            # region basic constraints
             m_CONST.POSE.hip_center.value: [DriverType.constraint, ["torso", "COPY_ROTATION"]],
             m_CONST.POSE.shoulder_center.value: [DriverType.constraint, ["chest", "COPY_ROTATION"]],
             # endregion
@@ -184,38 +187,47 @@ class RigifyPose(abs_rigging.BpyRigging):
                     add_constraint = self.method_mapping[driver.driver_type]
                     add_constraint(pose_bone, driver.source, values[1])
 
+            elif driver.driver_type == DriverType.arm_driver:
+                add_driver_batch = self.method_mapping[DriverType.limb_driver]
+                add_driver_batch()
+
     # endregion
 
     # region driver setup
+    def set_arm_joint_lengths(self):
+        """ length of individual arm joints """
+        arm_bones = self.get_joints(self.arm_bones, self.pose_bones)
+        self.left_upper_arm_length = m_V.get_vector_distance(arm_bones[0][0], arm_bones[0][1])
+        self.left_fore_arm_length = m_V.get_vector_distance(arm_bones[1][0], arm_bones[1][1])
+        self.left_wrist_length = m_V.get_vector_distance(arm_bones[2][0], arm_bones[2][1])
 
-    def arm_ik_driver_props(self, driver_target, offset):
+        self.right_upper_arm_length = m_V.get_vector_distance(arm_bones[3][0], arm_bones[3][1])
+        self.right_fore_arm_length = m_V.get_vector_distance(arm_bones[4][0], arm_bones[4][1])
+        self.right_wrist_length = m_V.get_vector_distance(arm_bones[5][0], arm_bones[5][1])
+
+    def get_arm_offsets(self):
+        """ offset for individual arm joints """
+        self.left_shoulder_offset = self.get_location_offset_at_origin(
+            self.pose_bones, "upper_arm_ik.L", m_CONST.POSE.right_shoulder.value, "hips")
+        self.left_elbow_offset = self.get_location_offset_at_origin(
+            self.pose_bones, "forearm_tweak.L", m_CONST.POSE.right_elbow.value, "hips")
+        self.left_wrist_offset = self.get_location_offset_at_origin(
+            self.pose_bones, "hand_ik.L", m_CONST.POSE.right_wrist.value, "hips")
+
+        self.right_shoulder_offset = self.get_location_offset_at_origin(
+            self.pose_bones, "upper_arm_ik.R", m_CONST.POSE.right_shoulder.value, "hips")
+        self.right_elbow_offset = self.get_location_offset_at_origin(
+            self.pose_bones, "forearm_tweak.R", m_CONST.POSE.right_elbow.value, "hips")
+        self.right_wrist_offset = self.get_location_offset_at_origin(
+            self.pose_bones, "hand_ik.R", m_CONST.POSE.right_wrist.value, "hips")
+
+    def set_ik_driver_props(self, driver_target, offset, joint_length):
         return [
             DriverType.limb_driver,
             self.driver_loc2loc_sca_attr(driver_target,
                                          offset,
-                                         self.avg_arm_length)
+                                         joint_length)
         ]
-
-    def leg_ik_driver_props(self, driver_target, offset):
-        return [
-            DriverType.limb_driver,
-            self.driver_loc2loc_sca_attr(driver_target,
-                                         offset,
-                                         self.avg_leg_length)
-        ]
-
-    def get_avg_limb_length(self):
-        avg_arm_length = self.get_average_joint_bone_length(self.arm_bones, self.pose_bones)
-        avg_leg_length = self.get_average_joint_bone_length(self.leg_bones, self.pose_bones)
-        return avg_arm_length, avg_leg_length
-
-    def get_limb_offsets(self):
-        left_arm_offset = self.get_location_offset(self.pose_bones, "upper_arm_ik.L", m_CONST.POSE.right_shoulder.value)
-        right_arm_offset = self.get_location_offset(self.pose_bones, "upper_arm_ik.R", m_CONST.POSE.left_shoulder.value)
-
-        left_leg_offset = self.get_location_offset(self.pose_bones, "thigh_ik.L", m_CONST.POSE.right_hip.value)
-        right_leg_offset = self.get_location_offset(self.pose_bones, "thigh_ik.R", m_CONST.POSE.left_hip.value)
-        return left_arm_offset, right_arm_offset, left_leg_offset, right_leg_offset
 
     @staticmethod
     def driver_z_sca2loc_attr():

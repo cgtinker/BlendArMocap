@@ -142,6 +142,22 @@ class BpyRigging(ABC):
 
         return offset
 
+    @staticmethod
+    def get_location_offset_at_origin(pose_bones, bone_name, target, pivot_name):
+        # remove constraint before calc offset
+        for constraint in pose_bones[bone_name].constraints:
+            if constraint.type == "COPY_LOCATION":
+                pose_bones[bone_name].constraints.remove(constraint)
+
+        # calc offset
+        bone_pos = pose_bones[bone_name].head
+        pivot_pos = pose_bones[pivot_name].head
+        ob = objects.get_object_by_name(target)
+        tar = ob.location
+        offset = bone_pos - tar - pivot_pos
+
+        return offset
+
     # region bone length
     def get_average_joint_empty_length(self, joint_empty_names):
         # get_empty_positions
@@ -160,6 +176,11 @@ class BpyRigging(ABC):
             distances.append(dist)
         avg_dist = sum(distances) / len(distances)
         return avg_dist
+
+    @staticmethod
+    def get_joint_length(joint):
+        dist = m_V.get_vector_distance(joint[0], joint[1])
+        return dist
 
     def get_average_joint_bone_length(self, joint_bone_names, pose_bones):
         """ requires an array of joints names [[bone_a, bone_b], []... ] and pose bones.
@@ -189,6 +210,7 @@ class DriverType(Enum):
     limb_driver = 0
     constraint = 1
     face_driver = 2
+    arm_driver = 3
 
 
 @dataclass(repr=True)
