@@ -210,7 +210,6 @@ class DriverType(Enum):
     limb_driver = 0
     constraint = 1
     face_driver = 2
-    arm_driver = 3
 
 
 @dataclass(repr=True)

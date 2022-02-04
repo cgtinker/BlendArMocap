@@ -169,12 +169,12 @@ class BridgePose(abs_assignment.DataAssignment):
         left_wrist_length = m_V.get_vector_distance(self.data[15][1], self.data[19][1])
 
         data = [
-            [11, [1, 1, left_upper_arm_length]],
-            [12, [1, 1, right_upper_arm_length]],
-            [13, [1, 1, left_forearm_length]],
-            [14, [1, 1, right_forearm_length]],
-            [15, [1, 1, left_wrist_length]],
-            [16, [1, 1, right_wrist_length]]
+            [13, [1, 1, left_upper_arm_length]],
+            [14, [1, 1, right_upper_arm_length]],
+            [15, [1, 1, left_forearm_length]],
+            [16, [1, 1, right_forearm_length]],
+            [19, [1, 1, left_wrist_length]],
+            [20, [1, 1, right_wrist_length]]
         ]
 
         for d in data:
