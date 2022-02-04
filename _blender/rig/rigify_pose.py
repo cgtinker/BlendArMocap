@@ -165,7 +165,7 @@ class RigifyPose(abs_rigging.BpyRigging):
 
         # setup relations between rig and drivers, then apply the drivers to the rig
         self.set_relation_dict(driver_objects)
-        self.apply_drivers()
+        #self.apply_drivers()
 
     # region rig driver relation setup
     def set_relation_dict(self, driver_objects: list):
@@ -180,6 +180,7 @@ class RigifyPose(abs_rigging.BpyRigging):
                 print(ref, idx)
                 # multi user driver (scale driver)
                 if ref in self.multi_user_driver_dict:
+                    print(ref)
                     for expression in self.multi_user_driver_dict[ref]:
                         rel = MappingRelation(driver_obj, driver_type, expression)
                         self.relation_mapping_lst.append(rel)
