@@ -104,10 +104,12 @@ class BpyRigging(ABC):
 
         variable = driver.variables.new()
         variable.name = prop_target
-        variable.targets[0].id = driver_obj
-
-        variable.targets[0].data_path = dataPath
-
+        try:
+            variable.targets[0].id = driver_obj
+            variable.targets[0].data_path = dataPath
+        except ReferenceError:
+            print("missing ik reference object")
+        
         driver.expression = "(" + func + "(" + variable.name + "))" if func else variable.name
     # endregion
 
