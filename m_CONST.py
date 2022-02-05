@@ -52,6 +52,8 @@ class POSE(Enum):
     hip_center = "CGT_HIP_CENTER_DRIVER"
     shoulder_center = "CGT_SHOULDER_CENTER_DRIVER"
 
+    # left_shoulder_ik = "CGT_LEFT_SHOULDER_IK_DRIVER"
+    # right_shoulder_ik = "CGT_RIGHT_SHOULDER_IK_DRIVER"
     left_forearm_ik = "CGT_LEFT_FOREARM_IK_DRIVER"
     right_forearm_ik = "CGT_RIGHT_FOREARM_IK_DRIVER"
     left_hand_ik = "CGT_LEFT_HAND_IK_DRIVER"

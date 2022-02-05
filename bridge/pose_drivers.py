@@ -125,13 +125,6 @@ class BridgePose(abs_assignment.DataAssignment):
         self.arm_chain_lengths()
         self.leg_chain_lengths()
 
-        # avg_arm_length = self.get_joint_chain_length(self.arms)
-        # self.scale_data.append([11, [1, 1, avg_arm_length]])
-        # self.scale_data.append([12, [1, 1, avg_arm_length]])
-        # avg_leg_lengths = self.get_joint_chain_length(self.legs)
-        # self.scale_data.append([23, [1, 1, avg_leg_lengths]])
-        # self.scale_data.append([24, [1, 1, avg_leg_lengths]])
-
     def leg_chain_lengths(self):
         """ every segment changes length individually during the tracking process """
         # 23: left_hip, 25: left_knee, 29: left_heel, 27: left_ankle
@@ -158,6 +151,7 @@ class BridgePose(abs_assignment.DataAssignment):
 
     def arm_chain_lengths(self):
         """ every segment changes length individually during the tracking process """
+
         # 11: left_shoulder, 13: left_elbow, 15: left_wrist, 19: left_index
         right_upper_arm_length = m_V.get_vector_distance(self.data[12][1], self.data[14][1])
         right_forearm_length = m_V.get_vector_distance(self.data[14][1], self.data[16][1])
@@ -179,21 +173,6 @@ class BridgePose(abs_assignment.DataAssignment):
 
         for d in data:
             self.scale_data.append(d)
-
-    # def get_joint_chain_length(self, joint_chain):
-    #     """ get length of joint chain """
-    #     avg_lengths = []
-    #     for vertices in joint_chain:
-    #         # setup a joint [0, 0+2] for the arm vertices to get vector distances
-    #         joints = [[self.data[vertex][1], self.data[vertex + 2][1]] for vertex in
-    #                   range(vertices[0], vertices[1] - 2, 2)]
-    #         vertex_lengths = [m_V.get_vector_distance(joint[0], joint[1]) for joint in joints]
-
-    #         # average lengths
-    #         avg_length = sum(vertex_lengths) / len(vertex_lengths)
-    #         avg_lengths.append(avg_length)
-    #     avg_length = sum(avg_lengths) / len(avg_lengths)
-    #     return avg_length
 
     def torso_rotation(self):
         # approximate perpendicular points to origin

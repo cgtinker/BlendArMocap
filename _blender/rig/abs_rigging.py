@@ -12,6 +12,7 @@ importlib.reload(constraints)
 
 
 class BpyRigging(ABC):
+    # region constraints
     constraint_mapping = {
         "CAMERA_SOLVER": 0,
         "FOLLOW_TRACK": 1,
@@ -44,7 +45,6 @@ class BpyRigging(ABC):
         "SHRINKWRAP": 27,
     }
 
-    # region constraints
     def add_constraint(self, bone, target, constraint):
         constraints = [c for c in bone.constraints]
 
@@ -85,7 +85,8 @@ class BpyRigging(ABC):
 
             # add driver
             for i in range(3):
-                self.add_driver(driver_target, driver_source, prop_source, prop_target, data_path[i], i, func[i])
+                self.add_driver(driver_target, driver_source,
+                                prop_source, prop_target, data_path[i], i, func[i])
         else:
             print("driver cannot be applied to same ob twice", driver_target.name)
 
@@ -94,6 +95,8 @@ class BpyRigging(ABC):
                    dataPath, index=-1, func=''):
         ''' Add driver to obj prop (at index), driven by target dataPath '''
 
+        print("\nattempt to add driver")
+        print(target_obj.name, driver_obj, prop_target)
         if index != -1:
             driver = target_obj.driver_add(prop, index).driver
         else:
@@ -102,10 +105,10 @@ class BpyRigging(ABC):
         variable = driver.variables.new()
         variable.name = prop_target
         variable.targets[0].id = driver_obj
+
         variable.targets[0].data_path = dataPath
 
-        driver.expression = func + "(" + variable.name + ")" if func else variable.name
-
+        driver.expression = "(" + func + "(" + variable.name + "))" if func else variable.name
     # endregion
 
     # region custom properties
@@ -151,12 +154,10 @@ class BpyRigging(ABC):
 
         # calc offset
         bone_pos = pose_bones[bone_name].head
-        pivot_pos = pose_bones[pivot_name].head
         ob = objects.get_object_by_name(target)
         tar = ob.location
-        offset = bone_pos - tar - pivot_pos
-
-        return offset
+        offset = bone_pos
+        return offset + tar
 
     # region bone length
     def get_average_joint_empty_length(self, joint_empty_names):
