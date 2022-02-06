@@ -32,12 +32,15 @@ def transfer_animation():
 
     driver_collections = objects.get_child_collections(selected_driver_collection)
     for col in driver_collections:
-        try:
-            armature = objects.get_armature(selected_armature)
-            driver_objects = objects.get_objects_from_collection(col)
-            col_mapping[col](armature, driver_objects)
-        except KeyError:
-            log.logger.error(f"COLLECTION MAPPING FAILED FOR {col}")
+        armature = objects.get_armature(selected_armature)
+        driver_objects = objects.get_objects_from_collection(col)
+        col_mapping[col](armature, driver_objects)
+        # try:
+        #     armature = objects.get_armature(selected_armature)
+        #     driver_objects = objects.get_objects_from_collection(col)
+        #     col_mapping[col](armature, driver_objects)
+        # except KeyError:
+        #     log.logger.error(f"COLLECTION MAPPING FAILED FOR {col}")
 
 
 def get_keyframe_step():

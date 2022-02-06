@@ -3,6 +3,7 @@ import importlib
 import m_CONST
 from _blender.rig import abs_rigging
 from _blender.rig.abs_rigging import DriverType, MappingRelation
+from _blender.rig.utils import limb_drivers
 from _blender.utils import objects
 from utils import m_V
 
@@ -10,50 +11,7 @@ importlib.reload(m_CONST)
 importlib.reload(m_V)
 importlib.reload(objects)
 importlib.reload(abs_rigging)
-
-
-class PoseDriver:
-    name: str = None
-    driver_type: DriverType = DriverType.limb_driver
-    length: float = .0
-    offset: list = [.0, .0, .0]
-    expressions: list = None
-
-    def __init__(self, name):
-        self.name = name
-
-    @staticmethod
-    def get_detected_joint_length_expression(driver_target):
-        return [
-            driver_target, "location", "length",
-            ["scale.z", "scale.z", "scale.z"],
-            ["", "", ""]
-        ]
-
-    @staticmethod
-    def get_detected_parent_pos_expression(driver_target):
-        return [
-            driver_target, "location", "prev_pos",
-            ["location.x", "location.y", "location.z"],
-            ["", "", ""]
-        ]
-
-    @staticmethod
-    def get_driver_origin_expression(driver_target):
-        return [
-            driver_target, "location", "origin",
-            ["location.x", "location.y", "location.z"],
-            ["", "", ""]
-        ]
-
-    def get_driver_main_expression(self, driver_target):
-        return [
-            driver_target, "location", "loc",
-            ["location.x", "location.y", "location.z"],
-            [f"({self.offset[0]}+origin))+{self.length}/(length)*(-(prev_pos)+",
-             f"({self.offset[1]}+origin))+{self.length}/(length)*(-(prev_pos)+",
-             f"({self.offset[2]}+origin))+{self.length}/(length)*(-(prev_pos)+"]
-        ]
+importlib.reload(limb_drivers)
 
 
 class RigPose(abs_rigging.BpyRigging):
@@ -73,35 +31,48 @@ class RigPose(abs_rigging.BpyRigging):
         m_CONST.POSE.right_index_ik.value: ["hand_ik.L", "DAMPED_TRACK"]
     }
 
-    pose_driver_targets = [
+    driver_targets = [
         m_CONST.POSE.left_forearm_ik.value, m_CONST.POSE.left_hand_ik.value, m_CONST.POSE.left_index_ik.value,
         m_CONST.POSE.right_forearm_ik.value, m_CONST.POSE.right_hand_ik.value, m_CONST.POSE.right_index_ik.value
     ]
 
-    driven_pose_bone_joints = [
+    rigify_joints = [
         ["upper_arm_fk.R", "forearm_fk.R"], ["forearm_fk.R", "hand_fk.R"], ["hand_fk.R", "f_middle.01_master.R"],
         ["upper_arm_fk.L", "forearm_fk.L"], ["forearm_fk.L", "hand_fk.L"], ["hand_fk.L", "f_middle.01_master.L"],
     ]
 
-    detected_parent_pos_drivers = [PoseDriver(name) for name in [
-        m_CONST.POSE.left_shoulder.value, m_CONST.POSE.left_elbow.value, m_CONST.POSE.left_wrist.value,
-        m_CONST.POSE.right_shoulder.value, m_CONST.POSE.right_elbow.value, m_CONST.POSE.right_wrist.value
-    ]]
-
-    origin_pose_drivers = [PoseDriver(name) for name in [
+    ik_driver_origins = [
         m_CONST.POSE.left_shoulder.value, m_CONST.POSE.left_forearm_ik.value, m_CONST.POSE.left_hand_ik.value,
         m_CONST.POSE.right_shoulder.value, m_CONST.POSE.right_forearm_ik.value, m_CONST.POSE.right_hand_ik.value,
-    ]]
+    ]
 
-    main_pose_drivers = [PoseDriver(name) for name in [
-        m_CONST.POSE.left_elbow.value, m_CONST.POSE.left_wrist.value, m_CONST.POSE.left_index.value,
-        m_CONST.POSE.right_elbow.value, m_CONST.POSE.right_wrist.value, m_CONST.POSE.right_index.value
-    ]]
+    detected_joints = [
+        [m_CONST.POSE.left_shoulder.value, m_CONST.POSE.left_elbow.value],
+        [m_CONST.POSE.left_elbow.value, m_CONST.POSE.left_wrist.value],
+        [m_CONST.POSE.left_wrist.value, m_CONST.POSE.left_index.value],
+
+        [m_CONST.POSE.right_shoulder.value, m_CONST.POSE.right_elbow.value],
+        [m_CONST.POSE.right_elbow.value, m_CONST.POSE.right_wrist.value],
+        [m_CONST.POSE.right_wrist.value, m_CONST.POSE.right_index.value]
+    ]
+
+    driver_offset_bones = [
+        "upper_arm_fk.R", None, None,
+        "upper_arm_fk.L", None, None
+    ]
 
     mapping_relation_list = []
 
     def __init__(self, armature, driver_objects: list):
         self.pose_bones = armature.pose.bones
+        self.limb_drivers = [limb_drivers.LimbDriver(
+            driver_target=driver,
+            driver_origin=self.ik_driver_origins[idx],
+            detected_joint=self.detected_joints[idx],
+            rigify_joint=self.rigify_joints[idx],
+            pose_bones=self.pose_bones,
+            offset_bone=self.driver_offset_bones[idx]
+        ) for idx, driver in enumerate(self.driver_targets)]
 
         self.method_mapping = {
             DriverType.limb_driver: self.add_driver_batch,
@@ -109,9 +80,8 @@ class RigPose(abs_rigging.BpyRigging):
         }
 
         # pose driver setup based on input rig
-        self.set_pose_driver_joint_length()
-        self.set_pose_driver_offset()
-        self.set_pose_driver_expressions()
+        for driver in self.limb_drivers:
+            driver.set_expressions()
 
         self.set_relation_dict(driver_objects)
         self.apply_drivers()
@@ -127,16 +97,19 @@ class RigPose(abs_rigging.BpyRigging):
     def add_pose_driver_mapping(self, driver_names, driver_objects):
         def setup_relation(pose_driver):
             if pose_driver.name in driver_names:
+                print(pose_driver.name)
                 # access the driver object which has been set up previously
                 driver_obj = self.get_driver_object(pose_driver.name, driver_names, driver_objects)
-                driver_type = pose_driver.driver_type
+                driver_type = DriverType.limb_driver
                 # add pose driver expressions to mapping list
                 for expression in pose_driver.expressions:
+                    print(expression)
                     relation = MappingRelation(driver_obj, driver_type, expression)
                     self.mapping_relation_list.append(relation)
 
-        for driver in self.origin_pose_drivers + self.detected_parent_pos_drivers + self.main_pose_drivers:
-            setup_relation(driver)
+        for drivers in self.limb_drivers:
+            for driver in drivers.pose_drivers:
+                setup_relation(driver)
 
     def add_constraint_mapping(self, driver_names, driver_objects):
         for name in self.pose_constraints:
@@ -151,20 +124,24 @@ class RigPose(abs_rigging.BpyRigging):
     def get_driver_object(driver_name, driver_names, driver_objects):
         idx = driver_names.index(driver_name)
         return driver_objects[idx]
-
     # endregion
 
     # region apply drivers
     def apply_drivers(self):
+        # log.logger.debug("\n\n")
         pose_bone_names = [bone.name for bone in self.pose_bones]
 
         def apply_by_type(values):
+            print("VALUES", values)
             if driver.driver_type == DriverType.limb_driver:
+                print("\nlimb_driver")
                 target = objects.get_object_by_name(values[0])
                 add_driver_batch = self.method_mapping[driver.driver_type]
+                print(target, driver.source, values[1], values[2], values[3], values[4])
                 add_driver_batch(target, driver.source, values[1], values[2], values[3], values[4])
 
             elif driver.driver_type == DriverType.constraint:
+                print("\nconstraint driver")
                 if values[0] in pose_bone_names:
                     idx = pose_bone_names.index(values[0])
                     pose_bone = self.pose_bones[idx]
@@ -175,40 +152,4 @@ class RigPose(abs_rigging.BpyRigging):
         for driver in self.mapping_relation_list:
             apply_by_type(driver.values[0])
     # endregion
-
-    # region driver setup
-    def set_pose_driver_expressions(self):
-        """ sets expressions for drivers """
-        # previous ik driver as origin in the chain
-        for idx, driver in enumerate(self.origin_pose_drivers):
-            print(driver.name)
-            origin_expression = driver.get_driver_origin_expression(self.pose_driver_targets[idx])
-            driver.expressions = [origin_expression]
-            print(origin_expression)
-
-        for idx, driver in enumerate(self.detected_parent_pos_drivers):
-            chain_parent = driver.get_detected_parent_pos_expression(self.pose_driver_targets[idx])
-            driver.expressions = [chain_parent]
-
-        for idx, driver in enumerate(self.main_pose_drivers):
-            scale_expression = driver.get_detected_joint_length_expression(self.pose_driver_targets[idx])
-            main_expression = driver.get_driver_main_expression(self.pose_driver_targets[idx])
-            driver.expressions = [scale_expression, main_expression]
-
-    def set_pose_driver_joint_length(self):
-        """ length of individual arm joints """
-        arm_bones = self.get_joints(self.driven_pose_bone_joints, self.pose_bones)
-        for idx, joint in enumerate(arm_bones):
-            self.main_pose_drivers[idx].length = m_V.get_vector_distance(joint[0], joint[1])
-
-    def set_pose_driver_offset(self):
-        """ offset for individual arm joints """
-        def set_offset(idx, origin):
-            self.main_pose_drivers[idx].offset = self.get_location_offset(
-                self.pose_bones,
-                self.driven_pose_bone_joints[idx][0],
-                origin,
-            )
-        set_offset(0, m_CONST.POSE.left_shoulder.value)
-        set_offset(3, m_CONST.POSE.right_shoulder.value)
     # endregion

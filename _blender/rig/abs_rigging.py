@@ -94,9 +94,7 @@ class BpyRigging(ABC):
     def add_driver(target_obj, driver_obj, prop, prop_target,
                    dataPath, index=-1, func=''):
         ''' Add driver to obj prop (at index), driven by target dataPath '''
-
-        print("\nattempt to add driver")
-        print(target_obj.name, driver_obj, prop_target)
+        print("APPLYING DRIVER", target_obj, driver_obj, prop, prop_target)
         if index != -1:
             driver = target_obj.driver_add(prop, index).driver
         else:
@@ -109,7 +107,7 @@ class BpyRigging(ABC):
             variable.targets[0].data_path = dataPath
         except ReferenceError:
             print("missing ik reference object")
-        
+
         driver.expression = "(" + func + "(" + variable.name + "))" if func else variable.name
     # endregion
 
