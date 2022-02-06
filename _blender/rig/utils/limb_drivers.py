@@ -20,7 +20,7 @@ class LimbDriver:
     rigify_joint_length: float = .0
     offset: list = [0, 0, 0]
 
-    def __init__(self, driver_target, driver_origin, detected_joint, rigify_joint, pose_bones, offset_bone=None):
+    def __init__(self, driver_target, driver_origin, detected_joint, rigify_joint_length, pose_bones, driver_offset=None):
         # actual drivers
         self.driver_target = driver_target
         self.driver_origin = pose_driver_expressions.PoseDriver(driver_origin)
@@ -30,16 +30,11 @@ class LimbDriver:
         # referencing pose drivers
         self.pose_drivers = [self.driver_origin, self.joint_head, self.joint_tail]
         # rigify joint length
-        self.set_rigify_joint_length(rigify_joint, pose_bones)
+        self.rigify_joint_length = rigify_joint_length
 
-        if offset_bone is not None:
-            self.set_pose_driver_offset(pose_bones, offset_bone, )
-
-    def set_rigify_joint_length(self, rigify_joint, pose_bones):
-        """ sets rigify joint length which should be targeted by the drivers """
-        self.rigify_joint_length = m_V.get_vector_distance(
-            pose_bones[rigify_joint[0]].head,
-            pose_bones[rigify_joint[1]].head)
+        if driver_offset is not None:
+            # self.set_pose_driver_offset(pose_bones, offset_bone, )
+            self.set_pose_driver_offset(driver_offset)
 
     def set_expressions(self):
         """ sets the expressions for blender internal drivers.
@@ -68,15 +63,15 @@ class LimbDriver:
         main_expression = self.joint_tail.get_driver_main_expression(self.driver_target)
         self.joint_tail.expressions = [scale_expression, main_expression]
 
-    def set_pose_driver_offset(self, pose_bones, bone_name):
+    def set_pose_driver_offset(self, driver_offset):
         """ offset for individual arm joints """
         # remove constraint
-        for constraint in pose_bones[bone_name].constraints:
-            if constraint.type == "COPY_LOCATION":
-                pose_bones[bone_name].constraints.remove(constraint)
-
-        # calc offset
-        bone_pos = pose_bones[bone_name].head
-        ob = objects.get_object_by_name(self.joint_tail.name)
+        # for constraint in pose_bones[bone_name].constraints:
+        #     if constraint.type == "COPY_LOCATION":
+        #         pose_bones[bone_name].constraints.remove(constraint)
+        #
+        # # calc offset
+        # bone_pos = pose_bones[bone_name].head
+        ob = objects.get_object_by_name(self.joint_head.name)
         tar = ob.location
-        self.offset = bone_pos - tar
+        self.offset = driver_offset - tar

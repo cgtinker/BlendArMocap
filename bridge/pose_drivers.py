@@ -100,9 +100,9 @@ class BridgePose(abs_assignment.DataAssignment):
         self.rotation_data = []
         self.scale_data = []
         self.prepare_landmarks()
-        self.average_rig_scale()
         self.shoulder_hip_location()
         self.shoulder_hip_rotation()
+        self.average_rig_scale()
 
     def update(self):
         self.set_position()
@@ -131,22 +131,26 @@ class BridgePose(abs_assignment.DataAssignment):
     def leg_chain_lengths(self):
         """ every segment changes length individually during the tracking process """
         # 23: left_hip, 25: left_knee, 29: left_heel, 27: left_ankle
+        left_hip_leg_length = m_V.get_vector_distance(self.hip_center.loc, self.data[23][1])
         left_upper_leg_length = m_V.get_vector_distance(self.data[23][1], self.data[25][1])
         left_lower_leg_length = m_V.get_vector_distance(self.data[25][1], self.data[27][1])
         left_foot_length = m_V.get_vector_distance(self.data[27][1], self.data[29][1])
 
         # 24: right_hip, 26: right_knee, 28: right_ankle, 30: right_heel
+        right_hip_leg_length = m_V.get_vector_distance(self.hip_center.loc, self.data[24][1])
         right_upper_leg_length = m_V.get_vector_distance(self.data[24][1], self.data[26][1])
         right_lower_leg_length = m_V.get_vector_distance(self.data[26][1], self.data[28][1])
         right_foot_length = m_V.get_vector_distance(self.data[28][1], self.data[30][1])
 
         data = [
-            [23, [1, 1, left_upper_leg_length]],
-            [24, [1, 1, right_upper_leg_length]],
-            [25, [1, 1, left_lower_leg_length]],
-            [26, [1, 1, right_lower_leg_length]],
-            [27, [1, 1, left_foot_length]],
-            [28, [1, 1, right_foot_length]]
+            [23, [1, 1, left_hip_leg_length]],
+            [24, [1, 1, right_hip_leg_length]],
+            [25, [1, 1, left_upper_leg_length]],
+            [26, [1, 1, right_upper_leg_length]],
+            [27, [1, 1, left_lower_leg_length]],
+            [28, [1, 1, right_lower_leg_length]],
+            [29, [1, 1, left_foot_length]],
+            [30, [1, 1, right_foot_length]]
         ]
 
         for d in data:
@@ -156,16 +160,20 @@ class BridgePose(abs_assignment.DataAssignment):
         """ every segment changes length individually during the tracking process """
 
         # 11: left_shoulder, 13: left_elbow, 15: left_wrist, 19: left_index
+        right_shoulder_arm_length = m_V.get_vector_distance(self.shoulder_center.loc, self.data[12][1])
         right_upper_arm_length = m_V.get_vector_distance(self.data[12][1], self.data[14][1])
         right_forearm_length = m_V.get_vector_distance(self.data[14][1], self.data[16][1])
         right_wrist_length = m_V.get_vector_distance(self.data[16][1], self.data[20][1])
 
         # 12: right_shoulder, 14: right_elbow, 16: right_wrist, 20: right_index
+        left_shoulder_arm_length = m_V.get_vector_distance(self.shoulder_center.loc, self.data[11][1])
         left_upper_arm_length = m_V.get_vector_distance(self.data[11][1], self.data[13][1])
         left_forearm_length = m_V.get_vector_distance(self.data[13][1], self.data[15][1])
         left_wrist_length = m_V.get_vector_distance(self.data[15][1], self.data[19][1])
 
         data = [
+            [11, [1, 1, left_shoulder_arm_length]],
+            [12, [1, 1, right_shoulder_arm_length]],
             [13, [1, 1, left_upper_arm_length]],
             [14, [1, 1, right_upper_arm_length]],
             [15, [1, 1, left_forearm_length]],

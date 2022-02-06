@@ -32,46 +32,62 @@ class RigPose(abs_rigging.BpyRigging):
     }
 
     driver_targets = [
-        m_CONST.POSE.left_forearm_ik.value, m_CONST.POSE.left_hand_ik.value, m_CONST.POSE.left_index_ik.value,
-        m_CONST.POSE.right_forearm_ik.value, m_CONST.POSE.right_hand_ik.value, m_CONST.POSE.right_index_ik.value
+        m_CONST.POSE.left_shoulder_ik.value, m_CONST.POSE.left_forearm_ik.value,
+        m_CONST.POSE.left_hand_ik.value, m_CONST.POSE.left_index_ik.value,
+        m_CONST.POSE.right_shoulder_ik.value, m_CONST.POSE.right_forearm_ik.value,
+        m_CONST.POSE.right_hand_ik.value, m_CONST.POSE.right_index_ik.value
     ]
 
+    shoulder_center = ["upper_arm_fk.R", "upper_arm_fk.L"]
+    hip_center = ["", ""]
     rigify_joints = [
-        ["upper_arm_fk.R", "forearm_fk.R"], ["forearm_fk.R", "hand_fk.R"], ["hand_fk.R", "f_middle.01_master.R"],
-        ["upper_arm_fk.L", "forearm_fk.L"], ["forearm_fk.L", "hand_fk.L"], ["hand_fk.L", "f_middle.01_master.L"],
+        ["shoulder_center", "upper_arm_fk.R"], ["upper_arm_fk.R", "forearm_fk.R"],
+        ["forearm_fk.R", "hand_fk.R"], ["hand_fk.R", "f_middle.01_master.R"],
+
+        ["shoulder_center", "upper_arm_fk.L"], ["upper_arm_fk.L", "forearm_fk.L"],
+        ["forearm_fk.L", "hand_fk.L"], ["hand_fk.L", "f_middle.01_master.L"],
     ]
 
     ik_driver_origins = [
-        m_CONST.POSE.left_shoulder.value, m_CONST.POSE.left_forearm_ik.value, m_CONST.POSE.left_hand_ik.value,
-        m_CONST.POSE.right_shoulder.value, m_CONST.POSE.right_forearm_ik.value, m_CONST.POSE.right_hand_ik.value,
+        m_CONST.POSE.shoulder_center.value, m_CONST.POSE.left_shoulder_ik.value,
+        m_CONST.POSE.left_forearm_ik.value, m_CONST.POSE.left_hand_ik.value,
+
+        m_CONST.POSE.shoulder_center.value, m_CONST.POSE.right_shoulder_ik.value,
+        m_CONST.POSE.right_forearm_ik.value, m_CONST.POSE.right_hand_ik.value,
     ]
 
     detected_joints = [
+        [m_CONST.POSE.shoulder_center.value, m_CONST.POSE.left_shoulder.value],
         [m_CONST.POSE.left_shoulder.value, m_CONST.POSE.left_elbow.value],
         [m_CONST.POSE.left_elbow.value, m_CONST.POSE.left_wrist.value],
         [m_CONST.POSE.left_wrist.value, m_CONST.POSE.left_index.value],
 
+        [m_CONST.POSE.shoulder_center.value, m_CONST.POSE.right_shoulder.value],
         [m_CONST.POSE.right_shoulder.value, m_CONST.POSE.right_elbow.value],
         [m_CONST.POSE.right_elbow.value, m_CONST.POSE.right_wrist.value],
         [m_CONST.POSE.right_wrist.value, m_CONST.POSE.right_index.value]
-    ]
-
-    driver_offset_bones = [
-        "upper_arm_fk.R", None, None,
-        "upper_arm_fk.L", None, None
     ]
 
     mapping_relation_list = []
 
     def __init__(self, armature, driver_objects: list):
         self.pose_bones = armature.pose.bones
+
+        self.shoulder_center = self.get_rigify_shoulder_center()
+        self.hip_center = None
+        joint_lengths = self.get_rigify_joint_lengths()
+        driver_offset = [
+            self.shoulder_center, None, None, None,
+            self.shoulder_center, None, None, None
+        ]
+
         self.limb_drivers = [limb_drivers.LimbDriver(
             driver_target=driver,
             driver_origin=self.ik_driver_origins[idx],
             detected_joint=self.detected_joints[idx],
-            rigify_joint=self.rigify_joints[idx],
+            rigify_joint_length=joint_lengths[idx],
             pose_bones=self.pose_bones,
-            offset_bone=self.driver_offset_bones[idx]
+            driver_offset=driver_offset[idx]
         ) for idx, driver in enumerate(self.driver_targets)]
 
         self.method_mapping = {
@@ -85,6 +101,31 @@ class RigPose(abs_rigging.BpyRigging):
 
         self.set_relation_dict(driver_objects)
         self.apply_drivers()
+
+    def get_rigify_shoulder_center(self):
+        def pos(bone_name):
+            return self.pose_bones[bone_name].head
+
+        center = m_V.center_point(pos(self.shoulder_center[0]), pos(self.shoulder_center[1]))
+        return center
+
+    def get_rigify_joint_lengths(self):
+        """ return the lengths of given joints while it uses
+            center as keyword for a custom joint origin based on the first index """
+        def pos(bone_name):
+            return self.pose_bones[bone_name].head
+
+        joint_lengths = []
+        for joint in self.rigify_joints:
+            if "shoulder_center" in joint:
+                joint_locs = [self.shoulder_center, pos(joint[1])]
+            elif "hip_center" in joint:
+                joint_locs = [self.hip_center, pos(joint[1])]
+            else:
+                joint_locs = [pos(name) for name in joint]
+            length = m_V.get_vector_distance(joint_locs[0], joint_locs[1])
+            joint_lengths.append(length)
+        return joint_lengths
 
     # region mapping
     def set_relation_dict(self, driver_objects: list):
@@ -128,20 +169,15 @@ class RigPose(abs_rigging.BpyRigging):
 
     # region apply drivers
     def apply_drivers(self):
-        # log.logger.debug("\n\n")
         pose_bone_names = [bone.name for bone in self.pose_bones]
 
         def apply_by_type(values):
-            print("VALUES", values)
             if driver.driver_type == DriverType.limb_driver:
-                print("\nlimb_driver")
                 target = objects.get_object_by_name(values[0])
                 add_driver_batch = self.method_mapping[driver.driver_type]
-                print(target, driver.source, values[1], values[2], values[3], values[4])
                 add_driver_batch(target, driver.source, values[1], values[2], values[3], values[4])
 
             elif driver.driver_type == DriverType.constraint:
-                print("\nconstraint driver")
                 if values[0] in pose_bone_names:
                     idx = pose_bone_names.index(values[0])
                     pose_bone = self.pose_bones[idx]
