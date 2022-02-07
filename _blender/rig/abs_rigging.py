@@ -74,7 +74,7 @@ class BpyRigging(ABC):
 
     # region driver
     def add_driver_batch(self, driver_target, driver_source, prop_source, prop_target,
-                         data_path, func=None, bone_target=None):
+                         data_path, func=None, target_rig=None):
         """ Add driver to object on x-y-z axis. """
         # check if custom prop has been added to the driver
         added = self.set_custom_property(driver_target, prop_target, True)
@@ -85,7 +85,7 @@ class BpyRigging(ABC):
             # attempt to add driver to all axis
             for i in range(3):
                 drivers.add_driver(driver_target, driver_source, prop_source, prop_target,
-                                   data_path[i], i, func[i], bone_target)
+                                   data_path[i], i, func[i], target_rig)
         else:
             print("driver cannot be applied to same ob twice", driver_target.name)
 

@@ -181,12 +181,12 @@ class RigifyFace(BpyRigging):
 
     # region eyes
     def eye_up_dir_driver_attr(self, target, avg_distance):
-        functions = ["", "", f"-{avg_distance}*.25*"]
+        functions = ["", "", f"-{avg_distance}*.3*"]
         attribute = self.get_loc_sca_driver_attribute(target, self.get_target_axis("Z"), functions)
         return attribute
 
     def eye_top_down_dir_driver_attr(self, target, avg_distance):
-        functions = ["", "", f"-{avg_distance}*.65+{avg_distance}*"]
+        functions = ["", "", f"-{avg_distance}*.7+{avg_distance}*"]
         attribute = self.get_loc_sca_driver_attribute(target, self.get_target_axis("Z"), functions)
         return attribute
 

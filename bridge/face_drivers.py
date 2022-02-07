@@ -147,7 +147,8 @@ class BridgeFace(abs_assignment.DataAssignment):
         z_angle = m_V.angle_between(nose_dir_z, chin_dir_z) * 1.8
 
         chin_rotation = m_V.rotate_towards(self.data[152][1], self.data[6][1], 'Y', 'Z')
-        self.chin_driver.rot = Euler((z_angle, 0, 0))
+        # due to the base angle it's required to offset the rotation
+        self.chin_driver.rot = Euler(((z_angle - 3.14159*.07)*1.175, 0, 0))
 
     def face_mesh_rotation(self):
         """ calculate face quaternion using
