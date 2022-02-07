@@ -20,7 +20,7 @@ class LimbDriver:
     rigify_joint_length: float = .0
     offset: list = [0, 0, 0]
 
-    def __init__(self, driver_target, driver_origin, detected_joint, rigify_joint_length, pose_bones, driver_offset=None):
+    def __init__(self, driver_target, driver_origin, detected_joint, rigify_joint_length, driver_offset=None):
         # actual drivers
         self.driver_target = driver_target
         self.driver_origin = pose_driver_expressions.PoseDriver(driver_origin)
@@ -65,13 +65,6 @@ class LimbDriver:
 
     def set_pose_driver_offset(self, driver_offset):
         """ offset for individual arm joints """
-        # remove constraint
-        # for constraint in pose_bones[bone_name].constraints:
-        #     if constraint.type == "COPY_LOCATION":
-        #         pose_bones[bone_name].constraints.remove(constraint)
-        #
-        # # calc offset
-        # bone_pos = pose_bones[bone_name].head
         ob = objects.get_object_by_name(self.joint_head.name)
         tar = ob.location
         self.offset = driver_offset - tar

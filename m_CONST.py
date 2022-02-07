@@ -61,6 +61,8 @@ class POSE(Enum):
     left_index_ik = "CGT_LEFT_INDEX_IK_DRIVER"
     right_index_ik = "CGT_RIGHT_INDEX_IK_DRIVER"
 
+    left_hip_ik = "CGT_LEFT_HIP_IK_DRIVER"
+    right_hip_ik = "CGT_RIGHT_HIP_IK_DRIVER"
     right_foot_ik = "CGT_RIGHT_FOOT_IK_DRIVER"
     left_foot_ik = "CGT_LEFT_FOOT_IK_DRIVER"
     left_shin_ik = "CGT_LEFT_SHIN_IK_DRIVER"

@@ -3,7 +3,7 @@ from abc import ABC
 from dataclasses import dataclass
 from enum import Enum
 
-from _blender.rig.utils import constraints
+from _blender.rig.utils import constraints, drivers
 from _blender.utils import objects
 from utils import m_V
 
@@ -73,8 +73,8 @@ class BpyRigging(ABC):
     # endregion
 
     # region driver
-    def add_driver_batch(self, driver_target, driver_source,
-                         prop_source, prop_target, data_path, func=None):
+    def add_driver_batch(self, driver_target, driver_source, prop_source, prop_target,
+                         data_path, func=None, bone_target=None):
         """ Add driver to object on x-y-z axis. """
         # check if custom prop has been added to the driver
         added = self.set_custom_property(driver_target, prop_target, True)
@@ -82,19 +82,19 @@ class BpyRigging(ABC):
         if added is True:
             if func is None:
                 func = ['', '', '']
-
-            # add driver
+            # attempt to add driver to all axis
             for i in range(3):
-                self.add_driver(driver_target, driver_source,
-                                prop_source, prop_target, data_path[i], i, func[i])
+                drivers.add_driver(driver_target, driver_source, prop_source, prop_target,
+                                   data_path[i], i, func[i], bone_target)
         else:
             print("driver cannot be applied to same ob twice", driver_target.name)
 
+    """
     @staticmethod
-    def add_driver(target_obj, driver_obj, prop, prop_target,
-                   dataPath, index=-1, func='', bone_target=None):
+    def add_driver(target_obj, driver_obj, prop, prop_target, data_path, index=-1, func='', bone_target=None):
+        drivers.add_driver(target_obj, driver_obj, prop, prop_target, data_path, index, func, bone_target)
         ''' Add driver to obj prop (at index), driven by target dataPath '''
-
+        
         if index != -1:
             driver = target_obj.driver_add(prop, index).driver
         else:
@@ -105,7 +105,7 @@ class BpyRigging(ABC):
         if bone_target is None:
             try:
                 variable.targets[0].id = driver_obj
-                variable.targets[0].data_path = dataPath
+                variable.targets[0].data_path = data_path
             except ReferenceError:
                 print("missing ik reference object")
         else:
@@ -113,6 +113,7 @@ class BpyRigging(ABC):
             variable.targets[0].bone_target = None
 
         driver.expression = "(" + func + "(" + variable.name + "))" if func else variable.name
+        """
     # endregion
 
     # region custom properties

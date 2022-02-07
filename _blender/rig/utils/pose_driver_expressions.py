@@ -1,4 +1,5 @@
 from _blender.rig.abs_rigging import DriverType
+import bpy
 
 
 class PoseDriver:
@@ -7,6 +8,7 @@ class PoseDriver:
     length: float = .0
     offset: list = [.0, .0, .0]
     expressions: list = None
+    target_rig: bpy.types.Object = None
 
     def __init__(self, name):
         self.name = name

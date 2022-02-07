@@ -76,9 +76,15 @@ class RigPose(abs_rigging.BpyRigging):
         self.shoulder_center = self.get_rigify_shoulder_center()
         self.hip_center = None
         joint_lengths = self.get_rigify_joint_lengths()
+
         driver_offset = [
             self.shoulder_center, None, None, None,
             self.shoulder_center, None, None, None
+        ]
+
+        bone_target = [
+            None, None, None, None,
+            None, None, None, None
         ]
 
         self.limb_drivers = [limb_drivers.LimbDriver(
@@ -86,7 +92,6 @@ class RigPose(abs_rigging.BpyRigging):
             driver_origin=self.ik_driver_origins[idx],
             detected_joint=self.detected_joints[idx],
             rigify_joint_length=joint_lengths[idx],
-            pose_bones=self.pose_bones,
             driver_offset=driver_offset[idx]
         ) for idx, driver in enumerate(self.driver_targets)]
 
