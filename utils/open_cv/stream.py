@@ -1,5 +1,7 @@
-import cv2
 import time
+
+import cv2
+
 
 class Webcam:
     def __init__(self,

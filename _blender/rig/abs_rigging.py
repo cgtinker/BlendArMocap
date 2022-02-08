@@ -1,14 +1,11 @@
-import importlib
 from abc import ABC
 from dataclasses import dataclass
 from enum import Enum
 
-from _blender.rig.utils import constraints, drivers
+from _blender.rig.utils import constraints
+from _blender.rig.utils.drivers import assignment
 from _blender.utils import objects
 from utils import m_V
-
-importlib.reload(m_V)
-importlib.reload(constraints)
 
 
 class BpyRigging(ABC):
@@ -84,36 +81,10 @@ class BpyRigging(ABC):
                 func = ['', '', '']
             # attempt to add driver to all axis
             for i in range(3):
-                drivers.add_driver(driver_target, driver_source, prop_source, prop_target,
-                                   data_path[i], i, func[i], target_rig)
+                assignment.add_driver(driver_target, driver_source, prop_source, prop_target,
+                                      data_path[i], i, func[i], target_rig)
         else:
             print("driver cannot be applied to same ob twice", driver_target.name)
-
-    """
-    @staticmethod
-    def add_driver(target_obj, driver_obj, prop, prop_target, data_path, index=-1, func='', bone_target=None):
-        drivers.add_driver(target_obj, driver_obj, prop, prop_target, data_path, index, func, bone_target)
-        ''' Add driver to obj prop (at index), driven by target dataPath '''
-        
-        if index != -1:
-            driver = target_obj.driver_add(prop, index).driver
-        else:
-            driver = target_obj.driver_add(prop).driver
-
-        variable = driver.variables.new()
-        variable.name = prop_target
-        if bone_target is None:
-            try:
-                variable.targets[0].id = driver_obj
-                variable.targets[0].data_path = data_path
-            except ReferenceError:
-                print("missing ik reference object")
-        else:
-            variable.targets[0].id = driver_obj
-            variable.targets[0].bone_target = None
-
-        driver.expression = "(" + func + "(" + variable.name + "))" if func else variable.name
-        """
     # endregion
 
     # region custom properties

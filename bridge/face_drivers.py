@@ -1,5 +1,3 @@
-import importlib
-
 import numpy as np
 from mathutils import Euler
 
@@ -7,10 +5,6 @@ import m_CONST
 from _blender.utils import objects
 from bridge import abs_assignment
 from utils import m_V
-
-importlib.reload(m_V)
-importlib.reload(abs_assignment)
-importlib.reload(m_CONST)
 
 
 class BridgeFace(abs_assignment.DataAssignment):
@@ -37,8 +31,10 @@ class BridgeFace(abs_assignment.DataAssignment):
                           m_CONST.FACE.left_eye_t.value, m_CONST.FACE.left_eye_b.value,
                           m_CONST.FACE.mouth_t.value, m_CONST.FACE.mouth_b.value,
                           m_CONST.FACE.mouth_r.value, m_CONST.FACE.mouth_l.value,
-                          m_CONST.FACE.eyebrow_in_l.value, m_CONST.FACE.eyebrow_mid_l.value, m_CONST.FACE.eyebrow_out_l.value,
-                          m_CONST.FACE.eyebrow_in_r.value, m_CONST.FACE.eyebrow_mid_r.value, m_CONST.FACE.eyebrow_out_r.value
+                          m_CONST.FACE.eyebrow_in_l.value, m_CONST.FACE.eyebrow_mid_l.value,
+                          m_CONST.FACE.eyebrow_out_l.value,
+                          m_CONST.FACE.eyebrow_in_r.value, m_CONST.FACE.eyebrow_mid_r.value,
+                          m_CONST.FACE.eyebrow_out_r.value
                           ]
 
         [self.init_bpy_driver_obj(
@@ -148,7 +144,7 @@ class BridgeFace(abs_assignment.DataAssignment):
 
         chin_rotation = m_V.rotate_towards(self.data[152][1], self.data[6][1], 'Y', 'Z')
         # due to the base angle it's required to offset the rotation
-        self.chin_driver.rot = Euler(((z_angle - 3.14159*.07)*1.175, 0, 0))
+        self.chin_driver.rot = Euler(((z_angle - 3.14159 * .07) * 1.175, 0, 0))
 
     def face_mesh_rotation(self):
         """ calculate face quaternion using

@@ -1,4 +1,3 @@
-import bpy
 
 
 def add_driver(target_obj, driver_obj, prop, prop_target,

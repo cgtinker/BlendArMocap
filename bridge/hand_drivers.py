@@ -1,5 +1,3 @@
-import importlib
-
 import numpy as np
 from mathutils import Euler
 
@@ -7,11 +5,6 @@ import m_CONST
 from _blender.utils import objects
 from bridge import abs_assignment
 from utils import m_V
-
-importlib.reload(objects)
-importlib.reload(abs_assignment)
-importlib.reload(m_V)
-importlib.reload(m_CONST)
 
 
 class BridgeHand(abs_assignment.DataAssignment):

@@ -2,6 +2,13 @@ from _blender.rig.abs_rigging import DriverType
 import bpy
 
 
+class BoneCenterDriver:
+    name: str = None
+    driver_type: DriverType = DriverType.limb_driver
+    length: float = .0
+    expression: list = None
+
+
 class PoseDriver:
     name: str = None
     driver_type: DriverType = DriverType.limb_driver

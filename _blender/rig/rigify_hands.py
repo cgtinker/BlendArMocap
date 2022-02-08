@@ -1,14 +1,6 @@
-import importlib
-
 import m_CONST
 from _blender.rig import abs_rigging
-from _blender.utils import objects
 from utils import log
-
-importlib.reload(log)
-importlib.reload(abs_rigging)
-importlib.reload(objects)
-importlib.reload(m_CONST)
 
 
 class RigifyHands(abs_rigging.BpyRigging):

@@ -1,12 +1,9 @@
 import mediapipe as mp
-from bridge import pose_drivers
+
 from bridge import events
+from bridge import pose_drivers
 from ml_detection import abstract_detector
 from utils.open_cv import stream
-import importlib
-
-importlib.reload(abstract_detector)
-importlib.reload(pose_drivers)
 
 
 class HolisticDetector(abstract_detector.RealtimeDetector):
@@ -102,7 +99,7 @@ def init_test():
 
 if __name__ == '__main__':
     handler = init_test()
-    #image_detection(handler)
+    # image_detection(handler)
     stream_detection(handler)
 
     del handler

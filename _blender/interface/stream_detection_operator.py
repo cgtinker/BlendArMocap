@@ -1,7 +1,5 @@
 import importlib
-
 import bpy
-
 from utils import log
 
 

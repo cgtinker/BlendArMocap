@@ -1,15 +1,8 @@
-import importlib
 import subprocess
 
 import bpy
-
 from _blender.interface import install_dependencies, ui_registration
 import m_CONST
-
-
-importlib.reload(install_dependencies)
-importlib.reload(ui_registration)
-importlib.reload(m_CONST)
 
 
 class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):

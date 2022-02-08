@@ -1,11 +1,5 @@
-from _blender.rig.utils import pose_driver_expressions
+from _blender.rig.utils.drivers import pose_driver_expressions
 from _blender.utils import objects
-from utils import m_V
-import importlib
-
-importlib.reload(m_V)
-importlib.reload(pose_driver_expressions)
-importlib.reload(objects)
 
 
 class LimbDriver:

@@ -1,17 +1,9 @@
-import importlib
-
 import m_CONST
 from _blender.rig import abs_rigging
 from _blender.rig.abs_rigging import DriverType, MappingRelation
-from _blender.rig.utils import limb_drivers
+from _blender.rig.utils.drivers import limb_drivers
 from _blender.utils import objects
 from utils import m_V
-
-importlib.reload(m_CONST)
-importlib.reload(m_V)
-importlib.reload(objects)
-importlib.reload(abs_rigging)
-importlib.reload(limb_drivers)
 
 
 class RigPose(abs_rigging.BpyRigging):
@@ -117,6 +109,7 @@ class RigPose(abs_rigging.BpyRigging):
     def get_rigify_joint_lengths(self):
         """ return the lengths of given joints while it uses
             center as keyword for a custom joint origin based on the first index """
+
         def pos(bone_name):
             return self.pose_bones[bone_name].head
 
@@ -170,6 +163,7 @@ class RigPose(abs_rigging.BpyRigging):
     def get_driver_object(driver_name, driver_names, driver_objects):
         idx = driver_names.index(driver_name)
         return driver_objects[idx]
+
     # endregion
 
     # region apply drivers

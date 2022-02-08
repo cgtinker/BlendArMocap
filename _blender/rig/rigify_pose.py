@@ -1,15 +1,8 @@
-import importlib
-
 import m_CONST
 from _blender.rig import abs_rigging
 from _blender.rig.abs_rigging import DriverType, MappingRelation
 from _blender.utils import objects
 from utils import m_V
-
-importlib.reload(m_CONST)
-importlib.reload(m_V)
-importlib.reload(objects)
-importlib.reload(abs_rigging)
 
 
 class RigifyPose(abs_rigging.BpyRigging):
@@ -131,9 +124,9 @@ class RigifyPose(abs_rigging.BpyRigging):
             # region DRIVERS
             # region arms
             # left arm
-            m_CONST.POSE.left_elbow.value:  [DriverType.limb_driver],
-            m_CONST.POSE.left_wrist.value:  [DriverType.limb_driver],
-            m_CONST.POSE.left_index.value:  [DriverType.limb_driver],
+            m_CONST.POSE.left_elbow.value: [DriverType.limb_driver],
+            m_CONST.POSE.left_wrist.value: [DriverType.limb_driver],
+            m_CONST.POSE.left_index.value: [DriverType.limb_driver],
 
             m_CONST.POSE.right_elbow.value: [DriverType.limb_driver],
             m_CONST.POSE.right_wrist.value: [DriverType.limb_driver],
@@ -165,7 +158,7 @@ class RigifyPose(abs_rigging.BpyRigging):
 
         # setup relations between rig and drivers, then apply the drivers to the rig
         self.set_relation_dict(driver_objects)
-        #self.apply_drivers()
+        # self.apply_drivers()
 
     # region rig driver relation setup
     def set_relation_dict(self, driver_objects: list):
@@ -221,6 +214,7 @@ class RigifyPose(abs_rigging.BpyRigging):
 
                     add_constraint = self.method_mapping[driver.driver_type]
                     add_constraint(pose_bone, driver.source, values[1])
+
     # endregion
 
     # region driver setup

@@ -4,8 +4,6 @@ from ml_detection import abstract_detector
 from utils.open_cv import stream
 import importlib
 
-importlib.reload(hand_drivers)
-importlib.reload(abstract_detector)
 
 
 class HandDetector(abstract_detector.RealtimeDetector):

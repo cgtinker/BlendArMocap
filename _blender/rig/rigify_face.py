@@ -1,12 +1,7 @@
-import importlib
-
+import m_CONST
 from _blender.rig.abs_rigging import DriverType, MappingRelation, BpyRigging
 from _blender.utils import objects
 from utils import log
-import m_CONST
-
-importlib.reload(m_CONST)
-importlib.reload(objects)
 
 
 class RigifyFace(BpyRigging):

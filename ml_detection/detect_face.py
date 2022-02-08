@@ -1,11 +1,8 @@
 import mediapipe as mp
+
 from bridge import events, face_drivers
 from ml_detection import abstract_detector
 from utils.open_cv import stream
-import importlib
-
-importlib.reload(face_drivers)
-importlib.reload(abstract_detector)
 
 
 class FaceDetector(abstract_detector.RealtimeDetector):

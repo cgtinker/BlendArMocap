@@ -1,13 +1,12 @@
 import mediapipe as mp
-from bridge import pose_drivers
+
 from bridge import events
+from bridge import pose_drivers
 from ml_detection import abstract_detector
 from utils.open_cv import stream
-import importlib
-# import ssl
-importlib.reload(pose_drivers)
-importlib.reload(abstract_detector)
 
+
+# import ssl
 # ssl._create_default_https_context = ssl._create_unverified_context
 
 

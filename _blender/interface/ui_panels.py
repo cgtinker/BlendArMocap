@@ -1,5 +1,3 @@
-import importlib
-
 import bpy
 from bpy.types import Panel
 
@@ -7,11 +5,6 @@ import m_CONST
 from _blender.interface import install_dependencies
 from _blender.interface import ui_preferences
 from management import input_manager
-
-importlib.reload(m_CONST)
-importlib.reload(install_dependencies)
-importlib.reload(ui_preferences)
-importlib.reload(input_manager)
 
 
 class DefaultPanel:
