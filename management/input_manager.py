@@ -5,14 +5,14 @@ import bpy
 import m_CONST
 from _blender.rig import rigify_hands, rigify_face, rigify_pose, rig_pose
 from _blender.utils import objects
-from utils import log
+# from utils import log
 
-importlib.reload(m_CONST)
-importlib.reload(rigify_hands)
-importlib.reload(rigify_pose)
-importlib.reload(rigify_face)
-importlib.reload(rig_pose)
-importlib.reload(log)
+# importlib.reload(m_CONST)
+# importlib.reload(rigify_hands)
+# importlib.reload(rigify_pose)
+# importlib.reload(rigify_face)
+# importlib.reload(rig_pose)
+# importlib.reload(log)
 
 
 def transfer_animation():
@@ -28,7 +28,7 @@ def transfer_animation():
     selected_driver_collection = user.selected_driver_collection
     selected_armature = user.selected_rig
 
-    log.logger.info(f"TRYING TO TRANSFER ANIMATION DATA FROM {selected_driver_collection} TO {selected_armature}")
+    print(f"TRYING TO TRANSFER ANIMATION DATA FROM {selected_driver_collection} TO {selected_armature}")
 
     driver_collections = objects.get_child_collections(selected_driver_collection)
     for col in driver_collections:

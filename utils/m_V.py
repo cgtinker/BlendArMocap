@@ -3,7 +3,7 @@ import math
 import numpy as np
 from mathutils import Euler, Matrix, Vector
 
-from utils import log
+#from utils import log
 
 
 # region vector utils
@@ -54,7 +54,7 @@ def remove_axis(vectors, *args):
             for vec in vectors:
                 res.append([np.delete(vec, axis[arg]) for arg in args])
         except KeyError:
-            log.logger.warning(arg, "AXIS NOT AVAILABLE")
+            print(arg, "AXIS NOT AVAILABLE")
 
     return res
 

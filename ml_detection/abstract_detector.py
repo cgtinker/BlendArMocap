@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from mediapipe.framework.formats import classification_pb2
 from mediapipe import solutions
 
-from utils import log
+# from utils import log
 from management import input_manager
 
 
@@ -79,7 +79,7 @@ class RealtimeDetector(ABC):
     def stream_updated(self):
         self.stream.update()
         if not self.stream.updated:
-            log.logger.debug("Ignoring empty camera frame")
+            print("Ignoring empty camera frame")
             return False
         return True
 

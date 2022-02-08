@@ -1,6 +1,6 @@
 import m_CONST
 from _blender.rig import abs_rigging
-from utils import log
+#from utils import log
 
 
 class RigifyHands(abs_rigging.BpyRigging):
@@ -62,7 +62,6 @@ class RigifyHands(abs_rigging.BpyRigging):
 
             except KeyError:
                 print("driver empty does not exist:", empty.name)
-                log.logger.Error("Driver empty does not exist: ", empty.name)
 
     def apply_drivers(self, armature):
         # hand angles just require rotation m_CONSTraints for remapping

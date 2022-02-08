@@ -4,7 +4,7 @@ from mathutils import Euler
 import m_CONST
 from _blender.utils import objects
 from bridge import abs_assignment
-from utils import m_V, log
+from utils import m_V # log
 
 
 class BridgePose(abs_assignment.DataAssignment):
@@ -112,7 +112,7 @@ class BridgePose(abs_assignment.DataAssignment):
             self.translate(self.pose, self.data, self.frame)
 
         except IndexError:
-            log.logger.error("VALUE ERROR WHILE ASSIGNING POSE POSITION")
+            print("VALUE ERROR WHILE ASSIGNING POSE POSITION")
 
     def set_rotation(self):
         self.euler_rotate(self.pose, self.rotation_data, self.frame)

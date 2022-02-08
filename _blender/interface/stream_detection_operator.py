@@ -1,6 +1,6 @@
 import importlib
 import bpy
-from utils import log
+# from utils import log
 
 
 class WM_modal_detection_operator(bpy.types.Operator):
@@ -30,7 +30,7 @@ class WM_modal_detection_operator(bpy.types.Operator):
         return handlers[detection_type]
 
     def execute(self, context):
-        log.logger.info("RUNNING MP AS TIMER DETECTION MODAL")
+        print("RUNNING MP AS TIMER DETECTION MODAL")
 
         # default detection type for testing while add-on is not registered
         detection_type = 'HAND'
@@ -38,7 +38,7 @@ class WM_modal_detection_operator(bpy.types.Operator):
             self.user = context.scene.m_cgtinker_mediapipe
             detection_type = self.user.enum_detection_type
         except AttributeError:
-            log.logger.error("CGT USER NOT FOUND")
+            print("CGT USER NOT FOUND")
             self.user = None
 
         # initialize the detection
@@ -54,7 +54,7 @@ class WM_modal_detection_operator(bpy.types.Operator):
         from utils.open_cv import stream
         importlib.reload(stream)
 
-        log.logger.info(f"INITIALIZING {detection_type} DETECTION")
+        print(f"INITIALIZING {detection_type} DETECTION")
 
         self.tracking_handler = self.set_detection_type(detection_type)()
 
@@ -87,5 +87,5 @@ class WM_modal_detection_operator(bpy.types.Operator):
         del self.tracking_handler
         wm = context.window_manager
         wm.event_timer_remove(self._timer)
-        log.logger.info("CANCELLED DETECTION")
+        print("CANCELLED DETECTION")
         return {'CANCELLED'}

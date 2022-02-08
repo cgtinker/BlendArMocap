@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from bridge import observer_pattern as op
 from typing import List
-from utils import log
+# from utils import log
 
 
 class UpdateListener(op.Listener):
@@ -12,11 +12,11 @@ class UpdateListener(op.Listener):
     frame = 0
 
     def attach(self, observer: op.Observer) -> None:
-        log.logger.debug("OBSERVER ATTACHED FROM UPDATE LISTENER")
+        print("OBSERVER ATTACHED FROM UPDATE LISTENER")
         self._observers.append(observer)
 
     def detach(self, observer: op.Observer) -> None:
-        log.logger.debug("OBSERVER DETACHED FROM UPDATE LISTENER")
+        print("OBSERVER DETACHED FROM UPDATE LISTENER")
         self._observers.remove(observer)
 
     def notify(self) -> None:

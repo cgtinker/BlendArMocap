@@ -1,7 +1,7 @@
 import m_CONST
 from _blender.rig.abs_rigging import DriverType, MappingRelation, BpyRigging
 from _blender.utils import objects
-from utils import log
+# from utils import log
 
 
 class RigifyFace(BpyRigging):
@@ -138,7 +138,7 @@ class RigifyFace(BpyRigging):
                 set_driver_data(reference_name)
                 print("found_reference")
             else:
-                log.logger.debug(f"Mapping failed for {reference_name} in rigify_face")
+                print(f"Mapping failed for {reference_name} in rigify_face")
 
     def apply_drivers(self):
         pose_bone_names = [bone.name for bone in self.pose_bones]
@@ -171,7 +171,6 @@ class RigifyFace(BpyRigging):
         axis = [v for k, v in axis_dict.items() if k in target][0]
         functions = ["", "", f"{avg_distance}*.2*"]
         attribute = self.get_loc_sca_driver_attribute(target, ["", "", "scale." + axis.lower()], functions)
-        print(target, attribute)
         return attribute
 
     # region eyes

@@ -5,7 +5,7 @@ from mathutils import Vector, Euler
 
 import m_CONST
 from _blender.utils import objects
-from utils import m_V, log
+from utils import m_V
 
 
 class CustomData:
@@ -80,7 +80,7 @@ class DataAssignment(ABC):
                 target[p[0]].keyframe_insert(data_path="location", frame=frame)
 
         except IndexError:
-            log.logger.warning(f"missing translation index at {frame}")
+            print(f"missing translation index at {frame}")
             pass
 
     @staticmethod
@@ -90,7 +90,7 @@ class DataAssignment(ABC):
                 target[p[0]].scale = Vector((p[1]))
                 target[p[0]].keyframe_insert(data_path="scale", frame=frame)
         except IndexError:
-            log.logger.warning(f"missing scale index at {data}, {frame}")
+            print(f"missing scale index at {data}, {frame}")
             pass
 
     @staticmethod
@@ -101,7 +101,7 @@ class DataAssignment(ABC):
                 target[p[0]].rotation_quaternion = p[1]
                 target[p[0]].keyframe_insert(data_path="rotation_quaternion", frame=frame)
         except IndexError:
-            log.logger.warning(f"missing quat_euler_rotate index {data}, {frame}")
+            print(f"missing quat_euler_rotate index {data}, {frame}")
             pass
 
     def euler_rotate(self, target, data, frame, idx_offset=0):
@@ -112,7 +112,7 @@ class DataAssignment(ABC):
                 target[p[0]].keyframe_insert(data_path="rotation_euler", frame=frame)
                 self.prev_rotation[p[0] + idx_offset] = p[1]
         except IndexError:
-            log.logger.warning(f"missing euler_rotate index at {data}, {frame}")
+            print(f"missing euler_rotate index at {data}, {frame}")
             pass
 
     def quart_to_euler_combat(self, quart, idx, idx_offset=0):
@@ -122,7 +122,7 @@ class DataAssignment(ABC):
                 combat = self.prev_rotation[idx + idx_offset]
                 return m_V.to_euler(quart, combat, 'XYZ')
             except KeyError:
-                log.logger.warning(f"invalid id to euler combat {idx}, {self.frame}")
+                print(f"invalid id to euler combat {idx}, {self.frame}")
                 return m_V.to_euler(quart)
         else:
             return m_V.to_euler(quart)
@@ -149,7 +149,7 @@ class DataAssignment(ABC):
             )
         except KeyError:
             m_rot = m_V.to_euler(quart_rotation)
-            log.logger.debug(f"invalid id to euler combat {m_rot}, {self.frame}")
+            print(f"invalid id to euler combat {m_rot}, {self.frame}")
 
         return m_rot
 
