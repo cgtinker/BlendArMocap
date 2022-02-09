@@ -1,7 +1,7 @@
 import numpy as np
 from mathutils import Euler
 
-from utils import m_CONST
+import m_CONST
 from ..blender.utils import objects
 from . import abs_assignment
 from ..utils import m_V

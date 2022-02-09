@@ -3,7 +3,7 @@ from math import pi
 
 from mathutils import Vector, Euler
 
-from utils import m_CONST
+import m_CONST
 from ..blender.utils import objects
 from ..utils import m_V
 

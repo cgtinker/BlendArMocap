@@ -2,7 +2,7 @@ import subprocess
 
 import bpy
 
-from utils import m_CONST
+import m_CONST
 from . import install_dependencies, ui_registration
 
 

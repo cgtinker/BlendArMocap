@@ -1,4 +1,4 @@
-from ...utils import m_CONST
+import m_CONST
 from . import abs_rigging
 from .abs_rigging import DriverType, MappingRelation
 from .utils.drivers import limb_drivers

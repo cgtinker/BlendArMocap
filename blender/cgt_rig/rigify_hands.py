@@ -1,4 +1,4 @@
-from utils import m_CONST
+import m_CONST
 from ..cgt_rig import abs_rigging
 
 

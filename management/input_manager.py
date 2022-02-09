@@ -1,6 +1,6 @@
 import bpy
 
-from utils import m_CONST
+import m_CONST
 from ..blender.cgt_rig import rigify_hands, rigify_face, rig_pose
 from ..blender.utils import objects
 

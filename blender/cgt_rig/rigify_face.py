@@ -1,4 +1,4 @@
-from ...utils import m_CONST
+import m_CONST
 from .abs_rigging import DriverType, MappingRelation, BpyRigging
 from ..utils import objects
 import bpy
