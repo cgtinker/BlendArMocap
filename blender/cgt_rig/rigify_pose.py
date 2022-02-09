@@ -1,4 +1,4 @@
-import m_CONST
+import cgt_naming
 from . import abs_rigging
 from .abs_rigging import DriverType, MappingRelation
 from ..utils import objects

@@ -2,7 +2,7 @@ import subprocess
 
 import bpy
 
-import m_CONST
+import cgt_naming
 from . import install_dependencies, ui_registration
 
 
@@ -39,7 +39,7 @@ class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
 
 
 class BLENDARMOCAP_preferences(bpy.types.AddonPreferences):
-    bl_idname = m_CONST.PACKAGE
+    bl_idname = cgt_naming.PACKAGE
 
     def draw(self, context):
         layout = self.layout

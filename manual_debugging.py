@@ -45,8 +45,10 @@ try:
     print("MANUAL ADDON INITIALIZATION")
 
 except AttributeError:
+    # already appended
     print("RUNNING MANUAL DEBUGGING IN EDITOR")
 
+import cgt_imports
 from blender.interface import ui_registration
 
 

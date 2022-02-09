@@ -2,7 +2,7 @@ import numpy as np
 from mathutils import Euler
 
 from . import abs_assignment
-from m_CONST import HAND, COLLECTIONS
+from cgt_naming import HAND, COLLECTIONS
 from blender.utils import objects
 from utils import m_V
 

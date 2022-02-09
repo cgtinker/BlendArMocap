@@ -1,6 +1,6 @@
 import bpy
 
-from m_CONST import COLLECTIONS
+from cgt_naming import COLLECTIONS
 from blender.cgt_rig import rigify_hands, rigify_face, rig_pose
 from blender.utils import objects
 

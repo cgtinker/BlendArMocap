@@ -1,4 +1,4 @@
-from m_CONST import FACE
+from cgt_naming import FACE
 from .abs_rigging import DriverType, MappingRelation, BpyRigging
 from ..utils import objects
 import bpy

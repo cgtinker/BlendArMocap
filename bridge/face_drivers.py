@@ -2,7 +2,7 @@ import numpy as np
 from mathutils import Euler
 
 from blender.utils import objects
-from m_CONST import FACE, COLLECTIONS
+from cgt_naming import FACE, COLLECTIONS
 from utils import m_V
 from . import abs_assignment
 

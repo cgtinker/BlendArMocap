@@ -4,7 +4,9 @@ import sys
 
 # has to be at root
 PACKAGE = os.path.basename(os.path.dirname(__file__))
-
+print(__file__)
+print(__name__)
+print(PACKAGE)
 load_order = {
     'init':       [
         'blender.interface.ui_registration',
@@ -14,46 +16,27 @@ load_order = {
         'blender.interface.install_dependencies',
         'blender.interface.stream_detection_operator',
         'blender.interface',
-        'm_CONST'
+        'cgt_naming'
     ],
-    'management': [
-
+    'modules': [
+        'utils.filter',
+        'utils.open_cv',
+        'utils.writer'
+        'utils',
+        'ml_detection',
+        'management',
+        'bridge',
+        'blender.cgt_rig'
+        'blender.utils'
     ],
-    'detection':  [
-
-    ],
-
 }
 
-initial_load_order = [
-    'utils.errors',
-    'utils.misc',
-    '...',
 
-    'blender.utils.objects',
-    'blender.utils',
-
-    'blender.cgt_rig.utils.drivers.assignment',
-    'blender.cgt_rig.utils.drivers.driver_expression',
-    'blender.cgt_rig.utils.drivers.limb_drivers',
-    'blender.cgt_rig.utils.drivers.pose_driver_expressions',
-    'blender.cgt_rig.utils.drivers',
-
-    'blender.cgt_rig.utils.constraints',
-    'blender.cgt_rig.utils',
-
-    'blender.cgt_rig.abs_rigging',
-    'blender.cgt_rig.rig_pose',
-    'blender.cgt_rig.rigify_face',
-    'blender.cgt_rig.rigify_hands',
-    'blender.cgt_rig.rigify_pose'
-]
-
-utils_module_name = __name__ + '.utils'
+utils_module_name = PACKAGE + '.blender'
 
 
 def get_loaded_modules():
-    prefix = __name__ + '.'
+    prefix = PACKAGE + '.blender'
     return [name for name in sys.modules if name.startswith(prefix)]
 
 
@@ -82,9 +65,10 @@ def compare_module_list(a, b):
 
 def load_initial_modules():
     # gets initial load order
-    load_list = [__name__ + '.' + name for name in load_order['init']]
+    load_list = [PACKAGE + '.' + name for name in load_order['init']]
 
     for i, name in enumerate(load_list):
+        print(name)
         # import modules
         importlib.import_module(name)
         # compare with loaded modules
@@ -100,29 +84,19 @@ def load_initial_modules():
     return load_list
 
 
-if PACKAGE in locals():
-    reload_modules()
-else:
-    legacy_loaded = False
-
-    load_list = load_initial_modules()
-
-    from . import metarig_menu, rig_lists
-
-    reload_list = reload_list_init = get_loaded_modules()
-
-    if not compare_module_list(reload_list, load_list):
-        print('!!! RIGIFY: initial load order mismatch - expected: \n', load_list, '\nGot:\n', reload_list)
-
-
 # PASS OUT TRY EXCEPT
 try:
     if PACKAGE in locals():
-        print(f'{PACKAGE}: RELOADING!')
-        """reloading"""
+        print(f'{PACKAGE}: Reloading package...')
+        reload_modules()
     else:
-        print(f'{PACKAGE}: Initial load')
-        """initial loading"""
+        print(f'{PACKAGE}: Initially loading package... ')
+
+        load_list = load_initial_modules()
+        reload_list = load_order['init'] = get_loaded_modules()
+
+        if not compare_module_list(reload_list, load_list):
+            print('!!! BlendArMocap: initial load order mismatch - expected: \n', load_list, '\nGot:\n', reload_list)
     import_succeeded = True
 except ModuleNotFoundError as e:
     print(f'{PACKAGE}: ModuleNotFoundError occurred when trying to enable add-on.')
