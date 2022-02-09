@@ -28,31 +28,23 @@ bl_info = {
     "category": "Development"
 }
 
-import importlib
-import os
-import sys
+# attempt to remove from sys path
+# import os
+# import sys
+# script_file = os.path.realpath(__file__)
+# directory = os.path.dirname(script_file)
+# if directory not in sys.path:
+#     sys.path.append(directory)
 
-
-script_file = os.path.realpath(__file__)
-directory = os.path.dirname(script_file)
-if directory not in sys.path:
-    sys.path.append(directory)
-
-from utils import log
-from _blender.interface import ui_registration
-
-importlib.reload(ui_registration)
-importlib.reload(log)
+from blender.interface import ui_registration
 
 
 def register():
-    log.init_logger("debug")
     ui_registration.register()
 
 
 def unregister():
     ui_registration.unregister()
-    log.remove_logger()
 
 
 if __name__ == '__main__':

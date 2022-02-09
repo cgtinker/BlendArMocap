@@ -15,7 +15,6 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-
 bl_info = {
     "name": "BlendArMocap",
     "description": "Mediapipe implementation for Blender 2.9+.",
@@ -48,12 +47,7 @@ try:
 except AttributeError:
     print("RUNNING MANUAL DEBUGGING IN EDITOR")
 
-from utils import log
-from _blender.interface import ui_registration
-import importlib
-
-importlib.reload(log)
-importlib.reload(ui_registration)
+from blender.interface import ui_registration
 
 
 def register():

@@ -1,5 +1,5 @@
 import m_CONST
-from _blender.rig import abs_rigging
+from blender.rig import abs_rigging
 #from utils import log
 
 

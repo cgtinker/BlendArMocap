@@ -1,7 +1,7 @@
 import m_CONST
-from _blender.rig import abs_rigging
-from _blender.rig.abs_rigging import DriverType, MappingRelation
-from _blender.utils import objects
+from blender.rig import abs_rigging
+from blender.rig.abs_rigging import DriverType, MappingRelation
+from blender.utils import objects
 from utils import m_V
 
 

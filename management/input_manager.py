@@ -3,8 +3,8 @@ import importlib
 import bpy
 
 import m_CONST
-from _blender.rig import rigify_hands, rigify_face, rigify_pose, rig_pose
-from _blender.utils import objects
+from blender.rig import rigify_hands, rigify_face, rigify_pose, rig_pose
+from blender.utils import objects
 # from utils import log
 
 # importlib.reload(m_CONST)

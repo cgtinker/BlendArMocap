@@ -1,25 +1,14 @@
-#import importlib
-
 import bpy
 from bpy.props import PointerProperty
 from bpy.utils import register_class, unregister_class
 
-from _blender.interface import properties, ui_panels, install_dependencies, ui_preferences, \
-    stream_detection_operator
-#from utils import log
-
-#importlib.reload(ui_panels)
-#importlib.reload(properties)
-#importlib.reload(ui_preferences)
-#importlib.reload(install_dependencies)
-#importlib.reload(log)
-#importlib.reload(stream_detection_operator)
+from . import ui_properties, ui_panels, install_dependencies, ui_preferences, stream_detection_operator
 
 
 def get_classes():
     # getting classes to avoid loading possibly unavailable packages
     classes = (
-        properties.MyProperties,
+        ui_properties.MyProperties,
 
         ui_panels.UI_transfer_anim_button,
         stream_detection_operator.WM_modal_detection_operator,
@@ -61,7 +50,7 @@ def register_user_interface():
     print("REGISTER BLENDARMOCAP INTERFACE")
     for cls in get_classes():
         register_class(cls)
-    bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=properties.MyProperties)
+    bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=ui_properties.MyProperties)
 
 
 def unregister():
@@ -91,4 +80,4 @@ def manual_test_registration():
     print("REGISTER")
     for cls in get_classes():
         register_class(cls)
-    bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=properties.MyProperties)
+    bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=ui_properties.MyProperties)

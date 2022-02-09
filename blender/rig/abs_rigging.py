@@ -2,9 +2,9 @@ from abc import ABC
 from dataclasses import dataclass
 from enum import Enum
 
-from _blender.rig.utils import constraints
-from _blender.rig.utils.drivers import assignment
-from _blender.utils import objects
+from blender.rig.utils import constraints
+from blender.rig.utils.drivers import assignment
+from blender.utils import objects
 from utils import m_V
 
 

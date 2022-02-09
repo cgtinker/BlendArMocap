@@ -1,6 +1,5 @@
 import importlib
 import bpy
-# from utils import log
 
 
 class WM_modal_detection_operator(bpy.types.Operator):
@@ -14,6 +13,7 @@ class WM_modal_detection_operator(bpy.types.Operator):
 
     @staticmethod
     def set_detection_type(detection_type):
+        # TODO: ADD TO IMPORT MANAGEMENT
         from ml_detection import detect_hands, detect_pose, detect_face
 
         importlib.reload(detect_hands)

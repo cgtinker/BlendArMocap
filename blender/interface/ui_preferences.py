@@ -1,8 +1,9 @@
 import subprocess
 
 import bpy
-from _blender.interface import install_dependencies, ui_registration
+
 import m_CONST
+from . import install_dependencies, ui_registration
 
 
 class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
@@ -39,7 +40,7 @@ class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
 
 class BLENDARMOCAP_preferences(bpy.types.AddonPreferences):
     bl_idname = m_CONST.PACKAGE
-    
+
     def draw(self, context):
         layout = self.layout
         layout.operator(PREFERENCES_OT_install_dependencies_button.bl_idname, icon="CONSOLE")

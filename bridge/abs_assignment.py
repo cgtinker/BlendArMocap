@@ -4,7 +4,7 @@ from math import pi
 from mathutils import Vector, Euler
 
 import m_CONST
-from _blender.utils import objects
+from blender.utils import objects
 from utils import m_V
 
 

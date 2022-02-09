@@ -2,7 +2,7 @@ import numpy as np
 from mathutils import Euler
 
 import m_CONST
-from _blender.utils import objects
+from blender.utils import objects
 from bridge import abs_assignment
 from utils import m_V
 

@@ -1,5 +1,5 @@
-from _blender.rig.utils.drivers import pose_driver_expressions
-from _blender.utils import objects
+from blender.rig.utils.drivers import pose_driver_expressions
+from blender.utils import objects
 
 
 class LimbDriver:
