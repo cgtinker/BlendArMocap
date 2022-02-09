@@ -4,8 +4,8 @@ from math import pi
 from mathutils import Vector, Euler
 
 import m_CONST
-from ..blender.utils import objects
-from ..utils import m_V
+from blender.utils import objects
+from utils import m_V
 
 
 class CustomData:

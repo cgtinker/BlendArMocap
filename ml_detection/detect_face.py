@@ -1,7 +1,7 @@
 import mediapipe as mp
 
-from ..bridge import events, face_drivers
-from ..utils.open_cv import stream
+from bridge import events, face_drivers
+from utils.open_cv import stream
 from . import abstract_detector
 
 

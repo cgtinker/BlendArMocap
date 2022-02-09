@@ -2,9 +2,9 @@ import numpy as np
 from mathutils import Euler
 
 import m_CONST
-from ..blender.utils import objects
+from blender.utils import objects
+from utils import m_V
 from . import abs_assignment
-from ..utils import m_V
 
 
 class BridgeFace(abs_assignment.DataAssignment):

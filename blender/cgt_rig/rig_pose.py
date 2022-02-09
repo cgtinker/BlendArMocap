@@ -3,7 +3,7 @@ from . import abs_rigging
 from .abs_rigging import DriverType, MappingRelation
 from .utils.drivers import limb_drivers
 from ..utils import objects
-from ...utils import m_V
+from utils import m_V
 
 
 class RigPose(abs_rigging.BpyRigging):

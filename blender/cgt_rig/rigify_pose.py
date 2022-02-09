@@ -2,7 +2,7 @@ import m_CONST
 from . import abs_rigging
 from .abs_rigging import DriverType, MappingRelation
 from ..utils import objects
-from ...utils import m_V
+from utils import m_V
 
 
 class RigifyPose(abs_rigging.BpyRigging):

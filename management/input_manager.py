@@ -1,8 +1,8 @@
 import bpy
 
 import m_CONST
-from ..blender.cgt_rig import rigify_hands, rigify_face, rig_pose
-from ..blender.utils import objects
+from blender.cgt_rig import rigify_hands, rigify_face, rig_pose
+from blender.utils import objects
 
 
 def transfer_animation():

@@ -3,8 +3,8 @@ from mathutils import Euler
 
 from . import abs_assignment
 import m_CONST
-from ..blender.utils import objects
-from ..utils import m_V
+from blender.utils import objects
+from utils import m_V
 
 
 class BridgeHand(abs_assignment.DataAssignment):

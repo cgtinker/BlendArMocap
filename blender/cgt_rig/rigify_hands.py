@@ -1,5 +1,5 @@
 import m_CONST
-from ..cgt_rig import abs_rigging
+from . import abs_rigging
 
 
 class RigifyHands(abs_rigging.BpyRigging):
