@@ -48,7 +48,7 @@ class DataAssignment(ABC):
                             ref_in_array: [],
                             size: float = 0.005,
                             name: str = "",
-                            col_name: str = m_CONST.COLLECTIONS.drivers.value,
+                            col_name: str = m_CONST.COLLECTIONS.drivers,
                             style: str = "CUBE",
                             position: [] = None,
                             is_parent: bool = False,
