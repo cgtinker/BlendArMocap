@@ -1,8 +1,8 @@
 import numpy as np
 from mathutils import Euler
 
-import m_CONST
 from blender.utils import objects
+from m_CONST import FACE, COLLECTIONS
 from utils import m_V
 from . import abs_assignment
 
@@ -18,23 +18,24 @@ class BridgeFace(abs_assignment.DataAssignment):
 
         self.rotation_data, self.driver_scale_data = None, None
 
-        self.col_name = m_CONST.COLLECTIONS.face
+        self.col_name = COLLECTIONS.face
 
     def init_references(self):
         references = {}
         for i in range(468):
-            references[f'{i}'] = f"{m_CONST.FACE.face}{i}"
+            references[f'{i}'] = f"{FACE.face}{i}"
         self.face = objects.add_empties(references, 0.005)
         objects.add_list_to_collection(self.col_name, self.face, self.driver_col)
 
-        mapping_driver = [m_CONST.FACE.right_eye_t, m_CONST.FACE.right_eye_b,
-                          m_CONST.FACE.left_eye_t, m_CONST.FACE.left_eye_b,
-                          m_CONST.FACE.mouth_t, m_CONST.FACE.mouth_b,
-                          m_CONST.FACE.mouth_r, m_CONST.FACE.mouth_l,
-                          m_CONST.FACE.eyebrow_in_l, m_CONST.FACE.eyebrow_mid_l,
-                          m_CONST.FACE.eyebrow_out_l,
-                          m_CONST.FACE.eyebrow_in_r, m_CONST.FACE.eyebrow_mid_r,
-                          m_CONST.FACE.eyebrow_out_r
+        mapping_driver = [FACE.right_eye_t, FACE.right_eye_b,
+                          FACE.left_eye_t, FACE.left_eye_b,
+                          FACE.mouth_t, FACE.mouth_b,
+                          FACE.mouth_r, FACE.mouth_l,
+
+                          FACE.eyebrow_in_l, FACE.eyebrow_mid_l,
+                          FACE.eyebrow_out_l,
+                          FACE.eyebrow_in_r, FACE.eyebrow_mid_r,
+                          FACE.eyebrow_out_r
                           ]
 
         [self.init_bpy_driver_obj(
@@ -42,13 +43,13 @@ class BridgeFace(abs_assignment.DataAssignment):
             for name in mapping_driver]
 
         drivers_array = [
-            [self.pivot, 0.025, m_CONST.FACE.head, "SPHERE", [0, 0, 0]],
-            [self._mouth_driver, 0.025, m_CONST.FACE.mouth, "CIRCLE", [0, -.1, -.1]],
-            [self.eye_driver_L, .01, m_CONST.FACE.left_eye, "CIRCLE", [-.05, -.05, .075]],
-            [self.eye_driver_R, .01, m_CONST.FACE.right_eye, "CIRCLE", [.05, .05, .075]],
-            [self.chin_driver, .01, m_CONST.FACE.chin, "SPHERE", [.0, -.05, -.25]],
-            [self.eyebrow_L, .01, m_CONST.FACE.left_eyebrow, "CUBE", [.05, 0, .1]],
-            [self.eyebrow_R, .01, m_CONST.FACE.right_eyebrow, "CUBE", [-.05, 0, .1]]
+            [self.pivot, 0.025, FACE.head, "SPHERE", [0, 0, 0]],
+            [self._mouth_driver, 0.025, FACE.mouth, "CIRCLE", [0, -.1, -.1]],
+            [self.eye_driver_L, .01, FACE.left_eye, "CIRCLE", [-.05, -.05, .075]],
+            [self.eye_driver_R, .01, FACE.right_eye, "CIRCLE", [.05, .05, .075]],
+            [self.chin_driver, .01, FACE.chin, "SPHERE", [.0, -.05, -.25]],
+            [self.eyebrow_L, .01, FACE.left_eyebrow, "CUBE", [.05, 0, .1]],
+            [self.eyebrow_R, .01, FACE.right_eyebrow, "CUBE", [-.05, 0, .1]]
         ]
         # init driver objects
         [self.init_bpy_driver_obj(e[0], self.face, e[1], e[2], self.col_name, e[3], e[4]) for e in drivers_array]

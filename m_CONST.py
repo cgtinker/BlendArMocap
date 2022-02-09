@@ -16,7 +16,7 @@ class COLLECTIONS:
 
 @dataclass(frozen=True, init=False)
 class POSE:
-    nose = "cgt_nose"
+    nose = "cgt_nose_YES"
     left_eye_inner = "cgt_left_eye_inner"
     left_eye = "cgt_left_eye"
     left_eye_outer = "cgt_left_eye_outer"

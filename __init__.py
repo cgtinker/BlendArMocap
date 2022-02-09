@@ -28,13 +28,6 @@ bl_info = {
     "category": "Development"
 }
 
-# attempt to remove from sys path
-# import os
-# import sys
-# script_file = os.path.realpath(__file__)
-# directory = os.path.dirname(script_file)
-# if directory not in sys.path:
-#     sys.path.append(directory)
 
 from blender.interface import ui_registration
 

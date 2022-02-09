@@ -2,34 +2,34 @@ import numpy as np
 from mathutils import Euler
 
 from . import abs_assignment
-import m_CONST
+from m_CONST import HAND, COLLECTIONS
 from blender.utils import objects
 from utils import m_V
 
 
 class BridgeHand(abs_assignment.DataAssignment):
     references = {
-        0:  m_CONST.HAND.wrist,
-        1:  m_CONST.HAND.thumb_cmc,
-        2:  m_CONST.HAND.thumb_mcp,
-        3:  m_CONST.HAND.thumb_ip,
-        4:  m_CONST.HAND.thumb_tip,
-        5:  m_CONST.HAND.index_finger_mcp,
-        6:  m_CONST.HAND.index_finger_pip,
-        7:  m_CONST.HAND.index_finger_dip,
-        8:  m_CONST.HAND.index_finger_tip,
-        9:  m_CONST.HAND.middle_finger_mcp,
-        10: m_CONST.HAND.middle_finger_pip,
-        11: m_CONST.HAND.middle_finger_dip,
-        12: m_CONST.HAND.middle_finger_tip,
-        13: m_CONST.HAND.ring_finger_mcp,
-        14: m_CONST.HAND.ring_finger_pip,
-        15: m_CONST.HAND.ring_finger_dip,
-        16: m_CONST.HAND.ring_finger_tip,
-        17: m_CONST.HAND.pinky_mcp,
-        18: m_CONST.HAND.pinky_pip,
-        19: m_CONST.HAND.pinky_dip,
-        20: m_CONST.HAND.pinky_tip,
+        0:  HAND.wrist,
+        1:  HAND.thumb_cmc,
+        2:  HAND.thumb_mcp,
+        3:  HAND.thumb_ip,
+        4:  HAND.thumb_tip,
+        5:  HAND.index_finger_mcp,
+        6:  HAND.index_finger_pip,
+        7:  HAND.index_finger_dip,
+        8:  HAND.index_finger_tip,
+        9:  HAND.middle_finger_mcp,
+        10: HAND.middle_finger_pip,
+        11: HAND.middle_finger_dip,
+        12: HAND.middle_finger_tip,
+        13: HAND.ring_finger_mcp,
+        14: HAND.ring_finger_pip,
+        15: HAND.ring_finger_dip,
+        16: HAND.ring_finger_tip,
+        17: HAND.pinky_mcp,
+        18: HAND.pinky_pip,
+        19: HAND.pinky_dip,
+        20: HAND.pinky_tip,
     }
     fingers = [
         [5, 9],  # index finger
@@ -48,7 +48,7 @@ class BridgeHand(abs_assignment.DataAssignment):
     left_angles, right_angles = None, None
 
     frame = 0
-    col_name = m_CONST.COLLECTIONS.hands
+    col_name = COLLECTIONS.hands
 
     def init_references(self):
         """ generate empty objects for mapping. """

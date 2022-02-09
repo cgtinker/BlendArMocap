@@ -2,7 +2,7 @@ import mediapipe as mp
 
 from bridge import events, face_drivers
 from utils.open_cv import stream
-from . import abstract_detector
+from ml_detection import abstract_detector
 
 
 class FaceDetector(abstract_detector.RealtimeDetector):
@@ -78,7 +78,7 @@ def init_test():
     tracking_handler.stream = stream.Webcam()
     tracking_handler.initialize_model()
     # tracking_handler.init_driver_logs()
-    # tracking_handler.init_raw_data_printer()
+    tracking_handler.init_raw_data_printer()
     tracking_handler.listener.attach(tracking_handler.observer)
     return tracking_handler
 

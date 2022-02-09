@@ -1,15 +1,15 @@
 import bpy
 
-import m_CONST
+from m_CONST import COLLECTIONS
 from blender.cgt_rig import rigify_hands, rigify_face, rig_pose
 from blender.utils import objects
 
 
 def transfer_animation():
     col_mapping = {
-        m_CONST.COLLECTIONS.hands: rigify_hands.RigifyHands,
-        m_CONST.COLLECTIONS.face:  rigify_face.RigifyFace,
-        m_CONST.COLLECTIONS.pose:  rig_pose.RigPose
+        COLLECTIONS.hands: rigify_hands.RigifyHands,
+        COLLECTIONS.face:  rigify_face.RigifyFace,
+        COLLECTIONS.pose:  rig_pose.RigPose
         # m_CONST.COLLECTIONS.pose.value: rigify_pose.RigifyPose
     }
 

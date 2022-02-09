@@ -2,7 +2,7 @@ import numpy as np
 from mathutils import Euler
 
 from . import abs_assignment
-import m_CONST
+from m_CONST import POSE, COLLECTIONS
 from blender.utils import objects
 from utils import m_V
 
@@ -11,57 +11,57 @@ class BridgePose(abs_assignment.DataAssignment):
     def __init__(self):
         self.references = {
             # MEDIAPIPE DEFAULTS
-            0:  m_CONST.POSE.nose,
-            1:  m_CONST.POSE.left_eye_inner,
-            2:  m_CONST.POSE.left_eye,
-            3:  m_CONST.POSE.left_eye_outer,
-            4:  m_CONST.POSE.right_eye_inner,
-            5:  m_CONST.POSE.right_eye,
-            6:  m_CONST.POSE.right_eye_outer,
-            7:  m_CONST.POSE.left_ear,
-            8:  m_CONST.POSE.right_ear,
-            9:  m_CONST.POSE.mouth_left,
-            10: m_CONST.POSE.mouth_right,
-            11: m_CONST.POSE.left_shoulder,
-            12: m_CONST.POSE.right_shoulder,
-            13: m_CONST.POSE.left_elbow,
-            14: m_CONST.POSE.right_elbow,
-            15: m_CONST.POSE.left_wrist,
-            16: m_CONST.POSE.right_wrist,
-            17: m_CONST.POSE.left_pinky,
-            18: m_CONST.POSE.right_pinky,
-            19: m_CONST.POSE.left_index,
-            20: m_CONST.POSE.right_index,
-            21: m_CONST.POSE.left_thumb,
-            22: m_CONST.POSE.right_thumb,
-            23: m_CONST.POSE.left_hip,
-            24: m_CONST.POSE.right_hip,
-            25: m_CONST.POSE.left_knee,
-            26: m_CONST.POSE.right_knee,
-            27: m_CONST.POSE.left_ankle,
-            28: m_CONST.POSE.right_ankle,
-            29: m_CONST.POSE.left_heel,
-            30: m_CONST.POSE.right_heel,
-            31: m_CONST.POSE.left_foot_index,
-            32: m_CONST.POSE.right_foot_index,
+            0:  POSE.nose,
+            1:  POSE.left_eye_inner,
+            2:  POSE.left_eye,
+            3:  POSE.left_eye_outer,
+            4:  POSE.right_eye_inner,
+            5:  POSE.right_eye,
+            6:  POSE.right_eye_outer,
+            7:  POSE.left_ear,
+            8:  POSE.right_ear,
+            9:  POSE.mouth_left,
+            10: POSE.mouth_right,
+            11: POSE.left_shoulder,
+            12: POSE.right_shoulder,
+            13: POSE.left_elbow,
+            14: POSE.right_elbow,
+            15: POSE.left_wrist,
+            16: POSE.right_wrist,
+            17: POSE.left_pinky,
+            18: POSE.right_pinky,
+            19: POSE.left_index,
+            20: POSE.right_index,
+            21: POSE.left_thumb,
+            22: POSE.right_thumb,
+            23: POSE.left_hip,
+            24: POSE.right_hip,
+            25: POSE.left_knee,
+            26: POSE.right_knee,
+            27: POSE.left_ankle,
+            28: POSE.right_ankle,
+            29: POSE.left_heel,
+            30: POSE.right_heel,
+            31: POSE.left_foot_index,
+            32: POSE.right_foot_index,
 
             # DRIVERS
-            33: m_CONST.POSE.left_forearm_ik,
-            34: m_CONST.POSE.right_forearm_ik,
-            35: m_CONST.POSE.left_hand_ik,
-            36: m_CONST.POSE.right_hand_ik,
+            33: POSE.left_forearm_ik,
+            34: POSE.right_forearm_ik,
+            35: POSE.left_hand_ik,
+            36: POSE.right_hand_ik,
 
-            37: m_CONST.POSE.left_index_ik,
-            38: m_CONST.POSE.right_index_ik,
-            39: m_CONST.POSE.right_foot_ik,
-            40: m_CONST.POSE.left_foot_ik,
-            41: m_CONST.POSE.left_shin_ik,
-            42: m_CONST.POSE.right_shin_ik,
+            37: POSE.left_index_ik,
+            38: POSE.right_index_ik,
+            39: POSE.right_foot_ik,
+            40: POSE.left_foot_ik,
+            41: POSE.left_shin_ik,
+            42: POSE.right_shin_ik,
 
-            43: m_CONST.POSE.left_shoulder_ik,
-            44: m_CONST.POSE.right_shoulder_ik,
-            45: m_CONST.POSE.left_hip_ik,
-            46: m_CONST.POSE.right_hip_ik
+            43: POSE.left_shoulder_ik,
+            44: POSE.right_shoulder_ik,
+            45: POSE.left_hip_ik,
+            46: POSE.right_hip_ik
         }
 
         self.arms = [
@@ -78,7 +78,7 @@ class BridgePose(abs_assignment.DataAssignment):
         self.hip_center = abs_assignment.CustomData()
 
         self.pose = []
-        self.col_name = m_CONST.COLLECTIONS.pose
+        self.col_name = COLLECTIONS.pose
         self.rotation_data = []
         self.scale_data = []
 
@@ -88,10 +88,10 @@ class BridgePose(abs_assignment.DataAssignment):
         objects.add_list_to_collection(self.col_name, self.pose, self.driver_col)
 
         self.init_bpy_driver_obj(
-            self.shoulder_center, self.pose, 0.01, m_CONST.POSE.shoulder_center, self.col_name, "SPHERE",
+            self.shoulder_center, self.pose, 0.01, POSE.shoulder_center, self.col_name, "SPHERE",
             [0, 0, 0])
         self.init_bpy_driver_obj(
-            self.hip_center, self.pose, 0.01, m_CONST.POSE.hip_center, self.col_name, "SPHERE", [0, 0, 0])
+            self.hip_center, self.pose, 0.01, POSE.hip_center, self.col_name, "SPHERE", [0, 0, 0])
 
     def init_data(self):
         self.rotation_data = []

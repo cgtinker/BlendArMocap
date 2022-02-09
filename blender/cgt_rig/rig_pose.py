@@ -1,4 +1,4 @@
-import m_CONST
+from m_CONST import POSE
 from . import abs_rigging
 from .abs_rigging import DriverType, MappingRelation
 from .utils.drivers import limb_drivers
@@ -9,25 +9,25 @@ from utils import m_V
 class RigPose(abs_rigging.BpyRigging):
     pose_constraints = {
         # plain copy rotation
-        m_CONST.POSE.hip_center:       ["torso", "COPY_ROTATION"],
-        m_CONST.POSE.shoulder_center:  ["chest", "COPY_ROTATION"],
+        POSE.hip_center:       ["torso", "COPY_ROTATION"],
+        POSE.shoulder_center:  ["chest", "COPY_ROTATION"],
 
         # copy pose driver location
-        m_CONST.POSE.left_hand_ik:     ["hand_ik.R", "COPY_LOCATION"],
-        m_CONST.POSE.right_hand_ik:    ["hand_ik.L", "COPY_LOCATION"],
-        m_CONST.POSE.left_forearm_ik:  ["forearm_tweak.R", "COPY_LOCATION"],
-        m_CONST.POSE.right_forearm_ik: ["forearm_tweak.L", "COPY_LOCATION"],
+        POSE.left_hand_ik:     ["hand_ik.R", "COPY_LOCATION"],
+        POSE.right_hand_ik:    ["hand_ik.L", "COPY_LOCATION"],
+        POSE.left_forearm_ik:  ["forearm_tweak.R", "COPY_LOCATION"],
+        POSE.right_forearm_ik: ["forearm_tweak.L", "COPY_LOCATION"],
 
         # damped track to pose driver
-        m_CONST.POSE.left_index_ik:    ["hand_ik.R", "DAMPED_TRACK"],
-        m_CONST.POSE.right_index_ik:   ["hand_ik.L", "DAMPED_TRACK"]
+        POSE.left_index_ik:    ["hand_ik.R", "DAMPED_TRACK"],
+        POSE.right_index_ik:   ["hand_ik.L", "DAMPED_TRACK"]
     }
 
     driver_targets = [
-        m_CONST.POSE.left_shoulder_ik, m_CONST.POSE.left_forearm_ik,
-        m_CONST.POSE.left_hand_ik, m_CONST.POSE.left_index_ik,
-        m_CONST.POSE.right_shoulder_ik, m_CONST.POSE.right_forearm_ik,
-        m_CONST.POSE.right_hand_ik, m_CONST.POSE.right_index_ik
+        POSE.left_shoulder_ik, POSE.left_forearm_ik,
+        POSE.left_hand_ik, POSE.left_index_ik,
+        POSE.right_shoulder_ik, POSE.right_forearm_ik,
+        POSE.right_hand_ik, POSE.right_index_ik
     ]
 
     shoulder_center = ["upper_arm_fk.R", "upper_arm_fk.L"]
@@ -41,23 +41,23 @@ class RigPose(abs_rigging.BpyRigging):
     ]
 
     ik_driver_origins = [
-        m_CONST.POSE.shoulder_center, m_CONST.POSE.left_shoulder_ik,
-        m_CONST.POSE.left_forearm_ik, m_CONST.POSE.left_hand_ik,
+        POSE.shoulder_center, POSE.left_shoulder_ik,
+        POSE.left_forearm_ik, POSE.left_hand_ik,
 
-        m_CONST.POSE.shoulder_center, m_CONST.POSE.right_shoulder_ik,
-        m_CONST.POSE.right_forearm_ik, m_CONST.POSE.right_hand_ik,
+        POSE.shoulder_center, POSE.right_shoulder_ik,
+        POSE.right_forearm_ik, POSE.right_hand_ik,
     ]
 
     detected_joints = [
-        [m_CONST.POSE.shoulder_center, m_CONST.POSE.left_shoulder],
-        [m_CONST.POSE.left_shoulder, m_CONST.POSE.left_elbow],
-        [m_CONST.POSE.left_elbow, m_CONST.POSE.left_wrist],
-        [m_CONST.POSE.left_wrist, m_CONST.POSE.left_index],
+        [POSE.shoulder_center,  POSE.left_shoulder],
+        [POSE.left_shoulder,    POSE.left_elbow],
+        [POSE.left_elbow,       POSE.left_wrist],
+        [POSE.left_wrist,       POSE.left_index],
 
-        [m_CONST.POSE.shoulder_center, m_CONST.POSE.right_shoulder],
-        [m_CONST.POSE.right_shoulder, m_CONST.POSE.right_elbow],
-        [m_CONST.POSE.right_elbow, m_CONST.POSE.right_wrist],
-        [m_CONST.POSE.right_wrist, m_CONST.POSE.right_index]
+        [POSE.shoulder_center,  POSE.right_shoulder],
+        [POSE.right_shoulder,   POSE.right_elbow],
+        [POSE.right_elbow,      POSE.right_wrist],
+        [POSE.right_wrist,      POSE.right_index]
     ]
 
     mapping_relation_list = []

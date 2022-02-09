@@ -16,16 +16,16 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 bl_info = {
-    "name": "BlendArMocap",
+    "name":        "BlendArMocap",
     "description": "Mediapipe implementation for Blender 2.9+.",
-    "author": "cgtinker",
-    "version": (1, 0, 0),
-    "blender": (2, 90, 0),
-    "location": "3D View > Tool",
-    "warning": "",
-    "wiki_url": "https://github.com/cgtinker/BlendArMocap",
+    "author":      "cgtinker",
+    "version":     (1, 0, 0),
+    "blender":     (2, 90, 0),
+    "location":    "3D View > Tool",
+    "warning":     "",
+    "wiki_url":    "https://github.com/cgtinker/BlendArMocap",
     "tracker_url": "https://github.com/cgtinker/BlendArMocap/issues",
-    "category": "Development"
+    "category":    "Development"
 }
 
 import os
@@ -59,5 +59,8 @@ def unregister():
 
 
 if __name__ == '__main__':
-    # log.init_logger()
-    register()
+    try:
+        register()
+    except ValueError:
+        unregister()
+        register()
