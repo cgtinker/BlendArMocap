@@ -33,7 +33,7 @@ class LimbDriver:
     def set_expressions(self):
         """ sets the expressions for blender internal drivers.
             the driver should copy the motion of the detection results,
-            while keeping an offsets to it's parent based on the target rig. """
+            while keeping an offsets to it's parent based on the target cgt_rig. """
         self.set_driver_origin()
         self.set_joint_head()
         self.set_joint_tail()

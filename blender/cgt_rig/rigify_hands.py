@@ -1,35 +1,35 @@
-from ... import m_CONST
-from ..rig import abs_rigging
+from utils import m_CONST
+from ..cgt_rig import abs_rigging
 
 
 class RigifyHands(abs_rigging.BpyRigging):
     def __init__(self, armature, driver_objects):
-        # driver to rigify rig transfer name references
+        # driver to rigify cgt_rig transfer name references
         self.references = {
-            m_CONST.HAND.wrist: "hand_ik",
-            m_CONST.HAND.thumb_cmc: "thumb.01",
-            m_CONST.HAND.thumb_mcp: "thumb.02",
-            m_CONST.HAND.thumb_ip: "thumb.03",
-            m_CONST.HAND.thumb_tip: "thumb.01",
-            m_CONST.HAND.index_finger_mcp: "f_index.01",
-            m_CONST.HAND.index_finger_pip: "f_index.02",
-            m_CONST.HAND.index_finger_dip: "f_index.03",
-            m_CONST.HAND.index_finger_tip: "f_index.01",
+            m_CONST.HAND.wrist:             "hand_ik",
+            m_CONST.HAND.thumb_cmc:         "thumb.01",
+            m_CONST.HAND.thumb_mcp:         "thumb.02",
+            m_CONST.HAND.thumb_ip:          "thumb.03",
+            m_CONST.HAND.thumb_tip:         "thumb.01",
+            m_CONST.HAND.index_finger_mcp:  "f_index.01",
+            m_CONST.HAND.index_finger_pip:  "f_index.02",
+            m_CONST.HAND.index_finger_dip:  "f_index.03",
+            m_CONST.HAND.index_finger_tip:  "f_index.01",
             m_CONST.HAND.middle_finger_mcp: "f_middle.01",
             m_CONST.HAND.middle_finger_pip: "f_middle.02",
             m_CONST.HAND.middle_finger_dip: "f_middle.03",
             m_CONST.HAND.middle_finger_tip: "f_middle.01",
-            m_CONST.HAND.ring_finger_mcp: "f_ring.01",
-            m_CONST.HAND.ring_finger_pip: "f_ring.02",
-            m_CONST.HAND.ring_finger_dip: "f_ring.03",
-            m_CONST.HAND.ring_finger_tip: "f_ring.01",
-            m_CONST.HAND.pinky_mcp: "f_pinky.01",
-            m_CONST.HAND.pinky_pip: "f_pinky.02",
-            m_CONST.HAND.pinky_dip: "f_pinky.03",
-            m_CONST.HAND.pinky_tip: "f_pinky.01",
+            m_CONST.HAND.ring_finger_mcp:   "f_ring.01",
+            m_CONST.HAND.ring_finger_pip:   "f_ring.02",
+            m_CONST.HAND.ring_finger_dip:   "f_ring.03",
+            m_CONST.HAND.ring_finger_tip:   "f_ring.01",
+            m_CONST.HAND.pinky_mcp:         "f_pinky.01",
+            m_CONST.HAND.pinky_pip:         "f_pinky.02",
+            m_CONST.HAND.pinky_dip:         "f_pinky.03",
+            m_CONST.HAND.pinky_tip:         "f_pinky.01",
         }
 
-        # storing relations between rigify and driver rig (left / right hand)
+        # storing relations between rigify and driver cgt_rig (left / right hand)
         self.relation_dict = {}
         self.set_relation_dict(driver_objects)
         self.apply_drivers(armature)

@@ -1,7 +1,7 @@
 import bpy
 from bpy.types import Panel
 
-from ... import m_CONST
+from utils import m_CONST
 from ...management import input_manager
 from . import install_dependencies, ui_preferences
 
@@ -83,7 +83,7 @@ class UI_PT_warning_panel(ExpandedPanel, Panel):
 class UI_transfer_anim_button(bpy.types.Operator):
     bl_label = "Transfer Animation"
     bl_idname = "button.cgt_transfer_animation_button"
-    bl_description = "Transfer driver animation to rig"
+    bl_description = "Transfer driver animation to cgt_rig"
 
     def execute(self, context):
         input_manager.transfer_animation()

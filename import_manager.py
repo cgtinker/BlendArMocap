@@ -14,24 +14,7 @@ load_order = {
         'blender.interface.install_dependencies',
         'blender.interface.stream_detection_operator',
         'blender.interface',
-
-        'blender.utils.objects',
-        'blender.utils',
-
-        'blender.rig.utils.drivers.assignment',
-        'blender.rig.utils.drivers.driver_expression',
-        'blender.rig.utils.drivers.limb_drivers',
-        'blender.rig.utils.drivers.pose_driver_expressions',
-        'blender.rig.utils.drivers',
-
-        'blender.rig.utils.constraints',
-        'blender.rig.utils',
-
-        'blender.rig.abs_rigging',
-        'blender.rig.rig_pose',
-        'blender.rig.rigify_face',
-        'blender.rig.rigify_hands',
-        'blender.rig.rigify_pose'
+        'm_CONST'
     ],
     'management': [
 
@@ -46,6 +29,24 @@ initial_load_order = [
     'utils.errors',
     'utils.misc',
     '...',
+
+    'blender.utils.objects',
+    'blender.utils',
+
+    'blender.cgt_rig.utils.drivers.assignment',
+    'blender.cgt_rig.utils.drivers.driver_expression',
+    'blender.cgt_rig.utils.drivers.limb_drivers',
+    'blender.cgt_rig.utils.drivers.pose_driver_expressions',
+    'blender.cgt_rig.utils.drivers',
+
+    'blender.cgt_rig.utils.constraints',
+    'blender.cgt_rig.utils',
+
+    'blender.cgt_rig.abs_rigging',
+    'blender.cgt_rig.rig_pose',
+    'blender.cgt_rig.rigify_face',
+    'blender.cgt_rig.rigify_hands',
+    'blender.cgt_rig.rigify_pose'
 ]
 
 utils_module_name = __name__ + '.utils'
@@ -60,10 +61,13 @@ def reload_modules():
     fixed_modules = set(reload_list)
 
     for name in get_loaded_modules():
+        print("loaded modules", name)
         if name not in fixed_modules:
+            print("del stale module", name)
             del sys.modules[name]
 
     for name in reload_list:
+        print("reloading", name)
         importlib.reload(sys.modules[name])
 
 
@@ -78,7 +82,7 @@ def compare_module_list(a, b):
 
 def load_initial_modules():
     # gets initial load order
-    load_list = [__name__ + '.' + name for name in initial_load_order]
+    load_list = [__name__ + '.' + name for name in load_order['init']]
 
     for i, name in enumerate(load_list):
         # import modules
@@ -86,7 +90,7 @@ def load_initial_modules():
         # compare with loaded modules
         module_list = get_loaded_modules()
         # min loaded vs max loaded
-        expected_list = load_list[0: max(11, i + 1)]
+        expected_list = load_list[0: max(7, i + 1)]
 
         if not compare_module_list(module_list, expected_list):
             print(f'{PACKAGE}: initial load order mismatch after {name} '
@@ -96,12 +100,6 @@ def load_initial_modules():
     return load_list
 
 
-def load_rigs():
-    if not legacy_loaded:
-        rig_lists.get_internal_rigs()
-        metarig_menu.init_metarig_menu()
-
-
 if PACKAGE in locals():
     reload_modules()
 else:
@@ -109,14 +107,13 @@ else:
 
     load_list = load_initial_modules()
 
-    from . import (rig_lists, metarig_menu)
+    from . import metarig_menu, rig_lists
 
     reload_list = reload_list_init = get_loaded_modules()
 
     if not compare_module_list(reload_list, load_list):
         print('!!! RIGIFY: initial load order mismatch - expected: \n', load_list, '\nGot:\n', reload_list)
 
-load_rigs()
 
 # PASS OUT TRY EXCEPT
 try:

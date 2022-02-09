@@ -2,7 +2,7 @@ import numpy as np
 from mathutils import Euler
 
 from . import abs_assignment
-from .. import m_CONST
+from utils import m_CONST
 from ..blender.utils import objects
 from ..utils import m_V
 
@@ -238,7 +238,7 @@ class BridgePose(abs_assignment.DataAssignment):
         return euler
 
     def shoulder_hip_rotation(self):
-        """ Creates custom rotation data for driving the rig. """
+        """ Creates custom rotation data for driving the cgt_rig. """
         self.shoulder_center.rot = self.shoulder_rotation()
         self.hip_center.rot = self.torso_rotation()
 
@@ -251,7 +251,7 @@ class BridgePose(abs_assignment.DataAssignment):
             self.rotation_data.append(d)
 
     def shoulder_hip_location(self):
-        """ Appending custom location data for driving the rig. """
+        """ Appending custom location data for driving the cgt_rig. """
         self.shoulder_center.loc = m_V.center_point(self.data[11][1], self.data[12][1])
         self.data.append([self.shoulder_center.idx, self.shoulder_center.loc])
 

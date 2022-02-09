@@ -1,4 +1,4 @@
-from ... import m_CONST
+from utils import m_CONST
 from . import abs_rigging
 from .abs_rigging import DriverType, MappingRelation
 from ..utils import objects
@@ -36,14 +36,14 @@ class RigifyPose(abs_rigging.BpyRigging):
 
     def __init__(self, armature, driver_objects: list):
         self.pose_bones = armature.pose.bones
-        # storing relation between rigify rig and driver rig in an array (drivers may be used multiple times)
+        # storing relation between rigify cgt_rig and driver cgt_rig in an array (drivers may be used multiple times)
         self.relation_mapping_lst = []
         self.method_mapping = {
             DriverType.limb_driver: self.add_driver_batch,
             DriverType.constraint: self.add_constraint
         }
 
-        # offsets and avg data based on rigify input rig
+        # offsets and avg data based on rigify input cgt_rig
         # self.avg_arm_length, self.avg_leg_length = self.get_avg_limb_length()
         self.get_arm_joint_lengths()
         self.get_arm_offsets()
@@ -124,26 +124,26 @@ class RigifyPose(abs_rigging.BpyRigging):
             # region DRIVERS
             # region arms
             # left arm
-            m_CONST.POSE.left_elbow: [DriverType.limb_driver],
-            m_CONST.POSE.left_wrist: [DriverType.limb_driver],
-            m_CONST.POSE.left_index: [DriverType.limb_driver],
+            m_CONST.POSE.left_elbow:       [DriverType.limb_driver],
+            m_CONST.POSE.left_wrist:       [DriverType.limb_driver],
+            m_CONST.POSE.left_index:       [DriverType.limb_driver],
 
-            m_CONST.POSE.right_elbow: [DriverType.limb_driver],
-            m_CONST.POSE.right_wrist: [DriverType.limb_driver],
-            m_CONST.POSE.right_index: [DriverType.limb_driver],
+            m_CONST.POSE.right_elbow:      [DriverType.limb_driver],
+            m_CONST.POSE.right_wrist:      [DriverType.limb_driver],
+            m_CONST.POSE.right_index:      [DriverType.limb_driver],
             # region m_CONSTRAINTS
             # region basic constraints
-            m_CONST.POSE.hip_center: [DriverType.constraint, ["torso", "COPY_ROTATION"]],
-            m_CONST.POSE.shoulder_center: [DriverType.constraint, ["chest", "COPY_ROTATION"]],
+            m_CONST.POSE.hip_center:       [DriverType.constraint, ["torso", "COPY_ROTATION"]],
+            m_CONST.POSE.shoulder_center:  [DriverType.constraint, ["chest", "COPY_ROTATION"]],
             # endregion
 
             # region arms (mapped mirrored)
-            m_CONST.POSE.left_hand_ik: [DriverType.constraint, ["hand_ik.R", "COPY_LOCATION"]],
-            m_CONST.POSE.right_hand_ik: [DriverType.constraint, ["hand_ik.L", "COPY_LOCATION"]],
-            m_CONST.POSE.left_forearm_ik: [DriverType.constraint, ["forearm_tweak.R", "COPY_LOCATION"]],
+            m_CONST.POSE.left_hand_ik:     [DriverType.constraint, ["hand_ik.R", "COPY_LOCATION"]],
+            m_CONST.POSE.right_hand_ik:    [DriverType.constraint, ["hand_ik.L", "COPY_LOCATION"]],
+            m_CONST.POSE.left_forearm_ik:  [DriverType.constraint, ["forearm_tweak.R", "COPY_LOCATION"]],
             m_CONST.POSE.right_forearm_ik: [DriverType.constraint, ["forearm_tweak.L", "COPY_LOCATION"]],
-            m_CONST.POSE.left_index_ik: [DriverType.constraint, ["hand_ik.R", "DAMPED_TRACK"]],
-            m_CONST.POSE.right_index_ik: [DriverType.constraint, ["hand_ik.L", "DAMPED_TRACK"]],
+            m_CONST.POSE.left_index_ik:    [DriverType.constraint, ["hand_ik.R", "DAMPED_TRACK"]],
+            m_CONST.POSE.right_index_ik:   [DriverType.constraint, ["hand_ik.L", "DAMPED_TRACK"]],
             # endregion
 
             # region legs (mapped mirrored)
@@ -156,11 +156,11 @@ class RigifyPose(abs_rigging.BpyRigging):
             # endregion
         }
 
-        # setup relations between rig and drivers, then apply the drivers to the rig
+        # setup relations between cgt_rig and drivers, then apply the drivers to the cgt_rig
         self.set_relation_dict(driver_objects)
         # self.apply_drivers()
 
-    # region rig driver relation setup
+    # region cgt_rig driver relation setup
     def set_relation_dict(self, driver_objects: list):
         driver_names = [obj.name for obj in driver_objects]
 
