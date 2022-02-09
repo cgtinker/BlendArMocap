@@ -1,19 +1,18 @@
 from ... import m_CONST
 from .abs_rigging import DriverType, MappingRelation, BpyRigging
 from ..utils import objects
-# from utils import log
 
 
 class RigifyFace(BpyRigging):
     relation_mapping_lst = []
 
     eye_bone_names = [["lid.T.R.002", "lid.B.R.002"], ["lid.T.L.002", "lid.B.L.002"]]
-    eye_driver_names = [[m_CONST.FACE.right_eye_t.value, m_CONST.FACE.right_eye_b.value],
-                        [m_CONST.FACE.left_eye_t.value, m_CONST.FACE.left_eye_b.value]]
+    eye_driver_names = [[m_CONST.FACE.right_eye_t, m_CONST.FACE.right_eye_b],
+                        [m_CONST.FACE.left_eye_t, m_CONST.FACE.left_eye_b]]
 
     mouth_bone_names = [["lip.T", "lip.B"], ["lips.R", "lips.L"]]
-    mouth_driver_names = [[m_CONST.FACE.mouth_t.value, m_CONST.FACE.mouth_b.value],
-                          [m_CONST.FACE.mouth_r.value, m_CONST.FACE.mouth_l.value]]
+    mouth_driver_names = [[m_CONST.FACE.mouth_t, m_CONST.FACE.mouth_b],
+                          [m_CONST.FACE.mouth_r, m_CONST.FACE.mouth_l]]
 
     # eyebrow_bone_names = [
     #     ["brow.T.R.003", "DEF-forehead.R"], ["brow.T.R.002", "DEF-forehead.R.001"],
@@ -22,8 +21,8 @@ class RigifyFace(BpyRigging):
     #     ["brow.T.L.003", "DEF-forehead.L"], ["brow.T.L.002", "DEF-forehead.L.001"],
     #     ["brow.T.L.001", "DEF-forehead.L.002"]]
     # eyebrow_driver_names = [
-    #     m_CONST.FACE.eyebrow_in_l.value, m_CONST.FACE.eyebrow_mid_l.value, m_CONST.FACE.eyebrow_out_l.value,
-    #     m_CONST.FACE.eyebrow_in_r.value, m_CONST.FACE.eyebrow_mid_r.value, m_CONST.FACE.eyebrow_out_r.value]
+    #     m_CONST.FACE.eyebrow_in_l, m_CONST.FACE.eyebrow_mid_l, m_CONST.FACE.eyebrow_out_l,
+    #     m_CONST.FACE.eyebrow_in_r, m_CONST.FACE.eyebrow_mid_r, m_CONST.FACE.eyebrow_out_r]
 
     def __init__(self, armature, driver_objects: list):
         self.pose_bones = armature.pose.bones
@@ -41,26 +40,26 @@ class RigifyFace(BpyRigging):
 
         # drivers are getting used multiple times
         self.multi_user_driver_dict = {
-            m_CONST.FACE.right_eye.value: [
+            m_CONST.FACE.right_eye: [
                 [self.eye_driver_names[0][0], eye_distances[0], self.eye_top_down_dir_driver_attr],
                 [self.eye_driver_names[0][1], eye_distances[0], self.eye_up_dir_driver_attr]],
-            m_CONST.FACE.left_eye.value: [
+            m_CONST.FACE.left_eye: [
                 [self.eye_driver_names[1][0], eye_distances[1], self.eye_top_down_dir_driver_attr],
                 [self.eye_driver_names[1][1], eye_distances[1], self.eye_up_dir_driver_attr]],
 
-            m_CONST.FACE.mouth.value: [
+            m_CONST.FACE.mouth: [
                 [self.mouth_driver_names[0][0], mouth_distances[0], self.mouth_up_dir_driver_attr],
                 [self.mouth_driver_names[0][1], mouth_distances[0], self.mouth_down_dir_driver_attr],
                 [self.mouth_driver_names[1][0], mouth_distances[1], self.mouth_left_dir_driver_attr],
                 [self.mouth_driver_names[1][1], mouth_distances[1], self.mouth_right_dir_driver_attr]
             ],
 
-            # m_CONST.FACE.left_eyebrow.value: [
+            # m_CONST.FACE.left_eyebrow: [
             #     [self.eyebrow_driver_names[0], eyebrow_distances[0], self.eyebrow_driver_attr],
             #     [self.eyebrow_driver_names[1], eyebrow_distances[1], self.eyebrow_driver_attr],
             #     [self.eyebrow_driver_names[2], eyebrow_distances[2], self.eyebrow_driver_attr],
             # ],
-            # m_CONST.FACE.right_eyebrow.value: [
+            # m_CONST.FACE.right_eyebrow: [
             #     [self.eyebrow_driver_names[3], eyebrow_distances[3], self.eyebrow_driver_attr],
             #     [self.eyebrow_driver_names[4], eyebrow_distances[4], self.eyebrow_driver_attr],
             #     [self.eyebrow_driver_names[5], eyebrow_distances[5], self.eyebrow_driver_attr],
@@ -70,11 +69,11 @@ class RigifyFace(BpyRigging):
         # mapping may contains multi user drivers
         self.references = {
             # region main drivers
-            m_CONST.FACE.mouth.value: [DriverType.face_driver],
-            m_CONST.FACE.left_eye.value: [DriverType.face_driver],
-            m_CONST.FACE.right_eye.value: [DriverType.face_driver],
-            # m_CONST.FACE.right_eyebrow.value: [DriverType.face_driver],
-            # m_CONST.FACE.left_eyebrow.value: [DriverType.face_driver],
+            m_CONST.FACE.mouth: [DriverType.face_driver],
+            m_CONST.FACE.left_eye: [DriverType.face_driver],
+            m_CONST.FACE.right_eye: [DriverType.face_driver],
+            # m_CONST.FACE.right_eyebrow: [DriverType.face_driver],
+            # m_CONST.FACE.left_eyebrow: [DriverType.face_driver],
             # endregion
 
             # region m_CONSTraints
@@ -85,20 +84,20 @@ class RigifyFace(BpyRigging):
             # "eyebrow_mid_r":    [DriverType.m_CONSTraint, [self.eyebrow_bone_names[4][0],    "COPY_LOCATION_OFFSET"]],
             # "eyebrow_out_r": [DriverType.m_CONSTraint, [self.eyebrow_bone_names[5][0], "COPY_LOCATION_OFFSET"]],
 
-            m_CONST.FACE.right_eye_t.value: [DriverType.constraint, ["lid.T.R.002", "COPY_LOCATION_OFFSET"]],
-            m_CONST.FACE.right_eye_b.value: [DriverType.constraint, ["lid.B.R.002", "COPY_LOCATION_OFFSET"]],
+            m_CONST.FACE.right_eye_t: [DriverType.constraint, ["lid.T.R.002", "COPY_LOCATION_OFFSET"]],
+            m_CONST.FACE.right_eye_b: [DriverType.constraint, ["lid.B.R.002", "COPY_LOCATION_OFFSET"]],
 
-            m_CONST.FACE.left_eye_t.value: [DriverType.constraint, ["lid.T.L.002", "COPY_LOCATION_OFFSET"]],
-            m_CONST.FACE.left_eye_b.value: [DriverType.constraint, ["lid.B.L.002", "COPY_LOCATION_OFFSET"]],
+            m_CONST.FACE.left_eye_t: [DriverType.constraint, ["lid.T.L.002", "COPY_LOCATION_OFFSET"]],
+            m_CONST.FACE.left_eye_b: [DriverType.constraint, ["lid.B.L.002", "COPY_LOCATION_OFFSET"]],
 
-            m_CONST.FACE.mouth_t.value: [DriverType.constraint, ["lip.T", "COPY_LOCATION_OFFSET"]],
-            m_CONST.FACE.mouth_b.value: [DriverType.constraint, ["lip.B", "COPY_LOCATION_OFFSET"]],
+            m_CONST.FACE.mouth_t: [DriverType.constraint, ["lip.T", "COPY_LOCATION_OFFSET"]],
+            m_CONST.FACE.mouth_b: [DriverType.constraint, ["lip.B", "COPY_LOCATION_OFFSET"]],
 
-            m_CONST.FACE.mouth_l.value: [DriverType.constraint, ["lips.R", "COPY_LOCATION_OFFSET"]],
-            m_CONST.FACE.mouth_r.value: [DriverType.constraint, ["lips.L", "COPY_LOCATION_OFFSET"]],
+            m_CONST.FACE.mouth_l: [DriverType.constraint, ["lips.R", "COPY_LOCATION_OFFSET"]],
+            m_CONST.FACE.mouth_r: [DriverType.constraint, ["lips.L", "COPY_LOCATION_OFFSET"]],
 
-            m_CONST.FACE.head.value: [DriverType.constraint, ["head", "COPY_ROTATION"]],
-            m_CONST.FACE.chin.value: [DriverType.constraint, ["jaw_master", "COPY_ROTATION"]],
+            m_CONST.FACE.head: [DriverType.constraint, ["head", "COPY_ROTATION"]],
+            m_CONST.FACE.chin: [DriverType.constraint, ["jaw_master", "COPY_ROTATION"]],
             # endregion
         }
 

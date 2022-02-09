@@ -7,9 +7,9 @@ from ..blender.utils import objects
 
 def transfer_animation():
     col_mapping = {
-        m_CONST.COLLECTIONS.hands.value: rigify_hands.RigifyHands,
-        m_CONST.COLLECTIONS.face.value: rigify_face.RigifyFace,
-        m_CONST.COLLECTIONS.pose.value: rig_pose.RigPose
+        m_CONST.COLLECTIONS.hands: rigify_hands.RigifyHands,
+        m_CONST.COLLECTIONS.face: rigify_face.RigifyFace,
+        m_CONST.COLLECTIONS.pose: rig_pose.RigPose
         # m_CONST.COLLECTIONS.pose.value: rigify_pose.RigifyPose
     }
 

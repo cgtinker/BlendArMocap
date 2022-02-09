@@ -1,19 +1,21 @@
 import os
-from enum import Enum
+from dataclasses import dataclass
 
 # has to be at root
 PACKAGE = os.path.basename(os.path.dirname(__file__))
 ADDON_NAME = "BlendArMocap"
 
 
-class COLLECTIONS(Enum):
+@dataclass(frozen=True, init=False)
+class COLLECTIONS:
     drivers = "cgt_DRIVERS"
     hands = "cgt_HANDS"
     face = "cgt_FACE"
     pose = "cgt_POSE"
 
 
-class POSE(Enum):
+@dataclass(frozen=True, init=False)
+class POSE:
     nose = "cgt_nose"
     left_eye_inner = "cgt_left_eye_inner"
     left_eye = "cgt_left_eye"
@@ -69,7 +71,8 @@ class POSE(Enum):
     right_shin_ik = "CGT_RIGHT_SHIN_IK_DRIVER"
 
 
-class HAND(Enum):
+@dataclass(frozen=True, init=False)
+class HAND:
     wrist = "CGT_WRIST"
     thumb_cmc = "CGT_THUMB_CMC"
     thumb_mcp = "CGT_THUMB_MCP"
@@ -93,7 +96,8 @@ class HAND(Enum):
     pinky_tip = "CGT_PINKY_TIP"
 
 
-class FACE(Enum):
+@dataclass(frozen=True, init=False)
+class FACE:
     face = "cgt_face_empty_"
 
     head = "CGT_FACE_ROTATION"

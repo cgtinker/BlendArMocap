@@ -9,27 +9,27 @@ from ..utils import m_V
 
 class BridgeHand(abs_assignment.DataAssignment):
     references = {
-        0:  m_CONST.HAND.wrist.value,
-        1:  m_CONST.HAND.thumb_cmc.value,
-        2:  m_CONST.HAND.thumb_mcp.value,
-        3:  m_CONST.HAND.thumb_ip.value,
-        4:  m_CONST.HAND.thumb_tip.value,
-        5:  m_CONST.HAND.index_finger_mcp.value,
-        6:  m_CONST.HAND.index_finger_pip.value,
-        7:  m_CONST.HAND.index_finger_dip.value,
-        8:  m_CONST.HAND.index_finger_tip.value,
-        9:  m_CONST.HAND.middle_finger_mcp.value,
-        10: m_CONST.HAND.middle_finger_pip.value,
-        11: m_CONST.HAND.middle_finger_dip.value,
-        12: m_CONST.HAND.middle_finger_tip.value,
-        13: m_CONST.HAND.ring_finger_mcp.value,
-        14: m_CONST.HAND.ring_finger_pip.value,
-        15: m_CONST.HAND.ring_finger_dip.value,
-        16: m_CONST.HAND.ring_finger_tip.value,
-        17: m_CONST.HAND.pinky_mcp.value,
-        18: m_CONST.HAND.pinky_pip.value,
-        19: m_CONST.HAND.pinky_dip.value,
-        20: m_CONST.HAND.pinky_tip.value,
+        0:  m_CONST.HAND.wrist,
+        1:  m_CONST.HAND.thumb_cmc,
+        2:  m_CONST.HAND.thumb_mcp,
+        3:  m_CONST.HAND.thumb_ip,
+        4:  m_CONST.HAND.thumb_tip,
+        5:  m_CONST.HAND.index_finger_mcp,
+        6:  m_CONST.HAND.index_finger_pip,
+        7:  m_CONST.HAND.index_finger_dip,
+        8:  m_CONST.HAND.index_finger_tip,
+        9:  m_CONST.HAND.middle_finger_mcp,
+        10: m_CONST.HAND.middle_finger_pip,
+        11: m_CONST.HAND.middle_finger_dip,
+        12: m_CONST.HAND.middle_finger_tip,
+        13: m_CONST.HAND.ring_finger_mcp,
+        14: m_CONST.HAND.ring_finger_pip,
+        15: m_CONST.HAND.ring_finger_dip,
+        16: m_CONST.HAND.ring_finger_tip,
+        17: m_CONST.HAND.pinky_mcp,
+        18: m_CONST.HAND.pinky_pip,
+        19: m_CONST.HAND.pinky_dip,
+        20: m_CONST.HAND.pinky_tip,
     }
     fingers = [
         [5, 9],  # index finger
@@ -48,7 +48,7 @@ class BridgeHand(abs_assignment.DataAssignment):
     left_angles, right_angles = None, None
 
     frame = 0
-    col_name = m_CONST.COLLECTIONS.hands.value
+    col_name = m_CONST.COLLECTIONS.hands
 
     def init_references(self):
         """ generate empty objects for mapping. """

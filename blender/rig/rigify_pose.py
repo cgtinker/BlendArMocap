@@ -49,71 +49,71 @@ class RigifyPose(abs_rigging.BpyRigging):
         self.get_arm_offsets()
 
         """
-        m_CONST.POSE.left_hand_ik.value,
-        m_CONST.POSE.left_forearm_ik.value,
-        m_CONST.POSE.left_index_ik.value
+        m_CONST.POSE.left_hand_ik,
+        m_CONST.POSE.left_forearm_ik,
+        m_CONST.POSE.left_index_ik
         """
         self.multi_user_driver_dict = {
-            m_CONST.POSE.left_elbow.value:
+            m_CONST.POSE.left_elbow:
                 [
                     self.set_ik_driver_scale_attr(
-                        m_CONST.POSE.left_shoulder.value
+                        m_CONST.POSE.left_shoulder
                     ),
                     self.set_ik_driver_expression(
-                        m_CONST.POSE.left_forearm_ik.value,
+                        m_CONST.POSE.left_forearm_ik,
                         self.left_shoulder_offset,
                         self.left_upper_arm_length
                     )
                 ],
-            m_CONST.POSE.left_wrist.value:
+            m_CONST.POSE.left_wrist:
                 [
                     self.set_ik_driver_scale_attr(
-                        m_CONST.POSE.left_elbow.value
+                        m_CONST.POSE.left_elbow
                     ),
                     self.set_ik_driver_expression(
-                        m_CONST.POSE.left_hand_ik.value,
+                        m_CONST.POSE.left_hand_ik,
                         self.left_elbow_offset,
                         self.left_wrist_length
                     )],
-            m_CONST.POSE.left_index.value:
+            m_CONST.POSE.left_index:
                 [
                     self.set_ik_driver_scale_attr(
-                        m_CONST.POSE.left_wrist.value
+                        m_CONST.POSE.left_wrist
                     ),
                     self.set_ik_driver_expression(
-                        m_CONST.POSE.left_index_ik.value,
+                        m_CONST.POSE.left_index_ik,
                         self.left_wrist_offset,
                         self.left_wrist_length
                     )],
 
             # right arm
-            m_CONST.POSE.right_elbow.value:
+            m_CONST.POSE.right_elbow:
                 [
                     self.set_ik_driver_scale_attr(
-                        m_CONST.POSE.right_shoulder.value
+                        m_CONST.POSE.right_shoulder
                     ),
                     self.set_ik_driver_expression(
-                        m_CONST.POSE.right_forearm_ik.value,
+                        m_CONST.POSE.right_forearm_ik,
                         self.right_shoulder_offset,
                         self.right_upper_arm_length
                     )],
-            m_CONST.POSE.right_wrist.value:
+            m_CONST.POSE.right_wrist:
                 [
                     self.set_ik_driver_scale_attr(
-                        m_CONST.POSE.right_elbow.value
+                        m_CONST.POSE.right_elbow
                     ),
                     self.set_ik_driver_expression(
-                        m_CONST.POSE.right_hand_ik.value,
+                        m_CONST.POSE.right_hand_ik,
                         self.right_elbow_offset,
                         self.right_wrist_length
                     )],
-            m_CONST.POSE.right_index.value:
+            m_CONST.POSE.right_index:
                 [
                     self.set_ik_driver_scale_attr(
-                        m_CONST.POSE.right_wrist.value
+                        m_CONST.POSE.right_wrist
                     ),
                     self.set_ik_driver_expression(
-                        m_CONST.POSE.right_index_ik.value,
+                        m_CONST.POSE.right_index_ik,
                         self.right_wrist_offset,
                         self.left_wrist_length
                     )],
@@ -124,26 +124,26 @@ class RigifyPose(abs_rigging.BpyRigging):
             # region DRIVERS
             # region arms
             # left arm
-            m_CONST.POSE.left_elbow.value: [DriverType.limb_driver],
-            m_CONST.POSE.left_wrist.value: [DriverType.limb_driver],
-            m_CONST.POSE.left_index.value: [DriverType.limb_driver],
+            m_CONST.POSE.left_elbow: [DriverType.limb_driver],
+            m_CONST.POSE.left_wrist: [DriverType.limb_driver],
+            m_CONST.POSE.left_index: [DriverType.limb_driver],
 
-            m_CONST.POSE.right_elbow.value: [DriverType.limb_driver],
-            m_CONST.POSE.right_wrist.value: [DriverType.limb_driver],
-            m_CONST.POSE.right_index.value: [DriverType.limb_driver],
+            m_CONST.POSE.right_elbow: [DriverType.limb_driver],
+            m_CONST.POSE.right_wrist: [DriverType.limb_driver],
+            m_CONST.POSE.right_index: [DriverType.limb_driver],
             # region m_CONSTRAINTS
             # region basic constraints
-            m_CONST.POSE.hip_center.value: [DriverType.constraint, ["torso", "COPY_ROTATION"]],
-            m_CONST.POSE.shoulder_center.value: [DriverType.constraint, ["chest", "COPY_ROTATION"]],
+            m_CONST.POSE.hip_center: [DriverType.constraint, ["torso", "COPY_ROTATION"]],
+            m_CONST.POSE.shoulder_center: [DriverType.constraint, ["chest", "COPY_ROTATION"]],
             # endregion
 
             # region arms (mapped mirrored)
-            m_CONST.POSE.left_hand_ik.value: [DriverType.constraint, ["hand_ik.R", "COPY_LOCATION"]],
-            m_CONST.POSE.right_hand_ik.value: [DriverType.constraint, ["hand_ik.L", "COPY_LOCATION"]],
-            m_CONST.POSE.left_forearm_ik.value: [DriverType.constraint, ["forearm_tweak.R", "COPY_LOCATION"]],
-            m_CONST.POSE.right_forearm_ik.value: [DriverType.constraint, ["forearm_tweak.L", "COPY_LOCATION"]],
-            m_CONST.POSE.left_index_ik.value: [DriverType.constraint, ["hand_ik.R", "DAMPED_TRACK"]],
-            m_CONST.POSE.right_index_ik.value: [DriverType.constraint, ["hand_ik.L", "DAMPED_TRACK"]],
+            m_CONST.POSE.left_hand_ik: [DriverType.constraint, ["hand_ik.R", "COPY_LOCATION"]],
+            m_CONST.POSE.right_hand_ik: [DriverType.constraint, ["hand_ik.L", "COPY_LOCATION"]],
+            m_CONST.POSE.left_forearm_ik: [DriverType.constraint, ["forearm_tweak.R", "COPY_LOCATION"]],
+            m_CONST.POSE.right_forearm_ik: [DriverType.constraint, ["forearm_tweak.L", "COPY_LOCATION"]],
+            m_CONST.POSE.left_index_ik: [DriverType.constraint, ["hand_ik.R", "DAMPED_TRACK"]],
+            m_CONST.POSE.right_index_ik: [DriverType.constraint, ["hand_ik.L", "DAMPED_TRACK"]],
             # endregion
 
             # region legs (mapped mirrored)
@@ -232,18 +232,18 @@ class RigifyPose(abs_rigging.BpyRigging):
     def get_arm_offsets(self):
         """ offset for individual arm joints """
         self.left_shoulder_offset = self.get_location_offset(
-            self.pose_bones, "upper_arm_ik.L", m_CONST.POSE.right_shoulder.value)
+            self.pose_bones, "upper_arm_ik.L", m_CONST.POSE.right_shoulder)
         self.left_elbow_offset = self.get_location_offset(
-            self.pose_bones, "forearm_tweak.L", m_CONST.POSE.right_elbow.value)
+            self.pose_bones, "forearm_tweak.L", m_CONST.POSE.right_elbow)
         self.left_wrist_offset = self.get_location_offset(
-            self.pose_bones, "hand_ik.L", m_CONST.POSE.right_wrist.value)
+            self.pose_bones, "hand_ik.L", m_CONST.POSE.right_wrist)
 
         self.right_shoulder_offset = self.get_location_offset(
-            self.pose_bones, "upper_arm_ik.R", m_CONST.POSE.right_shoulder.value)
+            self.pose_bones, "upper_arm_ik.R", m_CONST.POSE.right_shoulder)
         self.right_elbow_offset = self.get_location_offset(
-            self.pose_bones, "forearm_tweak.R", m_CONST.POSE.right_elbow.value)
+            self.pose_bones, "forearm_tweak.R", m_CONST.POSE.right_elbow)
         self.right_wrist_offset = self.get_location_offset(
-            self.pose_bones, "hand_ik.R", m_CONST.POSE.right_wrist.value)
+            self.pose_bones, "hand_ik.R", m_CONST.POSE.right_wrist)
 
     def set_ik_driver_expression(self, driver_target, offset, joint_length):
         return self.driver_loc2loc_sca_attr(driver_target,
