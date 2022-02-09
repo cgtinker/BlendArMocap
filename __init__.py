@@ -28,7 +28,7 @@ bl_info = {
     "category": "Development"
 }
 
-
+import cgt_imports
 from blender.interface import ui_registration
 
 
