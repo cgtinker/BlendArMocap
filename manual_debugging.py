@@ -28,6 +28,7 @@ bl_info = {
     "category":    "Development"
 }
 
+import importlib
 import os
 import sys
 
@@ -48,8 +49,75 @@ except AttributeError:
     # already appended
     print("RUNNING MANUAL DEBUGGING IN EDITOR")
 
-import cgt_imports
-from blender.interface import ui_registration
+
+class ModuleManager:
+    PACKAGE = "mediapipe_ml"
+    reload_list = None
+    load_order = {
+        'init':    [
+            'cgt_naming',
+            'blender.interface.ui_registration',
+            'blender.cgt_rig',
+            'blender.input_manager',
+            'blender.interface',
+            'blender'
+        ],
+        'modules': [
+            'utils.filter',
+            'utils.open_cv',
+            'utils.writer'
+            'utils',
+            'ml_detection',
+            'management',
+            'bridge',
+            'blender.cgt_rig'
+            'blender.utils'
+        ],
+    }
+
+    def __init__(self, module_type):
+        self.module_type = module_type
+
+    def get_loaded_modules(self):
+        prefix = self.PACKAGE + '.blender'
+        return [name for name in sys.modules if name.startswith(prefix)]
+
+    def reload_modules(self):
+        fixed_modules = set(self.reload_list)
+
+        for name in self.get_loaded_modules():
+            if name not in fixed_modules:
+                print("Deleting module:", name)
+                del sys.modules[name]
+
+        for name in self.reload_list:
+            importlib.reload(sys.modules[name])
+
+    def load_initial_modules(self):
+        load_list = [self.PACKAGE + '.' + name for name in self.load_order[self.module_type]]
+        for i, name in enumerate(load_list):
+            importlib.import_module(name)
+
+        return load_list
+
+    def execute(self):
+        if self.PACKAGE in locals():
+            print(f'{self.PACKAGE}: Reloading package...')
+            self.reload_modules()
+        else:
+            print(f'{self.PACKAGE}: Initial package loading... ')
+
+            load_list = self.load_initial_modules()
+            self.reload_list = self.load_order[self.module_type] = self.get_loaded_modules()
+            print("\nload list:", load_list)
+            print("\nreload_list", self.reload_list)
+
+
+importer = ModuleManager("init")
+importer.execute()
+
+# custom top level import
+from mediapipe_ml.blender.interface import ui_registration  # noqa
 
 
 def register():

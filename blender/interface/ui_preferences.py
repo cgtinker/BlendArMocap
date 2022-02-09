@@ -2,7 +2,7 @@ import subprocess
 
 import bpy
 
-import cgt_naming
+from ... import cgt_naming
 from . import install_dependencies, ui_registration
 
 

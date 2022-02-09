@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from mediapipe.framework.formats import classification_pb2
 from mediapipe import solutions
 
-from management import input_manager
+from ..blender import input_manager
 
 
 class RealtimeDetector(ABC):

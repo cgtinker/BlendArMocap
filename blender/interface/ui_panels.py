@@ -1,8 +1,8 @@
 import bpy
 from bpy.types import Panel
 
-import cgt_naming
-from management import input_manager
+from ... import cgt_naming
+from .. import input_manager
 from . import install_dependencies, ui_preferences
 
 

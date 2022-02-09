@@ -1,8 +1,8 @@
 import mediapipe as mp
 
 from . import abstract_detector
-from bridge import events, pose_drivers
-from utils.open_cv import stream
+from ..bridge import events, pose_drivers
+from ..utils.open_cv import stream
 
 
 class HolisticDetector(abstract_detector.RealtimeDetector):

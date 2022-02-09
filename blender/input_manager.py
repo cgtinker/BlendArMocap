@@ -1,11 +1,13 @@
 import bpy
 
-from cgt_naming import COLLECTIONS
-from blender.cgt_rig import rigify_hands, rigify_face, rig_pose
-from blender.utils import objects
+from ..cgt_naming import COLLECTIONS
+from .utils import objects
 
 
 def transfer_animation():
+    print("trans")
+    from .cgt_rig import rigify_hands, rigify_face, rig_pose
+
     col_mapping = {
         COLLECTIONS.hands: rigify_hands.RigifyHands,
         COLLECTIONS.face:  rigify_face.RigifyFace,

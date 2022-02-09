@@ -5,7 +5,7 @@ from enum import Enum
 from .utils import constraints
 from .utils.drivers import assignment
 from ..utils import objects
-from utils import m_V
+from ...utils import m_V
 
 
 class BpyRigging(ABC):
