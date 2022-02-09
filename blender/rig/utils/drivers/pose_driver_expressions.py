@@ -1,4 +1,4 @@
-from blender.rig.abs_rigging import DriverType
+from ...abs_rigging import DriverType
 import bpy
 
 

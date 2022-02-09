@@ -1,18 +1,8 @@
-import importlib
-
 import bpy
 
-import m_CONST
-from blender.rig import rigify_hands, rigify_face, rigify_pose, rig_pose
-from blender.utils import objects
-# from utils import log
-
-# importlib.reload(m_CONST)
-# importlib.reload(rigify_hands)
-# importlib.reload(rigify_pose)
-# importlib.reload(rigify_face)
-# importlib.reload(rig_pose)
-# importlib.reload(log)
+from .. import m_CONST
+from ..blender.rig import rigify_hands, rigify_face, rigify_pose, rig_pose
+from ..blender.utils import objects
 
 
 def transfer_animation():
@@ -35,12 +25,6 @@ def transfer_animation():
         armature = objects.get_armature(selected_armature)
         driver_objects = objects.get_objects_from_collection(col)
         col_mapping[col](armature, driver_objects)
-        # try:
-        #     armature = objects.get_armature(selected_armature)
-        #     driver_objects = objects.get_objects_from_collection(col)
-        #     col_mapping[col](armature, driver_objects)
-        # except KeyError:
-        #     log.logger.error(f"COLLECTION MAPPING FAILED FOR {col}")
 
 
 def get_keyframe_step():

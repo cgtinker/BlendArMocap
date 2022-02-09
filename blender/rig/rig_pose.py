@@ -1,9 +1,9 @@
 import m_CONST
-from blender.rig import abs_rigging
-from blender.rig.abs_rigging import DriverType, MappingRelation
-from blender.rig.utils.drivers import limb_drivers
-from blender.utils import objects
-from utils import m_V
+from . import abs_rigging
+from .abs_rigging import DriverType, MappingRelation
+from .utils.drivers import limb_drivers
+from ..utils import objects
+from ...utils import m_V
 
 
 class RigPose(abs_rigging.BpyRigging):

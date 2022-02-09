@@ -1,6 +1,5 @@
-import m_CONST
-from blender.rig import abs_rigging
-#from utils import log
+from ... import m_CONST
+from ..rig import abs_rigging
 
 
 class RigifyHands(abs_rigging.BpyRigging):

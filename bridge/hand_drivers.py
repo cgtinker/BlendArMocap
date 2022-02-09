@@ -1,24 +1,24 @@
 import numpy as np
 from mathutils import Euler
 
-import m_CONST
-from blender.utils import objects
-from bridge import abs_assignment
-from utils import m_V
+from . import abs_assignment
+from .. import m_CONST
+from ..blender.utils import objects
+from ..utils import m_V
 
 
 class BridgeHand(abs_assignment.DataAssignment):
     references = {
-        0: m_CONST.HAND.wrist.value,
-        1: m_CONST.HAND.thumb_cmc.value,
-        2: m_CONST.HAND.thumb_mcp.value,
-        3: m_CONST.HAND.thumb_ip.value,
-        4: m_CONST.HAND.thumb_tip.value,
-        5: m_CONST.HAND.index_finger_mcp.value,
-        6: m_CONST.HAND.index_finger_pip.value,
-        7: m_CONST.HAND.index_finger_dip.value,
-        8: m_CONST.HAND.index_finger_tip.value,
-        9: m_CONST.HAND.middle_finger_mcp.value,
+        0:  m_CONST.HAND.wrist.value,
+        1:  m_CONST.HAND.thumb_cmc.value,
+        2:  m_CONST.HAND.thumb_mcp.value,
+        3:  m_CONST.HAND.thumb_ip.value,
+        4:  m_CONST.HAND.thumb_tip.value,
+        5:  m_CONST.HAND.index_finger_mcp.value,
+        6:  m_CONST.HAND.index_finger_pip.value,
+        7:  m_CONST.HAND.index_finger_dip.value,
+        8:  m_CONST.HAND.index_finger_tip.value,
+        9:  m_CONST.HAND.middle_finger_mcp.value,
         10: m_CONST.HAND.middle_finger_pip.value,
         11: m_CONST.HAND.middle_finger_dip.value,
         12: m_CONST.HAND.middle_finger_tip.value,

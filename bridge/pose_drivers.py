@@ -1,26 +1,26 @@
 import numpy as np
 from mathutils import Euler
 
-import m_CONST
-from blender.utils import objects
-from bridge import abs_assignment
-from utils import m_V # log
+from . import abs_assignment
+from .. import m_CONST
+from ..blender.utils import objects
+from ..utils import m_V
 
 
 class BridgePose(abs_assignment.DataAssignment):
     def __init__(self):
         self.references = {
             # MEDIAPIPE DEFAULTS
-            0: m_CONST.POSE.nose.value,
-            1: m_CONST.POSE.left_eye_inner.value,
-            2: m_CONST.POSE.left_eye.value,
-            3: m_CONST.POSE.left_eye_outer.value,
-            4: m_CONST.POSE.right_eye_inner.value,
-            5: m_CONST.POSE.right_eye.value,
-            6: m_CONST.POSE.right_eye_outer.value,
-            7: m_CONST.POSE.left_ear.value,
-            8: m_CONST.POSE.right_ear.value,
-            9: m_CONST.POSE.mouth_left.value,
+            0:  m_CONST.POSE.nose.value,
+            1:  m_CONST.POSE.left_eye_inner.value,
+            2:  m_CONST.POSE.left_eye.value,
+            3:  m_CONST.POSE.left_eye_outer.value,
+            4:  m_CONST.POSE.right_eye_inner.value,
+            5:  m_CONST.POSE.right_eye.value,
+            6:  m_CONST.POSE.right_eye_outer.value,
+            7:  m_CONST.POSE.left_ear.value,
+            8:  m_CONST.POSE.right_ear.value,
+            9:  m_CONST.POSE.mouth_left.value,
             10: m_CONST.POSE.mouth_right.value,
             11: m_CONST.POSE.left_shoulder.value,
             12: m_CONST.POSE.right_shoulder.value,

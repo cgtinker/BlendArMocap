@@ -1,8 +1,8 @@
-import m_CONST
-from blender.rig import abs_rigging
-from blender.rig.abs_rigging import DriverType, MappingRelation
-from blender.utils import objects
-from utils import m_V
+from ... import m_CONST
+from . import abs_rigging
+from .abs_rigging import DriverType, MappingRelation
+from ..utils import objects
+from ...utils import m_V
 
 
 class RigifyPose(abs_rigging.BpyRigging):

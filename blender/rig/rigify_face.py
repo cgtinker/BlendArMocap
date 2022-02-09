@@ -1,6 +1,6 @@
-import m_CONST
-from blender.rig.abs_rigging import DriverType, MappingRelation, BpyRigging
-from blender.utils import objects
+from ... import m_CONST
+from .abs_rigging import DriverType, MappingRelation, BpyRigging
+from ..utils import objects
 # from utils import log
 
 

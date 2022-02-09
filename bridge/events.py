@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from bridge import observer_pattern as op
+from . import observer_pattern as op
 from typing import List
 # from utils import log
 

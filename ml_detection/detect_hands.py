@@ -1,9 +1,8 @@
 import mediapipe as mp
-from bridge import events, hand_drivers
-from ml_detection import abstract_detector
-from utils.open_cv import stream
-import importlib
 
+from . import abstract_detector
+from ..bridge import events, hand_drivers
+from ..utils.open_cv import stream
 
 
 class HandDetector(abstract_detector.RealtimeDetector):
@@ -41,7 +40,7 @@ class HandDetector(abstract_detector.RealtimeDetector):
         self.listener = events.UpdateListener()
 
     def process_detection_result(self, mp_res):
-        #multi_hand_world_landmarks // multi_hand_landmarks
+        # multi_hand_world_landmarks // multi_hand_landmarks
         return (
             [self.cvt2landmark_array(hand) for hand in mp_res.multi_hand_world_landmarks],
             self.cvt_hand_orientation(mp_res.multi_handedness)

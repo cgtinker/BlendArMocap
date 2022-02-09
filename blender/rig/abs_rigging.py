@@ -2,10 +2,10 @@ from abc import ABC
 from dataclasses import dataclass
 from enum import Enum
 
-from blender.rig.utils import constraints
-from blender.rig.utils.drivers import assignment
-from blender.utils import objects
-from utils import m_V
+from .utils import constraints
+from .utils.drivers import assignment
+from ..utils import objects
+from ...utils import m_V
 
 
 class BpyRigging(ABC):

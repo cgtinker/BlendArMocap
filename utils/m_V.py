@@ -3,8 +3,6 @@ import math
 import numpy as np
 from mathutils import Euler, Matrix, Vector
 
-#from utils import log
-
 
 # region vector utils
 def vector_length(vector: np.array):

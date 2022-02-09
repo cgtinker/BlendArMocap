@@ -1,8 +1,8 @@
 import bpy
 from bpy.types import Panel
 
-import m_CONST
-from management import input_manager
+from ... import m_CONST
+from ...management import input_manager
 from . import install_dependencies, ui_preferences
 
 
