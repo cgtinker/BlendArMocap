@@ -22,7 +22,7 @@ class DataAssignment(ABC):
     references = None
     prev_rotation = {}
     memory_stack = {}
-    driver_col = m_CONST.COLLECTIONS.drivers.value
+    driver_col = m_CONST.COLLECTIONS.drivers
 
     # region abstract methods
     @abstractmethod
