@@ -23,6 +23,7 @@ def import_module(module_name, global_name=None, reload=True):
        the global_name under which the module can be accessed.
     :raises: ImportError and ModuleNotFoundError
     """
+    print("Trying to import module")
     if global_name is None:
         global_name = module_name
 
@@ -46,11 +47,11 @@ def install_pip():
     """
 
     try:
-        # Check if pip is already installed
+        print("accessing pip installer")
         subprocess.run([sys.executable, "-m", "pip", "--version"], check=True)
     except subprocess.CalledProcessError:
         import ensurepip
-
+        print("installing pip installer")
         ensurepip.bootstrap()
         os.environ.pop("PIP_REQ_TRACKER", None)
 
@@ -72,26 +73,10 @@ def install_and_import_module(module_name, package_name=None, global_name=None):
     if global_name is None:
         global_name = module_name
 
-    # Blender disables the loading of user site-packages by default. However, pip will still check them to determine
-    # if a dependency is already installed. This can cause problems if the packages is installed in the user
-    # site-packages and pip deems the requirement satisfied, but Blender cannot import the package from the user
-    # site-packages. Hence, the environment variable PYTHONNOUSERSITE is set to disallow pip from checking the user
-    # site-packages. If the package is not already installed for Blender's Python interpreter, it will then try to.
-    # The paths used by pip can be checked with `subprocess.run([bpy.app.binary_path_python, "-m", "site"], check=True)`
-
-    # Create a copy of the environment variables and modify them for the subprocess call
     environ_copy = dict(os.environ)
     environ_copy["PYTHONNOUSERSITE"] = "1"
-    try:
-        subprocess.run([sys.executable, "-m", "pip", "install", package_name], check=True, env=environ_copy)
-    except EnvironmentError:
-        print(f"Installing module failed using 'python -m pip install {package_name}'.")
-        print(f"Attempt to install module using 'python pip install {package_name}'")
-        try:
-            subprocess.run([sys.executable, "pip", "install", package_name], check=True, env=environ_copy)
-        except EnvironmentError as e:
-            print(f"Module installation failed, please create a new github issue")
-            print(e)
-
+    print("Try to install:", package_name, environ_copy)
+    subprocess.run([sys.executable, "-m", "pip", "install", package_name], check=True, env=environ_copy)
+    print("Installation process finished")
     # The installation succeeded, attempt to import the module again
     import_module(module_name, global_name)
