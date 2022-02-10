@@ -45,15 +45,11 @@ def reload_modules():
 
 
 def load_initial_modules():
-    print("load initial modules:\n", load_order[module_type])
-    load_list = [PACKAGE + '.' + name for name in load_order[module_type]]
+    print("load initial modules:\n", load_order.get(module_type))
+    load_list = [PACKAGE + '.' + name for name in load_order.get(module_type)]
     for i, name in enumerate(load_list):
-        if name == f"{PACKAGE}.{PACKAGE}":
-            print("attempt to load:", i, name, "...")
-            print("ABORT")
-        else:
-            print("attempt to load:", i, name, "...")
-            importlib.import_module(name)
+        print("attempt to load:", i, name, "...")
+        importlib.import_module(name)
     return load_list
 
 
