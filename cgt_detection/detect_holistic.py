@@ -1,30 +1,23 @@
 import mediapipe as mp
 
 from . import abstract_detector
-from ..bridge import events, pose_drivers
-from ..utils.open_cv import stream
+from ..cgt_bridge import events, pose_drivers
+from ..cgt_utils.open_cv import stream
 
 
-# import ssl
-# ssl._create_default_https_context = ssl._create_unverified_context
-
-
-class PoseDetector(abstract_detector.RealtimeDetector):
+class HolisticDetector(abstract_detector.RealtimeDetector):
     def image_detection(self):
-        # BlazePose GHUM 3D
-        with self.solution.Pose(
+        with self.solution.Holistic(
+                min_detection_confidence=0.7,
                 static_image_mode=True,
-                model_complexity=1,
-                # model_complexity=2,
-                min_detection_confidence=0.7) as mp_lib:
+        ) as mp_lib:
             return self.exec_detection(mp_lib)
 
     def stream_detection(self):
-        with self.solution.Pose(
+        with self.solution.Holistic(
                 min_detection_confidence=0.8,
                 min_tracking_confidence=0.5,
                 static_image_mode=False,
-                smooth_segmentation=True
         ) as mp_lib:
             while self.stream.capture.isOpened():
                 state = self.exec_detection(mp_lib)
@@ -32,36 +25,53 @@ class PoseDetector(abstract_detector.RealtimeDetector):
                     return {'CANCELLED'}
 
     def initialize_model(self):
-        self.solution = mp.solutions.pose
+        self.solution = mp.solutions.holistic
 
     def init_bpy_bridge(self):
+        # TODO: requires multiple listeners. also requires a special observer pattern.
         target = pose_drivers.BridgePose()
         self.observer = events.BpyUpdateReceiver(target)
         self.listener = events.UpdateListener()
 
-    def init_driver_logs(self):
-        target = pose_drivers.BridgePose()
-        self.observer = events.DriverDebug(target)
-        self.listener = events.UpdateListener()
-
-    def init_raw_data_printer(self):
+    def init_debug_logs(self):
         self.observer = events.PrintRawDataUpdate()
         self.listener = events.UpdateListener()
 
     def process_detection_result(self, mp_res):
-        return self.cvt2landmark_array(mp_res.pose_world_landmarks)
+        face, pose, l_hand, r_hand = None, None, None, None
+        if mp_res.pose_landmarks:
+            pose = self.cvt2landmark_array(mp_res.pose_landmarks)
+        if mp_res.face_landmarks:
+            face = self.cvt2landmark_array(mp_res.face_landmarks)
+        if mp_res.left_hand_landmarks:
+            l_hand = self.cvt2landmark_array(mp_res.left_hand_landmarks)
+        if mp_res.right_hand_landmarks:
+            r_hand = self.cvt2landmark_array(mp_res.right_hand_landmarks)
+        return [face, pose, l_hand, r_hand]
 
     def contains_features(self, mp_res):
-        if not mp_res.pose_world_landmarks:
+        if not mp_res.pose_landmarks:
             return False
         return True
 
     def draw_result(self, s, mp_res, mp_drawings):
         mp_drawings.draw_landmarks(
             s.frame,
+            mp_res.face_landmarks,
+            self.solution.FACEMESH_CONTOURS,
+            landmark_drawing_spec=None,
+            connection_drawing_spec=self.drawing_style
+                .get_default_face_mesh_contours_style())
+        mp_drawings.draw_landmarks(
+            s.frame,
             mp_res.pose_landmarks,
             self.solution.POSE_CONNECTIONS,
-            landmark_drawing_spec=self.drawing_style.get_default_pose_landmarks_style())
+            landmark_drawing_spec=self.drawing_style
+                .get_default_pose_landmarks_style())
+        mp_drawings.draw_landmarks(
+            s.frame, mp_res.left_hand_landmarks, self.solution.HAND_CONNECTIONS)
+        mp_drawings.draw_landmarks(
+            s.frame, mp_res.right_hand_landmarks, self.solution.HAND_CONNECTIONS)
 
 
 # region manual tests
@@ -77,12 +87,11 @@ def stream_detection(tracking_handler):
 
 
 def init_test():
-    tracking_handler = PoseDetector()
+    tracking_handler = HolisticDetector()
 
     tracking_handler.stream = stream.Webcam()
     tracking_handler.initialize_model()
-    # tracking_handler.init_debug_logs()
-    tracking_handler.init_driver_logs()
+    tracking_handler.init_debug_logs()
     tracking_handler.listener.attach(tracking_handler.observer)
     return tracking_handler
 

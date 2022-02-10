@@ -3,9 +3,9 @@ from math import pi
 
 from mathutils import Vector, Euler
 
-from ..blender.utils import objects
+from ..cgt_blender.utils import objects
 from ..cgt_naming import COLLECTIONS
-from ..utils import m_V
+from ..cgt_utils import m_V
 
 
 class CustomData:

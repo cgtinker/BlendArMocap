@@ -4,7 +4,7 @@ import numpy as np
 from mathutils import Euler, Matrix, Vector
 
 
-# region vector utils
+# region vector cgt_utils
 def vector_length(vector: np.array):
     """ returns the length of a given vector. """
     vec = np.sum(vector ** 2)

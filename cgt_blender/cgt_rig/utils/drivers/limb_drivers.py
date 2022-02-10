@@ -1,5 +1,5 @@
 from . import pose_driver_expressions
-from .....blender.utils import objects
+from .....cgt_blender.utils import objects
 
 
 class LimbDriver:
@@ -31,7 +31,7 @@ class LimbDriver:
             self.set_pose_driver_offset(driver_offset)
 
     def set_expressions(self):
-        """ sets the expressions for blender internal drivers.
+        """ sets the expressions for cgt_blender internal drivers.
             the driver should copy the motion of the detection results,
             while keeping an offsets to it's parent based on the target cgt_rig. """
         self.set_driver_origin()

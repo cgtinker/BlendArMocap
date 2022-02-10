@@ -2,9 +2,9 @@ import numpy as np
 from mathutils import Euler
 
 from . import abs_assignment
-from ..blender.utils import objects
+from ..cgt_blender.utils import objects
 from ..cgt_naming import FACE, COLLECTIONS
-from ..utils import m_V
+from ..cgt_utils import m_V
 
 
 class BridgeFace(abs_assignment.DataAssignment):
@@ -167,7 +167,7 @@ class BridgeFace(abs_assignment.DataAssignment):
         loc, quart, scale = m_V.decompose_matrix(matrix)
         self.pivot.rot = quart
 
-    # region utils
+    # region cgt_utils
     def average_length_at_scale(self, p1, p2, scale):
         """ get length of 2d vector and normalize by 1d scale """
         length = m_V.vector_length_2d(self.data[p1][1], self.data[p2][1], 'Z')

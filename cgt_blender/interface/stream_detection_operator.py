@@ -14,7 +14,7 @@ class WM_modal_detection_operator(bpy.types.Operator):
     @staticmethod
     def set_detection_type(detection_type):
         # TODO: ADD TO IMPORT MANAGEMENT
-        from ...ml_detection import detect_hands, detect_pose, detect_face
+        from ...cgt_detection import detect_hands, detect_pose, detect_face
 
         importlib.reload(detect_hands)
         importlib.reload(detect_pose)
@@ -51,7 +51,7 @@ class WM_modal_detection_operator(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
     def init_detector(self, detection_type='HAND'):
-        from ...utils.open_cv import stream
+        from ...cgt_utils.open_cv import stream
         importlib.reload(stream)
 
         print(f"INITIALIZING {detection_type} DETECTION")

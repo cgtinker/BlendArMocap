@@ -7,7 +7,7 @@ class MyProperties(PropertyGroup):
     # BUTTONS
     button_start_detection: StringProperty(
         name="",
-        description="Detects features and record results in blender.",
+        description="Detects features and record results in cgt_blender.",
         default="Start Detection"
     )
 

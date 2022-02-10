@@ -1,8 +1,8 @@
 import mediapipe as mp
 
 from . import abstract_detector
-from ..bridge import events, face_drivers
-from ..utils.open_cv import stream
+from ..cgt_bridge import events, face_drivers
+from ..cgt_utils.open_cv import stream
 
 
 class FaceDetector(abstract_detector.RealtimeDetector):

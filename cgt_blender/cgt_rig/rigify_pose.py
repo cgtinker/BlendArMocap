@@ -3,10 +3,10 @@ from . import abs_rigging
 from .abs_rigging import DriverType, MappingRelation
 from .utils.drivers import limb_drivers
 from ..utils import objects
-from ...utils import m_V
+from ...cgt_utils import m_V
 
 
-class RigPose(abs_rigging.BpyRigging):
+class RigifyPose(abs_rigging.BpyRigging):
     pose_constraints = {
         # plain copy rotation
         POSE.hip_center:       ["torso", "COPY_ROTATION"],
@@ -74,11 +74,6 @@ class RigPose(abs_rigging.BpyRigging):
             self.shoulder_center, None, None, None
         ]
 
-        bone_target = [
-            None, None, None, None,
-            None, None, None, None
-        ]
-
         self.limb_drivers = [limb_drivers.LimbDriver(
             driver_target=driver,
             driver_origin=self.ik_driver_origins[idx],
@@ -136,13 +131,11 @@ class RigPose(abs_rigging.BpyRigging):
     def add_pose_driver_mapping(self, driver_names, driver_objects):
         def setup_relation(pose_driver):
             if pose_driver.name in driver_names:
-                print(pose_driver.name)
                 # access the driver object which has been set up previously
                 driver_obj = self.get_driver_object(pose_driver.name, driver_names, driver_objects)
                 driver_type = DriverType.limb_driver
                 # add pose driver expressions to mapping list
                 for expression in pose_driver.expressions:
-                    print(expression)
                     relation = MappingRelation(driver_obj, driver_type, expression)
                     self.mapping_relation_list.append(relation)
 

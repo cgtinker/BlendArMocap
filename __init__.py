@@ -20,7 +20,7 @@ bl_info = {
     "description": "Mediapipe implementation for Blender 2.9+.",
     "author":      "cgtinker",
     "version":     (1, 0, 2),
-    "blender":     (2, 90, 0),
+    "cgt_blender":     (2, 90, 0),
     "location":    "3D View > Tool",
     "warning":     "",
     "wiki_url":    "https://github.com/cgtinker/BlendArMocap",
@@ -32,29 +32,29 @@ import sys
 
 load_order = {
     'init':    [
-        'blender.interface.ui_registration',
-        'blender.cgt_rig',
-        'blender.input_manager',
-        'blender.interface',
+        'cgt_blender.interface.ui_registration',
+        'cgt_blender.cgt_rig',
+        'cgt_blender.input_manager',
+        'cgt_blender.interface',
     ],
     'modules': [
-        'utils.filter',
-        'utils.open_cv',
-        'utils.writer'
-        'utils',
-        'ml_detection',
+        'cgt_utils.filter',
+        'cgt_utils.open_cv',
+        'cgt_utils.writer'
+        'cgt_utils',
+        'cgt_detection',
         'management',
-        'bridge',
-        'blender.cgt_rig'
-        'blender.utils'
+        'cgt_bridge',
+        'cgt_blender.cgt_rig'
+        'cgt_blender.cgt_utils'
     ]
 }
 
-utils_module_name = __name__ + '.blender'
+utils_module_name = __name__ + '.cgt_blender'
 
 
 def get_loaded_modules():
-    prefix = __name__ + '.blender'
+    prefix = __name__ + '.cgt_blender'
     return [name for name in sys.modules if name.startswith(prefix)]
 
 
@@ -101,7 +101,7 @@ except Exception as e:
     print(f'{__name__}: Unexpected Exception occurred when trying to enable add-on.')
     print(e)
 
-from .blender.interface import ui_registration
+from .cgt_blender.interface import ui_registration
 
 
 def register():

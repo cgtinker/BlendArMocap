@@ -6,12 +6,12 @@ from .utils import objects
 
 def transfer_animation():
     print("trans")
-    from .cgt_rig import rigify_hands, rigify_face, rig_pose
+    from .cgt_rig import rigify_hands, rigify_face, rigify_pose
 
     col_mapping = {
         COLLECTIONS.hands: rigify_hands.RigifyHands,
         COLLECTIONS.face:  rigify_face.RigifyFace,
-        COLLECTIONS.pose:  rig_pose.RigPose
+        COLLECTIONS.pose:  rigify_pose.RigifyPose
         # m_CONST.COLLECTIONS.pose.value: rigify_pose.RigifyPose
     }
 

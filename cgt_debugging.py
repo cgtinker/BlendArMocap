@@ -20,7 +20,7 @@ bl_info = {
     "description": "Mediapipe implementation for Blender 2.9+.",
     "author":      "cgtinker",
     "version":     (1, 0, 0),
-    "blender":     (2, 90, 0),
+    "cgt_blender":     (2, 90, 0),
     "location":    "3D View > Tool",
     "warning":     "",
     "wiki_url":    "https://github.com/cgtinker/BlendArMocap",
@@ -34,7 +34,7 @@ import sys
 
 import bpy
 
-# getting access to the current dir - necessary to access blender file location
+# getting access to the current dir - necessary to access cgt_blender file location
 try:
     blend_dir = os.path.dirname(bpy.data.filepath)
     if blend_dir not in sys.path:
@@ -56,18 +56,17 @@ class ModuleManager:
     load_order = {
         'init':    [
             'cgt_naming',
-            'blender.interface.ui_registration',
-            'blender.cgt_rig',
-            'blender.input_manager',
-            'blender.interface',
-            'blender'
+            'cgt_blender.interface.ui_registration',
+            'cgt_blender.cgt_rig',
+            'cgt_blender.input_manager',
+            'cgt_blender.interface',
+            'cgt_blender'
         ],
         'core': [
-            'utils.open_cv',
-            'utils',
-            'ml_detection',
-            'management',
-            'bridge',
+            'cgt_utils.open_cv',
+            'cgt_utils',
+            'cgt_detection',
+            'cgt_bridge',
         ],
     }
 
@@ -75,7 +74,7 @@ class ModuleManager:
         self.module_type = module_type
 
     def get_loaded_modules(self):
-        prefix = self.PACKAGE + '.blender'
+        prefix = self.PACKAGE + '.cgt_blender'
         return [name for name in sys.modules if name.startswith(prefix)]
 
     def reload_modules(self):
@@ -113,7 +112,7 @@ importer = ModuleManager("init")
 importer.execute()
 
 # custom top level import
-from mediapipe_ml.blender.interface import ui_registration  # noqa
+from mediapipe_ml.cgt_blender.interface import ui_registration  # noqa
 
 
 def register():
