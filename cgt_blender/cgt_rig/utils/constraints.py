@@ -7,6 +7,17 @@ def copy_rotation(constraint, target, *args):
     constraint.owner_space = 'LOCAL'
 
 
+def copy_rotation_world_space(bone, target, *args):
+    constraint = bone.constraints.new(
+        type="COPY_ROTATION"
+    )
+    constraint.target = target
+    constraint.euler_order = 'XYZ'
+    constraint.influence = 1
+    constraint.mix_mode = 'ADD'
+    constraint.owner_space = 'WORLD'
+
+
 def copy_location(constraint, target, *args):
     constraint.target = target
     constraint.influence = 1

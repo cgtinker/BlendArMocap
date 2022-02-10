@@ -127,9 +127,9 @@ class BridgeFace(abs_assignment.DataAssignment):
         self.face_mesh_rotation()
         self.chin_rotation()
 
-        head_rotation = self.quart_to_euler_combat(self.pivot.rot, self.pivot.idx)
-        # chin_rotation = self.quart_to_euler_combat(self.chin_driver.rot, self.chin_driver.idx)
+        head_rotation = self.quart_to_euler_combat(self.pivot.rot, self.pivot.idx, axis='XZY')
         chin_rotation = self.chin_driver.rot
+
         self.rotation_data = [
             [self.pivot.idx, head_rotation],
             [self.chin_driver.idx, chin_rotation]
@@ -151,8 +151,8 @@ class BridgeFace(abs_assignment.DataAssignment):
         """ calculate face quaternion using
         points to approximate the transformation matrix. """
         origin = np.array([0, 0, 0])
+        # TODO: fix rotation (flip z & y)
 
-        # approximate perpendicular points to origin
         forward_point = m_V.center_point(np.array(self.data[1][1]), np.array(self.data[4][1]))  # nose
         right_point = m_V.center_point(np.array(self.data[447][1]), np.array(self.data[366][1]))  # temple.R
         down_point = np.array(self.data[152][1])  # chin
@@ -165,6 +165,7 @@ class BridgeFace(abs_assignment.DataAssignment):
         # generate matrix to decompose it and access quaternion rotation
         matrix = m_V.generate_matrix(tangent, normal, binormal)
         loc, quart, scale = m_V.decompose_matrix(matrix)
+
         self.pivot.rot = quart
 
     # region cgt_utils

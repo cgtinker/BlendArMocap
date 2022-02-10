@@ -68,7 +68,7 @@ def unregister():
 
 
 def manual_unregistration():
-    print("UNREGISTER")
+    print("TRY TO UNREGISTER")
     classes = get_classes()
     for cls in reversed(classes):
         unregister_class(cls)
@@ -77,7 +77,7 @@ def manual_unregistration():
 
 
 def manual_test_registration(importer):
-    print("REGISTER")
+    print("TRY TO REGISTER")
     for cls in get_classes():
         register_class(cls)
 

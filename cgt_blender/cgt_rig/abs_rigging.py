@@ -17,6 +17,7 @@ class BpyRigging(ABC):
         "COPY_LOCATION": constraints.copy_location,
         "COPY_LOCATION_OFFSET": constraints.copy_location_offset,
         "COPY_ROTATION": constraints.copy_rotation,
+        "COPY_ROTATION_WORLD": constraints.copy_rotation_world_space,
         "COPY_SCALE": 5,
         "COPY_TRANSFORMS": 6,
         "LIMIT_DISTANCE": 7,

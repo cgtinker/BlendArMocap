@@ -115,12 +115,12 @@ class DataAssignment(ABC):
             print(f"missing euler_rotate index at {data}, {frame}")
             pass
 
-    def quart_to_euler_combat(self, quart, idx, idx_offset=0):
+    def quart_to_euler_combat(self, quart, idx, idx_offset=0, axis='XYZ'):
         """ Converts quart to euler rotation while comparing with previous rotation. """
         if len(self.prev_rotation) > 0:
             try:
                 combat = self.prev_rotation[idx + idx_offset]
-                return m_V.to_euler(quart, combat, 'XYZ')
+                return m_V.to_euler(quart, combat, axis)
             except KeyError:
                 print(f"invalid id to euler combat {idx}, {self.frame}")
                 return m_V.to_euler(quart)

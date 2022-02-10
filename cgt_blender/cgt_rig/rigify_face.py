@@ -96,8 +96,8 @@ class RigifyFace(BpyRigging):
 
             FACE.mouth_l:     [DriverType.constraint, ["lips.R", "COPY_LOCATION_OFFSET"]],
             FACE.mouth_r:     [DriverType.constraint, ["lips.L", "COPY_LOCATION_OFFSET"]],
-
-            FACE.head:        [DriverType.constraint, ["head", "COPY_ROTATION"]],
+            # TODO: FACE ROTATION HAS TO APPLIED TO WORLD SPACE
+            FACE.head:        [DriverType.constraint, ["head", "COPY_ROTATION_WORLD"]],
             FACE.chin:        [DriverType.constraint, ["jaw_master", "COPY_ROTATION"]],
             # endregion
         }

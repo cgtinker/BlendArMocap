@@ -43,7 +43,7 @@ try:
     # append sys path to dir
     main_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'module')
     sys.path.append(main_dir)
-    print("MANUAL ADDON INITIALIZATION")
+    print("\n\nMANUAL ADDON INITIALIZATION")
 
 except AttributeError:
     # already appended
@@ -66,6 +66,7 @@ class ModuleManager:
             'cgt_utils.open_cv',
             'cgt_utils',
             'cgt_detection',
+            'cgt_bridge.face_drivers',
             'cgt_bridge',
         ],
     }
@@ -74,12 +75,12 @@ class ModuleManager:
         self.module_type = module_type
 
     def get_loaded_modules(self):
-        prefix = self.PACKAGE + '.cgt_blender'
+        prefix = self.PACKAGE
         return [name for name in sys.modules if name.startswith(prefix)]
 
     def reload_modules(self):
         fixed_modules = set(self.reload_list)
-
+        # todo: only remove from reload list
         for name in self.get_loaded_modules():
             if name not in fixed_modules:
                 print("Deleting module:", name)
@@ -96,6 +97,7 @@ class ModuleManager:
         return load_list
 
     def execute(self):
+        print("EXECUTING")
         if self.PACKAGE in locals():
             print(f'{self.PACKAGE}: Reloading package...')
             self.reload_modules()
@@ -104,6 +106,10 @@ class ModuleManager:
 
             load_list = self.load_initial_modules()
             self.reload_list = self.load_order[self.module_type] = self.get_loaded_modules()
+            for module_name in self.reload_list:
+                module = importlib.import_module(module_name)
+                importlib.reload(module)
+
             print("\nload list:", load_list)
             print("\nreload_list", self.reload_list)
 
