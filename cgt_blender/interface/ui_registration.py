@@ -8,7 +8,7 @@ from . import ui_properties, ui_panels, install_dependencies, ui_preferences, st
 def get_classes():
     # getting classes to avoid loading possibly unavailable packages
     classes = (
-        ui_properties.MyProperties,
+        ui_properties.CgtProperties,
 
         ui_panels.UI_transfer_anim_button,
         stream_detection_operator.WM_modal_detection_operator,
@@ -26,7 +26,7 @@ def get_preferences():
 
 
 def register():
-    print('REGISTERING BLENDARMOCAP')
+    print('\n\nREGISTERING BLENDARMOCAP')
 
     for m_class in get_preferences():
         register_class(m_class)
@@ -50,11 +50,11 @@ def register_user_interface():
     print("REGISTER BLENDARMOCAP INTERFACE")
     for cls in get_classes():
         register_class(cls)
-    bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=ui_properties.MyProperties)
+    bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=ui_properties.CgtProperties)
 
 
 def unregister():
-    print("UNREGISTER BLENDARMOCAP")
+    print("\n\nUNREGISTER BLENDARMOCAP")
     for cls in get_preferences():
         unregister_class(cls)
 
@@ -68,7 +68,7 @@ def unregister():
 
 
 def manual_unregistration():
-    print("TRY TO UNREGISTER")
+    print("MANUAL UNREGISTER")
     classes = get_classes()
     for cls in reversed(classes):
         unregister_class(cls)
@@ -76,11 +76,9 @@ def manual_unregistration():
     del bpy.types.Scene.m_cgtinker_mediapipe
 
 
-def manual_test_registration(importer):
-    print("TRY TO REGISTER")
+def manual_test_registration():
+    print("MANUAL REGISTER")
     for cls in get_classes():
         register_class(cls)
 
-    bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=ui_properties.MyProperties)
-    importer.module_type = "core"
-    importer.execute()
+    bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=ui_properties.CgtProperties)

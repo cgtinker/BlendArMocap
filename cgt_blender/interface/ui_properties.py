@@ -3,7 +3,7 @@ from bpy.props import StringProperty, EnumProperty, IntProperty
 from bpy.types import PropertyGroup
 
 
-class MyProperties(PropertyGroup):
+class CgtProperties(PropertyGroup):
     # BUTTONS
     button_start_detection: StringProperty(
         name="",
