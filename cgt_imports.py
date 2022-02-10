@@ -47,26 +47,23 @@ def reload_modules():
 def load_initial_modules():
     load_list = [PACKAGE + '.' + name for name in load_order[module_type]]
     for i, name in enumerate(load_list):
+        print("attempt to load:", i, name, "...")
         importlib.import_module(name)
     return load_list
 
 
 def execute():
-    if 'reload_list' in locals():
-        print("IS IN LOCALS")
-    else:
-        print("NOT IN LOCALS")
     if PACKAGE in locals():
         print(f'{PACKAGE}: Reloading package...')
         reload_modules()
     else:
         print(f'{PACKAGE}: Initial package loading... ')
         load_list = load_initial_modules()
+        print("\nload_list:", load_list)
     reload_list = load_order[module_type] = get_loaded_modules()
-    for module_name in reload_list:
-        module = importlib.import_module(module_name)
-        importlib.reload(module)
+    print("\nreload_list:", reload_list)
+
     if module_type == 'debug':
-        print("\nload list:", load_list)
-        print("\nreload_list", reload_list)
-    print(locals())
+        for module_name in reload_list:
+            module = importlib.import_module(module_name)
+            importlib.reload(module)
