@@ -3,6 +3,7 @@ import os
 import sys
 import subprocess
 import importlib
+import imp
 from collections import namedtuple
 
 Dependency = namedtuple("Dependency", ["module", "package", "name"])
@@ -75,8 +76,8 @@ def install_and_import_module(module_name, package_name=None, global_name=None):
 
     environ_copy = dict(os.environ)
     environ_copy["PYTHONNOUSERSITE"] = "1"
-    print("Try to install:", package_name, environ_copy)
-    subprocess.run([sys.executable, "-m", "pip", "install", package_name], check=True, env=environ_copy)
+    print("Try to install:", package_name, environ_copy["PYTHONNOUSERSITE"])
+    subprocess.run([sys.executable, "-m", "pip", "install", package_name, "--user"], check=True, env=environ_copy)
     print("Installation process finished")
     # The installation succeeded, attempt to import the module again
     import_module(module_name, global_name)

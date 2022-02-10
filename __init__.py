@@ -32,7 +32,6 @@ bl_info = {
 from . import cgt_imports
 
 cgt_imports.PACKAGE = __name__
-print("PACKAGE_NAME:", __name__)
 cgt_imports.module_type = 'init'
 cgt_imports.execute()
 

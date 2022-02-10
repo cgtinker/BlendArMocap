@@ -45,6 +45,7 @@ def reload_modules():
 
 
 def load_initial_modules():
+    print("load initial modules:\n", load_order[module_type])
     load_list = [PACKAGE + '.' + name for name in load_order[module_type]]
     for i, name in enumerate(load_list):
         print("attempt to load:", i, name, "...")
@@ -53,7 +54,6 @@ def load_initial_modules():
 
 
 def execute():
-    print("EXE PACKAGE", PACKAGE)
     if PACKAGE in locals():
         print(f'{PACKAGE}: Reloading package...')
         reload_modules()
