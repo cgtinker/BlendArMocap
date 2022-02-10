@@ -53,6 +53,7 @@ def load_initial_modules():
 
 
 def execute():
+    print("EXE PACKAGE", PACKAGE)
     if PACKAGE in locals():
         print(f'{PACKAGE}: Reloading package...')
         reload_modules()
