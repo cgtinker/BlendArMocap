@@ -55,6 +55,7 @@ def install_pip():
         print("installing pip installer")
         ensurepip.bootstrap()
         os.environ.pop("PIP_REQ_TRACKER", None)
+    subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "pip", "setuptools", "wheel"], check=True)
 
 
 def install_and_import_module(module_name, package_name=None, global_name=None):
