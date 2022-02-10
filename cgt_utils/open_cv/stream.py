@@ -27,13 +27,14 @@ class Webcam:
         }
 
     def update(self):
-        self.updated, self.frame = self.capture.read()
+        self.updated, frame = self.capture.read()
+        self.frame = cv2.flip(frame, 1)
 
     def set_color_space(self, space):
         self.frame = cv2.cvtColor(self.frame, self.color_spaces[space])
 
     def draw(self):
-        cv2.imshow(self.title, cv2.flip(self.frame, 1))
+        cv2.imshow(self.title, self.frame)
 
     def exit_stream(self):
         if cv2.waitKey(1) & 0xFF == ord('q'):
