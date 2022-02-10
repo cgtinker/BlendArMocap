@@ -62,16 +62,12 @@ class ModuleManager:
             'blender.interface',
             'blender'
         ],
-        'modules': [
-            'utils.filter',
+        'core': [
             'utils.open_cv',
-            'utils.writer'
             'utils',
             'ml_detection',
             'management',
             'bridge',
-            'blender.cgt_rig'
-            'blender.utils'
         ],
     }
 
@@ -121,7 +117,7 @@ from mediapipe_ml.blender.interface import ui_registration  # noqa
 
 
 def register():
-    ui_registration.manual_test_registration()
+    ui_registration.manual_test_registration(importer)
 
 
 def unregister():

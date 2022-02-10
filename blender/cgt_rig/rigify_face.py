@@ -41,26 +41,26 @@ class RigifyFace(BpyRigging):
 
         # drivers are getting used multiple times
         self.multi_user_driver_dict = {
-            m_CONST.FACE.right_eye: [
+            FACE.right_eye: [
                 [self.eye_driver_names[0][0], eye_distances[0], self.eye_top_down_dir_driver_attr],
                 [self.eye_driver_names[0][1], eye_distances[0], self.eye_up_dir_driver_attr]],
-            m_CONST.FACE.left_eye:  [
+            FACE.left_eye:  [
                 [self.eye_driver_names[1][0], eye_distances[1], self.eye_top_down_dir_driver_attr],
                 [self.eye_driver_names[1][1], eye_distances[1], self.eye_up_dir_driver_attr]],
 
-            m_CONST.FACE.mouth:     [
+            FACE.mouth:     [
                 [self.mouth_driver_names[0][0], mouth_distances[0], self.mouth_up_dir_driver_attr],
                 [self.mouth_driver_names[0][1], mouth_distances[0], self.mouth_down_dir_driver_attr],
                 [self.mouth_driver_names[1][0], mouth_distances[1], self.mouth_left_dir_driver_attr],
                 [self.mouth_driver_names[1][1], mouth_distances[1], self.mouth_right_dir_driver_attr]
             ],
 
-            # m_CONST.FACE.left_eyebrow: [
+            # FACE.left_eyebrow: [
             #     [self.eyebrow_driver_names[0], eyebrow_distances[0], self.eyebrow_driver_attr],
             #     [self.eyebrow_driver_names[1], eyebrow_distances[1], self.eyebrow_driver_attr],
             #     [self.eyebrow_driver_names[2], eyebrow_distances[2], self.eyebrow_driver_attr],
             # ],
-            # m_CONST.FACE.right_eyebrow: [
+            # FACE.right_eyebrow: [
             #     [self.eyebrow_driver_names[3], eyebrow_distances[3], self.eyebrow_driver_attr],
             #     [self.eyebrow_driver_names[4], eyebrow_distances[4], self.eyebrow_driver_attr],
             #     [self.eyebrow_driver_names[5], eyebrow_distances[5], self.eyebrow_driver_attr],
@@ -73,8 +73,8 @@ class RigifyFace(BpyRigging):
             FACE.mouth:       [DriverType.face_driver],
             FACE.left_eye:    [DriverType.face_driver],
             FACE.right_eye:   [DriverType.face_driver],
-            # m_CONST.FACE.right_eyebrow: [DriverType.face_driver],
-            # m_CONST.FACE.left_eyebrow: [DriverType.face_driver],
+            # FACE.right_eyebrow: [DriverType.face_driver],
+            # FACE.left_eyebrow: [DriverType.face_driver],
             # endregion
 
             # region m_CONSTraints

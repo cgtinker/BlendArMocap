@@ -2,9 +2,9 @@ import numpy as np
 from mathutils import Euler
 
 from . import abs_assignment
-from cgt_naming import HAND, COLLECTIONS
-from blender.utils import objects
-from utils import m_V
+from ..cgt_naming import HAND, COLLECTIONS
+from ..blender.utils import objects
+from ..utils import m_V
 
 
 class BridgeHand(abs_assignment.DataAssignment):

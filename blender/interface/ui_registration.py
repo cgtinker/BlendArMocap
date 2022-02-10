@@ -76,8 +76,11 @@ def manual_unregistration():
     del bpy.types.Scene.m_cgtinker_mediapipe
 
 
-def manual_test_registration():
+def manual_test_registration(importer):
     print("REGISTER")
     for cls in get_classes():
         register_class(cls)
+
     bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=ui_properties.MyProperties)
+    importer.module_type = "core"
+    importer.execute()

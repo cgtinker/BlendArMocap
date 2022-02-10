@@ -3,9 +3,9 @@ from math import pi
 
 from mathutils import Vector, Euler
 
-import cgt_naming
-from blender.utils import objects
-from utils import m_V
+from ..blender.utils import objects
+from ..cgt_naming import COLLECTIONS
+from ..utils import m_V
 
 
 class CustomData:
@@ -22,7 +22,7 @@ class DataAssignment(ABC):
     references = None
     prev_rotation = {}
     memory_stack = {}
-    driver_col = m_CONST.COLLECTIONS.drivers
+    driver_col = COLLECTIONS.drivers
 
     # region abstract methods
     @abstractmethod
@@ -48,7 +48,7 @@ class DataAssignment(ABC):
                             ref_in_array: [],
                             size: float = 0.005,
                             name: str = "",
-                            col_name: str = m_CONST.COLLECTIONS.drivers,
+                            col_name: str = COLLECTIONS.drivers,
                             style: str = "CUBE",
                             position: [] = None,
                             is_parent: bool = False,

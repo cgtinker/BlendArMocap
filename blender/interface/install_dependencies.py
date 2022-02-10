@@ -82,8 +82,16 @@ def install_and_import_module(module_name, package_name=None, global_name=None):
     # Create a copy of the environment variables and modify them for the subprocess call
     environ_copy = dict(os.environ)
     environ_copy["PYTHONNOUSERSITE"] = "1"
-
-    subprocess.run([sys.executable, "-m", "pip", "install", package_name], check=True, env=environ_copy)
+    try:
+        subprocess.run([sys.executable, "-m", "pip", "install", package_name], check=True, env=environ_copy)
+    except EnvironmentError:
+        print(f"Installing module failed using 'python -m pip install {package_name}'.")
+        print(f"Attempt to install module using 'python pip install {package_name}'")
+        try:
+            subprocess.run([sys.executable, "pip", "install", package_name], check=True, env=environ_copy)
+        except EnvironmentError as e:
+            print(f"Module installation failed, please create a new github issue")
+            print(e)
 
     # The installation succeeded, attempt to import the module again
     import_module(module_name, global_name)
