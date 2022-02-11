@@ -33,6 +33,74 @@ bl_info = {
 import importlib
 import sys
 
+dir_layout = {
+    "cgt_blender": [
+
+    ]
+}
+
+def reload_modules(name):
+    """
+    This makes sure all modules are reloaded from new files, when the addon is removed and a new version is installed in the same session,
+    or when Blender's 'Reload Scripts' operator is run manually.
+    It's important, that utils modules are reloaded first, as operators and menus import from them
+    """
+
+    import os
+    import importlib
+
+    # first fetch and reload all utils modules
+    print(__file__)
+    package_dir = os.path.dirname(__file__)
+    print(os.listdir(os.path.join(package_dir, "cgt_blender")))
+    print(os.listdir(package_dir))
+    #ld = os.listdir(os.path.join(__file__[0]))
+    #print(ld)
+    return
+    utils_modules = sorted([name[:-3] for name in os.listdir(os.path.join(__path__[0], "utils")) if name.endswith('.py')])
+    print(utils_modules)
+    for module in utils_modules:
+        impline = "from . utils import %s" % (module)
+
+        print("reloading %s" % (".".join([name] + ['utils'] + [module])))
+
+        exec(impline)
+        importlib.reload(eval(module))
+
+    # then update the classes and keys dicts
+    #from . import dicts
+    #importlib.reload(dicts)
+
+    # and based on that, reload the modules containing operator and menu classes
+    modules = []
+
+    for label in dicts.classes:
+        entries = dicts.classes[label]
+        for entry in entries:
+            path = entry[0].split('.')
+            module = path.pop(-1)
+
+            if (path, module) not in modules:
+                modules.append((path, module))
+
+    for path, module in modules:
+        if path:
+            impline = "from . %s import %s" % (".".join(path), module)
+        else:
+            impline = "from . import %s" % (module)
+
+        print("reloading %s" % (".".join([name] + path + [module])))
+
+        exec(impline)
+        importlib.reload(eval(module))
+
+
+if 'bpy' in locals():
+    reload_modules(__name__)
+reload_modules("mediapipe_ml")
+
+
+"""
 PACKAGE: str = __name__
 reload_list: list = None
 module_type: str = 'init'
@@ -45,8 +113,7 @@ load_order: dict = {
         'cgt_blender.cgt_rig',
         'cgt_blender.input_manager',
         'cgt_blender.interface',
-        'cgt_blender',
-        '__init__'
+        'cgt_blender'
     ],
     'core':  [
         'cgt_utils.open_cv',
@@ -102,17 +169,17 @@ def execute():
 
 
 execute()
-
-from .cgt_blender.interface import ui_registration
-
-
-def register():
-    ui_registration.register()
-
-
-def unregister():
-    ui_registration.unregister()
-
-
-if __name__ == '__main__':
-    register()
+"""
+# from .cgt_blender.interface import ui_registration
+#
+#
+# def register():
+#     ui_registration.register()
+#
+#
+# def unregister():
+#     ui_registration.unregister()
+#
+#
+# if __name__ == '__main__':
+#     register()

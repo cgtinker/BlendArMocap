@@ -2,7 +2,7 @@ import mediapipe as mp
 
 from . import abstract_detector
 from ..cgt_bridge import events, pose_drivers
-from ..cgt_utils.open_cv import stream
+from cgt_utils import stream
 
 
 # import ssl

@@ -133,10 +133,8 @@ class RigifyFace(BpyRigging):
                 set_multi_user_driver_data(driver_obj, driver_type, ref_name)
 
         for reference_name in self.references:
-            print(reference_name)
             if reference_name in driver_names:
                 set_driver_data(reference_name)
-                print("found_reference")
             else:
                 print(f"Mapping failed for {reference_name} in rigify_face")
 

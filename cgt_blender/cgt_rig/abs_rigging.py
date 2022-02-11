@@ -48,9 +48,16 @@ class BpyRigging(ABC):
 
         # overwriting constraint by
         # removing previously added constraints if types match
+        print("adding constraints")
         for c in constraints:
             # setup correct syntax for comparison
             constraint_name = c.name
+            print("applying constraint", constraint_name)
+            if "_WORLD" in constraint_name:
+                constraint_name.remove("_WORLD")
+                print("world in name", constraint_name)
+            elif "_OFFSET" in constraint_name:
+                constraint_name.remove("_OFFSET", constraint_name)
             constraint_name = constraint_name.replace(" ", "_")
             constraint_name = constraint_name.upper()
             # remove match
@@ -85,7 +92,7 @@ class BpyRigging(ABC):
                 assignment.add_driver(driver_target, driver_source, prop_source, prop_target,
                                       data_path[i], i, func[i], target_rig)
         else:
-            print("driver cannot be applied to same ob twice", driver_target.name)
+            print("Driver may not be applied to same target twice", driver_target.name)
     # endregion
 
     # region custom properties
@@ -107,6 +114,7 @@ class BpyRigging(ABC):
 
     # endregion
 
+    # region way to many lengths
     @staticmethod
     def get_location_offset(pose_bones, bone_name, target):
         # remove constraint before calc offset
@@ -136,7 +144,6 @@ class BpyRigging(ABC):
         offset = bone_pos
         return offset + tar
 
-    # region bone length
     def get_average_joint_empty_length(self, joint_empty_names):
         # get_empty_positions
         joints = []
