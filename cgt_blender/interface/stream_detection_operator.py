@@ -13,12 +13,7 @@ class WM_modal_detection_operator(bpy.types.Operator):
 
     @staticmethod
     def set_detection_type(detection_type):
-        # TODO: ADD TO IMPORT MANAGEMENT
         from ...cgt_detection import detect_hands, detect_pose, detect_face
-
-        importlib.reload(detect_hands)
-        importlib.reload(detect_pose)
-        importlib.reload(detect_face)
 
         handlers = {
             "POSE": detect_pose.PoseDetector,

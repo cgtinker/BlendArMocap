@@ -3,7 +3,8 @@ import subprocess
 import bpy
 
 from ... import cgt_naming
-from . import install_dependencies, ui_registration
+from . import ui_registration
+from ..utils import install_dependencies
 
 
 class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):

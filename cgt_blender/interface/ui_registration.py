@@ -2,7 +2,8 @@ import bpy
 from bpy.props import PointerProperty
 from bpy.utils import register_class, unregister_class
 
-from . import ui_properties, ui_panels, install_dependencies, ui_preferences, stream_detection_operator
+from . import ui_properties, ui_panels, ui_preferences, stream_detection_operator
+from ..utils import install_dependencies
 
 
 def get_classes():

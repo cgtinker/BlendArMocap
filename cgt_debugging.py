@@ -31,7 +31,7 @@ bl_info = {
 
 import os
 import sys
-
+import importlib
 import bpy
 
 # getting access to the current dir to access blender file location
@@ -48,15 +48,6 @@ try:
 except AttributeError:
     # already appended
     print("RUNNING MANUAL DEBUGGING IN EDITOR")
-
-import importlib
-from mediapipe_ml import cgt_imports  # noqa
-
-importlib.reload(cgt_imports)
-
-cgt_imports.PACKAGE = "mediapipe_ml"
-cgt_imports.module_type = 'debug'
-cgt_imports.execute()
 
 # custom top level import
 from mediapipe_ml.cgt_blender.interface import ui_registration  # noqa

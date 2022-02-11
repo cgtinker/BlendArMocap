@@ -91,7 +91,7 @@ Once the transfer has taken place, new recordings will be applied instantly to t
 So there is no need to transfer twice.<br>
 
 
-###Data Assignment<br>
+### Data Assignment<br>
 
 | Driver Source     | Constraint type | Rigify Pose Bone | 
 |-------------------|-----------------|------------------|

@@ -3,7 +3,8 @@ from bpy.types import Panel
 
 from ... import cgt_naming
 from .. import input_manager
-from . import install_dependencies, ui_preferences
+from . import ui_preferences
+from ..utils import install_dependencies
 
 
 class DefaultPanel:
