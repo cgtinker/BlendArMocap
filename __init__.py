@@ -45,33 +45,18 @@ INIT_MODULES = [
 ]
 
 
-class Module:
-    name: str
-    path: str
-
-    def __init__(self, name, path):
-        self.name = name
-        self.path = path
-
-
-def reload_modules(name):
+def reload_modules():
     """
     This makes sure all modules are reloaded from new files, when the addon is removed and a new version is installed in the same session,
     or when Blender's 'Reload Scripts' operator is run manually.
     """
 
     def import_module(module):
-        print(f"importing {name}.{module} ...")
-        importlib.import_module(f"{name}.{module}")
+        importlib.import_module(f"{__name__}.{module}")
 
     def reload_module(module):
-        import_msg = f"from .{module.path} import {module.name}"
-        import_module(f"{module.path}.{module.name}")
-        #exec(import_msg)
-
-        print(sys.modules[f"{name}.{module.path}.{module.name}"])
-        importlib.reload(sys.modules[f"{name}.{module.path}.{module.name}"])
-
+        import_module(module)
+        importlib.reload(sys.modules[f"{__name__}.{module}"])
 
     def get_reload_list(sub_dirs):
         reload_list = []
@@ -85,7 +70,7 @@ def reload_modules(name):
                            if file.endswith('.py') if file != '__init__.py']
 
                 for module in modules:
-                    m_module = Module(module, sub_path)
+                    m_module = f"{sub_path}.{module}"
                     reload_list.append(m_module)
 
         return reload_list
@@ -96,18 +81,18 @@ def reload_modules(name):
 
     from .cgt_blender.utils import install_dependencies
     if install_dependencies.dependencies_installed:
+        print(f"Attempt to reload {__name__}")
         package = os.path.dirname(__file__)
         sub_dirs = [os.path.join(package, sub_dir) for sub_dir in SUB_DIRS]
         reload_list = get_reload_list(sub_dirs)
 
         for module in reload_list:
             reload_module(module)
+        print(f"Reloaded {__name__} successfully")
 
 
-if __name__ in locals():
-    print("mediapipe in locals!")
-    reload_modules(__name__)
-reload_modules(__name__)
+if "INIT_MODULES" in locals():
+    reload_modules()
 
 from .cgt_blender.interface import ui_registration
 

@@ -23,16 +23,13 @@ def import_module(module_name, global_name=None, reload=True):
        the global_name under which the module can be accessed.
     :raises: ImportError and ModuleNotFoundError
     """
-    print("Trying to import module")
     if global_name is None:
         global_name = module_name
 
     if global_name in globals():
-        print("load module from globals")
         importlib.reload(globals()[global_name])
 
     else:
-        print("assign to globals")
         # Attempt to import the module and assign it to globals dictionary.
         globals()[global_name] = importlib.import_module(global_name)
 
