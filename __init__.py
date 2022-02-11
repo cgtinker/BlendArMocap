@@ -29,157 +29,96 @@ bl_info = {
     "category":    "Development"
 }
 
-
 import importlib
+import os
 import sys
 
-dir_layout = {
-    "cgt_blender": [
+SUB_DIRS = ['cgt_blender', 'cgt_bridge', 'cgt_detection', 'cgt_utils']
+INIT_MODULES = [
+    'cgt_naming',
+    'cgt_blender.interface.ui_properties',
+    'cgt_blender.interface.ui_registration',
+    'cgt_blender.input_manager',
+    'cgt_blender.interface',
+    'cgt_blender.utils.install_dependencies',
 
-    ]
-}
+]
+
+
+class Module:
+    name: str
+    path: str
+
+    def __init__(self, name, path):
+        self.name = name
+        self.path = path
+
 
 def reload_modules(name):
     """
     This makes sure all modules are reloaded from new files, when the addon is removed and a new version is installed in the same session,
     or when Blender's 'Reload Scripts' operator is run manually.
-    It's important, that utils modules are reloaded first, as operators and menus import from them
     """
 
-    import os
-    import importlib
+    def import_module(module):
+        print(f"importing {name}.{module} ...")
+        importlib.import_module(f"{name}.{module}")
 
-    # first fetch and reload all utils modules
-    print(__file__)
-    package_dir = os.path.dirname(__file__)
-    print(os.listdir(os.path.join(package_dir, "cgt_blender")))
-    print(os.listdir(package_dir))
-    #ld = os.listdir(os.path.join(__file__[0]))
-    #print(ld)
-    return
-    utils_modules = sorted([name[:-3] for name in os.listdir(os.path.join(__path__[0], "utils")) if name.endswith('.py')])
-    print(utils_modules)
-    for module in utils_modules:
-        impline = "from . utils import %s" % (module)
+    def reload_module(module):
+        import_msg = f"from .{module.path} import {module.name}"
+        import_module(f"{module.path}.{module.name}")
+        #exec(import_msg)
 
-        print("reloading %s" % (".".join([name] + ['utils'] + [module])))
-
-        exec(impline)
-        importlib.reload(eval(module))
-
-    # then update the classes and keys dicts
-    #from . import dicts
-    #importlib.reload(dicts)
-
-    # and based on that, reload the modules containing operator and menu classes
-    modules = []
-
-    for label in dicts.classes:
-        entries = dicts.classes[label]
-        for entry in entries:
-            path = entry[0].split('.')
-            module = path.pop(-1)
-
-            if (path, module) not in modules:
-                modules.append((path, module))
-
-    for path, module in modules:
-        if path:
-            impline = "from . %s import %s" % (".".join(path), module)
-        else:
-            impline = "from . import %s" % (module)
-
-        print("reloading %s" % (".".join([name] + path + [module])))
-
-        exec(impline)
-        importlib.reload(eval(module))
+        print(sys.modules[f"{name}.{module.path}.{module.name}"])
+        importlib.reload(sys.modules[f"{name}.{module.path}.{module.name}"])
 
 
-if 'bpy' in locals():
+    def get_reload_list(sub_dirs):
+        reload_list = []
+
+        for sub_dir in sub_dirs:
+            for root, sub_dir, files in os.walk(sub_dir):
+                # get all python modules files for the import
+                sub_path = root.replace(os.path.dirname(__file__) + "/", "")
+                sub_path = sub_path.replace("/", ".")
+                modules = [f"{file.replace('.py', '')}" for file in files
+                           if file.endswith('.py') if file != '__init__.py']
+
+                for module in modules:
+                    m_module = Module(module, sub_path)
+                    reload_list.append(m_module)
+
+        return reload_list
+
+    # first reload the required modules to activate the UI
+    for module in INIT_MODULES:
+        import_module(module)
+
+    from .cgt_blender.utils import install_dependencies
+    if install_dependencies.dependencies_installed:
+        package = os.path.dirname(__file__)
+        sub_dirs = [os.path.join(package, sub_dir) for sub_dir in SUB_DIRS]
+        reload_list = get_reload_list(sub_dirs)
+
+        for module in reload_list:
+            reload_module(module)
+
+
+if __name__ in locals():
+    print("mediapipe in locals!")
     reload_modules(__name__)
-reload_modules("mediapipe_ml")
+reload_modules(__name__)
+
+from .cgt_blender.interface import ui_registration
 
 
-"""
-PACKAGE: str = __name__
-reload_list: list = None
-module_type: str = 'init'
-
-load_order: dict = {
-    'init':  [
-        'cgt_naming',
-        'cgt_blender.utils.install_dependencies',
-        'cgt_blender.interface.ui_registration',
-        'cgt_blender.cgt_rig',
-        'cgt_blender.input_manager',
-        'cgt_blender.interface',
-        'cgt_blender'
-    ],
-    'core':  [
-        'cgt_utils.open_cv',
-        'cgt_utils',
-        'cgt_detection',
-        'cgt_bridge.face_drivers',
-        'cgt_bridge',
-    ],
-    'debug': [
-        'cgt_naming',
-        'cgt_blender',
-        'cgt_bridge',
-        'cgt_detection',
-    ]
-}
+def register():
+    ui_registration.register()
 
 
-def get_loaded_modules():
-    prefix = PACKAGE
-    return [name for name in sys.modules if name.startswith(prefix)]
+def unregister():
+    ui_registration.unregister()
 
 
-def reload_modules():
-    fixed_modules = set(reload_list)
-    for name in get_loaded_modules():
-        if name not in fixed_modules:
-            print("NAMING CONFLICT WHILE INITIALIZATION:", name)
-    for name in reload_list:
-        importlib.reload(sys.modules[name])
-
-
-def load_initial_modules():
-    load_list = [PACKAGE + '.' + name for name in load_order[module_type]]
-    for i, name in enumerate(load_list):
-        print("attempt to load:", i, name, "...")
-        importlib.import_module(name)
-    return load_list
-
-
-def execute():
-    if PACKAGE in locals():
-        print(f'{PACKAGE}: Reloading package...')
-        reload_modules()
-    else:
-        print(f'{PACKAGE}: Initial package loading... ')
-        load_list = load_initial_modules()
-
-    reload_list = load_order[module_type] = get_loaded_modules()
-    if module_type == 'debug':
-        for module_name in reload_list:
-            module = importlib.import_module(module_name)
-            importlib.reload(module)
-
-
-execute()
-"""
-# from .cgt_blender.interface import ui_registration
-#
-#
-# def register():
-#     ui_registration.register()
-#
-#
-# def unregister():
-#     ui_registration.unregister()
-#
-#
-# if __name__ == '__main__':
-#     register()
+if __name__ == '__main__':
+    register()

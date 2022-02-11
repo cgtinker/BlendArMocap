@@ -2,7 +2,7 @@ import mediapipe as mp
 
 from . import abstract_detector
 from ..cgt_bridge import events, hand_drivers
-from cgt_utils import stream
+from ..cgt_utils import stream
 
 
 class HandDetector(abstract_detector.RealtimeDetector):
