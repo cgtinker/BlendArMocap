@@ -47,8 +47,6 @@ class WM_modal_detection_operator(bpy.types.Operator):
 
     def init_detector(self, detection_type='HAND'):
         from ...cgt_utils import stream
-        importlib.reload(stream)
-
         print(f"INITIALIZING {detection_type} DETECTION")
 
         self.tracking_handler = self.set_detection_type(detection_type)()
