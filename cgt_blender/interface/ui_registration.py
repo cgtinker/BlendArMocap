@@ -48,6 +48,9 @@ def register():
 
 
 def register_user_interface():
+    from ... import cgt_imports
+    cgt_imports.manage_imports(reload=False)
+
     print("REGISTER BLENDARMOCAP INTERFACE")
     for cls in get_classes():
         register_class(cls)
