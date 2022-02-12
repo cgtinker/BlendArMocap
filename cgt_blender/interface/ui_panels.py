@@ -23,7 +23,7 @@ class ExpandedPanel:
     bl_options = {"HEADER_LAYOUT_EXPAND"}
 
 
-class UI_PT_main_panel(ExpandedPanel, Panel):
+class UI_PT_main_panel(DefaultPanel, Panel):
     bl_label = cgt_naming.ADDON_NAME
     bl_idname = "OBJECT_PT_cgt_main_panel"
 
@@ -58,7 +58,7 @@ class UI_PT_main_panel(ExpandedPanel, Panel):
         box.row(align=True).operator("button.cgt_transfer_animation_button", text=user.button_transfer_animation)
 
 
-class UI_PT_warning_panel(ExpandedPanel, Panel):
+class UI_PT_warning_panel(DefaultPanel, Panel):
     bl_label = cgt_naming.ADDON_NAME
     bl_idname = "OBJECT_PT_warning_panel"
 
