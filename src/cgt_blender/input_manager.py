@@ -1,6 +1,6 @@
 import bpy
 
-from ..cgt_naming import COLLECTIONS
+from src.cgt_naming import COLLECTIONS
 from .utils import objects
 
 

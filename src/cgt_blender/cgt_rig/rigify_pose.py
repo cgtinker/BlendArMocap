@@ -1,4 +1,4 @@
-from ...cgt_naming import POSE
+from src.cgt_naming import POSE
 from . import abs_rigging
 from .abs_rigging import DriverType, MappingRelation
 from .utils.drivers import limb_drivers

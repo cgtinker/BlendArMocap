@@ -1,4 +1,3 @@
-import importlib
 import bpy
 
 
@@ -16,9 +15,9 @@ class WM_modal_detection_operator(bpy.types.Operator):
         from ...cgt_detection import detect_hands, detect_pose, detect_face
 
         handlers = {
-            "POSE": detect_pose.PoseDetector,
-            "HAND": detect_hands.HandDetector,
-            "FACE": detect_face.FaceDetector,
+            "POSE":     detect_pose.PoseDetector,
+            "HAND":     detect_hands.HandDetector,
+            "FACE":     detect_face.FaceDetector,
             "HOLISTIC": ""
         }
 

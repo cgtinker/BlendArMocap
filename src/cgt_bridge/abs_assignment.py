@@ -4,7 +4,7 @@ from math import pi
 from mathutils import Vector, Euler
 
 from ..cgt_blender.utils import objects
-from ..cgt_naming import COLLECTIONS
+from src.cgt_naming import COLLECTIONS
 from ..cgt_utils import m_V
 
 

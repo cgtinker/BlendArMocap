@@ -31,14 +31,14 @@ bl_info = {
 
 
 def reload_modules():
-    from . import cgt_imports
+    from src import cgt_imports
     cgt_imports.manage_imports(reload=True)
 
 
 if "bl_info" in locals():
     reload_modules()
 
-from .cgt_blender.interface import ui_registration
+from src.cgt_blender.interface import ui_registration
 
 
 def register():

@@ -57,7 +57,7 @@ def manage_imports(reload=False):
     for module in INIT_MODULES:
         import_module(module)
 
-    from .cgt_blender.utils import install_dependencies
+    from src.cgt_blender.utils import install_dependencies
     print("DEPENDENCIES INSTALLED:", install_dependencies.dependencies_installed)
 
     if install_dependencies.dependencies_installed is True:
@@ -72,3 +72,15 @@ def manage_imports(reload=False):
             else:
                 import_module(module)
         print(f"Reloaded {PACKAGE} successfully")
+
+
+if __name__ == '__main__':
+    addons_folder = str(PARENT.parent)
+    sys.path.append(addons_folder)
+
+    # reload modules besides bpy
+    sub_dirs = [PARENT / sub_dir for sub_dir in SUB_DIRS[1:]]
+    reload_list = get_reload_list(sub_dirs)
+    for module in reload_list:
+        print(f"importing {module}...")
+        import_module(module)
