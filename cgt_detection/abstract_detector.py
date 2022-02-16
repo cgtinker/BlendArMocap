@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from mediapipe.framework.formats import classification_pb2
+
 from mediapipe import solutions
+from mediapipe.framework.formats import classification_pb2
 
 from ..cgt_blender import input_manager
 
