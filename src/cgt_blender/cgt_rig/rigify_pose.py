@@ -5,6 +5,8 @@ from .utils.drivers import limb_drivers
 from ..utils import objects
 from ...cgt_utils import m_V
 
+from .utils.drivers import limb_driver_expressions, driver_types
+
 
 class RigifyPose(abs_rigging.BpyRigging):
     pose_constraints = {
