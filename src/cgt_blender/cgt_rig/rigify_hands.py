@@ -1,4 +1,4 @@
-from src.cgt_naming import HAND
+from ...cgt_naming import HAND
 from . import abs_rigging
 
 

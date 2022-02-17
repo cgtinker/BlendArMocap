@@ -7,28 +7,30 @@ This makes sure all modules are reloaded from new files, when the addon is remov
 or when Blender's 'Reload Scripts' operator is run manually.
 """
 
-SUB_DIRS = ['cgt_blender', 'cgt_bridge', 'cgt_detection', 'cgt_utils']
+SUB_DIRS = ['src/cgt_blender', 'src/cgt_bridge', 'src/cgt_detection', 'src/cgt_utils']
 INIT_MODULES = [
-    '.cgt_naming',
-    '.cgt_imports',
-    '.cgt_blender.interface.ui_properties',
-    '.cgt_blender.interface.ui_registration',
-    '.cgt_blender.input_manager',
-    '.cgt_blender.interface',
-    '.cgt_blender.utils.install_dependencies',
+    '.src.cgt_naming',
+    '.src.cgt_imports',
+    '.src.cgt_blender.interface.ui_properties',
+    '.src.cgt_blender.interface.ui_registration',
+    '.src.cgt_blender.input_manager',
+    '.src.cgt_blender.interface',
+    '.src.cgt_blender.utils.install_dependencies',
 ]
 
 FILE = Path(__file__)
-PARENT = FILE.parent
-PACKAGE = PARENT.name
+PACKAGE_PATH = FILE.parent.parent
+PACKAGE_NAME = PACKAGE_PATH.name
 
 
 def import_module(module):
-    importlib.import_module(f"{PACKAGE}{module}")
+    print(f"importing {PACKAGE_NAME}{module}...")
+    importlib.import_module(f"{PACKAGE_NAME}{module}")
 
 
 def reload_module(module):
-    importlib.reload(sys.modules[f"{PACKAGE}{module}"])
+    print(f"reloading {PACKAGE_NAME}{module}...")
+    importlib.reload(sys.modules[f"{PACKAGE_NAME}{module}"])
 
 
 def get_reload_list(sub_dirs):
@@ -47,7 +49,7 @@ def get_reload_list(sub_dirs):
 
 
 def get_parents(file: Path, parents: list):
-    if file.parent.name != PACKAGE:
+    if file.parent.name != PACKAGE_NAME:
         parents.append(file.parent.name)
         get_parents(file.parent, parents)
     return parents
@@ -55,14 +57,15 @@ def get_parents(file: Path, parents: list):
 
 def manage_imports(reload=False):
     for module in INIT_MODULES:
+        print("module to import:", module)
         import_module(module)
 
-    from src.cgt_blender.utils import install_dependencies
+    from .cgt_blender.utils import install_dependencies
     print("DEPENDENCIES INSTALLED:", install_dependencies.dependencies_installed)
 
     if install_dependencies.dependencies_installed is True:
-        print(f"Attempt to reload {PACKAGE}")
-        sub_dirs = [PARENT / sub_dir for sub_dir in SUB_DIRS]
+        print(f"Attempt to reload {PACKAGE_NAME}")
+        sub_dirs = [PACKAGE_PATH / sub_dir for sub_dir in SUB_DIRS]
         reload_list = get_reload_list(sub_dirs)
 
         for module in reload_list:
@@ -71,16 +74,18 @@ def manage_imports(reload=False):
                 reload_module(module)
             else:
                 import_module(module)
-        print(f"Reloaded {PACKAGE} successfully")
+        print(f"Reloaded {PACKAGE_NAME} successfully")
 
 
 if __name__ == '__main__':
-    addons_folder = str(PARENT.parent)
+    addons_folder = str(PACKAGE_PATH)
     sys.path.append(addons_folder)
 
     # reload modules besides bpy
-    sub_dirs = [PARENT / sub_dir for sub_dir in SUB_DIRS[1:]]
+    sub_dirs = [PACKAGE_PATH / sub_dir for sub_dir in SUB_DIRS[1:]]
+    print(sub_dirs)
     reload_list = get_reload_list(sub_dirs)
+    print(reload_list)
     for module in reload_list:
         print(f"importing {module}...")
         import_module(module)
