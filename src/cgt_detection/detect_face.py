@@ -56,17 +56,17 @@ class FaceDetector(abstract_detector.RealtimeDetector):
         """Draws the landmarks and the connections on the image."""
         for face_landmarks in mp_res.multi_face_landmarks:
             self.drawing_utils.draw_landmarks(
-                # image=self.stream.frame,
-                # landmark_list=face_landmarks,
-                # connections=self.solution.FACEMESH_CONTOURS,
-                # connection_drawing_spec=self.drawing_style.get_default_face_mesh_contours_style(),
-                # landmark_drawing_spec=None)
-
                 image=self.stream.frame,
                 landmark_list=face_landmarks,
-                connections=self.solution.FACEMESH_IRISES,
-                landmark_drawing_spec=None,
-                connection_drawing_spec=self.drawing_style.get_default_face_mesh_iris_connections_style())
+                connections=self.solution.FACEMESH_CONTOURS,
+                connection_drawing_spec=self.drawing_style.get_default_face_mesh_contours_style(),
+                landmark_drawing_spec=None)
+
+                # image=self.stream.frame,
+                # landmark_list=face_landmarks,
+                # connections=self.solution.FACEMESH_IRISES,
+                # landmark_drawing_spec=None,
+                # connection_drawing_spec=self.drawing_style.get_default_face_mesh_iris_connections_style())
 
 
 # region manual tests
