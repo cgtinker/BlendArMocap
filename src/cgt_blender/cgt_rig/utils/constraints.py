@@ -34,6 +34,15 @@ def copy_location_offset(bone, target, *args):
     constraint.owner_space = 'POSE'
 
 
+def copy_location_world(bone, target, *args):
+    constraint = bone.constraints.new(
+        type="COPY_LOCATION"
+    )
+    constraint.target = target
+    constraint.influence = 1
+    constraint.owner_space = 'WORLD'
+
+
 def damped_track(constraint, target, *args):
     constraint.target = target
     constraint.influence = 1

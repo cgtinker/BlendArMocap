@@ -20,7 +20,7 @@ class RightBone(DriverProperties):
         self.property_type = "location"
         self.property_name = "right"
         self.data_paths = ["location.x", "location.y", "location.z"]
-        self.functions = [".5*)(left+", ".5*)(left+", ".5*)(left+"]
+        self.functions = [".5)*(left+", ".5)*(left+", ".5)*(left+"]
 
 
 # endregion

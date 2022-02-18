@@ -19,8 +19,7 @@ class BonePropDriver(Driver):
         print("preparing boen prop driver")
         for idx, variable in enumerate(self.variables):
             print(variable)
-            print(self.provider_obj, self.provider_obj.name)
-            print(self.target_rig)
+            variable.name = self.property_name
             variable.type = 'TRANSFORMS'
             variable.targets[0].id = self.target_rig
             variable.targets[0].bone_target = self.provider_obj.name

@@ -13,10 +13,10 @@ class RigifyPose(abs_rigging.BpyRigging):
         POSE.shoulder_center:  ["chest", "COPY_ROTATION"],
 
         # copy pose driver location
-        POSE.left_hand_ik:     ["hand_ik.R", "COPY_LOCATION"],
-        POSE.right_hand_ik:    ["hand_ik.L", "COPY_LOCATION"],
-        POSE.left_forearm_ik:  ["forearm_tweak.R", "COPY_LOCATION"],
-        POSE.right_forearm_ik: ["forearm_tweak.L", "COPY_LOCATION"],
+        POSE.left_hand_ik:     ["hand_ik.R", "COPY_LOCATION_WORLD"],
+        POSE.right_hand_ik:    ["hand_ik.L", "COPY_LOCATION_WORLD"],
+        POSE.left_forearm_ik:  ["forearm_tweak.R", "COPY_LOCATION_WORLD"],
+        POSE.right_forearm_ik: ["forearm_tweak.L", "COPY_LOCATION_WORLD"],
 
         # damped track to pose driver
         POSE.left_index_ik:    ["hand_ik.R", "DAMPED_TRACK"],
@@ -94,13 +94,13 @@ class RigifyPose(abs_rigging.BpyRigging):
             driver_origin=self.ik_driver_origins[idx],
             detected_joint=self.detected_joints[idx],
             rigify_joint_length=joint_lengths[idx],
-            driver_offset=None # driver_offset[idx]
+            driver_offset=None  # driver_offset[idx]
         ) for idx, target in enumerate(self.limb_driver_targets)]
 
         self.method_mapping = {
             DriverType.CONSTRAINT: self.add_constraint,
             DriverType.SINGLE:     self.add_single_prop_driver,
-            DriverType.BONE: self.add_bone_prop_driver
+            DriverType.BONE:       self.add_bone_prop_driver
         }
 
         self.set_relation_dict(driver_objects)
@@ -192,7 +192,10 @@ class RigifyPose(abs_rigging.BpyRigging):
         pose_bone_names = [bone.name for bone in self.pose_bones]
 
         def setup_driver(driver):
-            driver.target_object = objects.get_object_by_name(driver.target_object)
+            # todo : check reassignment issue
+            if type(driver.target_object) == str:
+                driver.target_object = objects.get_object_by_name(driver.target_object)
+
             driver.provider_obj = mapping_relation.source
             # add driver to object
             driver_method = self.method_mapping[mapping_relation.driver_type]
@@ -200,69 +203,25 @@ class RigifyPose(abs_rigging.BpyRigging):
 
         def apply_by_type(values):
             def constraint():
-                print("applying constraint")
                 if values[0] in pose_bone_names:
-                    # get bone
                     idx = pose_bone_names.index(values[0])
                     pose_bone = self.pose_bones[idx]
-                    # add constraint to bone
                     add_constraint = self.method_mapping[mapping_relation.driver_type]
                     add_constraint(pose_bone, mapping_relation.source, values[1])
 
             def bone_driver():
-                print("attempt to apply single prop drivers")
-                # get target object
-                driver = values
-                driver.target_object = values.target_object
-                driver.provider_obj = mapping_relation.source
-                # add driver to object
-                single_prop_driver = self.method_mapping[mapping_relation.driver_type]
-                single_prop_driver(driver)
+                setup_driver(values)
 
             def single_prop_driver():
-                print("applying single prop driver")
-                # get target object
-                driver = values
-                driver.target_object = values.target_object
-                driver.provider_obj = mapping_relation.source
-                # add driver to object
-                single_prop_driver = self.method_mapping[mapping_relation.driver_type]
-                single_prop_driver(driver)
+                setup_driver(values)
 
             relations = {
-                DriverType.BONE: bone_driver,
+                DriverType.BONE:       bone_driver,
                 DriverType.CONSTRAINT: constraint,
-                DriverType.SINGLE: single_prop_driver,
+                DriverType.SINGLE:     single_prop_driver,
             }
 
-            print(mapping_relation.driver_type)
             relations[mapping_relation.driver_type]()
-
-            # if mapping_relation.driver_type is DriverType.BONE:
-            #     print("yea bone prop!")
-            #     pass
-
-            # print(mapping_relation.driver_type)
-            # if mapping_relation.driver_type is DriverType.CONSTRAINT:
-            #     print("attempt to apply constraint")
-            #     if values[0] in pose_bone_names:
-            #         # get bone
-            #         idx = pose_bone_names.index(values[0])
-            #         pose_bone = self.pose_bones[idx]
-            #         # add constraint to bone
-            #         add_constraint = self.method_mapping[mapping_relation.driver_type]
-            #         add_constraint(pose_bone, mapping_relation.source, values[1])
-
-            # if mapping_relation.driver_type is DriverType.SINGLE:
-            #     print("attempt to apply single prop drivers")
-            #     setup_driver(values)
-            #     # # get target object
-            #     # driver = values
-            #     # driver.target_object = objects.get_object_by_name(values.target_object)
-            #     # driver.provider_obj = mapping_relation.source
-            #     # # add driver to object
-            #     # single_prop_driver = self.method_mapping[mapping_relation.driver_type]
-            #     # single_prop_driver(driver)
 
         for mapping_relation in self.mapping_relation_list:
             apply_by_type(mapping_relation.values)

@@ -16,6 +16,7 @@ class BpyRigging(ABC):
         "OBJECT_SOLVER":        2,
         "COPY_LOCATION":        constraints.copy_location,
         "COPY_LOCATION_OFFSET": constraints.copy_location_offset,
+        "COPY_LOCATION_WORLD":  constraints.copy_location_world,
         "COPY_ROTATION":        constraints.copy_rotation,
         "COPY_ROTATION_WORLD":  constraints.copy_rotation_world_space,
         "COPY_SCALE":           5,
@@ -60,18 +61,15 @@ class BpyRigging(ABC):
             # remove match
             if constraint_name == constraint:
                 bone.constraints.remove(c)
-
         try:
             # adding a new constraint
             m_constraint = bone.constraints.new(
                 type=constraint
             )
             self.constraint_mapping[constraint](m_constraint, target)
-
-        except TypeError:
+        except TypeError or KeyError:
             # call custom method with bone
             self.constraint_mapping[constraint](bone, target)
-
     # endregion
 
     # region driver
@@ -169,13 +167,6 @@ class BpyRigging(ABC):
     # endregion
 
 
-#class DriverType(Enum):
-#    LIMB = 0
-#    CONSTRAINT = 1
-#    face_driver = 2
-#    SINGLE = 3
-#    BONE = 4
-
 @dataclass(frozen=True)
 class DriverType:
     LIMB: int = 0
@@ -184,13 +175,14 @@ class DriverType:
     SINGLE: int = 3
     BONE: int = 4
 
+
 @dataclass(repr=True)
 class MappingRelation:
     source: object
     values: object
-    driver_type: Enum
+    driver_type: int
 
-    def __init__(self, source: object, driver_type: DriverType, values: object):
+    def __init__(self, source: object, driver_type: int, values: object):
         self.source = source
         self.driver_type = driver_type
         self.values = values
