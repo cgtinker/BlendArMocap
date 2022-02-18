@@ -78,9 +78,7 @@ class BpyRigging(ABC):
     # endregion
 
     # region driver
-    def add_single_prop_driver(self, driver_target, driver_source, driver):
-        driver.target_object = driver_target
-        driver.provider_obj = driver_source
+    def add_single_prop_driver(self, driver):
         driver_types.SinglePropDriver(driver)
 
     def add_driver_batch(self, driver_target, driver_source, prop_source, prop_target,
@@ -136,29 +134,6 @@ class BpyRigging(ABC):
         return offset
 
     @staticmethod
-    def get_location_offset_at_origin(pose_bones, bone_name, target, pivot_name):
-        # remove constraint before calc offset
-        for constraint in pose_bones[bone_name].constraints:
-            if constraint.type == "COPY_LOCATION":
-                pose_bones[bone_name].constraints.remove(constraint)
-
-        # calc offset
-        bone_pos = pose_bones[bone_name].head
-        ob = objects.get_object_by_name(target)
-        tar = ob.location
-        offset = bone_pos
-        return offset + tar
-
-    def get_average_joint_empty_length(self, joint_empty_names):
-        # get_empty_positions
-        joints = []
-        for joint_names in joint_empty_names:
-            joint_locations = [objects.get_object_by_name(name).location for name in joint_names]
-            joints.append(joint_locations)
-        avg_dist = self.get_average_length(joints)
-        return avg_dist
-
-    @staticmethod
     def get_average_length(joint_array):
         distances = []
         for joint in joint_array:
@@ -166,11 +141,6 @@ class BpyRigging(ABC):
             distances.append(dist)
         avg_dist = sum(distances) / len(distances)
         return avg_dist
-
-    @staticmethod
-    def get_joint_length(joint):
-        dist = m_V.get_vector_distance(joint[0], joint[1])
-        return dist
 
     def get_average_joint_bone_length(self, joint_bone_names, pose_bones):
         """ requires an array of joints names [[bone_a, bone_b], []... ] and pose bones.
@@ -200,7 +170,6 @@ class DriverType(Enum):
     limb_driver = 0
     constraint = 1
     face_driver = 2
-
     single_prop = 3
     bone_prop = 4
 
@@ -208,10 +177,10 @@ class DriverType(Enum):
 @dataclass(repr=True)
 class MappingRelation:
     source: object
-    values: list
+    values: object
     driver_type: Enum
 
-    def __init__(self, source: object, driver_type: DriverType, *args):
+    def __init__(self, source: object, driver_type: DriverType, values: object):
         self.source = source
         self.driver_type = driver_type
-        self.values = args
+        self.values = values

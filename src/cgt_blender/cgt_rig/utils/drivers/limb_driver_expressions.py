@@ -1,10 +1,12 @@
 from .driver_interface import DriverProperties
+from ...abs_rigging import DriverType
 from ....utils import objects
 
 
 class JointLength(DriverProperties):
     def __init__(self, provider_obj, **kwargs):
         self.provider_obj = provider_obj
+        self.driver_type = DriverType.single_prop
         self.property_type = "location"
         self.property_name = "length"
         self.data_paths = ["scale.z", "scale.z", "scale.z"]
@@ -14,6 +16,7 @@ class JointLength(DriverProperties):
 class PreviousPosition(DriverProperties):
     def __init__(self, provider_obj, **kwargs):
         self.provider_obj = provider_obj
+        self.driver_type = DriverType.single_prop
         self.property_type = "location"
         self.property_name = "prev_pos"
         self.data_paths = ["location.x", "location.y", "location.z"]
@@ -23,6 +26,7 @@ class PreviousPosition(DriverProperties):
 class DriverOrigin(DriverProperties):
     def __init__(self, provider_obj, **kwargs):
         self.provider_obj = provider_obj
+        self.driver_type = DriverType.single_prop
         self.property_type = "location"
         self.property_name = "origin"
         self.data_paths = ["location.x", "location.y", "location.z"]
@@ -34,6 +38,7 @@ class MainExpression(DriverProperties):
 
     def __init__(self, provider_obj, **kwargs):
         self.provider_obj = provider_obj
+        self.driver_type = DriverType.single_prop
         self.property_type = "location"
         self.property_name = "loc"
         self.data_paths = ["location.x", "location.y", "location.z"]
