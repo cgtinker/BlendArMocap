@@ -34,8 +34,8 @@ class RigifyFace(BpyRigging):
 
         # types for mapping
         self.method_mapping = {
-            DriverType.limb_driver: self.add_driver_batch,
-            DriverType.constraint: self.add_constraint,
+            DriverType.LIMB:        self.add_driver_batch,
+            DriverType.CONSTRAINT:  self.add_constraint,
             DriverType.face_driver: self.add_driver_batch
         }
 
@@ -85,20 +85,20 @@ class RigifyFace(BpyRigging):
             # "eyebrow_mid_r":    [DriverType.m_CONSTraint, [self.eyebrow_bone_names[4][0],    "COPY_LOCATION_OFFSET"]],
             # "eyebrow_out_r": [DriverType.m_CONSTraint, [self.eyebrow_bone_names[5][0], "COPY_LOCATION_OFFSET"]],
 
-            FACE.right_eye_t: [DriverType.constraint, ["lid.T.R.002", "COPY_LOCATION_OFFSET"]],
-            FACE.right_eye_b: [DriverType.constraint, ["lid.B.R.002", "COPY_LOCATION_OFFSET"]],
+            FACE.right_eye_t: [DriverType.CONSTRAINT, ["lid.T.R.002", "COPY_LOCATION_OFFSET"]],
+            FACE.right_eye_b: [DriverType.CONSTRAINT, ["lid.B.R.002", "COPY_LOCATION_OFFSET"]],
 
-            FACE.left_eye_t:  [DriverType.constraint, ["lid.T.L.002", "COPY_LOCATION_OFFSET"]],
-            FACE.left_eye_b:  [DriverType.constraint, ["lid.B.L.002", "COPY_LOCATION_OFFSET"]],
+            FACE.left_eye_t:  [DriverType.CONSTRAINT, ["lid.T.L.002", "COPY_LOCATION_OFFSET"]],
+            FACE.left_eye_b:  [DriverType.CONSTRAINT, ["lid.B.L.002", "COPY_LOCATION_OFFSET"]],
 
-            FACE.mouth_t:     [DriverType.constraint, ["lip.T", "COPY_LOCATION_OFFSET"]],
-            FACE.mouth_b:     [DriverType.constraint, ["lip.B", "COPY_LOCATION_OFFSET"]],
+            FACE.mouth_t:     [DriverType.CONSTRAINT, ["lip.T", "COPY_LOCATION_OFFSET"]],
+            FACE.mouth_b:     [DriverType.CONSTRAINT, ["lip.B", "COPY_LOCATION_OFFSET"]],
 
-            FACE.mouth_l:     [DriverType.constraint, ["lips.R", "COPY_LOCATION_OFFSET"]],
-            FACE.mouth_r:     [DriverType.constraint, ["lips.L", "COPY_LOCATION_OFFSET"]],
+            FACE.mouth_l:     [DriverType.CONSTRAINT, ["lips.R", "COPY_LOCATION_OFFSET"]],
+            FACE.mouth_r:     [DriverType.CONSTRAINT, ["lips.L", "COPY_LOCATION_OFFSET"]],
             # TODO: FACE ROTATION HAS TO APPLIED TO WORLD SPACE
-            FACE.head:        [DriverType.constraint, ["head", "COPY_ROTATION_WORLD"]],
-            FACE.chin:        [DriverType.constraint, ["jaw_master", "COPY_ROTATION"]],
+            FACE.head:        [DriverType.CONSTRAINT, ["head", "COPY_ROTATION_WORLD"]],
+            FACE.chin:        [DriverType.CONSTRAINT, ["jaw_master", "COPY_ROTATION"]],
             # endregion
         }
 
@@ -149,7 +149,7 @@ class RigifyFace(BpyRigging):
                 add_driver_batch = self.method_mapping[driver.driver_type]
                 add_driver_batch(target, driver.source, values[1], values[2], values[3], values[4])
 
-            elif driver.driver_type == DriverType.constraint:
+            elif driver.driver_type == DriverType.CONSTRAINT:
                 print(driver)
                 if values[0] in pose_bone_names:
                     idx = pose_bone_names.index(values[0])

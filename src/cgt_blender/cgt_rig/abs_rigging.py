@@ -39,8 +39,8 @@ class BpyRigging(ABC):
         "CHILD_OF":             23,
         "FLOOR":                24,
         "FOLLOW_PATH":          25,
-        "PIVOT": 26,
-        "SHRINKWRAP": 27,
+        "PIVOT":                26,
+        "SHRINKWRAP":           27,
     }
 
     def add_constraint(self, bone, target, constraint):
@@ -48,14 +48,11 @@ class BpyRigging(ABC):
 
         # overwriting constraint by
         # removing previously added constraints if types match
-        print("adding constraints")
         for c in constraints:
             # setup correct syntax for comparison
             constraint_name = c.name
-            print("applying constraint", constraint_name)
             if "_WORLD" in constraint_name:
                 constraint_name.remove("_WORLD")
-                print("world in name", constraint_name)
             elif "_OFFSET" in constraint_name:
                 constraint_name.remove("_OFFSET", constraint_name)
             constraint_name = constraint_name.replace(" ", "_")
@@ -78,8 +75,13 @@ class BpyRigging(ABC):
     # endregion
 
     # region driver
-    def add_single_prop_driver(self, driver):
+    @staticmethod
+    def add_single_prop_driver(driver):
         driver_types.SinglePropDriver(driver)
+
+    @staticmethod
+    def add_bone_prop_driver(driver):
+        driver_types.BonePropDriver(driver)
 
     def add_driver_batch(self, driver_target, driver_source, prop_source, prop_target,
                          data_path, func=None, target_rig=None):
@@ -96,6 +98,7 @@ class BpyRigging(ABC):
                                       data_path[i], i, func[i], target_rig)
         else:
             print("Driver may not be applied to same target twice", driver_target.name)
+
     # endregion
 
     # region custom properties
@@ -166,13 +169,20 @@ class BpyRigging(ABC):
     # endregion
 
 
-class DriverType(Enum):
-    limb_driver = 0
-    constraint = 1
-    face_driver = 2
-    single_prop = 3
-    bone_prop = 4
+#class DriverType(Enum):
+#    LIMB = 0
+#    CONSTRAINT = 1
+#    face_driver = 2
+#    SINGLE = 3
+#    BONE = 4
 
+@dataclass(frozen=True)
+class DriverType:
+    LIMB: int = 0
+    CONSTRAINT: int = 1
+    face_driver: int = 2
+    SINGLE: int = 3
+    BONE: int = 4
 
 @dataclass(repr=True)
 class MappingRelation:

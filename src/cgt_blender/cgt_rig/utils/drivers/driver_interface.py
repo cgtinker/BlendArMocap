@@ -33,6 +33,7 @@ class Driver(DriverProperties):
         self.property_name = expression.property_name
         self.data_paths = expression.data_paths
         self.functions = expression.functions
+        self.target_rig = expression.target_rig
 
         if self.functions is None:
             self.functions = ["", "", ""]
