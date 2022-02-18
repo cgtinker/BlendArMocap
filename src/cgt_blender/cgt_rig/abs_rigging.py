@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 from .utils import constraints
-from .utils.drivers import assignment
+from .utils.drivers import assignment, driver_types
 from ..utils import objects
 from ...cgt_utils import m_V
 
@@ -78,6 +78,11 @@ class BpyRigging(ABC):
     # endregion
 
     # region driver
+    def add_single_prop_driver(self, driver_target, driver_source, driver):
+        driver.target_object = driver_target
+        driver.provider_obj = driver_source
+        driver_types.SinglePropDriver(driver)
+
     def add_driver_batch(self, driver_target, driver_source, prop_source, prop_target,
                          data_path, func=None, target_rig=None):
         """ Add driver to object on x-y-z axis. """
@@ -196,6 +201,9 @@ class DriverType(Enum):
     constraint = 1
     face_driver = 2
 
+    single_prop = 3
+    bone_prop = 4
+
 
 @dataclass(repr=True)
 class MappingRelation:
@@ -203,7 +211,7 @@ class MappingRelation:
     values: list
     driver_type: Enum
 
-    def __init__(self, source, driver_type: DriverType, *args):
+    def __init__(self, source: object, driver_type: DriverType, *args):
         self.source = source
         self.driver_type = driver_type
         self.values = args

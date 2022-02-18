@@ -1,11 +1,10 @@
-from ...cgt_naming import POSE
 from . import abs_rigging
 from .abs_rigging import DriverType, MappingRelation
+from .utils.drivers import limb_driver_expressions
 from .utils.drivers import limb_drivers
 from ..utils import objects
+from ...cgt_naming import POSE
 from ...cgt_utils import m_V
-
-from .utils.drivers import limb_driver_expressions, driver_types
 
 
 class RigifyPose(abs_rigging.BpyRigging):
@@ -51,15 +50,15 @@ class RigifyPose(abs_rigging.BpyRigging):
     ]
 
     detected_joints = [
-        [POSE.shoulder_center,  POSE.left_shoulder],
-        [POSE.left_shoulder,    POSE.left_elbow],
-        [POSE.left_elbow,       POSE.left_wrist],
-        [POSE.left_wrist,       POSE.left_index],
+        [POSE.shoulder_center, POSE.left_shoulder],
+        [POSE.left_shoulder, POSE.left_elbow],
+        [POSE.left_elbow, POSE.left_wrist],
+        [POSE.left_wrist, POSE.left_index],
 
-        [POSE.shoulder_center,  POSE.right_shoulder],
-        [POSE.right_shoulder,   POSE.right_elbow],
-        [POSE.right_elbow,      POSE.right_wrist],
-        [POSE.right_wrist,      POSE.right_index]
+        [POSE.shoulder_center, POSE.right_shoulder],
+        [POSE.right_shoulder, POSE.right_elbow],
+        [POSE.right_elbow, POSE.right_wrist],
+        [POSE.right_wrist, POSE.right_index]
     ]
 
     mapping_relation_list = []
@@ -75,23 +74,33 @@ class RigifyPose(abs_rigging.BpyRigging):
             self.shoulder_center, None, None, None,
             self.shoulder_center, None, None, None
         ]
-
-        self.limb_drivers = [limb_drivers.LimbDriver(
-            driver_target=driver,
+        # NEW DRIVER EXPRESSION SETUP
+        self.limb_drivers = [limb_driver_expressions.LimbDriver(
+            driver_target=target,
             driver_origin=self.ik_driver_origins[idx],
             detected_joint=self.detected_joints[idx],
             rigify_joint_length=joint_lengths[idx],
             driver_offset=driver_offset[idx]
-        ) for idx, driver in enumerate(self.driver_targets)]
+        ) for idx, target in enumerate(self.driver_targets)]
+
+        # # OLD DRIVER EXPRESSION SETUP
+        # self.limb_drivers = [limb_drivers.LimbDriver(
+        #     driver_target=driver,
+        #     driver_origin=self.ik_driver_origins[idx],
+        #     detected_joint=self.detected_joints[idx],
+        #     rigify_joint_length=joint_lengths[idx],
+        #     driver_offset=driver_offset[idx]
+        # ) for idx, driver in enumerate(self.driver_targets)]
 
         self.method_mapping = {
             DriverType.limb_driver: self.add_driver_batch,
-            DriverType.constraint: self.add_constraint
+            DriverType.constraint:  self.add_constraint,
+            DriverType.single_prop: self.add_single_prop_driver
         }
 
-        # pose driver setup based on input cgt_rig
-        for driver in self.limb_drivers:
-            driver.set_expressions()
+        # # pose driver setup based on input cgt_rig
+        # for driver in self.limb_drivers:
+        #     driver.set_expressions()
 
         self.set_relation_dict(driver_objects)
         self.apply_drivers()
@@ -128,18 +137,31 @@ class RigifyPose(abs_rigging.BpyRigging):
         driver_names = [obj.name for obj in driver_objects]
         # pose driver objects
         self.add_pose_driver_mapping(driver_names, driver_objects)
-        self.add_constraint_mapping(driver_names, driver_objects)
+        # self.add_constraint_mapping(driver_names, driver_objects)
 
     def add_pose_driver_mapping(self, driver_names, driver_objects):
+        # def setup_relation(pose_driver):
+        #     if pose_driver.name in driver_names:
+        #         # access the driver object which has been set up previously
+        #         driver_obj = self.get_driver_object(pose_driver.name, driver_names, driver_objects)
+        #         driver_type = DriverType.limb_driver
+        #         # add pose driver expressions to mapping list
+        #         for expression in pose_driver.expressions:
+        #             relation = MappingRelation(driver_obj, driver_type, expression)
+        #             self.mapping_relation_list.append(relation)
+
         def setup_relation(pose_driver):
-            if pose_driver.name in driver_names:
+            if pose_driver.provider_obj in driver_names:
                 # access the driver object which has been set up previously
-                driver_obj = self.get_driver_object(pose_driver.name, driver_names, driver_objects)
-                driver_type = DriverType.limb_driver
+                driver_obj = self.get_driver_object(pose_driver.provider_obj, driver_names, driver_objects)
+                driver_type = DriverType.single_prop
                 # add pose driver expressions to mapping list
-                for expression in pose_driver.expressions:
-                    relation = MappingRelation(driver_obj, driver_type, expression)
-                    self.mapping_relation_list.append(relation)
+                # TODO: add to mapping list??
+                relation = MappingRelation(driver_obj, driver_type, pose_driver) # TODO remove parenthesis
+                self.mapping_relation_list.append(relation)
+                # for expression in pose_driver.expressions:
+                #     relation = MappingRelation(driver_obj, driver_type, expression)
+                #     self.mapping_relation_list.append(relation)
 
         for drivers in self.limb_drivers:
             for driver in drivers.pose_drivers:
@@ -179,7 +201,13 @@ class RigifyPose(abs_rigging.BpyRigging):
                     add_constraint = self.method_mapping[driver.driver_type]
                     add_constraint(pose_bone, driver.source, values[1])
 
+            elif driver.driver_type == DriverType.single_prop:
+                target = objects.get_object_by_name(values.target_object)
+                single_prop_driver = self.method_mapping[driver.driver_type]
+                single_prop_driver(target, driver.source, values)
+
         for driver in self.mapping_relation_list:
-            apply_by_type(driver.values[0])
+            apply_by_type(driver.values[0]) # TODO fix.values[0]
+
     # endregion
     # endregion

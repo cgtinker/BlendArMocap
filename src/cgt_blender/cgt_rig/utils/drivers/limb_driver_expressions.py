@@ -1,18 +1,19 @@
 from .driver_interface import DriverProperties
+from ....utils import objects
 
 
 class JointLength(DriverProperties):
-    def __init__(self, target_object, **kwargs):
-        self.target_object = target_object
+    def __init__(self, provider_obj, **kwargs):
+        self.provider_obj = provider_obj
         self.property_type = "location"
         self.property_name = "length"
         self.data_paths = ["scale.z", "scale.z", "scale.z"]
         self.functions = ["", "", ""]
 
 
-class JointHead(DriverProperties):
-    def __init__(self, target_object, **kwargs):
-        self.target_object = target_object
+class PreviousPosition(DriverProperties):
+    def __init__(self, provider_obj, **kwargs):
+        self.provider_obj = provider_obj
         self.property_type = "location"
         self.property_name = "prev_pos"
         self.data_paths = ["location.x", "location.y", "location.z"]
@@ -20,8 +21,8 @@ class JointHead(DriverProperties):
 
 
 class DriverOrigin(DriverProperties):
-    def __init__(self, target_object, **kwargs):
-        self.target_object = target_object
+    def __init__(self, provider_obj, **kwargs):
+        self.provider_obj = provider_obj
         self.property_type = "location"
         self.property_name = "origin"
         self.data_paths = ["location.x", "location.y", "location.z"]
@@ -31,14 +32,17 @@ class DriverOrigin(DriverProperties):
 class MainExpression(DriverProperties):
     offset: list = [.0, .0, .0]
 
-    def __init__(self, target_object, **kwargs):
-        self.target_object = target_object
+    def __init__(self, provider_obj, **kwargs):
+        self.provider_obj = provider_obj
         self.property_type = "location"
         self.property_name = "loc"
         self.data_paths = ["location.x", "location.y", "location.z"]
 
+        # offset by object
         if kwargs['offset'] is not None:
-            self.offset = kwargs['offset']
+            ob = objects.get_object_by_name(self.provider_obj)
+            tar = ob.location
+            self.offset = kwargs['offset'] - tar
 
         self.functions = [f"({self.offset[0]}+origin))+{kwargs['length']}/(length)*(-(prev_pos)+",
                           f"({self.offset[1]}+origin))+{kwargs['length']}/(length)*(-(prev_pos)+",
@@ -46,13 +50,23 @@ class MainExpression(DriverProperties):
 
 
 class LimbDriver:
+    joint_head: PreviousPosition
     joint_length: JointLength
-    joint_head: JointHead
+    joint_tail: MainExpression
     driver_origin: DriverOrigin
-    main_expression: MainExpression
 
-    drivers: list = None
+    pose_drivers: list = None
 
-    def __init__(self):
-        self.drivers = [self.joint_length, self.joint_head, self.driver_origin, self.main_expression]
-        pass
+    def __init__(self, driver_target, driver_origin, detected_joint, rigify_joint_length, driver_offset):
+        self.driver_target = driver_target
+        # previous driver as origin
+        self.driver_origin = DriverOrigin(driver_origin)
+
+        # detected results for mapping
+        self.joint_head = PreviousPosition(detected_joint[0])
+        self.joint_length = JointLength(detected_joint[1])
+        self.joint_tail = MainExpression(detected_joint[1], offset=driver_offset, length=rigify_joint_length)
+
+        self.pose_drivers = [self.driver_origin, self.joint_head, self.joint_length, self.joint_tail]
+        for driver in self.pose_drivers:
+            driver.target_object = driver_target
