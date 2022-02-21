@@ -1,5 +1,6 @@
 from . import abs_rigging
-from .abs_rigging import DriverType, MappingRelation
+from .utils.mapping import MappingRelation
+from .utils.drivers.driver_interface import DriverType
 from .utils.drivers import limb_drivers
 from ..utils import objects
 from ...cgt_naming import POSE

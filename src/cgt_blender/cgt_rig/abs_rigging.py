@@ -1,6 +1,5 @@
 from abc import ABC
 from dataclasses import dataclass
-from enum import Enum
 
 from .utils import constraints
 from .utils.drivers import assignment, driver_types
@@ -9,70 +8,10 @@ from ...cgt_utils import m_V
 
 
 class BpyRigging(ABC):
-    # region constraints
-    constraint_mapping = {
-        "CAMERA_SOLVER":        0,
-        "FOLLOW_TRACK":         1,
-        "OBJECT_SOLVER":        2,
-        "COPY_LOCATION":        constraints.copy_location,
-        "COPY_LOCATION_OFFSET": constraints.copy_location_offset,
-        "COPY_LOCATION_WORLD":  constraints.copy_location_world,
-        "COPY_ROTATION":        constraints.copy_rotation,
-        "COPY_ROTATION_WORLD":  constraints.copy_rotation_world_space,
-        "COPY_SCALE":           5,
-        "COPY_TRANSFORMS":      6,
-        "LIMIT_DISTANCE":       7,
-        "LIMIT_LOCATION":       8,
-        "LIMIT_ROTATION":       9,
-        "LIMIT_SCALE":          10,
-        "MAINTAIN_VOLUME":      11,
-        "TRANSFORM":            12,
-        "TRANSFORM_CACHE":      13,
-        "CLAMP_TO":             14,
-        "DAMPED_TRACK":         constraints.damped_track,
-        "IK":                   16,
-        "LOCKED_TRACK":         17,
-        "SPLINE_IK":            18,
-        "STRETCH_TO":           19,
-        "TRACK_TO":             20,
-        "ACTION":               21,
-        "ARMATURE":             22,
-        "CHILD_OF":             23,
-        "FLOOR":                24,
-        "FOLLOW_PATH":          25,
-        "PIVOT":                26,
-        "SHRINKWRAP":           27,
-    }
+    @staticmethod
+    def add_constraint(bone, target, constraint):
+        constraints.add_constraint(bone, target, constraint)
 
-    def add_constraint(self, bone, target, constraint):
-        constraints = [c for c in bone.constraints]
-
-        # overwriting constraint by
-        # removing previously added constraints if types match
-        for c in constraints:
-            # setup correct syntax for comparison
-            constraint_name = c.name
-            if "_WORLD" in constraint_name:
-                constraint_name.remove("_WORLD")
-            elif "_OFFSET" in constraint_name:
-                constraint_name.remove("_OFFSET", constraint_name)
-            constraint_name = constraint_name.replace(" ", "_")
-            constraint_name = constraint_name.upper()
-            # remove match
-            if constraint_name == constraint:
-                bone.constraints.remove(c)
-        try:
-            # adding a new constraint
-            m_constraint = bone.constraints.new(
-                type=constraint
-            )
-            self.constraint_mapping[constraint](m_constraint, target)
-        except TypeError or KeyError:
-            # call custom method with bone
-            self.constraint_mapping[constraint](bone, target)
-    # endregion
-
-    # region driver
     @staticmethod
     def add_single_prop_driver(driver):
         driver_types.SinglePropDriver(driver)
@@ -81,40 +20,40 @@ class BpyRigging(ABC):
     def add_bone_prop_driver(driver):
         driver_types.BonePropDriver(driver)
 
-    def add_driver_batch(self, driver_target, driver_source, prop_source, prop_target,
-                         data_path, func=None, target_rig=None):
-        """ Add driver to object on x-y-z axis. """
-        # check if custom prop has been added to the driver
-        added = self.set_custom_property(driver_target, prop_target, True)
+    # def add_driver_batch(self, driver_target, driver_source, prop_source, prop_target,
+    #                      data_path, func=None, target_rig=None):
+    #     """ Add driver to object on x-y-z axis. """
+    #     # check if custom prop has been added to the driver
+    #     added = self.set_custom_property(driver_target, prop_target, True)
 
-        if added is True:
-            if func is None:
-                func = ['', '', '']
-            # attempt to add driver to all axis
-            for i in range(3):
-                assignment.add_driver(driver_target, driver_source, prop_source, prop_target,
-                                      data_path[i], i, func[i], target_rig)
-        else:
-            print("Driver may not be applied to same target twice", driver_target.name)
+    #     if added is True:
+    #         if func is None:
+    #             func = ['', '', '']
+    #         # attempt to add driver to all axis
+    #         for i in range(3):
+    #             assignment.add_driver(driver_target, driver_source, prop_source, prop_target,
+    #                                   data_path[i], i, func[i], target_rig)
+    #     else:
+    #         print("Driver may not be applied to same target twice", driver_target.name)
 
-    # endregion
+    # # endregion
 
-    # region custom properties
-    def set_custom_property(self, target_obj, prop_name, prop):
-        if self.get_custom_property(target_obj, prop_name) == None:
-            target_obj[prop_name] = prop
-            return True
-        else:
-            return False
+    # # region custom properties
+    # def set_custom_property(self, target_obj, prop_name, prop):
+    #     if self.get_custom_property(target_obj, prop_name) == None:
+    #         target_obj[prop_name] = prop
+    #         return True
+    #     else:
+    #         return False
 
-    @staticmethod
-    def get_custom_property(target_obj, prop_name):
-        try:
-            value = target_obj[prop_name]
-        except KeyError:
-            value = None
+    # @staticmethod
+    # def get_custom_property(target_obj, prop_name):
+    #     try:
+    #         value = target_obj[prop_name]
+    #     except KeyError:
+    #         value = None
 
-        return value
+    #     return value
 
     # endregion
 
@@ -167,22 +106,10 @@ class BpyRigging(ABC):
     # endregion
 
 
-@dataclass(frozen=True)
-class DriverType:
-    LIMB: int = 0
-    CONSTRAINT: int = 1
-    face_driver: int = 2
-    SINGLE: int = 3
-    BONE: int = 4
-
-
-@dataclass(repr=True)
-class MappingRelation:
-    source: object
-    values: object
-    driver_type: int
-
-    def __init__(self, source: object, driver_type: int, values: object):
-        self.source = source
-        self.driver_type = driver_type
-        self.values = values
+# @dataclass(frozen=True)
+# class DriverType:
+#     LIMB: int = 0
+#     CONSTRAINT: int = 1
+#     face_driver: int = 2
+#     SINGLE: int = 3
+#     BONE: int = 4
