@@ -26,6 +26,8 @@ class ExpandedPanel:
 class UI_PT_main_panel(DefaultPanel, Panel):
     bl_label = cgt_naming.ADDON_NAME
     bl_idname = "OBJECT_PT_cgt_main_panel"
+    print("new test")
+    # define the filter method
 
     def draw(self, context):
         user = context.scene.m_cgtinker_mediapipe
@@ -48,12 +50,13 @@ class UI_PT_main_panel(DefaultPanel, Panel):
                                         search_data=bpy.data,
                                         search_property="collections",
                                         text="Drivers")
-
+        # searching for custom ui prop
         box.row(align=True).prop_search(data=user,
                                         property="selected_rig",
                                         search_data=bpy.data,
-                                        search_property="armatures",
-                                        text="Armature")
+                                        search_property="objects",
+                                        text="Armature",
+                                        icon="ARMATURE_DATA")
 
         box.row(align=True).operator("button.cgt_transfer_animation_button", text=user.button_transfer_animation)
 

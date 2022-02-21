@@ -17,12 +17,14 @@ class CgtProperties(PropertyGroup):
         default="Start Transfer"
     )
 
-    # DATA SELECTION
-    selected_rig: StringProperty(
-        name="",
+    def armature_poll(self, object):
+        return object.type == 'ARMATURE'
+
+    selected_rig: bpy.props.PointerProperty(
+        type=bpy.types.Object,
         description="Select an armature for animation transfer.",
-        default="Armature"
-    )
+        name="Armature",
+        poll=armature_poll)
 
     selected_driver_collection: StringProperty(
         name="",

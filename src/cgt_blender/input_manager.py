@@ -16,7 +16,7 @@ def transfer_animation():
     user = bpy.context.scene.m_cgtinker_mediapipe
 
     selected_driver_collection = user.selected_driver_collection
-    selected_armature = user.selected_rig
+    selected_armature = user.selected_rig.name_full
 
     print(f"TRYING TO TRANSFER ANIMATION DATA FROM {selected_driver_collection} TO {selected_armature}")
 

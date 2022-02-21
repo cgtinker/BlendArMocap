@@ -171,7 +171,7 @@ def add_armature(name):
     return arm
 
 
-def get_armature(name="face_armature"):
+def get_armature(name: str = "face_armature"):
     armature = bpy.data.objects[name]
     return armature
 

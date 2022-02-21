@@ -111,11 +111,11 @@ class BridgeHand(abs_assignment.DataAssignment):
         for idx, angles in enumerate(angle_data):
             if angles is None:
                 break
-
             # finger start & end idx
             mcp, tip = self.fingers[idx]
             # iter over every finger joint
             for angle_idx, finger_idx in enumerate(range(mcp, tip - 1)):
+                # joint_angle = [finger_idx, Euler((angles[angle_idx] * factor[angle_idx] - 3.142 * offset[angle_idx], 0, 0))]
                 joint_angle = [finger_idx, Euler((angles[angle_idx], 0, 0))]
                 data.append(joint_angle)
 
