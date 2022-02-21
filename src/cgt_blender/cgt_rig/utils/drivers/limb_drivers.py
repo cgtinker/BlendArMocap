@@ -1,6 +1,4 @@
 from .driver_interface import DriverProperties, DriverContainer, DriverType
-# from ...abs_rigging import DriverType
-from ....utils import objects
 
 
 # region Bone Center Driver
@@ -68,34 +66,28 @@ class DriverOrigin(DriverProperties):
 class MainExpression(DriverProperties):
     offset: list = [.0, .0, .0]
 
-    def __init__(self, provider_obj, offset, bone_length):
+    def __init__(self, provider_obj, bone_length):
         self.provider_obj = provider_obj
         self.property_type = "location"
         self.property_name = "loc"
         self.data_paths = ["location.x", "location.y", "location.z"]
 
-        # offset by object
-        if offset is not None:
-            ob = objects.get_object_by_name(self.provider_obj)
-            tar = ob.location
-            self.offset = offset - tar
-
-        self.functions = [f"({self.offset[0]}+origin))+{bone_length}/(length)*(-(prev_pos)+",
-                          f"({self.offset[1]}+origin))+{bone_length}/(length)*(-(prev_pos)+",
-                          f"({self.offset[2]}+origin))+{bone_length}/(length)*(-(prev_pos)+"]
+        self.functions = [f"(origin))+{bone_length}/(length)*(-(prev_pos)+",
+                          f"(origin))+{bone_length}/(length)*(-(prev_pos)+",
+                          f"(origin))+{bone_length}/(length)*(-(prev_pos)+"]
 
 
 # endregion
 
 class LimbDriver(DriverContainer):
-    def __init__(self, driver_target, driver_origin, detected_joint, rigify_joint_length, driver_offset):
+    def __init__(self, driver_target, driver_origin, detected_joint, rigify_joint_length):
         # previous driver as origin
         driver_origin = DriverOrigin(driver_origin)
 
         # detected results for mapping
         joint_head = PreviousPosition(detected_joint[0])
         joint_length = JointLength(detected_joint[1])
-        joint_tail = MainExpression(detected_joint[1], offset=driver_offset, bone_length=rigify_joint_length)
+        joint_tail = MainExpression(detected_joint[1], bone_length=rigify_joint_length)
 
         self.pose_drivers = [driver_origin, joint_head, joint_length, joint_tail]
         self.set(driver_target, DriverType.SINGLE)

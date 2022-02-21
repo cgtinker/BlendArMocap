@@ -32,7 +32,7 @@ class RigifyHands(abs_rigging.BpyRigging):
         # storing relations between rigify and driver cgt_rig (left / right hand)
         self.relation_dict = {}
         self.set_relation_dict(driver_objects)
-        self.apply_drivers(armature)
+        self.m_apply_drivers(armature)
 
     def get_reference_bone(self, key, extension):
         """ get reference bone by driver empty name. """
@@ -62,7 +62,7 @@ class RigifyHands(abs_rigging.BpyRigging):
             except KeyError:
                 print("driver empty does not exist:", empty.name)
 
-    def apply_drivers(self, armature):
+    def m_apply_drivers(self, armature):
         # hand angles just require rotation m_CONSTraints for remapping
         pose_bones = armature.pose.bones
         for key, value in self.relation_dict.items():
