@@ -78,11 +78,6 @@ class RigifyPose(abs_rigging.BpyRigging):
         self.hip_center = None
         joint_lengths = self.get_rigify_joint_lengths()
 
-        # driver_offset = [
-        #     self.shoulder_center, None, None, None,
-        #     self.shoulder_center, None, None, None
-        # ]
-
         self.center_drivers = [limb_drivers.BoneCenter(
             driver_target=target,
             bones=self.shoulder_center,
@@ -153,7 +148,6 @@ class RigifyPose(abs_rigging.BpyRigging):
         # setup drivers
         for drivers in self.center_drivers:
             for driver in drivers.pose_drivers:
-                print("center driver", driver)
                 setup_relation(driver)
 
     def add_pose_driver_mapping(self, driver_names, driver_objects):
