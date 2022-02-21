@@ -1,5 +1,5 @@
-from .driver_interface import DriverProperties
-from ...abs_rigging import DriverType
+from .driver_interface import DriverProperties, DriverContainer, DriverType
+# from ...abs_rigging import DriverType
 from ....utils import objects
 
 
@@ -24,21 +24,15 @@ class RightBone(DriverProperties):
 
 
 # endregion
-class BoneCenter:
-    left_bone: LeftBone
-    right_bone: RightBone
-
-    pose_drivers: list = None
-
+class BoneCenter(DriverContainer):
     def __init__(self, driver_target, bones, target_rig):
-        self.left_bone = LeftBone(bones[0])
-        self.right_bone = RightBone(bones[1])
+        left_bone = LeftBone(bones[0])
+        right_bone = RightBone(bones[1])
 
-        self.pose_drivers = [self.left_bone, self.right_bone]
-        for driver in self.pose_drivers:
-            driver.target_object = driver_target
-            driver.target_rig = target_rig
-            driver.driver_type = DriverType.BONE
+        self.pose_drivers = [left_bone, right_bone]
+        self.set(driver_target, DriverType.BONE, target_rig)
+
+
 # endregion
 
 
@@ -93,27 +87,17 @@ class MainExpression(DriverProperties):
 
 # endregion
 
-class LimbDriver:
-    joint_head: PreviousPosition
-    joint_length: JointLength
-    joint_tail: MainExpression
-    driver_origin: DriverOrigin
-
-    pose_drivers: list = None
-
+class LimbDriver(DriverContainer):
     def __init__(self, driver_target, driver_origin, detected_joint, rigify_joint_length, driver_offset):
-        self.driver_target = driver_target
         # previous driver as origin
-        self.driver_origin = DriverOrigin(driver_origin)
+        driver_origin = DriverOrigin(driver_origin)
 
         # detected results for mapping
-        self.joint_head = PreviousPosition(detected_joint[0])
-        self.joint_length = JointLength(detected_joint[1])
-        self.joint_tail = MainExpression(detected_joint[1], offset=driver_offset, bone_length=rigify_joint_length)
+        joint_head = PreviousPosition(detected_joint[0])
+        joint_length = JointLength(detected_joint[1])
+        joint_tail = MainExpression(detected_joint[1], offset=driver_offset, bone_length=rigify_joint_length)
 
-        self.pose_drivers = [self.driver_origin, self.joint_head, self.joint_length, self.joint_tail]
-        for driver in self.pose_drivers:
-            driver.target_object = driver_target
-            driver.driver_type = DriverType.SINGLE
+        self.pose_drivers = [driver_origin, joint_head, joint_length, joint_tail]
+        self.set(driver_target, DriverType.SINGLE)
 
 # endregion

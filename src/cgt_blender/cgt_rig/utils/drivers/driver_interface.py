@@ -1,8 +1,17 @@
 from abc import abstractmethod
 
 import bpy
-
+from dataclasses import dataclass
 from ....utils import objects
+
+
+@dataclass(frozen=True)
+class DriverType:
+    LIMB: int = 0
+    CONSTRAINT: int = 1
+    face_driver: int = 2
+    SINGLE: int = 3
+    BONE: int = 4
 
 
 class DriverProperties:
@@ -19,9 +28,27 @@ class DriverProperties:
     target_rig: bpy.types.Object = None
 
 
+class DriverContainer:
+    """
+    Container for storing multiple drivers.
+    attributes:
+        pose_drivers: list containing drivers
+        driver_target: object to assign drivers to
+        target_rig: targeted rig, default None
+        driver_type: driver type which gets assigned
+    """
+    pose_drivers: list = None
+
+    def set(self, driver_target: object, driver_type: int, target_rig: object = None):
+        for driver in self.pose_drivers:
+            driver.target_object = driver_target
+            driver.target_rig = target_rig
+            driver.driver_type = driver_type
+
+
 class Driver(DriverProperties):
     """ Applies a driver to a targeted object using values gathered from a
-        provider object. May stores multiple drivers and variables """
+        provider object. May stores multiple drivers and variables. """
     drivers: list
     assigned: bool = False
     variables: list
