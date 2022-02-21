@@ -4,7 +4,7 @@ import bpy
 # region OBJECTS
 # region GENERATE EMPTY
 def add_empties(data: dict, size, extension=""):
-    return [add_empty(size=size, name=value+extension) for key, value in data.items()]
+    return [add_empty(size=size, name=value + extension) for key, value in data.items()]
 
 
 def add_empty(size, name, display='ARROWS'):
@@ -32,6 +32,8 @@ def add_camera(name):
     camera_object = bpy.data.objects.new(name, camera_data)
     bpy.context.scene.collection.objects.link(camera_object)
     return camera_object
+
+
 # endregion
 
 
@@ -49,6 +51,8 @@ def get_selected_object():
 
     if objects >= 1:
         return bpy.context.selected_objects[0]
+
+
 # endregion
 
 
@@ -59,6 +63,8 @@ def set_parents(parent, children):
 
 def set_parent(parent, child):
     child.parent = parent
+
+
 # endregion
 # endregion
 
@@ -146,6 +152,8 @@ def get_objects_from_collection(col_name):
         return [ob for ob in col.all_objects]
     else:
         return None
+
+
 # endregion
 
 
@@ -162,6 +170,8 @@ def purge_orphan_data():
         if armature.users == 0:
             print("remove;", armature)
             bpy.data.armatures.remove(armature)
+
+
 # endregion
 
 
@@ -194,6 +204,8 @@ def get_global_bone_position(armature, bone):
 def get_global_bone_head_position(armature, bone):
     global_location = armature.matrix_world @ bone.head_local
     return global_location
+
+
 # endregion
 
 
@@ -209,12 +221,39 @@ def add_copy_rotation_constraint(obj, target_obj, invert_y):
     constraint.source = target_obj
     if invert_y:
         constraint.invert_y = True
+
+
 # endregion
 
 
+# region CUSTOM PROPERTIES
+def set_custom_property(target_obj, prop_name, prop):
+    print(get_custom_property(target_obj, prop_name))
+
+    if get_custom_property(target_obj, prop_name) == None:
+        target_obj[prop_name] = prop
+        return True
+    else:
+        return False
+
+
+def get_custom_property(target_obj, prop_name):
+    try:
+        value = target_obj[prop_name]
+        print("value assigned")
+    except KeyError:
+        value = None
+    print(value)
+    return value
+
+
+# endregion
+
+# region scene
 def get_frame_start():
     try:
         frame_start = bpy.context.scene.frame_start
     except AttributeError:
         return 0
     return frame_start
+# endregion

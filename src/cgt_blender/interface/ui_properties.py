@@ -17,6 +17,7 @@ class CgtProperties(PropertyGroup):
         default="Start Transfer"
     )
 
+    # custom ui prop search
     def armature_poll(self, object):
         return object.type == 'ARMATURE'
 
