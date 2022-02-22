@@ -109,22 +109,7 @@ class BpyRigging(ABC):
     def bone_head(self, bone_name):
         return self.pose_bones[bone_name].head
 
-    # region way to many lengths
-    @staticmethod
-    def get_location_offset(pose_bones, bone_name, target):
-        # remove constraint before calc offset
-        for constraint in pose_bones[bone_name].constraints:
-            if constraint.type == "COPY_LOCATION":
-                pose_bones[bone_name].constraints.remove(constraint)
-
-        # calc offset
-        bone_pos = pose_bones[bone_name].head
-        ob = objects.get_object_by_name(target)
-        tar = ob.location
-        offset = bone_pos - tar
-
-        return offset
-
+    # region joint length
     def get_average_joint_bone_length(self, joint_bone_names, pose_bones):
         """ requires an array of joints names [[bone_a, bone_b], []... ] and pose bones.
             returns the average length of the connected bones. """
@@ -155,5 +140,4 @@ class BpyRigging(ABC):
 
             arm_joints.append(joint)
         return arm_joints
-
     # endregion

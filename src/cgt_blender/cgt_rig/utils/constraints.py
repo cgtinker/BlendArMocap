@@ -95,16 +95,22 @@ def add_constraint(bone, target, constraint):
     # overwriting constraint by
     # removing previously added constraints if types match
     for c in m_constraints:
-        # setup correct syntax for comparison
+        # prepare target constraint
+        target_constraint = constraint
+        if "_WORLD" in constraint:
+            target_constraint.replace("_WORLD", "")
+        elif "_OFFSET" in constraint:
+            target_constraint.replace("_OFFSET", "")
+
+        # match syntax of bpy constraint
         constraint_name = c.name
-        if "_WORLD" in constraint_name:
-            constraint_name.remove("_WORLD")
-        elif "_OFFSET" in constraint_name:
-            constraint_name.remove("_OFFSET", constraint_name)
         constraint_name = constraint_name.replace(" ", "_")
         constraint_name = constraint_name.upper()
-        # remove match
-        if constraint_name == constraint:
+        constraint_name = constraint_name.rsplit('.', 1)[0]
+        print("preassigned constraint:", constraint_name, "attempt to assign", target_constraint)
+        # remove if names match
+        if constraint_name == target_constraint:
+            print("removing preassigned constraint", c)
             bone.constraints.remove(c)
     try:
         # adding a new constraint
