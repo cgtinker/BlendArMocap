@@ -1,34 +1,74 @@
-from .driver_interface import DriverProperties, DriverContainer
-
-
-# from ...abs_rigging import DriverType
-
-def get_target_axis(axis):
-    """target only a specifc scale axis"""
-    target_axis = []
-    for tar_axis in ["X", "Y", "Z"]:
-        if tar_axis == axis:
-            target_axis.append("scale." + tar_axis.lower())
-        else:
-            target_axis.append("")
-
-    return target_axis
+from .driver_interface import DriverProperties, DriverContainer, DriverType
 
 
 class EyeDriver(DriverProperties):
-    def __init__(self, provider_obj, target_axis, avg_distance, factor):
-        """ Provides eye driver properties.
+    def __init__(self, driver_target, provider_obj, bone_distance, factor, direction):
+        """ Provides eye driver properties to animate the lids.
             :param provider_obj: object providing scale values.
             :param target_axis: target axis to set datapath [X, Y, Z].
-            :param avg_distance: base distance from rigify right.
-            :param factor: scale attr factorized.
+            :param bone_distance: eye bone distance from rigify rig
+            :param factor: factor to multiply the dist
         """
+        self.target_object = driver_target
+        self.driver_type = DriverType.SINGLE
         self.provider_obj = provider_obj
         self.property_type = "location"
         self.property_name = "scale"
-        self.data_paths = get_target_axis(target_axis)
-        self.functions = ["", "", f"{avg_distance}*{factor}"]
+        self.data_paths = ["", "", "scale.z"]
+        self.get_functions(direction, bone_distance, factor)
+
+    def get_functions(self, direction, bone_distance, factor):
+        if direction == "down":
+            self.functions = ["", "", f"-{bone_distance}*{factor}+{bone_distance}*"]
+        elif direction == "up":
+            self.functions = ["", "", f"-{bone_distance}*{factor}*"]
+
 
 class EyeDriverContainer(DriverContainer):
-    pass
+    def __init__(self, driver_targets, provider_objs, eye_distances):
+        right_top_lid = EyeDriver(driver_targets[0][0], provider_objs[0], eye_distances[0], 0.7, "down")
+        right_bot_lid = EyeDriver(driver_targets[0][1], provider_objs[0], eye_distances[0], 0.3, "up")
+        left_top_lid = EyeDriver(driver_targets[1][0], provider_objs[1], eye_distances[1], 0.7, "down")
+        left_bot_lid = EyeDriver(driver_targets[1][1], provider_objs[1], eye_distances[1], 0.3, "up")
 
+        self.pose_drivers = [left_top_lid, left_bot_lid, right_top_lid, right_bot_lid]
+
+
+class MouthDriver(DriverProperties):
+    def __init__(self, driver_target, provider_obj, bone_distance, factor, direction):
+        """ Provides mouth driver properties to animate the lips.
+                    :param provider_obj: object providing scale values.
+                    :param target_axis: target axis to set datapath [X, Y, Z].
+                    :param bone_distance: mouth bone distance from rigify rig
+                    :param factor: factor to multiply the dist
+                """
+
+        self.target_object = driver_target
+        self.driver_type = DriverType.SINGLE
+        self.provider_obj = provider_obj
+        self.property_type = "location"
+        self.property_name = "scale"
+        self.get_data_paths(direction)
+        self.get_functions(direction, bone_distance, factor)
+
+    def get_data_paths(self, direction):
+        if direction == "up" or "down":
+            self.data_paths = ["", "scale.y", ""]
+        elif direction == "left" or "right":
+            self.data_paths = ["", "", "scale.z"]
+
+    def get_functions(self, direction, bone_distance, factor):
+        if direction == "up" or "down":
+            self.functions = ["", "", f"{bone_distance}*{factor}*"]
+        elif direction == "left" or "right":
+            self.functions = ["", f"{bone_distance}*{factor}*", ""]
+
+
+class MouthDriverContainer(DriverContainer):
+    def __init__(self, driver_targets, provider_objs, mouth_distances):
+        upper_lip = MouthDriver(driver_targets[0][0], provider_objs[0], mouth_distances[0], 0.3, "up")
+        lower_lip = MouthDriver(driver_targets[0][1], provider_objs[0], mouth_distances[0], -0.3, "down")
+        left_lip = MouthDriver(driver_targets[1][0], provider_objs[1], mouth_distances[1], .05, "left")
+        right_lip = MouthDriver(driver_targets[1][1], provider_objs[1], mouth_distances[1], -.05, "right")
+
+        self.pose_drivers = [upper_lip, lower_lip, left_lip, right_lip]

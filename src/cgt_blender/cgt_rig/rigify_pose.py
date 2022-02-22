@@ -113,7 +113,7 @@ class RigifyPose(abs_rigging.BpyRigging):
     def set_relation_dict(self, driver_objects: list):
         """ Sets a list of relations for further data transfer. """
         driver_names = [obj.name for obj in driver_objects]
-        self.set_bone_driver_mapping(self.bone_center_drivers)
-        self.set_single_prop_driver_mapping(self.limb_drivers, driver_names, driver_objects)
-        self.set_constraint_mapping(self.pose_constraints, driver_names, driver_objects)
+        self.set_bone_relation(self.bone_center_drivers)
+        self.set_single_prop_relation(self.limb_drivers, driver_names, driver_objects)
+        self.set_constraint_relation(self.pose_constraints, driver_names, driver_objects)
     # endregion

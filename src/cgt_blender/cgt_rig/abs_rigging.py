@@ -61,7 +61,7 @@ class BpyRigging(ABC):
     # endregion
 
     # region mapping
-    def set_bone_driver_mapping(self, driver_containers: list):
+    def set_bone_relation(self, driver_containers: list):
         def setup_relation(pose_driver):
             # requires bone names for setup
             pose_bone_names = [bone.name for bone in self.pose_bones]
@@ -75,7 +75,7 @@ class BpyRigging(ABC):
             for driver in drivers.pose_drivers:
                 setup_relation(driver)
 
-    def set_single_prop_driver_mapping(self, driver_containers: list, driver_names: list, driver_objects: list):
+    def set_single_prop_relation(self, driver_containers: list, driver_names: list, driver_objects: list):
         def setup_relation(pose_driver):
             # get the provider object by name
             if pose_driver.provider_obj in driver_names:
@@ -88,7 +88,7 @@ class BpyRigging(ABC):
             for driver in drivers.pose_drivers:
                 setup_relation(driver)
 
-    def set_constraint_mapping(self, constraint_dict: dict, driver_names: list, driver_objects: list):
+    def set_constraint_relation(self, constraint_dict: dict, driver_names: list, driver_objects: list):
         for name in constraint_dict:
             # get constraint by name
             if name in driver_names:
