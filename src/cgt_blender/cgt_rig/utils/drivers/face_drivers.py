@@ -1,7 +1,12 @@
 from .driver_interface import DriverProperties, DriverContainer, DriverType
+from dataclasses import dataclass
 
 
+@dataclass(repr=True)
 class EyeDriver(DriverProperties):
+    target_object: str
+    functions: list
+
     def __init__(self, driver_target, provider_obj, bone_distance, factor, direction):
         """ Provides eye driver properties to animate the lids.
             :param provider_obj: object providing scale values.
@@ -24,6 +29,7 @@ class EyeDriver(DriverProperties):
             self.functions = ["", "", f"-{bone_distance}*{factor}*"]
 
 
+@dataclass(repr=True)
 class EyeDriverContainer(DriverContainer):
     def __init__(self, driver_targets, provider_objs, eye_distances):
         right_top_lid = EyeDriver(driver_targets[0][0], provider_objs[0], eye_distances[0], 0.7, "down")
@@ -34,7 +40,11 @@ class EyeDriverContainer(DriverContainer):
         self.pose_drivers = [left_top_lid, left_bot_lid, right_top_lid, right_bot_lid]
 
 
+@dataclass(repr=True)
 class MouthDriver(DriverProperties):
+    target_object: str
+    functions: list
+
     def __init__(self, driver_target, provider_obj, bone_distance, factor, direction):
         """ Provides mouth driver properties to animate the lips.
                     :param provider_obj: object providing scale values.
@@ -52,23 +62,24 @@ class MouthDriver(DriverProperties):
         self.get_functions(direction, bone_distance, factor)
 
     def get_data_paths(self, direction):
-        if direction == "up" or "down":
-            self.data_paths = ["", "scale.y", ""]
-        elif direction == "left" or "right":
+        if direction in ["up", "down"]:
             self.data_paths = ["", "", "scale.z"]
+        elif direction in ["left", "right"]:
+            self.data_paths = ["scale.x", "", ""]
 
     def get_functions(self, direction, bone_distance, factor):
-        if direction == "up" or "down":
+        if direction in ["up", "down"]:
             self.functions = ["", "", f"{bone_distance}*{factor}*"]
-        elif direction == "left" or "right":
-            self.functions = ["", f"{bone_distance}*{factor}*", ""]
+        elif direction in ["left", "right"]:
+            self.functions = [f"{bone_distance}*{factor}*", "", ""]
 
 
+@dataclass(repr=True)
 class MouthDriverContainer(DriverContainer):
-    def __init__(self, driver_targets, provider_objs, mouth_distances):
-        upper_lip = MouthDriver(driver_targets[0][0], provider_objs[0], mouth_distances[0], 0.3, "up")
-        lower_lip = MouthDriver(driver_targets[0][1], provider_objs[0], mouth_distances[0], -0.3, "down")
-        left_lip = MouthDriver(driver_targets[1][0], provider_objs[1], mouth_distances[1], .05, "left")
-        right_lip = MouthDriver(driver_targets[1][1], provider_objs[1], mouth_distances[1], -.05, "right")
+    def __init__(self, driver_targets, provider_obj, mouth_distances):
+        upper_lip = MouthDriver(driver_targets[0][0], provider_obj, mouth_distances[0], 0.3, "up")
+        lower_lip = MouthDriver(driver_targets[0][1], provider_obj, mouth_distances[0], -0.3, "down")
+        left_lip = MouthDriver(driver_targets[1][0], provider_obj, mouth_distances[1], .05, "left")
+        right_lip = MouthDriver(driver_targets[1][1], provider_obj, mouth_distances[1], -.01, "right")
 
         self.pose_drivers = [upper_lip, lower_lip, left_lip, right_lip]

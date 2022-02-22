@@ -84,8 +84,10 @@ class BpyRigging(ABC):
                 relation = mapping.MappingRelation(driver_obj, pose_driver.driver_type, pose_driver)
                 self.mapping_relation_list.append(relation)
 
-        for drivers in driver_containers:
-            for driver in drivers.pose_drivers:
+        for containers in driver_containers:
+            print("Processing", containers)
+            for driver in containers.pose_drivers:
+                print("Preparing", driver)
                 setup_relation(driver)
 
     def set_constraint_relation(self, constraint_dict: dict, driver_names: list, driver_objects: list):

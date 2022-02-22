@@ -1,9 +1,14 @@
 from .driver_interface import DriverProperties, DriverContainer, DriverType
+from dataclasses import dataclass
 
 
 # region Bone Center Driver
 # region Properties
+@dataclass(repr=True)
 class LeftBone(DriverProperties):
+    target_object: str
+    functions: list
+
     def __init__(self, provider_obj):
         self.provider_obj = provider_obj
         self.property_type = "location"
@@ -12,7 +17,11 @@ class LeftBone(DriverProperties):
         self.functions = ["", "", ""]
 
 
+@dataclass(repr=True)
 class RightBone(DriverProperties):
+    target_object: str
+    functions: list
+
     def __init__(self, provider_obj):
         self.provider_obj = provider_obj
         self.property_type = "location"
@@ -22,6 +31,7 @@ class RightBone(DriverProperties):
 
 
 # endregion
+@dataclass(repr=True)
 class BoneCenter(DriverContainer):
     def __init__(self, driver_target, bones, target_rig):
         left_bone = LeftBone(bones[0])
@@ -36,7 +46,11 @@ class BoneCenter(DriverContainer):
 
 # region Limb Driver
 # region Properties
+@dataclass(repr=True)
 class JointLength(DriverProperties):
+    target_object: str
+    functions: list
+
     def __init__(self, provider_obj):
         self.provider_obj = provider_obj
         self.property_type = "location"
@@ -45,7 +59,11 @@ class JointLength(DriverProperties):
         self.functions = ["", "", ""]
 
 
+@dataclass(repr=True)
 class PreviousPosition(DriverProperties):
+    target_object: str
+    functions: list
+
     def __init__(self, provider_obj):
         self.provider_obj = provider_obj
         self.property_type = "location"
@@ -54,7 +72,11 @@ class PreviousPosition(DriverProperties):
         self.functions = ["", "", ""]
 
 
+@dataclass(repr=True)
 class DriverOrigin(DriverProperties):
+    target_object: str
+    functions: list
+
     def __init__(self, provider_obj):
         self.provider_obj = provider_obj
         self.property_type = "location"
@@ -63,8 +85,10 @@ class DriverOrigin(DriverProperties):
         self.functions = ["", "", ""]
 
 
+@dataclass(repr=True)
 class MainExpression(DriverProperties):
-    offset: list = [.0, .0, .0]
+    target_object: str
+    functions: list
 
     def __init__(self, provider_obj, bone_length):
         self.provider_obj = provider_obj
@@ -79,6 +103,7 @@ class MainExpression(DriverProperties):
 
 # endregion
 
+@dataclass(repr=True)
 class LimbDriver(DriverContainer):
     def __init__(self, driver_target, driver_origin, detected_joint, rigify_joint_length):
         # previous driver as origin
