@@ -5,11 +5,11 @@ from .utils import objects
 
 
 def transfer_animation():
-    from .cgt_rig import rigify_pose, rig_face # ,rigify_hands, rigify_face
+    from .cgt_rig import rigify_pose, rigify_face # ,rigify_hands
 
     col_mapping = {
         # COLLECTIONS.hands: rigify_hands.RigifyHands,
-        COLLECTIONS.face:  rig_face.RigifyFace,
+        COLLECTIONS.face:  rigify_face.RigifyFace,
         COLLECTIONS.pose:  rigify_pose.RigifyPose
     }
 
