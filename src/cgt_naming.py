@@ -96,6 +96,27 @@ class HAND:
     pinky_dip = "CGT_PINKY_DIP"
     pinky_tip = "CGT_PINKY_TIP"
 
+    driver_thumb_cmc = "CGT_THUMB_CMC_DRIVER"
+    driver_thumb_mcp = "CGT_THUMB_MCP_DRIVER"
+    driver_thumb_ip = "CGT_THUMP_IP_DRIVER"
+    driver_thumb_tip = "CGT_THUMB_TIP_DRIVER"
+    driver_index_finger_mcp = "CGT_INDEX_FINGER_MCP_DRIVER"
+    driver_index_finger_pip = "CGT_INDEX_FINGER_PIP_DRIVER"
+    driver_index_finger_dip = "CGT_INDEX_FINGER_DIP_DRIVER"
+    driver_index_finger_tip = "CGT_INDEX_FINGER_TIP_DRIVER"
+    driver_middle_finger_mcp = "CGT_MIDDLE_FINGER_MCP_DRIVER"
+    driver_middle_finger_pip = "CGT_MIDDLE_FINGER_PIP_DRIVER"
+    driver_middle_finger_dip = "CGT_MIDDLE_FINGER_DIP_DRIVER"
+    driver_middle_finger_tip = "CGT_MIDDLE_FINGER_TIP_DRIVER"
+    driver_ring_finger_mcp = "CGT_RING_FINGER_MCP_DRIVER"
+    driver_ring_finger_pip = "CGT_RING_FINGER_PIP_DRIVER"
+    driver_ring_finger_dip = "CGT_RING_FINGER_DIP_DRIVER"
+    driver_ring_finger_tip = "CGT_RING_FINGER_TIP_DRIVER"
+    driver_pinky_mcp = "CGT_PINKY_MCP_DRIVER"
+    driver_pinky_pip = "CGT_PINKY_PIP_DRIVER"
+    driver_pinky_dip = "CGT_PINKY_DIP_DRIVER"
+    driver_pinky_tip = "CGT_PINKY_TIP_DRIVER"
+
 
 @dataclass(frozen=True, init=False)
 class FACE:

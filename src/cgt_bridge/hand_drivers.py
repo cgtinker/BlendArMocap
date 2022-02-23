@@ -9,6 +9,7 @@ from ..cgt_utils import m_V
 
 class BridgeHand(abs_assignment.DataAssignment):
     references = {
+        # receiver objects
         0:  HAND.wrist,
         1:  HAND.thumb_cmc,
         2:  HAND.thumb_mcp,
@@ -30,6 +31,28 @@ class BridgeHand(abs_assignment.DataAssignment):
         18: HAND.pinky_pip,
         19: HAND.pinky_dip,
         20: HAND.pinky_tip,
+
+        # driver objects
+        21: HAND.driver_thumb_cmc,
+        22: HAND.driver_thumb_mcp,
+        23: HAND.driver_thumb_ip,
+        24: HAND.driver_thumb_tip,
+        25: HAND.driver_index_finger_mcp,
+        26: HAND.driver_index_finger_pip,
+        27: HAND.driver_index_finger_dip,
+        28: HAND.driver_index_finger_tip,
+        29: HAND.driver_middle_finger_mcp,
+        30: HAND.driver_middle_finger_pip,
+        31: HAND.driver_middle_finger_dip,
+        32: HAND.driver_middle_finger_tip,
+        33: HAND.driver_ring_finger_mcp,
+        34: HAND.driver_ring_finger_pip,
+        35: HAND.driver_ring_finger_dip,
+        36: HAND.driver_ring_finger_tip,
+        37: HAND.driver_pinky_mcp,
+        38: HAND.driver_pinky_pip,
+        39: HAND.driver_pinky_dip,
+        40: HAND.driver_pinky_tip,
     }
     fingers = [
         [5, 9],  # index finger
@@ -115,7 +138,6 @@ class BridgeHand(abs_assignment.DataAssignment):
             mcp, tip = self.fingers[idx]
             # iter over every finger joint
             for angle_idx, finger_idx in enumerate(range(mcp, tip - 1)):
-                # joint_angle = [finger_idx, Euler((angles[angle_idx] * factor[angle_idx] - 3.142 * offset[angle_idx], 0, 0))]
                 joint_angle = [finger_idx, Euler((angles[angle_idx], 0, 0))]
                 data.append(joint_angle)
 
