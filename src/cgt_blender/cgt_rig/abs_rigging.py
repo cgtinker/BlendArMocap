@@ -72,7 +72,9 @@ class BpyRigging(ABC):
                 self.mapping_relation_list.append(relation)
 
         for drivers in driver_containers:
+            print("Processing", drivers)
             for driver in drivers.pose_drivers:
+                print("Preparing", driver)
                 setup_relation(driver)
 
     def set_single_prop_relation(self, driver_containers: list, driver_names: list, driver_objects: list):
@@ -92,6 +94,7 @@ class BpyRigging(ABC):
 
     def set_constraint_relation(self, constraint_dict: dict, driver_names: list, driver_objects: list):
         for name in constraint_dict:
+            print("Preparing", name, constraint_dict[name])
             # get constraint by name
             if name in driver_names:
                 driver_obj = self.get_driver_object(name, driver_names, driver_objects)
