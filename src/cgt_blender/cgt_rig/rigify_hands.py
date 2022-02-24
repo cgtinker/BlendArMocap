@@ -9,7 +9,7 @@ class RigifyHands(abs_rigging.BpyRigging):
         self.pose_bones = armature.pose.bones
 
         self.references = {
-            HAND.wrist:                     "hand_ik",
+            # HAND.wrist:                     "hand_ik",
             HAND.driver_thumb_cmc:          "thumb.01",
             HAND.driver_thumb_mcp:          "thumb.02",
             HAND.driver_thumb_ip:           "thumb.03",
@@ -37,23 +37,23 @@ class RigifyHands(abs_rigging.BpyRigging):
             HAND.thumb_cmc:         HAND.driver_thumb_cmc,
             HAND.thumb_mcp:         HAND.driver_thumb_mcp,
             HAND.thumb_ip:          HAND.driver_thumb_ip,
-            HAND.thumb_tip:         HAND.driver_thumb_tip,
+            # HAND.thumb_tip:         HAND.driver_thumb_tip,
             HAND.index_finger_mcp:  HAND.driver_index_finger_mcp,
             HAND.index_finger_pip:  HAND.driver_index_finger_pip,
             HAND.index_finger_dip:  HAND.driver_index_finger_dip,
-            HAND.index_finger_tip:  HAND.driver_index_finger_tip,
+            # HAND.index_finger_tip:  HAND.driver_index_finger_tip,
             HAND.middle_finger_mcp: HAND.driver_middle_finger_mcp,
             HAND.middle_finger_pip: HAND.driver_middle_finger_pip,
             HAND.middle_finger_dip: HAND.driver_middle_finger_dip,
-            HAND.middle_finger_tip: HAND.driver_middle_finger_tip,
+            # HAND.middle_finger_tip: HAND.driver_middle_finger_tip,
             HAND.ring_finger_mcp:   HAND.driver_ring_finger_mcp,
             HAND.ring_finger_pip:   HAND.driver_ring_finger_pip,
             HAND.ring_finger_dip:   HAND.driver_ring_finger_dip,
-            HAND.ring_finger_tip:   HAND.driver_ring_finger_tip,
+            # HAND.ring_finger_tip:   HAND.driver_ring_finger_tip,
             HAND.pinky_mcp:         HAND.driver_pinky_mcp,
             HAND.pinky_pip:         HAND.driver_pinky_pip,
             HAND.pinky_dip:         HAND.driver_pinky_dip,
-            HAND.pinky_tip:         HAND.driver_pinky_tip,
+            # HAND.pinky_tip:         HAND.driver_pinky_tip,
         }
 
         left_finger_provider = [key + ".L" for key in finger_driver_references.keys()]

@@ -230,9 +230,9 @@ def add_copy_rotation_constraint(obj, target_obj, invert_y):
 def set_custom_property(target_obj, prop_name, prop):
     if get_custom_property(target_obj, prop_name) == None:
         target_obj[prop_name] = prop
-        return True
-    else:
         return False
+    else:
+        return True
 
 
 def get_custom_property(target_obj, prop_name):

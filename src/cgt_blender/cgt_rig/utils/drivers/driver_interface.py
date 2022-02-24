@@ -1,7 +1,8 @@
 from abc import abstractmethod
+from dataclasses import dataclass
 
 import bpy
-from dataclasses import dataclass
+
 from ....utils import objects
 
 
@@ -26,6 +27,7 @@ class DriverProperties:
     data_paths: list
     functions: list = None
     target_rig: bpy.types.Object = None
+    overwrite: bool = False
 
 
 class DriverContainer:
@@ -58,24 +60,38 @@ class Driver(DriverProperties):
         self.assigned = objects.set_custom_property(self.target_object, self.property_name, True)
 
     def __init__(self, expression: DriverProperties):
+        # requirements to check custom props
         self.target_object = expression.target_object
         self.property_name = expression.property_name
+        self.overwrite = expression.overwrite
 
+        # prevent to apply driver twice
         self.is_custom_property_assigned()
-        if self.assigned is False:
-            # prevent to apply driver twice
+        if self.assigned is True and self.overwrite is False:
             return
 
-        # setup driver vars
+        self.functions = expression.functions
+
+        # overwrite driver expression
+        if self.overwrite is True:
+            try:
+                self.drivers = [
+                    self.target_object.animation_data.drivers.remove(
+                        self.target_object.animation_data.drivers[index]
+                    ) for index in range(3)]
+            except IndexError:
+                pass
+
+        # setup vars for new driver
         self.property_type = expression.property_type
         self.provider_obj = expression.provider_obj
         self.data_paths = expression.data_paths
-        self.functions = expression.functions
         self.target_rig = expression.target_rig
 
         if self.functions is None:
             self.functions = ["", "", ""]
 
+        # generate drivers
         self.drivers = [self.target_object.driver_add(self.property_type, index) for index in range(3)]
         self.variables = [d.driver.variables.new() for d in self.drivers]
 

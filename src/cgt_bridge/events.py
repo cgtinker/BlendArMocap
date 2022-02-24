@@ -1,7 +1,10 @@
 from __future__ import annotations
 
-from . import observer_pattern as op
 from typing import List
+
+from . import observer_pattern as op
+
+
 # from cgt_utils import log
 
 
@@ -26,12 +29,14 @@ class UpdateListener(op.Listener):
 
 class PrintRawDataUpdate(op.Observer):
     """ Prints updated data for debugging. """
+
     def update(self, subject: op.Listener) -> None:
         print(subject.data)
 
 
 class DriverDebug(op.Observer):
     """ Doesnt apply data but usefull for debugging purposes. """
+
     def __init__(self, _model):
         self.model = _model
 
@@ -43,6 +48,7 @@ class DriverDebug(op.Observer):
 
 class BpyUpdateReceiver(op.Observer):
     """ Updates empties in realtime via modal operator. """
+
     def __init__(self, _model):
         self.model = _model
         self.model.init_references()
@@ -56,6 +62,7 @@ class BpyUpdateReceiver(op.Observer):
 
 class MemoryUpdateReceiver(op.Observer):
     """ Preserve changes in memory for async update. """
+
     def __init__(self, _hand):
         self.hand = _hand
         self.idx = 0

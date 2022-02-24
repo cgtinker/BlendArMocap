@@ -1,6 +1,6 @@
 import numpy as np
 from mathutils import Euler
-
+import math
 from . import abs_assignment
 from ..cgt_naming import HAND, COLLECTIONS
 from ..cgt_blender.utils import objects
@@ -70,6 +70,8 @@ class BridgeHand(abs_assignment.DataAssignment):
     left_hand_data, right_hand_data = None, None
     left_angles, right_angles = None, None
 
+    approx_angles = []
+
     frame = 0
     col_name = COLLECTIONS.hands
 
@@ -130,7 +132,9 @@ class BridgeHand(abs_assignment.DataAssignment):
         if angle_data is None:
             return data
 
+        # test_angles = []
         # every angle targets a finger joint
+        tmp_angles = []
         for idx, angles in enumerate(angle_data):
             if angles is None:
                 break
@@ -138,8 +142,17 @@ class BridgeHand(abs_assignment.DataAssignment):
             mcp, tip = self.fingers[idx]
             # iter over every finger joint
             for angle_idx, finger_idx in enumerate(range(mcp, tip - 1)):
+                tmp_angles.append(angles[angle_idx])
                 joint_angle = [finger_idx, Euler((angles[angle_idx], 0, 0))]
                 data.append(joint_angle)
+
+        self.approx_angles.append(tmp_angles)
+        angle_sum = [0]*15
+        for angle_data in self.approx_angles:
+            for idx, angle in enumerate(angle_data):
+                angle_sum[idx] += angle
+        avg_angles = [angle/len(self.approx_angles) for angle in angle_sum]
+        print(avg_angles)
 
         return data
 
