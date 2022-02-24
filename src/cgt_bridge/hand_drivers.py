@@ -69,8 +69,7 @@ class BridgeHand(abs_assignment.DataAssignment):
     #  position and joint angle
     left_hand_data, right_hand_data = None, None
     left_angles, right_angles = None, None
-
-    approx_angles = []
+    # approx_angles = []
 
     frame = 0
     col_name = COLLECTIONS.hands
@@ -134,7 +133,7 @@ class BridgeHand(abs_assignment.DataAssignment):
 
         # test_angles = []
         # every angle targets a finger joint
-        tmp_angles = []
+        # tmp_angles = []
         for idx, angles in enumerate(angle_data):
             if angles is None:
                 break
@@ -142,17 +141,17 @@ class BridgeHand(abs_assignment.DataAssignment):
             mcp, tip = self.fingers[idx]
             # iter over every finger joint
             for angle_idx, finger_idx in enumerate(range(mcp, tip - 1)):
-                tmp_angles.append(angles[angle_idx])
+                # tmp_angles.append(angles[angle_idx])
                 joint_angle = [finger_idx, Euler((angles[angle_idx], 0, 0))]
                 data.append(joint_angle)
 
-        self.approx_angles.append(tmp_angles)
-        angle_sum = [0]*15
-        for angle_data in self.approx_angles:
-            for idx, angle in enumerate(angle_data):
-                angle_sum[idx] += angle
-        avg_angles = [angle/len(self.approx_angles) for angle in angle_sum]
-        print(avg_angles)
+        # self.approx_angles.append(tmp_angles)
+        # angle_sum = [0]*15
+        # for m_angles in self.approx_angles:
+        #     for idx, angle in enumerate(m_angles):
+        #         angle_sum[idx] += angle
+        # avg_angles = [angle/len(self.approx_angles) for angle in angle_sum]
+        # print(avg_angles, len(self.approx_angles))
 
         return data
 
