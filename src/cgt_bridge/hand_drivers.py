@@ -70,6 +70,8 @@ class BridgeHand(abs_assignment.DataAssignment):
     left_hand_data, right_hand_data = None, None
     left_angles, right_angles = None, None
     # approx_angles = []
+    # max_anges = [-1000]*15
+    # min_angles = [1000]*15
 
     frame = 0
     col_name = COLLECTIONS.hands
@@ -145,6 +147,16 @@ class BridgeHand(abs_assignment.DataAssignment):
                 joint_angle = [finger_idx, Euler((angles[angle_idx], 0, 0))]
                 data.append(joint_angle)
 
+        # for i, a in enumerate(tmp_angles):
+        #     if a > self.max_anges[i]:
+        #         self.max_anges[i] = a
+        #     if a < self.min_angles[i]:
+        #         self.min_angles[i] = a
+        # print("MAX:")
+        # print(self.max_anges)
+        # print("MIN:")
+        # print(self.min_angles)
+        # print("||")
         # self.approx_angles.append(tmp_angles)
         # angle_sum = [0]*15
         # for m_angles in self.approx_angles:
