@@ -35,8 +35,9 @@ class FingerAngleDriver(DriverProperties):
         self.property_type = "rotation_euler"
         self.property_name = "rotation"
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
-        self.functions = [f"{slope.min_out})+{slope.slope}*(-{slope.min_in}+", "", f""]
-        self.overwrite = True
+        self.functions = ["", "", ""]
+        # self.functions = [f"{slope.min_out})+{slope.slope}*(-{slope.min_in}+", "", f""]
+        # self.overwrite = True
 
 
 @dataclass(repr=True)

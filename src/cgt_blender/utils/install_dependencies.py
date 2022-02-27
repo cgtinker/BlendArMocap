@@ -74,7 +74,7 @@ def install_and_import_module(module_name, package_name=None, global_name=None):
 
     environ_copy = dict(os.environ)
     environ_copy["PYTHONNOUSERSITE"] = "1"
-    print("Try to install:", package_name, environ_copy["PYTHONNOUSERSITE"])
+    print("Try to install:", package_name)
     try:
         subprocess.run([sys.executable, "-m", "pip", "install", package_name], check=True, env=environ_copy)
     except Exception:
