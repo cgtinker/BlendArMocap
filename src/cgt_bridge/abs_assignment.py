@@ -108,6 +108,9 @@ class DataAssignment(ABC):
         """ Translates and keyframes bpy empty objects. """
         try:
             for p in data:
+                if p is None:
+                    print("p is None!!!!", p, frame, target)
+                    break
                 target[p[0]].rotation_euler = p[1]
                 target[p[0]].keyframe_insert(data_path="rotation_euler", frame=frame)
                 self.prev_rotation[p[0] + idx_offset] = p[1]

@@ -30,6 +30,7 @@ def register():
     print('\n\nREGISTERING BLENDARMOCAP')
 
     for m_class in get_preferences():
+        print(m_class)
         register_class(m_class)
 
     try:
