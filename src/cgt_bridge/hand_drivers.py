@@ -55,11 +55,11 @@ class BridgeHand(abs_assignment.DataAssignment):
         40: HAND.driver_pinky_tip,
     }
     fingers = [
+        [1, 5],  # thumb
         [5, 9],  # index finger
         [9, 13],  # middle finger
         [13, 17],  # ring finger
         [17, 21],  # pinky
-        [1, 5]  # thumb
     ]
 
     # hands
@@ -85,10 +85,6 @@ class BridgeHand(abs_assignment.DataAssignment):
         self.left_hand_data, self.right_hand_data = self.landmarks_to_hands(list(zip(self.data[0], self.data[1])))
         self.left_angles = self.finger_angles(self.left_hand_data)
         self.right_angles = self.finger_angles(self.right_hand_data)
-
-        # updated angle to joint references before applying
-        # self.left_angles = self.prepare_rotation_data(self.left_angles)
-        # self.right_angles = self.prepare_rotation_data(self.right_angles)
 
         # using bpy matrix
         left_hand_rot = self.global_hand_rotation(self.left_hand_data, 0, "L")
@@ -119,45 +115,26 @@ class BridgeHand(abs_assignment.DataAssignment):
         for hand in [[self.left_hand, self.left_angles, 0],
                      [self.right_hand, self.right_angles, 100]]:
             try:
+                if hand[1] is None:
+                    break
+
                 self.euler_rotate(hand[0], hand[1], self.frame, hand[2])
             except IndexError:
                 pass
-
-    # def prepare_rotation_data(self, angle_data):
-    #     """ prepare data formatting for applying keyframe """
-    #     data = []
-    #     # check if contains agnles
-    #     if angle_data is None:
-    #         return data
-
-    #     # every angle targets a finger joint
-    #     for idx, angles in enumerate(angle_data):
-    #         if angles is None:
-    #             break
-    #         # finger start & end idx
-    #         mcp, tip = self.fingers[idx]
-    #         # iter over every finger joint
-    #         for angle_idx, finger_idx in enumerate(range(mcp, tip - 1)):
-    #             joint_angle = [finger_idx, Euler((angles[angle_idx], 0, 0))]
-    #             data.append(joint_angle)
-
-    #     return data
 
     def finger_angles(self, hand):
         """ get finger joint x-angles of target hand """
         if hand == []:
             return None
 
-        # get all finger vertex positions and add the origin
-        origin = hand[0][1]  # [0, 0, 0]
         x_angles = self.get_x_angles(hand)
-        # needs to be straight for sure
-        y_angles = self.get_y_angles(hand)
+        z_angles = self.get_y_angles(hand)
 
         data = []
         for idx in range(0, 20):
-            joint_angle = [idx, Euler((x_angles[idx], 0, y_angles[idx]*5))]
-            data.append(joint_angle)
+            if x_angles[idx] != 0 or z_angles[idx] != 0:
+                joint_angle = [idx, Euler((x_angles[idx], 0, z_angles[idx]))]
+                data.append(joint_angle)
 
         return data
 
@@ -165,20 +142,32 @@ class BridgeHand(abs_assignment.DataAssignment):
         carpals = [[knuckle[0], self.fingers[idx + 1][0]] for idx, knuckle in enumerate(self.fingers[:4])]
         proximal = [idx[0] + 1 for idx in self.fingers]
         joints = np.array([[0, 1, 2]])
-        data = [0]*20
+        data = [0] * 20
+
+        # plane = np.array([
+        #    hand[0][1],
+        #    hand[5][1] * 15,
+        #    hand[17][1] * 15
+        # ])
+
         # project proximal phalanges on plane based on surrounding metacarpals
-        for idx, knuckle in enumerate(carpals):
+        for idx, carpal in enumerate(carpals):
+            # project per knuckle
+            plane = np.array([hand[0][1],
+                              hand[carpal[0]][1] * 15,
+                              hand[carpal[1]][1] * 15])
+
             projection = m_V.project_vec_on_plane(
-                np.array([hand[0][1], hand[knuckle[0]][1] * 10, hand[knuckle[1]][1] * 10]),
+                plane,
                 joints,
                 np.array(hand[proximal[idx]][1])
             )
             # get angle between projected vector and knuckle
-            angle = m_V.angle_between(np.array(projection), np.array(hand[knuckle[0]][1]))
+            angle = m_V.angle_between(np.array(projection), np.array(hand[carpal[0]][1]))
 
             if angle is None:
                 break
-            data[knuckle[0]] = angle
+            data[carpal[0]] = angle
         return data
 
     def get_x_angles(self, hand):
@@ -189,10 +178,9 @@ class BridgeHand(abs_assignment.DataAssignment):
 
         # setup joints to calc finger angles
         x_joints = [[0, 1, 2], [1, 2, 3], [2, 3, 4]]
-        # todo: add index
         x_finger_angles = [m_V.joint_angles(finger, x_joints) for finger in x_fingers]
 
-        data = [0]*20
+        data = [0] * 20
         for idx, angles in enumerate(x_finger_angles):
             if angles is None:
                 break
@@ -200,9 +188,7 @@ class BridgeHand(abs_assignment.DataAssignment):
             mcp, tip = self.fingers[idx]
             # iter over every finger joint
             for angle_idx, finger_idx in enumerate(range(mcp, tip - 1)):
-                # joint_angle = [finger_idx, angles[angle_idx]]
                 data[finger_idx] = angles[angle_idx]
-                # data.append(joint_angle)
 
         return data
 
