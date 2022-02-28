@@ -60,7 +60,7 @@ def project_vec_on_vec(target, destination):
 
 
 def project_vec_on_plane(triangle, faces, vec):
-    normals, norm = m_V.create_normal_array(np.array(triangle), np.array([faces]))
+    normals, norm = m_V.create_normal_array(triangle, np.array(faces))
     projection = project_vec_from_normal(normals[0], np.array(vec))
     return projection
 
@@ -78,10 +78,16 @@ def project_vec_from_normal(normal, vector):
 def main():
     objs = get_finger_objs()
     loc = [ob.location for ob in objs]
-
-    projection = project_vec_on_plane([loc[0], loc[9], loc[5]], [0, 1, 2], np.array(loc[6])-np.array(loc[5]))
-    angle = m_V.angle_between(np.array(projection), np.array(loc[9]) - np.array(loc[0]))
+    # projection = project_vec_on_vec(np.array(loc[5]), np.array(loc[6]))
+    # angle = m_V.angle_between(np.array(loc[6])-np.array(loc[5]), projection-np.array(loc[5]))
+    projection = project_vec_on_plane(
+        np.array([loc[0], loc[9]*10, loc[5]*10]),
+        np.array([[0, 1, 2]]),
+        np.array(loc[6])-np.array(loc[0]))
+    angle = m_V.angle_between(np.array(projection), np.array(loc[9]))
     print(angle)
+    ob = objects.get_object_by_name("Cube.001")
+    ob.location = projection * 1
 
 
 if __name__ == "__main__":

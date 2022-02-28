@@ -78,6 +78,38 @@ def null_axis(vectors, *args):
 # endregion
 # endregion
 
+# region vector projection
+def project_vec_on_vec(target, destination):
+    # project vector u on vector v
+    v_norm = vector_length(target)
+    # find dot product using np.dot()
+    proj_of_u_on_v = (np.dot(destination, target) / v_norm ** 2) * target
+    return proj_of_u_on_v
+
+
+def project_vec_on_plane(triangle: np.array, faces: np.array, vec: np.array):
+    """ project a vector on input plane
+    :param triangle - [[0, 0, 0], [1, 0, 1] [1, 3, 1]] vertex triplet
+    :param faces - [[0, 1, 2]] vertex connection order
+    :param vec - vector to project
+    return projection vector"""
+    normals, norm = create_normal_array(triangle, faces)
+    projection = project_vec_from_normal(normals[0], np.array(vec))
+    return projection
+
+
+def project_vec_from_normal(normal, vector):
+    """The projection of a vector v
+    onto a plane is calculated by subtracting the component of u
+    which is orthogonal to the plane from u"""
+    n_norm = vector_length(normal)
+    proj_of_vec_on_norm = (np.dot(vector, normal) / n_norm ** 2) * normal
+    # this is the projection of the vector on normal of the input plane
+    return vector - proj_of_vec_on_norm
+
+
+# endregion
+
 
 # region angle and rotation
 # region angle

@@ -1,9 +1,9 @@
 import numpy as np
 from mathutils import Euler
-import math
+
 from . import abs_assignment
-from ..cgt_naming import HAND, COLLECTIONS
 from ..cgt_blender.utils import objects
+from ..cgt_naming import HAND, COLLECTIONS
 from ..cgt_utils import m_V
 
 
@@ -150,19 +150,40 @@ class BridgeHand(abs_assignment.DataAssignment):
 
         # get all finger vertex positions and add the origin
         origin = hand[0][1]  # [0, 0, 0]
+        x_finger_angles = self.get_x_angles(hand)
+        # needs to be straight for sure
+        y_finger_angles = self.get_y_angles(hand)
+
+        return x_finger_angles
+
+    def get_y_angles(self, hand):
+        carpals = [[knuckle[0], self.fingers[idx + 1][0]] for idx, knuckle in enumerate(self.fingers[:4])]
+        proximal = [idx[0] + 1 for idx in self.fingers]
+        joints = np.array([[0, 1, 2]])
+        y_finger_angles = []
+        # project proximal phalanges on plane based on surrounding metacarpals
+        for idx, knuckle in enumerate(carpals):
+            projection = m_V.project_vec_on_plane(
+                np.array(hand[0][1], hand[knuckle[0]][1] * 10, hand[knuckle[1]][1] * 10),
+                joints,
+                np.array(hand[proximal[idx]][1])
+            )
+            # get angle between projected vector and knuckle
+            angle = m_V.angle_between(np.array(projection), np.array(hand[knuckle[0]][1]))
+            # todo: add index
+            y_finger_angles.append(angle)
+        return y_finger_angles
+
+    def get_x_angles(self, hand):
+        origin = hand[0][1]  # [0, 0, 0]
+
         x_fingers = [[hand[idx][1] for idx in range(finger[0], finger[1])] for finger in self.fingers]
         x_fingers = [np.array([origin] + finger) for finger in x_fingers]  # add origin to finger
 
         # setup joints to calc finger angles
         x_joints = [[0, 1, 2], [1, 2, 3], [2, 3, 4]]
+        # todo: add index
         x_finger_angles = [m_V.joint_angles(finger, x_joints) for finger in x_fingers]
-
-        # needs to be straight for sure
-        y_fingers = [[hand[indexes[0]][1], hand[indexes[1]-1][1]] for indexes in self.fingers]
-        y_fingers = [np.array([origin] + finger) for finger in y_fingers]  # add origin to finger
-        y_joints = [[0, 1, 2]]
-        y_finger_angles = [m_V.joint_angles(finger, y_joints) for finger in y_fingers]
-
         return x_finger_angles
 
     def global_hand_rotation(self, hand, combat_idx_offset=0, orientation="R"):
