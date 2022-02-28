@@ -139,23 +139,22 @@ class BridgeHand(abs_assignment.DataAssignment):
         return data
 
     def get_y_angles(self, hand):
+        """ get approximate y angle
+            by projecting the proximal phalanges on a plane
+            taking the vector from wrist to knuckle
+            and calculating the angle offset."""
+
         carpals = [[knuckle[0], self.fingers[idx + 1][0]] for idx, knuckle in enumerate(self.fingers[:4])]
         proximal = [idx[0] + 1 for idx in self.fingers]
         joints = np.array([[0, 1, 2]])
         data = [0] * 20
 
-        # plane = np.array([
-        #    hand[0][1],
-        #    hand[5][1] * 15,
-        #    hand[17][1] * 15
-        # ])
-
         # project proximal phalanges on plane based on surrounding metacarpals
         for idx, carpal in enumerate(carpals):
             # project per knuckle
             plane = np.array([hand[0][1],
-                              hand[carpal[0]][1] * 15,
-                              hand[carpal[1]][1] * 15])
+                              hand[carpal[0]][1] * 25,
+                              hand[carpal[1]][1] * 25])
 
             projection = m_V.project_vec_on_plane(
                 plane,
@@ -171,6 +170,7 @@ class BridgeHand(abs_assignment.DataAssignment):
         return data
 
     def get_x_angles(self, hand):
+        """ get finger x angle by calculating the angle between each finger joint """
         origin = hand[0][1]  # [0, 0, 0]
 
         x_fingers = [[hand[idx][1] for idx in range(finger[0], finger[1])] for finger in self.fingers]
@@ -193,7 +193,8 @@ class BridgeHand(abs_assignment.DataAssignment):
         return data
 
     def global_hand_rotation(self, hand, combat_idx_offset=0, orientation="R"):
-        """calculates approximate hand rotation. """
+        """ calculates approximate hand rotation by generating
+            a matrix using the palm as approximate triangle. """
         if hand == []:
             return None
 
