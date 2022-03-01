@@ -143,18 +143,16 @@ class BridgeHand(abs_assignment.DataAssignment):
             by projecting the proximal phalanges on a plane
             taking the vector from wrist to knuckle
             and calculating the angle offset."""
-
-        carpals = [[knuckle[0], self.fingers[idx + 1][0]] for idx, knuckle in enumerate(self.fingers[:4])]
         proximal = [idx[0] + 1 for idx in self.fingers]
         joints = np.array([[0, 1, 2]])
         data = [0] * 20
 
         # project proximal phalanges on plane based on surrounding metacarpals
-        for idx, carpal in enumerate(carpals):
+        for idx, carpal in enumerate(self.fingers):
             # project per knuckle
             plane = np.array([hand[0][1],
-                              hand[carpal[0]][1] * 25,
-                              hand[carpal[1]][1] * 25])
+                              hand[carpal[0]][1] * 25,      # mcp
+                              hand[carpal[1]-1][1] * 25])   # tip
 
             projection = m_V.project_vec_on_plane(
                 plane,
