@@ -17,7 +17,6 @@ class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
 
     @classmethod
     def poll(self, context):
-        print("POLL CALLED")
         # Deactivate install button when dependencies have been installed
         return not install_dependencies.dependencies_installed
 

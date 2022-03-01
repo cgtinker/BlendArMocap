@@ -3,8 +3,8 @@ import importlib
 import os
 import subprocess
 import sys
-from pathlib import Path
 from collections import namedtuple
+from pathlib import Path
 
 import bpy.app
 
@@ -19,15 +19,15 @@ dependencies_installed = False
 def python_exe():
     version = bpy.app.version
     print("binary:", bpy.app.binary_path)
-    
+
     # blender vers =< 2.91 contain a path to their py executable
     if version[0] == 2 and version[1] <= 91:
         executable = bpy.app.binary_path_python
-        print("version < 2.92", executable)
+        print(version, executable)
     # newer versions sys.executable should point to the py executable
     else:
         executable = sys.executable
-        print("version > 2.91", executable)
+        print(version, executable)
 
     # some version point to the binary path instead of the py executable
     if executable == bpy.app.binary_path:
@@ -37,6 +37,9 @@ def python_exe():
         print("pointer failed, redirecting to:", executable)
 
     return executable
+
+
+python_exe = python_exe()
 
 
 def import_module(module_name, global_name=None, reload=True):
@@ -54,7 +57,8 @@ def import_module(module_name, global_name=None, reload=True):
 def install_pip():
     try:
         print("accessing pip installer")
-        subprocess.run([python_exe(), "-m", "pip", "--version"], check=True)
+        print(python_exe, "-m", "pip", "--version")
+        subprocess.run([python_exe, "-m", "pip", "--version"], check=True)
         # subprocess.run([sys.executable, "-m", "pip", "--version"], check=True)
     except subprocess.CalledProcessError:
         import ensurepip
@@ -64,7 +68,8 @@ def install_pip():
 
 
 def update_pip():
-    subprocess.call([python_exe(), "-m", "pip", "install", "--upgrade", "pip"])
+    print([python_exe, "-m", "pip", "install", "--upgrade", "pip"])
+    subprocess.call([python_exe, "-m", "pip", "install", "--upgrade", "pip"])
     # subprocess.call([sys.executable, "-m", "pip", "install", "--upgrade", "pip"])
 
 
@@ -79,11 +84,12 @@ def install_and_import_module(module_name, package_name=None, global_name=None):
     environ_copy["PYTHONNOUSERSITE"] = "1"
     print("Try to install:", package_name)
     try:
-        subprocess.run([python_exe(), "-m", "pip", "install", package_name], check=True, env=environ_copy)
+        print(python_exe, "-m", "pip", "install", package_name)
+        subprocess.run([python_exe, "-m", "pip", "install", package_name], check=True, env=environ_copy)
         # subprocess.run([sys.executable, "-m", "pip", "install", package_name], check=True, env=environ_copy)
     except Exception as e:
         print("INSTALL USING --USER TAG\n", e)
-        subprocess.run([python_exe(), "-m", "pip", "install", package_name], check=True, env=environ_copy)
+        subprocess.run([python_exe, "-m", "pip", "install", package_name], check=True, env=environ_copy)
         # subprocess.run([sys.executable, "-m", "pip", "install", package_name, "--user"], check=True, env=environ_copy)
     print("Installation process finished")
     # The installation succeeded, attempt to import the module again
