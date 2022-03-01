@@ -59,7 +59,6 @@ def install_pip():
         print("accessing pip installer")
         print(python_exe, "-m", "pip", "--version")
         subprocess.run([python_exe, "-m", "pip", "--version"], check=True)
-        # subprocess.run([sys.executable, "-m", "pip", "--version"], check=True)
     except subprocess.CalledProcessError:
         import ensurepip
         print("installing pip installer")
@@ -70,7 +69,6 @@ def install_pip():
 def update_pip():
     print([python_exe, "-m", "pip", "install", "--upgrade", "pip"])
     subprocess.call([python_exe, "-m", "pip", "install", "--upgrade", "pip"])
-    # subprocess.call([sys.executable, "-m", "pip", "install", "--upgrade", "pip"])
 
 
 def install_and_import_module(module_name, package_name=None, global_name=None):
@@ -86,11 +84,11 @@ def install_and_import_module(module_name, package_name=None, global_name=None):
     try:
         print(python_exe, "-m", "pip", "install", package_name)
         subprocess.run([python_exe, "-m", "pip", "install", package_name], check=True, env=environ_copy)
-        # subprocess.run([sys.executable, "-m", "pip", "install", package_name], check=True, env=environ_copy)
     except Exception as e:
+        # shouldn't be required but in rare cases it's required to install as with sudo
         print("INSTALL USING --USER TAG\n", e)
         subprocess.run([python_exe, "-m", "pip", "install", package_name], check=True, env=environ_copy)
-        # subprocess.run([sys.executable, "-m", "pip", "install", package_name, "--user"], check=True, env=environ_copy)
+
     print("Installation process finished")
     # The installation succeeded, attempt to import the module again
     import_module(module_name, global_name)

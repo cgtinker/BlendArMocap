@@ -24,6 +24,7 @@ class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
         try:
             # try to install dependencies
             install_dependencies.install_pip()
+            install_dependencies.update_pip()
             for dependency in install_dependencies.dependencies:
                 install_dependencies.install_and_import_module(module_name=dependency.module,
                                                                package_name=dependency.package,
