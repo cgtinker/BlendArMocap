@@ -55,6 +55,13 @@ class FingerDriverContainer(DriverContainer):
                  0.009209944768346605, 0.013687051320355704, 0.014263744947147612,
                  0.007851238324285822, 0.018652939267497854, 0.020807922400291265]
 
+    offsets = [
+        [-45, 45.], [-20, 45], [-10, .0],     # thumb
+        [-45, .0], [-25, .0], [-85, 75],     # index
+        [-35, 15], [-55, .0], [-15, 15],     # middle
+        [-45, -25], [-30, .0], [-25, 15],     # ring
+        [-55, -40], [-55, .0], [-25, .0],     # pinky
+    ]
     offset_min = [-45, -20, -10,  # thumb
                   -45, -25, -85,  # index
                   -35, -55, -15,  # middle
@@ -68,9 +75,9 @@ class FingerDriverContainer(DriverContainer):
                   -40, 0, 0]  # pinky
 
     def __init__(self, driver_targets: list, provider_objs: list):
-        slopes = [Slope(0, 1, 0, 1) for idx, _ in enumerate(self.max_input)]
-        #slopes = [Slope(self.min_input[idx], self.max_input[idx], self.offset_min[idx], self.offset_max[idx])
-        #          for idx, _ in enumerate(self.max_input)]
+        # slopes = [Slope(0, 1, 0, 1) for idx, _ in enumerate(self.max_input)]
+        slopes = [Slope(self.min_input[idx], self.max_input[idx], self.offset_min[idx], self.offset_max[idx])
+                  for idx, _ in enumerate(self.max_input)]
 
         self.pose_drivers = [FingerAngleDriver(driver_targets[idx], provider_objs[idx], slopes[idx]) for idx, _ in
                              enumerate(driver_targets)]

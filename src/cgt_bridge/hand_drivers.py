@@ -172,13 +172,15 @@ class BridgeHand(abs_assignment.DataAssignment):
     def get_x_angles(self, hand):
         """ get finger x angle by calculating the angle between each finger joint """
         origin = hand[0][1]  # [0, 0, 0]
-
-        x_fingers = [[hand[idx][1] for idx in range(finger[0], finger[1])] for finger in self.fingers]
-        x_fingers = [np.array([origin] + finger) for finger in x_fingers]  # add origin to finger
+        # finger vertices
+        fingers = [[hand[idx][1] for idx in range(finger[0], finger[1])] for finger in self.fingers]
+        # wrist as origin to fingers
+        fingers = [np.array([origin] + finger) for finger in fingers]
+        # remap finger ?
 
         # setup joints to calc finger angles
         x_joints = [[0, 1, 2], [1, 2, 3], [2, 3, 4]]
-        x_finger_angles = [m_V.joint_angles(finger, x_joints) for finger in x_fingers]
+        x_finger_angles = [m_V.joint_angles(finger, x_joints) for finger in fingers]
 
         data = [0] * 20
         for idx, angles in enumerate(x_finger_angles):

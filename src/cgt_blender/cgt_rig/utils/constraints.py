@@ -1,5 +1,6 @@
 
 def copy_rotation(constraint, target, *args):
+    print(constraint, target)
     constraint.target = target
     constraint.euler_order = 'XYZ'
     constraint.influence = 1
