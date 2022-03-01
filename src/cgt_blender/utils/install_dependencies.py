@@ -18,19 +18,23 @@ dependencies_installed = False
 
 def python_exe():
     version = bpy.app.version
-
+    print("binary:", bpy.app.binary_path)
+    
     # blender vers =< 2.91 contain a path to their py executable
     if version[0] == 2 and version[1] <= 91:
         executable = bpy.app.binary_path_python
+        print("version < 2.92", executable)
     # newer versions sys.executable should point to the py executable
     else:
         executable = sys.executable
+        print("version > 2.91", executable)
 
     # some version point to the binary path instead of the py executable
     if executable == bpy.app.binary_path:
         py_path = Path(sys.prefix) / "bin"
         py_exec = next(py_path.glob("python*"))  # first file that starts with "python" in "bin" dir
         executable = str(py_exec)
+        print("pointer failed, redirecting to:", executable)
 
     return executable
 
