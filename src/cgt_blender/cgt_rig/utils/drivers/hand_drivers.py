@@ -36,40 +36,40 @@ class FingerAngleDriver(DriverProperties):
         self.property_name = "rotation"
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
         # self.functions = ["", "", ""]
-        self.functions = [f"{slope.min_out})+{slope.slope}*(-{slope.min_in}+", "", f"3*"]
+        self.functions = [f"{slope.min_out})+{slope.slope}*(-{slope.min_in}+", "", f""]
         self.overwrite = True
 
 
 @dataclass(repr=True)
 class FingerDriverContainer(DriverContainer):
     # approx rounded input min max values based on 500 sample values
-    min_input = [0.00573971401900053, 0.02822212688624859, 0.15607228875160217,
-                 0.004682004451751709, 0.004955798387527466, 0.4647256135940552,
-                 0.009591266512870789, 0.380163311958313, 0.009675596840679646,
-                 0.010703802108764648, 0.17845264077186584, 0.016609380021691322,
-                 0.0671580359339714, 0.16959387063980103, 0.2043222188949585]
+    # min_input = [0.00573971401900053, 0.02822212688624859, 0.15607228875160217,
+    #              0.004682004451751709, 0.004955798387527466, 0.4647256135940552,
+    #              0.009591266512870789, 0.380163311958313, 0.009675596840679646,
+    #              0.010703802108764648, 0.17845264077186584, 0.016609380021691322,
+    #              0.0671580359339714, 0.16959387063980103, 0.2043222188949585]
 
-    max_input = [0.650924026966095, 0.6996214985847473, 1.1686301231384277,
-                 1.50493586063385, 1.9332847595214844, 1.2798185348510742,
-                 1.5089573860168457, 1.834489345550537, 1.814769983291626,
-                 1.56886887550354, 1.881842851638794, 1.5812692642211914,
-                 1.571094274520874, 1.5308549404144287, 1.8501083850860596]
+    # max_input = [0.650924026966095, 0.6996214985847473, 1.1686301231384277,
+    #              1.50493586063385, 1.9332847595214844, 1.2798185348510742,
+    #              1.5089573860168457, 1.834489345550537, 1.814769983291626,
+    #              1.56886887550354, 1.881842851638794, 1.5812692642211914,
+    #              1.571094274520874, 1.5308549404144287, 1.8501083850860596]
 
-    offset_min = [-45, -30, -10,  # thumb
-                  -55, -30, -25,  # index
-                  -30, -40, -15,  # middle
-                  -35, -20, -25,  # ring
-                  -45, -35, -25]  # pinky
+    # offset_min = [-45, -30, -10,  # thumb
+    #               -55, -30, -25,  # index
+    #               -30, -40, -15,  # middle
+    #               -35, -20, -25,  # ring
+    #               -45, -35, -25]  # pinky
 
-    offset_max = [0, 0, 0,  # thumb
-                  0, 0, 25,  # index
-                  0, 0, 0,  # middle
-                  -25, 0, 0,  # ring
-                  -20, 0, 0]  # pinky
+    # offset_max = [0, 0, 0,  # thumb
+    #               0, 0, 25,  # index
+    #               0, 0, 0,  # middle
+    #               -25, 0, 0,  # ring
+    #               -20, 0, 0]  # pinky
 
     def __init__(self, driver_targets: list, provider_objs: list):
-        slopes = [Slope(0, 1, 0, 1) for idx, _ in enumerate(self.max_input)]
-        #slopes = [Slope(self.min_input[idx], self.max_input[idx], self.offset_min[idx], self.offset_max[idx])
+        # slopes = [Slope(0, 1, 0, 1) for idx, _ in enumerate(self.max_input)]
+        # slopes = [Slope(self.min_input[idx], self.max_input[idx], self.offset_min[idx], self.offset_max[idx])
         #          for idx, _ in enumerate(self.max_input)]
 
         self.pose_drivers = [FingerAngleDriver(driver_targets[idx], provider_objs[idx], slopes[idx]) for idx, _ in
