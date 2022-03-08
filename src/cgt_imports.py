@@ -55,7 +55,7 @@ def get_parents(file: Path, parents: list):
     return parents
 
 
-def manage_imports(reload=False):
+def manage_imports(reload: bool = False):
     for module in INIT_MODULES:
         print("module to import:", module)
         import_module(module)
