@@ -141,10 +141,11 @@ class BridgeHand(abs_assignment.DataAssignment):
                 joint_angle = [idx, Euler((x_angles[idx], 0, z_angles[idx]))]
                 data.append(joint_angle)
 
-        self.print_angle_matrix(x_angles)
+        # self.print_angle_matrix(x_angles)
         return data
 
     def print_angle_matrix(self, angles):
+        # printing matrix for setting up drivers
         deg = [degrees(d) for d in angles]
 
         # averages
@@ -168,8 +169,6 @@ class BridgeHand(abs_assignment.DataAssignment):
                 self.max_values[idx] = d
             if d < self.min_values[idx]:
                 self.min_values[idx] = d
-
-
 
     def get_y_angles(self, hand):
         """ get approximate y angle

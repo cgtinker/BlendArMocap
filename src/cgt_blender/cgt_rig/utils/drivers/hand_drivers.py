@@ -61,11 +61,11 @@ class FingerDriverContainer(DriverContainer):
     ]
 
     min_output = [
-        -45., -20., -10.,  # thumb
-        -45., -20., -90.,  # index
-        -35., -50., -10.,  # middle
-        -45., -25., -20.,  # ring
-        -75., -45., -30.,  # pinky
+        -50., -20., -10.,  # thumb
+        -65., -35., -90.,  # index
+        -40., -65., -15.,  # middle
+        -40., -35., -30.,  # ring
+        -85., -60., -40.,  # pinky
     ]
 
     max_output = [
