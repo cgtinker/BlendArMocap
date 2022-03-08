@@ -1,4 +1,4 @@
-def copy_rotation(constraint, target, *args):
+def copy_rotation(constraint, target, values):
     constraint.target = target
     constraint.euler_order = 'XYZ'
     constraint.influence = 1
@@ -6,15 +6,18 @@ def copy_rotation(constraint, target, *args):
     constraint.owner_space = 'LOCAL'
 
 
-def limit_rotation(constraint, target, *args):
+def limit_rotation(constraint, target, values):
+    print(constraint)
+    print("args", values)
     constraint.use_limit_x = True
-    constraint.min_x = -0.136
+    # constraint.min_x = -0.136
+    constraint.min_x = -3.1472
     constraint.max_x = 3.1472
     constraint.influence = 1
     constraint.owner_space = 'LOCAL'
 
 
-def copy_rotation_world_space(bone, target, *args):
+def copy_rotation_world_space(bone, target, values):
     constraint = bone.constraints.new(
         type="COPY_ROTATION"
     )
@@ -25,13 +28,13 @@ def copy_rotation_world_space(bone, target, *args):
     constraint.owner_space = 'WORLD'
 
 
-def copy_location(constraint, target, *args):
+def copy_location(constraint, target, values):
     constraint.target = target
     constraint.influence = 1
     constraint.owner_space = 'POSE'
 
 
-def copy_location_offset(bone, target, *args):
+def copy_location_offset(bone, target, values):
     constraint = bone.constraints.new(
         type="COPY_LOCATION"
     )
@@ -41,7 +44,7 @@ def copy_location_offset(bone, target, *args):
     constraint.owner_space = 'POSE'
 
 
-def copy_location_world(bone, target, *args):
+def copy_location_world(bone, target, values):
     constraint = bone.constraints.new(
         type="COPY_LOCATION"
     )
@@ -50,14 +53,14 @@ def copy_location_world(bone, target, *args):
     constraint.owner_space = 'WORLD'
 
 
-def damped_track(constraint, target, *args):
+def damped_track(constraint, target, values):
     constraint.target = target
     constraint.influence = 1
     constraint.track_axis = 'TRACK_Y'
     constraint.owner_space = 'POSE'
 
 
-def track_to(constraint, target, *args):
+def track_to(constraint, target, values):
     constraint.target = target
     constraint.influence = 1
 
@@ -97,7 +100,7 @@ constraint_mapping = {
 }
 
 
-def add_constraint(bone, target, constraint):
+def add_constraint(bone, target, constraint, values):
     m_constraints = [c for c in bone.constraints]
     # overwriting constraint by
     # removing previously added constraints if types match
@@ -124,7 +127,7 @@ def add_constraint(bone, target, constraint):
         m_constraint = bone.constraints.new(
             type=constraint
         )
-        constraint_mapping[constraint](m_constraint, target)
+        constraint_mapping[constraint](m_constraint, target, values)
     except TypeError or KeyError:
         # call custom method with bone
-        constraint_mapping[constraint](bone, target)
+        constraint_mapping[constraint](bone, target, values)

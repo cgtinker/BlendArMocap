@@ -25,26 +25,34 @@ class BpyRigging(ABC):
             gets target method by driver type."""
         pose_bone_names = [bone.name for bone in self.pose_bones]
 
-        def apply_by_type(values):
+        def apply_by_type(mapping_relation):
+            print("PROCESSING", mapping_relation)
+
             def constraint():
-                if values[0] in pose_bone_names:
+                if mapping_relation.driver_target in pose_bone_names:
+
                     # get pose bone
-                    idx = pose_bone_names.index(values[0])
+                    idx = pose_bone_names.index(mapping_relation.driver_target)
                     pose_bone = self.pose_bones[idx]
 
                     # add constraint to bone
                     add_constraint = self.method_mapping[mapping_relation.driver_type]
-                    add_constraint(pose_bone, mapping_relation.source, values[1])
+                    add_constraint(pose_bone,
+                                   mapping_relation.driver_source,
+                                   mapping_relation.values[0],
+                                   mapping_relation.values[1:])
 
             def driver():
+                driver_container = mapping_relation.driver_target
+
                 # if ob already found, pass
-                if type(values.target_object) == str:
-                    values.target_object = objects.get_object_by_name(values.target_object)
+                if type(driver_container.target_object) == str:
+                    driver_container.target_object = objects.get_object_by_name(driver_container.target_object)
 
                 # assign values as driver
-                values.provider_obj = mapping_relation.source
-                driver_method = self.method_mapping[mapping_relation.driver_type]
-                driver_method(values)
+                driver_container.provider_obj = mapping_relation.driver_source
+                driver_method = self.method_mapping[driver_container.driver_type]
+                driver_method(driver_container)
 
             # type determines target method
             relations = {
@@ -56,8 +64,8 @@ class BpyRigging(ABC):
             relations[mapping_relation.driver_type]()
 
         # apply all mapping relation based on their types
-        for mapping_relation in self.mapping_relation_list:
-            apply_by_type(mapping_relation.values)
+        for m_mapping_relation in self.mapping_relation_list:
+            apply_by_type(m_mapping_relation)
     # endregion
 
     # region mapping
@@ -94,13 +102,16 @@ class BpyRigging(ABC):
 
     def set_constraint_relation(self, constraint_dict: dict, driver_names: list, driver_objects: list):
         for name in constraint_dict:
-            print("Preparing", name, constraint_dict[name])
-            # get constraint by name
             if name in driver_names:
+                # get driver source object and set driver type
                 driver_obj = self.get_driver_object(name, driver_names, driver_objects)
                 driver_type = driver_interface.DriverType.CONSTRAINT
-                # create a mapping relation
-                relation = mapping.MappingRelation(driver_obj, driver_type, constraint_dict[name])
+                # create a mapping relation (source, type, driver, values)
+                relation = mapping.MappingRelation(
+                    driver_source=driver_obj,
+                    driver_type=driver_type,
+                    driver_target=constraint_dict[name][0],
+                    values=constraint_dict[name][1:])
                 self.mapping_relation_list.append(relation)
     # endregion
 

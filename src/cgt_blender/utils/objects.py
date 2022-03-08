@@ -212,13 +212,13 @@ def get_global_bone_head_position(armature, bone):
 # region CONSTRAINTS
 def add_copy_location_constraint(obj, target_obj, use_offset):
     constraint = obj.constraints.new('COPY_LOCATION')
-    constraint.source = target_obj
+    constraint.driver_source = target_obj
     constraint.use_offset = use_offset
 
 
 def add_copy_rotation_constraint(obj, target_obj, invert_y):
     constraint = obj.constraints.new('COPY_ROTATION')
-    constraint.source = target_obj
+    constraint.driver_source = target_obj
     if invert_y:
         constraint.invert_y = True
 

@@ -38,7 +38,7 @@ class CgtProperties(PropertyGroup):
         name="Target",
         description="Select detection type for motion tracking.",
         items=(
-            ("HAND", "Hands", ""),
+            ("HAND", "Fingers", ""),
             ("FACE", "Face", ""),
             ("POSE", "Pose", ""),
         )
