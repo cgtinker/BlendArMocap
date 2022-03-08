@@ -9,11 +9,19 @@ class RigifyHands(abs_rigging.BpyRigging):
         self.pose_bones = armature.pose.bones
 
         self.bone_limits = [
-            [0, 1], [0, 1], [0, 1],  # thumb
-            [0, 1], [0, 1], [0, 1],  # index
-            [0, 1], [0, 1], [0, 1],  # middle
-            [0, 1], [0, 1], [0, 1],  # ring
-            [0, 1], [0, 1], [0, 1],  # pinky
+            [-0.261, 3.1421], [-0.136, 3.1421], [-0.136, 3.1421],  # thumb
+            [-0.261, 3.1421], [-0.136, 3.1421], [-0.136, 3.1421],  # index
+            [-0.261, 3.1421], [-0.136, 3.1421], [-0.136, 3.1421],  # middle
+            [-0.349, 3.1421], [-0.136, 3.1421], [-0.136, 3.1421],  # ring
+            [-0.654, 3.1421], [-0.136, 3.1421], [-0.136, 3.1421],  # pinky
+        ]
+
+        self.no_limits = [
+            [-3.142, 3.142], [-3.142, 3.142], [-3.142, 3.142],
+            [-3.142, 3.142], [-3.142, 3.142], [-3.142, 3.142],
+            [-3.142, 3.142], [-3.142, 3.142], [-3.142, 3.142],
+            [-3.142, 3.142], [-3.142, 3.142], [-3.142, 3.142],
+            [-3.142, 3.142], [-3.142, 3.142], [-3.142, 3.142],
         ]
 
         self.rigify_bone_refs = {
@@ -115,16 +123,16 @@ class RigifyHands(abs_rigging.BpyRigging):
             name = empty.name.replace(extension, "")
             try:
                 index, bone_name = self.get_reference_bone(name, extension)
-                print("RET", index, bone_name, "KEY", name)
                 self.rot_constraint_dict[empty.name] = [bone_name, "COPY_ROTATION"]
-                self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.bone_limits[index]]
-
+                # self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.bone_limits[index]]
+                self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.no_limits[index]]
             except KeyError:
                 print("driver empty does not exist:", empty.name)
 
+        # prepare drivers
         self.set_single_prop_relation(
             [self.left_finger_angle_drivers, self.right_finger_angle_drivers],
             [obj.name for obj in driver_objects], driver_objects)
-        print("DICT", self.limit_constraint_dict)
+        # prepare constraints
         self.set_constraint_relation(self.rot_constraint_dict, [obj.name for obj in driver_objects], driver_objects)
         self.set_constraint_relation(self.limit_constraint_dict, [obj.name for obj in driver_objects], driver_objects)

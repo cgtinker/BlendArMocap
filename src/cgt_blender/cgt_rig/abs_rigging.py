@@ -112,6 +112,7 @@ class BpyRigging(ABC):
                     driver_type=driver_type,
                     driver_target=constraint_dict[name][0],
                     values=constraint_dict[name][1:])
+                print("\nACTIVE REL:", relation)
                 self.mapping_relation_list.append(relation)
     # endregion
 

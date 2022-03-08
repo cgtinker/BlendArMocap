@@ -7,12 +7,11 @@ def copy_rotation(constraint, target, values):
 
 
 def limit_rotation(constraint, target, values):
-    print(constraint)
-    print("args", values)
+    print("CURRENT", constraint, values)
     constraint.use_limit_x = True
     # constraint.min_x = -0.136
-    constraint.min_x = -3.1472
-    constraint.max_x = 3.1472
+    constraint.min_x = values[0][0]
+    constraint.max_x = values[0][1]
     constraint.influence = 1
     constraint.owner_space = 'LOCAL'
 
@@ -63,6 +62,7 @@ def damped_track(constraint, target, values):
 def track_to(constraint, target, values):
     constraint.target = target
     constraint.influence = 1
+    constraint.owner_space = 'POSE'
 
 
 constraint_mapping = {
@@ -89,7 +89,7 @@ constraint_mapping = {
     "LOCKED_TRACK":         17,
     "SPLINE_IK":            18,
     "STRETCH_TO":           19,
-    "TRACK_TO":             20,
+    "TRACK_TO":             track_to,
     "ACTION":               21,
     "ARMATURE":             22,
     "CHILD_OF":             23,
@@ -101,6 +101,7 @@ constraint_mapping = {
 
 
 def add_constraint(bone, target, constraint, values):
+    print("ADD CONST", values)
     m_constraints = [c for c in bone.constraints]
     # overwriting constraint by
     # removing previously added constraints if types match
