@@ -23,7 +23,7 @@ class FingerAngleDriver(DriverProperties):
     functions: list
 
     # def __init__(self, driver_target, provider_obj, factor, offset):
-    def __init__(self, driver_target, provider_obj, slope):
+    def __init__(self, driver_target: object, provider_obj: object, slope: Slope, z_func: str):
         """ Provides eye driver properties to animate the lids.
             :param provider_obj: object providing rotation values.
             :param slope: factor to multiply and offset the rotation
@@ -36,7 +36,9 @@ class FingerAngleDriver(DriverProperties):
         self.property_type = "rotation_euler"
         self.property_name = "rotation"
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
-        self.functions = [f"{slope.min_out})+{slope.slope}*({slope.min_in}+", "", f""]
+        self.functions = [f"{slope.min_out})+{slope.slope}*({slope.min_in}+",
+                          "",
+                          z_func]
         self.overwrite = True
 
 
@@ -44,6 +46,14 @@ class FingerAngleDriver(DriverProperties):
 class FingerDriverContainer(DriverContainer):
     # approx rounded input min max values based on 500 sample values
     # min_input = [0.00] * 15
+    z_angle_funcs = [
+        "-.261+2.5*rotation if rotation != 0 else", "", "",  # thumb
+        "-.261+2.5*rotation if rotation != 0 else", "", "",  # index
+        "-.055+2.5*rotation if rotation != 0 else", "", "",  # middle
+        "0.150-2.5*rotation if rotation != 0 else", "", "",  # ring
+        "-.250+5.0*rotation if rotation != 0 else", "", "",  # pinky
+    ]
+
     min_input = [
         0.22, 0.80, 0.59,
         5.06, 0.66, 1.17,
@@ -61,11 +71,11 @@ class FingerDriverContainer(DriverContainer):
     ]
 
     min_output = [
-        -50., -20., -10.,  # thumb
-        -65., -35., -90.,  # index
-        -40., -65., -15.,  # middle
-        -40., -35., -30.,  # ring
-        -85., -60., -40.,  # pinky
+        -47.5, -17.5, -12.5,  # thumb
+        -62.5, -32.5, -87.5,  # index
+        -37.5, -62.5, -12.5,  # middle
+        -42.5, -32.5, -27.5,  # ring
+        -82.5, -60.0, -37.5,  # pinky
     ]
 
     max_output = [
@@ -89,4 +99,5 @@ class FingerDriverContainer(DriverContainer):
                 driver_targets[idx],
                 provider_objs[idx],
                 slopes[idx],
+                self.z_angle_funcs[idx]
             ) for idx, _ in enumerate(driver_targets)]
