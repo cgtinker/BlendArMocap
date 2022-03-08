@@ -5,6 +5,7 @@ from . import abs_assignment
 from ..cgt_blender.utils import objects
 from ..cgt_naming import HAND, COLLECTIONS
 from ..cgt_utils import m_V
+from math import degrees
 
 
 class BridgeHand(abs_assignment.DataAssignment):
@@ -61,6 +62,10 @@ class BridgeHand(abs_assignment.DataAssignment):
         [13, 17],  # ring finger
         [17, 21],  # pinky
     ]
+
+    max_values = [-155] * 20
+    min_values = [155] * 20
+    avg_values = []
 
     # hands
     left_hand = []
@@ -136,7 +141,35 @@ class BridgeHand(abs_assignment.DataAssignment):
                 joint_angle = [idx, Euler((x_angles[idx], 0, z_angles[idx]))]
                 data.append(joint_angle)
 
+        self.print_angle_matrix(x_angles)
         return data
+
+    def print_angle_matrix(self, angles):
+        deg = [degrees(d) for d in angles]
+
+        # averages
+        avg_container = [0]*20
+        self.avg_values.append(deg)
+        for values in self.avg_values:
+            for i, val in enumerate(values):
+                avg_container[i] += val
+        avg_c = [val / len(self.avg_values) for val in avg_container]
+        print(f"{len(self.avg_values)}, \n")
+
+        # current
+        for finger in self.fingers:
+            cu = [[idx, self.min_values[idx], avg_c[idx], deg[idx], self.max_values[idx]] for idx in
+                  range(finger[0], finger[1] - 1)]
+            print(cu)
+
+        # min max values
+        for idx, d in enumerate(deg):
+            if d > self.max_values[idx]:
+                self.max_values[idx] = d
+            if d < self.min_values[idx]:
+                self.min_values[idx] = d
+
+
 
     def get_y_angles(self, hand):
         """ get approximate y angle
@@ -170,11 +203,9 @@ class BridgeHand(abs_assignment.DataAssignment):
     def get_x_angles(self, hand):
         """ get finger x angle by calculating the angle between each finger joint """
         origin = hand[0][1]  # [0, 0, 0]
-        # finger vertices
+        # finger vertices - wrist as origin to fingers
         fingers = [[hand[idx][1] for idx in range(finger[0], finger[1])] for finger in self.fingers]
-        # wrist as origin to fingers
         fingers = [np.array([origin] + finger) for finger in fingers]
-        # remap finger ?
 
         # setup joints to calc finger angles
         x_joints = [[0, 1, 2], [1, 2, 3], [2, 3, 4]]

@@ -1,10 +1,16 @@
-
 def copy_rotation(constraint, target, *args):
-    print(constraint, target)
     constraint.target = target
     constraint.euler_order = 'XYZ'
     constraint.influence = 1
     constraint.mix_mode = 'ADD'
+    constraint.owner_space = 'LOCAL'
+
+
+def limit_rotation(constraint, target, *args):
+    constraint.use_limit_x = True
+    constraint.min_x = -0.136
+    constraint.max_x = 3.1472
+    constraint.influence = 1
     constraint.owner_space = 'LOCAL'
 
 
@@ -57,38 +63,38 @@ def track_to(constraint, target, *args):
 
 
 constraint_mapping = {
-        "CAMERA_SOLVER":        0,
-        "FOLLOW_TRACK":         1,
-        "OBJECT_SOLVER":        2,
-        "COPY_LOCATION":        copy_location,
-        "COPY_LOCATION_OFFSET": copy_location_offset,
-        "COPY_LOCATION_WORLD":  copy_location_world,
-        "COPY_ROTATION":        copy_rotation,
-        "COPY_ROTATION_WORLD":  copy_rotation_world_space,
-        "COPY_SCALE":           5,
-        "COPY_TRANSFORMS":      6,
-        "LIMIT_DISTANCE":       7,
-        "LIMIT_LOCATION":       8,
-        "LIMIT_ROTATION":       9,
-        "LIMIT_SCALE":          10,
-        "MAINTAIN_VOLUME":      11,
-        "TRANSFORM":            12,
-        "TRANSFORM_CACHE":      13,
-        "CLAMP_TO":             14,
-        "DAMPED_TRACK":         damped_track,
-        "IK":                   16,
-        "LOCKED_TRACK":         17,
-        "SPLINE_IK":            18,
-        "STRETCH_TO":           19,
-        "TRACK_TO":             20,
-        "ACTION":               21,
-        "ARMATURE":             22,
-        "CHILD_OF":             23,
-        "FLOOR":                24,
-        "FOLLOW_PATH":          25,
-        "PIVOT":                26,
-        "SHRINKWRAP":           27,
-    }
+    "CAMERA_SOLVER":        0,
+    "FOLLOW_TRACK":         1,
+    "OBJECT_SOLVER":        2,
+    "COPY_LOCATION":        copy_location,
+    "COPY_LOCATION_OFFSET": copy_location_offset,
+    "COPY_LOCATION_WORLD":  copy_location_world,
+    "COPY_ROTATION":        copy_rotation,
+    "COPY_ROTATION_WORLD":  copy_rotation_world_space,
+    "COPY_SCALE":           5,
+    "COPY_TRANSFORMS":      6,
+    "LIMIT_DISTANCE":       7,
+    "LIMIT_LOCATION":       8,
+    "LIMIT_ROTATION":       limit_rotation,
+    "LIMIT_SCALE":          10,
+    "MAINTAIN_VOLUME":      11,
+    "TRANSFORM":            12,
+    "TRANSFORM_CACHE":      13,
+    "CLAMP_TO":             14,
+    "DAMPED_TRACK":         damped_track,
+    "IK":                   16,
+    "LOCKED_TRACK":         17,
+    "SPLINE_IK":            18,
+    "STRETCH_TO":           19,
+    "TRACK_TO":             20,
+    "ACTION":               21,
+    "ARMATURE":             22,
+    "CHILD_OF":             23,
+    "FLOOR":                24,
+    "FOLLOW_PATH":          25,
+    "PIVOT":                26,
+    "SHRINKWRAP":           27,
+}
 
 
 def add_constraint(bone, target, constraint):

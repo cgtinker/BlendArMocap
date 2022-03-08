@@ -1,6 +1,6 @@
 from . import abs_rigging
-from ...cgt_naming import HAND
 from .utils.drivers.hand_drivers import FingerDriverContainer
+from ...cgt_naming import HAND
 
 
 class RigifyHands(abs_rigging.BpyRigging):
@@ -8,28 +8,38 @@ class RigifyHands(abs_rigging.BpyRigging):
         # driver to rigify cgt_rig transfer name references
         self.pose_bones = armature.pose.bones
 
-        self.references = {
+        self.bone_limits = [
+            [
+                [0, 1], [0, 1], [0, 1],  # thumb
+                [0, 1], [0, 1], [0, 1],  # index
+                [0, 1], [0, 1], [0, 1],  # middle
+                [0, 1], [0, 1], [0, 1],  # ring
+                [0, 1], [0, 1], [0, 1],  # pinky
+            ]
+        ]
+
+        self.rigify_bone_refs = {
             # HAND.wrist:                     "hand_ik",
-            HAND.driver_thumb_cmc:          "thumb.01",
-            HAND.driver_thumb_mcp:          "thumb.02",
-            HAND.driver_thumb_ip:           "thumb.03",
-            HAND.driver_thumb_tip:          "thumb.01",
-            HAND.driver_index_finger_mcp:   "f_index.01",
-            HAND.driver_index_finger_pip:   "f_index.02",
-            HAND.driver_index_finger_dip:   "f_index.03",
-            HAND.driver_index_finger_tip:   "f_index.01",
-            HAND.driver_middle_finger_mcp:  "f_middle.01",
-            HAND.driver_middle_finger_pip:  "f_middle.02",
-            HAND.driver_middle_finger_dip:  "f_middle.03",
-            HAND.driver_middle_finger_tip:  "f_middle.01",
-            HAND.driver_ring_finger_mcp:    "f_ring.01",
-            HAND.driver_ring_finger_pip:    "f_ring.02",
-            HAND.driver_ring_finger_dip:    "f_ring.03",
-            HAND.driver_ring_finger_tip:    "f_ring.01",
-            HAND.driver_pinky_mcp:          "f_pinky.01",
-            HAND.driver_pinky_pip:          "f_pinky.02",
-            HAND.driver_pinky_dip:          "f_pinky.03",
-            HAND.driver_pinky_tip:          "f_pinky.01",
+            HAND.driver_thumb_cmc:         "thumb.01",
+            HAND.driver_thumb_mcp:         "thumb.02",
+            HAND.driver_thumb_ip:          "thumb.03",
+            HAND.driver_thumb_tip:         "thumb.01",
+            HAND.driver_index_finger_mcp:  "f_index.01",
+            HAND.driver_index_finger_pip:  "f_index.02",
+            HAND.driver_index_finger_dip:  "f_index.03",
+            HAND.driver_index_finger_tip:  "f_index.01",
+            HAND.driver_middle_finger_mcp: "f_middle.01",
+            HAND.driver_middle_finger_pip: "f_middle.02",
+            HAND.driver_middle_finger_dip: "f_middle.03",
+            HAND.driver_middle_finger_tip: "f_middle.01",
+            HAND.driver_ring_finger_mcp:   "f_ring.01",
+            HAND.driver_ring_finger_pip:   "f_ring.02",
+            HAND.driver_ring_finger_dip:   "f_ring.03",
+            HAND.driver_ring_finger_tip:   "f_ring.01",
+            HAND.driver_pinky_mcp:         "f_pinky.01",
+            HAND.driver_pinky_pip:         "f_pinky.02",
+            HAND.driver_pinky_dip:         "f_pinky.03",
+            HAND.driver_pinky_tip:         "f_pinky.01",
         }
 
         finger_driver_references = {
@@ -70,7 +80,8 @@ class RigifyHands(abs_rigging.BpyRigging):
             right_finger_provider)
 
         # storing relations between rigify and driver cgt_rig (left / right hand)
-        self.constraint_dict = {}
+        self.rot_constraint_dict = {}
+        self.limit_constraint_dict = {}
         self.set_relation_dict(driver_objects)
         self.apply_drivers()
 
@@ -78,10 +89,10 @@ class RigifyHands(abs_rigging.BpyRigging):
         """ get reference bone by driver empty name. """
         if "TIP" in key:
             # rigify finger tip has .001 extension (why ever..)
-            bone_name = self.references[key] + extension + ".001"
+            bone_name = self.rigify_bone_refs[key] + extension + ".001"
             return bone_name
 
-        bone_name = self.references[key] + extension
+        bone_name = self.rigify_bone_refs[key] + extension
         return bone_name
 
     def set_relation_dict(self, driver_objects):
@@ -97,7 +108,8 @@ class RigifyHands(abs_rigging.BpyRigging):
             name = empty.name.replace(extension, "")
             try:
                 bone_name = self.get_reference_bone(name, extension)
-                self.constraint_dict[empty.name] = [bone_name, "COPY_ROTATION"]
+                self.rot_constraint_dict[empty.name] = [bone_name, "COPY_ROTATION"]
+                self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION"]
 
             except KeyError:
                 print("driver empty does not exist:", empty.name)
@@ -105,4 +117,5 @@ class RigifyHands(abs_rigging.BpyRigging):
         self.set_single_prop_relation(
             [self.left_finger_angle_drivers, self.right_finger_angle_drivers],
             [obj.name for obj in driver_objects], driver_objects)
-        self.set_constraint_relation(self.constraint_dict, [obj.name for obj in driver_objects], driver_objects)
+        self.set_constraint_relation(self.rot_constraint_dict, [obj.name for obj in driver_objects], driver_objects)
+        self.set_constraint_relation(self.limit_constraint_dict, [obj.name for obj in driver_objects], driver_objects)

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
+from math import radians
 
 from .driver_interface import DriverProperties, DriverContainer, DriverType
-from math import radians
 
 
 @dataclass(repr=True)
@@ -26,57 +26,67 @@ class FingerAngleDriver(DriverProperties):
     def __init__(self, driver_target, provider_obj, slope):
         """ Provides eye driver properties to animate the lids.
             :param provider_obj: object providing rotation values.
-            :param factor: factor to multiply and offset the rotation
+            :param slope: factor to multiply and offset the rotation
+            :param offset: offsets the base input value
         """
+
         self.target_object = driver_target
         self.driver_type = DriverType.SINGLE
         self.provider_obj = provider_obj
         self.property_type = "rotation_euler"
         self.property_name = "rotation"
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
-        self.functions = [f"{slope.min_out})+{slope.slope}*(-{slope.min_in}+", "", f""]
+        self.functions = [f"{slope.min_out})+{slope.slope}*({slope.min_in}+", "", f""]
         self.overwrite = True
 
 
 @dataclass(repr=True)
 class FingerDriverContainer(DriverContainer):
     # approx rounded input min max values based on 500 sample values
+    # min_input = [0.00] * 15
     min_input = [
-        10.5, 10.0, 17.5,  # thumb
-        15.0, 5.00, 45.0,  # index
-        7.50, 27.5, 6.50,  # middle
-        6.50, 17.5, 2.50,  # ring
-        15.0, 17.5, 20.0  # pinky
+        0.22, 0.80, 0.59,
+        5.06, 0.66, 1.17,
+        1.11, 0.98, 0.41,
+        0.62, 1.62, 0.05,
+        5.21, 2.30, 0.71
     ]
 
     max_input = [
-        22.5, 42.5, 67.5,  # thumb
-        65.0, 95.0, 80.0,  # index
-        70.0, 95.0, 105.,  # middle
-        70.0, 95.0, 92.5,  # ring
-        80.0, 85.0, 105.0  # pinky
+        42.76, 58.19, 93.19,  # thumb
+        117.0, 116.3, 86.71,  # index
+        104.8, 112.4, 111.0,  # middle
+        121.3, 108.2, 99.16,  # ring
+        123.9, 95.04, 117.8  # pinky
     ]
 
     min_output = [
-        -5., -5, -5,     # thumb
-        -25, -5, -5,     # index
-        -25, -5, -5,     # middle
-        -25, -5, -5,     # ring
-        -45, -5, -5      # pinky
+        -45., -20., -10.,  # thumb
+        -45., -20., -90.,  # index
+        -35., -50., -10.,  # middle
+        -45., -25., -20.,  # ring
+        -75., -45., -30.,  # pinky
     ]
 
     max_output = [
-        22.5, 42.5, 67.5,  # thumb
-        65.0, 95.0, 80.0,  # index
-        70.0, 95.0, 105.,  # middle
-        70.0, 95.0, 92.5,  # ring
-        80.0, 85.0, 105.0  # pinky
+        42.76, 58.19, 93.19,  # thumb
+        117.0, 116.3, 86.71,  # index
+        104.8, 112.4, 111.0,  # middle
+        121.3, 108.2, 99.16,  # ring
+        123.9, 95.04, 117.8  # pinky
     ]
 
+    limits = [0.00] * 15
+
     def __init__(self, driver_targets: list, provider_objs: list):
-        # slopes = [Slope(0, 1, 0, 1) for idx, _ in enumerate(self.max_input)]
+        # slopes = [Slope(0, 1, 0, 1)
+        #           for idx, _ in enumerate(self.max_input)]
         slopes = [Slope(self.min_input[idx], self.max_input[idx], self.min_output[idx], self.max_output[idx])
                   for idx, _ in enumerate(self.max_input)]
 
-        self.pose_drivers = [FingerAngleDriver(driver_targets[idx], provider_objs[idx], slopes[idx]) for idx, _ in
-                             enumerate(driver_targets)]
+        self.pose_drivers = [
+            FingerAngleDriver(
+                driver_targets[idx],
+                provider_objs[idx],
+                slopes[idx],
+            ) for idx, _ in enumerate(driver_targets)]
