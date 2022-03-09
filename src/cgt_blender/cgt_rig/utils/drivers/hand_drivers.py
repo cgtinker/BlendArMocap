@@ -23,7 +23,13 @@ class FingerAngleDriver(DriverProperties):
     functions: list
 
     # def __init__(self, driver_target, provider_obj, factor, offset):
-    def __init__(self, driver_target: object, provider_obj: object, slope: Slope, z_func: str):
+    def __init__(self,
+                 driver_target: str,
+                 provider_obj: object,
+                 slope: Slope,
+                 z_offset: float,
+                 z_dir: int,
+                 z_factor: float):
         """ Provides eye driver properties to animate the lids.
             :param provider_obj: object providing rotation values.
             :param slope: factor to multiply and offset the rotation
@@ -38,7 +44,8 @@ class FingerAngleDriver(DriverProperties):
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
         self.functions = [f"{slope.min_out})+{slope.slope}*({slope.min_in}+",
                           "",
-                          z_func]
+                          # z_func]
+                          f"{z_offset} + {z_dir} * rotation * {z_factor} if rotation != 0 else"]
         self.overwrite = True
 
 
@@ -46,12 +53,14 @@ class FingerAngleDriver(DriverProperties):
 class FingerDriverContainer(DriverContainer):
     # approx rounded input min max values based on 500 sample values
     # L / R hand inverted
-    z_angle_funcs = [
-        "-.261 + rotation * 6 if rotation != 0 else", "", "",  # thumb
-        "0.376 - rotation * 6 if rotation != 0 else", "", "",  # index
-        "0.171 - rotation * 6 if rotation != 0 else", "", "",  # middle
-        "-.176 + rotation * 6 if rotation != 0 else", "", "",  # ring
-        "-.216 + rotation * 6 if rotation != 0 else", "", "",  # pinky
+    # todo: setup slopes
+    z_factor = 5.5
+    z_angle_offset = [
+        -.161, 0, 0,
+        0.534, 0, 0,
+        0.114, 0, 0,
+        -.361, 0, 0,
+        -.376, 0, 0,
     ]
 
     min_input = [
@@ -88,16 +97,31 @@ class FingerDriverContainer(DriverContainer):
 
     limits = [0.00] * 15
 
-    def __init__(self, driver_targets: list, provider_objs: list):
+    def __init__(self, driver_targets: list, provider_objs: list, orientation: str):
         # slopes = [Slope(0, 1, 0, 1)
         #           for idx, _ in enumerate(self.max_input)]
         slopes = [Slope(self.min_input[idx], self.max_input[idx], self.min_output[idx], self.max_output[idx])
                   for idx, _ in enumerate(self.max_input)]
+
+        def z_angle_function(idx):
+            offset = 0
+            if orientation == "left":
+                offset = self.z_angle_offset[idx]
+            elif orientation == "right":
+                offset = self.z_angle_offset[idx] * -1
+
+            if offset > 0:
+                factor = -1
+            else:
+                factor = 1
+            return offset, factor
 
         self.pose_drivers = [
             FingerAngleDriver(
                 driver_targets[idx],
                 provider_objs[idx],
                 slopes[idx],
-                self.z_angle_funcs[idx]
-            ) for idx, _ in enumerate(driver_targets)]
+                z_angle_function(idx)[0],
+                z_angle_function(idx)[1],
+                self.z_factor
+        ) for idx, _ in enumerate(driver_targets)]

@@ -75,11 +75,13 @@ class RigifyHands(abs_rigging.BpyRigging):
 
         self.left_finger_angle_drivers = FingerDriverContainer(
             left_finger_targets,
-            left_finger_provider)
+            left_finger_provider,
+            "left")
 
         self.right_finger_angle_drivers = FingerDriverContainer(
             right_finger_targets,
-            right_finger_provider)
+            right_finger_provider,
+            "right")
 
         # storing relations between rigify and driver cgt_rig (left / right hand)
         self.rot_constraint_dict = {}

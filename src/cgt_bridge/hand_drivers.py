@@ -200,6 +200,13 @@ class BridgeHand(abs_assignment.DataAssignment):
                 np.array(mcp)
             )
 
+            pip = hand[finger[1] - 1][1]
+            proj_pip = m_V.project_vec_on_plane(
+                plane,
+                joints,
+                np.array(pip)
+            )
+
             dip = hand[finger[0]+1][1]
             proj_dip = m_V.project_vec_on_plane(
                 plane,
