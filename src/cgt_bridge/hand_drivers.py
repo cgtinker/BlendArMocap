@@ -175,42 +175,44 @@ class BridgeHand(abs_assignment.DataAssignment):
             by projecting the proximal phalanges on a plane
             taking the vector from wrist to knuckle
             and calculating the angle offset."""
-        proximal = [idx[0] + 1 for idx in self.fingers]
         joints = np.array([[0, 1, 2]])
         data = [0] * 20
-
-        plane = np.array([
-            hand[0][1],
-            hand[1][1] * 25,
-            hand[17][1] * 25
-        ])
+        plane_tris = [
+            [1, 5],
+            [5, 9],
+            [9, 13],
+            [13, 17],
+            [13, 17]
+        ]
 
         # project proximal phalanges on plane based on surrounding metacarpals
-        for idx, carpal in enumerate(self.fingers):
-            # project per knuckle
-            # plane = np.array([hand[0][1],
-            #                   hand[carpal[0]][1] * 25,      # mcp
-            #                   hand[carpal[1]-1][1] * 25])   # tip
+        for idx, finger in enumerate(self.fingers):
+            mcp = hand[finger[0]][1]
+            plane = np.array([
+                np.array([0, 0, 0]),
+                hand[plane_tris[idx][0]][1],
+                hand[plane_tris[idx][1]][1]
+            ])
 
-            projection = m_V.project_vec_on_plane(
+            proj_mcp = m_V.project_vec_on_plane(
                 plane,
                 joints,
-                np.array(hand[proximal[idx]][1])
+                np.array(mcp)
             )
 
-            proj_carpal = m_V.project_vec_on_plane(
+            dip = hand[finger[0]+1][1]
+            proj_dip = m_V.project_vec_on_plane(
                 plane,
                 joints,
-                np.array(hand[carpal[0]][1])
+                np.array(dip)
             )
-            angle = m_V.angle_between(np.array(projection), np.array(proj_carpal))
 
-            # get angle between projected vector and knuckle
-            # angle = m_V.angle_between(np.array(projection), np.array(hand[carpal[0]][1]))
+            angle = m_V.angle_between(np.array(proj_dip), np.array(proj_mcp))
 
             if angle is None:
                 break
-            data[carpal[0]] = angle
+
+            data[finger[0]] = angle
         return data
 
     def get_x_angles(self, hand):

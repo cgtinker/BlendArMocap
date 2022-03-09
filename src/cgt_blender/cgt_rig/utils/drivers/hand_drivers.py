@@ -45,13 +45,13 @@ class FingerAngleDriver(DriverProperties):
 @dataclass(repr=True)
 class FingerDriverContainer(DriverContainer):
     # approx rounded input min max values based on 500 sample values
-    # min_input = [0.00] * 15
+    # L / R hand inverted
     z_angle_funcs = [
-        "-.261+2.5*rotation if rotation != 0 else", "", "",  # thumb
-        "-.261+2.5*rotation if rotation != 0 else", "", "",  # index
-        "-.055+2.5*rotation if rotation != 0 else", "", "",  # middle
-        "0.150-2.5*rotation if rotation != 0 else", "", "",  # ring
-        "-.250+5.0*rotation if rotation != 0 else", "", "",  # pinky
+        "-.261 + rotation * 6 if rotation != 0 else", "", "",  # thumb
+        "0.376 - rotation * 6 if rotation != 0 else", "", "",  # index
+        "0.171 - rotation * 6 if rotation != 0 else", "", "",  # middle
+        "-.176 + rotation * 6 if rotation != 0 else", "", "",  # ring
+        "-.216 + rotation * 6 if rotation != 0 else", "", "",  # pinky
     ]
 
     min_input = [
