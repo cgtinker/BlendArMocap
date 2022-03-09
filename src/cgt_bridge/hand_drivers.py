@@ -179,20 +179,34 @@ class BridgeHand(abs_assignment.DataAssignment):
         joints = np.array([[0, 1, 2]])
         data = [0] * 20
 
+        plane = np.array([
+            hand[0][1],
+            hand[1][1] * 25,
+            hand[17][1] * 25
+        ])
+
         # project proximal phalanges on plane based on surrounding metacarpals
         for idx, carpal in enumerate(self.fingers):
             # project per knuckle
-            plane = np.array([hand[0][1],
-                              hand[carpal[0]][1] * 25,      # mcp
-                              hand[carpal[1]-1][1] * 25])   # tip
+            # plane = np.array([hand[0][1],
+            #                   hand[carpal[0]][1] * 25,      # mcp
+            #                   hand[carpal[1]-1][1] * 25])   # tip
 
             projection = m_V.project_vec_on_plane(
                 plane,
                 joints,
                 np.array(hand[proximal[idx]][1])
             )
+
+            proj_carpal = m_V.project_vec_on_plane(
+                plane,
+                joints,
+                np.array(hand[carpal[0]][1])
+            )
+            angle = m_V.angle_between(np.array(projection), np.array(proj_carpal))
+
             # get angle between projected vector and knuckle
-            angle = m_V.angle_between(np.array(projection), np.array(hand[carpal[0]][1]))
+            # angle = m_V.angle_between(np.array(projection), np.array(hand[carpal[0]][1]))
 
             if angle is None:
                 break
