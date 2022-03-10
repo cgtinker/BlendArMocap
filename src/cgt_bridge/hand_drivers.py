@@ -65,7 +65,6 @@ class BridgeHand(abs_assignment.DataAssignment):
 
     max_values = [-155] * 20
     min_values = [155] * 20
-    avg_values = []
 
     # hands
     left_hand = []
@@ -133,7 +132,7 @@ class BridgeHand(abs_assignment.DataAssignment):
             return None
 
         x_angles = self.get_x_angles(hand)
-        z_angles = self.get_y_angles(hand)
+        z_angles = self.get_z_angles(hand)
 
         data = []
         for idx in range(0, 20):
@@ -141,25 +140,16 @@ class BridgeHand(abs_assignment.DataAssignment):
                 joint_angle = [idx, Euler((x_angles[idx], 0, z_angles[idx]))]
                 data.append(joint_angle)
 
-        # self.print_angle_matrix(x_angles)
+        # self.print_angle_matrix(z_angles)
         return data
 
     def print_angle_matrix(self, angles):
         # printing matrix for setting up drivers
         deg = [degrees(d) for d in angles]
 
-        # averages
-        avg_container = [0]*20
-        self.avg_values.append(deg)
-        for values in self.avg_values:
-            for i, val in enumerate(values):
-                avg_container[i] += val
-        avg_c = [val / len(self.avg_values) for val in avg_container]
-        print(f"{len(self.avg_values)}, \n")
-
         # current
         for finger in self.fingers:
-            cu = [[idx, self.min_values[idx], avg_c[idx], deg[idx], self.max_values[idx]] for idx in
+            cu = [[idx, self.min_values[idx], deg[idx], self.max_values[idx]] for idx in
                   range(finger[0], finger[1] - 1)]
             print(cu)
 
@@ -170,7 +160,7 @@ class BridgeHand(abs_assignment.DataAssignment):
             if d < self.min_values[idx]:
                 self.min_values[idx] = d
 
-    def get_y_angles(self, hand):
+    def get_z_angles(self, hand):
         """ get approximate y angle
             by projecting the proximal phalanges on a plane
             taking the vector from wrist to knuckle
