@@ -48,19 +48,19 @@ class FingerAngleDriver(DriverProperties):
 @dataclass(repr=True)
 class FingerDriverContainer(DriverContainer):
     z_inputs = [
-        [0.0, 16],  [0, 1], [0, 1],  # thumb
-        [0.0, 7.5], [0, 1], [0, 1],  # index
-        [0.0, 4.0], [0, 1], [0, 1],  # middle
-        [0.0, 5.8], [0, 1], [0, 1],  # ring
-        [0.0, 6],   [0, 1], [0, 1],  # pinky
+        [0.0, 16],  # thumb
+        [0.0, 7.5],  # index
+        [0.0, 4.0],  # middle
+        [0.0, 5.8],  # ring
+        [0.0, 6],  # pinky
     ]
 
     z_outputs = [
-        [-20, 20], [0, 1], [0, 1],  # thumb
-        [9.5, -18], [0, 1], [0, 1],  # index
-        [-9, 7], [0, 1], [0, 1],  # middle
-        [-5, 12], [0, 1], [0, 1],  # ring
-        [-10, 20], [0, 1], [0, 1],  # pinky
+        [20, -20],  # thumb
+        [-15, 20],  # index
+        [15, -10],  # middle
+        [5, -12],  # ring
+        [10, -20],  # pinky
     ]
 
     x_inputs = [
@@ -87,21 +87,24 @@ class FingerDriverContainer(DriverContainer):
 
         z_slopes = [
             Slope(self.z_inputs[idx][0], self.z_inputs[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1])
-            for idx in range(0, 15)
+            for idx in range(0, 5)
         ]
 
         # values have to be mirrored to fit angles
-        self.z_outputs = [[i[0]*-1, i[1]*-1] for i in self.z_outputs]
+        self.z_outputs = [[i[0] * -1, i[1] * -1] for i in self.z_outputs]
         m_slopes = [
             Slope(self.z_inputs[idx][0], self.z_inputs[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1])
-            for idx in range(0, 15)
+            for idx in range(0, 5)
         ]
 
         def get_z_slope(idx):
+            if idx not in range(0, 15, 3):
+                return Slope(0, 1, 0, 1)
+
             if orientation == "right":
-                return z_slopes[idx]
+                return z_slopes[int(idx / 3)]
             else:
-                return m_slopes[idx]
+                return m_slopes[int(idx / 3)]
 
         self.pose_drivers = [
             FingerAngleDriver(
