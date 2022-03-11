@@ -39,38 +39,31 @@ class FingerAngleDriver(DriverProperties):
         self.property_type = "rotation_euler"
         self.property_name = "rotation"
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
-        self.functions = [f"{x_slope.min_out})+{x_slope.slope}*({x_slope.min_in}+",
+        self.functions = [f"{x_slope.min_out})+{x_slope.slope}*({-x_slope.min_in}+",
                           "",
-                          f"{z_slope.min_out})+{z_slope.slope}*({z_slope.min_in}+"]
+                          f"{z_slope.min_out})+{z_slope.slope}*({-z_slope.min_in}+"]
         self.overwrite = True
 
 
 @dataclass(repr=True)
 class FingerDriverContainer(DriverContainer):
     # shifting avgs for L / R hand z-angles
-    z_inputs_R = [
-        [-.7, 18.],  # thumb
-        [-1., 10],  # index
-        [-3.5, 6.5],  # middle
-        [-.5, 10.],  # ring
-        [-3, 7.5],  # pinky
-    ]
 
-    z_inputs_L = [
-        [0.0, 18.],  # thumb
-        [0., 8.5],  # index
-        [-.9, 7.5],  # middle
-        [-.0, 10.],  # ring
-        [-3, 7.5],  # pinky
+    z_inputs = [
+        [20, 62.5],  # thumb
+        [30, 110],  # index
+        [60, 115],  # middle
+        [90, 165],  # ring
+        [75, 160],  # pinky
     ]
 
     z_outputs = [
         # in / out
-        [-15, 25],  # thumb
-        [-25, 25],  # index
-        [0., 30],  # middle
-        [5, -30],  # ring
-        [5, -35],  # pinky
+        [-25, 25],  # thumb
+        [35, -20],  # index
+        [30, -15],  # middle
+        [35, -25],  # ring
+        [35, -25],  # pinky
     ]
 
     x_inputs = [
@@ -95,15 +88,15 @@ class FingerDriverContainer(DriverContainer):
             for idx in range(0, 15)
         ]
 
-        z_slopes_R = [
-            Slope(self.z_inputs_R[idx][0], self.z_inputs_R[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1])
+        z_slopes_r = [
+            Slope(self.z_inputs[idx][0], self.z_inputs[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1])
             for idx in range(0, 5)
         ]
 
         # values have to be mirrored to fit angles
         self.z_outputs = [[i[0] * -1, i[1] * -1] for idx, i in enumerate(self.z_outputs)]
-        m_slopes_L = [
-            Slope(self.z_inputs_L[idx][0], self.z_inputs_L[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1])
+        z_slopes_l = [
+            Slope(self.z_inputs[idx][0], self.z_inputs[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1])
             for idx in range(0, 5)
         ]
 
@@ -112,9 +105,9 @@ class FingerDriverContainer(DriverContainer):
                 return Slope(0, 1, 0, 1)
 
             if orientation == "right":
-                return z_slopes_R[int(idx / 3)]
+                return z_slopes_r[int(idx / 3)]
             else:
-                return m_slopes_L[int(idx / 3)]
+                return z_slopes_l[int(idx / 3)]
 
         self.pose_drivers = [
             FingerAngleDriver(

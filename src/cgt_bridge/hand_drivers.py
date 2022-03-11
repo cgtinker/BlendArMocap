@@ -1,3 +1,5 @@
+from math import degrees
+
 import numpy as np
 from mathutils import Euler
 
@@ -5,7 +7,6 @@ from . import abs_assignment
 from ..cgt_blender.utils import objects
 from ..cgt_naming import HAND, COLLECTIONS
 from ..cgt_utils import m_V
-from math import degrees
 
 
 class BridgeHand(abs_assignment.DataAssignment):
@@ -132,7 +133,7 @@ class BridgeHand(abs_assignment.DataAssignment):
             return None
 
         x_angles = self.get_x_angles(hand)
-        z_angles = self.get_z_angles(hand)
+        z_angles = self.get_nz_angles(hand)
 
         data = []
         for idx in range(0, 20):
@@ -140,7 +141,7 @@ class BridgeHand(abs_assignment.DataAssignment):
                 joint_angle = [idx, Euler((x_angles[idx], 0, z_angles[idx]))]
                 data.append(joint_angle)
 
-        # self.print_angle_matrix(z_angles)
+        self.print_angle_matrix(z_angles)
         return data
 
     def print_angle_matrix(self, angles):
@@ -159,6 +160,66 @@ class BridgeHand(abs_assignment.DataAssignment):
                 self.max_values[idx] = d
             if d < self.min_values[idx]:
                 self.min_values[idx] = d
+
+    def get_nz_angles(self, hand):
+        """ get approximate z angle
+            by projecting mcp and dip on a plane based on the palm
+            calculating the angle based on the mcps and dips """
+        joints = np.array([[0, 1, 2]])
+        data = [0] * 20
+        plane_tris = [
+            [1, 5],  # thumb
+            [5, 9],  # index
+            [9, 13],  # middle
+            [13, 17],  # ring
+            [17, 13]  # pinky -> [17, 13]
+        ]
+
+        # project proximal phalanges on plane based on surrounding metacarpals
+        for idx, finger in enumerate(self.fingers):
+            if idx != 0:
+                # palm based plane
+                plane = np.array([
+                    np.array([0, 0, 0]),
+                    hand[5][1],
+                    hand[17][1]
+                ])
+            else:
+                # thumb based plane
+                plane = np.array([
+                    np.array([0, 0, 0]),
+                    hand[plane_tris[idx][0]][1],
+                    hand[plane_tris[idx][1]][1]
+                ])
+
+            # PROJ MCP ON PLANE
+            proj_mcp = m_V.project_vec_on_plane(
+                plane, joints, hand[plane_tris[idx][0]][1])
+            proj_mcp_b = m_V.project_vec_on_plane(
+                plane, joints, hand[plane_tris[idx][1]][1])
+
+            # PROJ PIP ON PLANE
+            pip = hand[finger[0] + 1]
+            proj_pip = m_V.project_vec_on_plane(
+                plane, joints, np.array(pip[1]))
+
+            # vector to chain mcps
+            if idx < 4:
+                mcp_vector = m_V.to_vector(proj_mcp, proj_mcp_b)
+
+            else:  # change vector direction
+                mcp_vector = m_V.to_vector(proj_mcp_b, proj_mcp)
+
+            # mcp to pip vec
+            tar_vec = m_V.to_vector(np.array(proj_mcp), np.array(proj_pip))
+            angle = m_V.angle_between(np.array(tar_vec), np.array(mcp_vector))
+
+            if angle is None:
+                break
+
+            data[finger[0]] = angle # noqa
+
+        return data
 
     def get_z_angles(self, hand):
         """ get approximate y angle
@@ -190,7 +251,7 @@ class BridgeHand(abs_assignment.DataAssignment):
                 np.array(mcp)
             )
 
-            dip = hand[finger[0]+1][1]
+            dip = hand[finger[0] + 1][1]
             proj_dip = m_V.project_vec_on_plane(
                 plane,
                 joints,
