@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from .driver_interface import DriverProperties, DriverContainer, DriverType
+from ..mapping import Slope
 
 
 @dataclass(repr=True)
@@ -91,7 +92,7 @@ class EyebrowDriver(DriverProperties):
     target_object: str
     functions: list
 
-    def __init__(self, driver_target, provider_obj, bone_distance, target_path):
+    def __init__(self, driver_target, provider_obj, bone_distance, target_path, slope):
         self.target_object = driver_target
         self.driver_type = DriverType.SINGLE
         self.provider_obj = provider_obj
@@ -99,19 +100,37 @@ class EyebrowDriver(DriverProperties):
         self.property_name = "scale"
         self.data_paths = target_path
         self.overwrite = True
-        # requires a slope!
-        self.functions = ["0*", "0*", f"{bone_distance}*.15) + ({bone_distance}*-.3)*(-1+"]
+        self.functions = ["0*", "0*",
+                          f"{bone_distance}*.25)-({bone_distance}*.2)*"
+                          f"({slope.min_out}+{slope.slope})*({-slope.min_in}+"]
 
 
 @dataclass(repr=True)
 class EyebrowDriverContainer(DriverContainer):
+    inputs = [
+        [0.75, 1.85],  # in
+        [0.65, 1.65],  # mid
+        [0.65, 1.66],  # out
+    ]
+
+    outputs = [
+        # in / out
+        [0, 1],  # in
+        [0, 1],  # mid
+        [0, 1],  # out
+    ]
+
     def __init__(self, driver_targets, provider_objs, brow_distances):
+        slopes = [
+            Slope(self.inputs[idx][0], self.inputs[idx][1], self.outputs[idx][0], self.outputs[idx][1])
+            for idx in range(0, 3)
+        ]
         tar_path = [
             ["scale.x", "scale.x", "scale.x"],
             ["scale.y", "scale.y", "scale.y"],
             ["scale.z", "scale.z", "scale.z"]
         ]
         self.pose_drivers = [
-            EyebrowDriver(driver_targets[i], provider_objs[0], brow_distances[i], tar_path[i]) if i < 3
-            else EyebrowDriver(driver_targets[i], provider_objs[1], brow_distances[i], tar_path[i - 3])
+            EyebrowDriver(driver_targets[i], provider_objs[0], brow_distances[i], tar_path[i], slopes[i]) if i < 3
+            else EyebrowDriver(driver_targets[i], provider_objs[1], brow_distances[i], tar_path[i - 3], slopes[i-3])
             for i in range(0, 6)]
