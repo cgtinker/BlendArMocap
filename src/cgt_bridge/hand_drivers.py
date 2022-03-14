@@ -103,13 +103,13 @@ class BridgeHand(abs_assignment.DataAssignment):
 
     def update(self):
         """ applies gathered data to references """
-        if self.has_duplicated_results():
-            return
+        # if self.has_duplicated_results(self.left_hand_data[0][0]):
+        #     return
 
         self.set_position()
         self.set_rotation()
 
-        self.prev_data = self.left_hand_data
+        # self.prev_data = self.left_hand_data[0][0]
 
     def set_position(self):
         """ keyframe the input data."""

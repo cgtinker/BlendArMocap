@@ -66,14 +66,14 @@ class BridgeFace(abs_assignment.DataAssignment):
         self.set_rotation_driver_data()
 
     def update(self):
-        if self.has_duplicated_results():
-            return
+        # if self.has_duplicated_results():
+        #     return
 
         self.euler_rotate(self.face, self.rotation_data, self.frame)
         self.scale(self.face, self.driver_scale_data, self.frame)
         self.set_position()
 
-        self.prev_data = self.data
+        # self.prev_data = self.data
 
     def set_position(self):
         """Keyframes the position of input data."""

@@ -70,9 +70,13 @@ class DataAssignment(ABC):
         objects.add_obj_to_collection(col_name, driver.obj, self.driver_col)
         return driver.obj
 
-    def has_duplicated_results(self):
+    def has_duplicated_results(self, data=None):
+        if data is None:
+            data = self.data
         for i in range(0, 11):
-            if np.array_equal(self.data[0][1], self.prev_data[0][1]):
+            print(i, self.data[i])
+            print(i, self.prev_data[i])
+            if np.array_equal(data[i][1], self.prev_data[i][1]):
                 return True
 
         return False

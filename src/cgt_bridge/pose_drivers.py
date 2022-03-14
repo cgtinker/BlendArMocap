@@ -103,14 +103,14 @@ class BridgePose(abs_assignment.DataAssignment):
         self.average_rig_scale()
 
     def update(self):
-        if self.has_duplicated_results():
-            return
+        # if self.has_duplicated_results():
+        #     return
 
         self.set_position()
         self.set_rotation()
         self.set_scale()
 
-        self.prev_data = self.data
+        # self.prev_data = self.data
 
     def set_position(self):
         """Keyframe the position of input data."""
