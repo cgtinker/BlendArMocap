@@ -101,16 +101,16 @@ class EyebrowDriver(DriverProperties):
         self.data_paths = target_path
         self.overwrite = True
         self.functions = ["0*", "0*",
-                          f"{bone_distance}*.25)-({bone_distance}*.2)*"
+                          f"{bone_distance}*.125)-({bone_distance}*.25)*"
                           f"({slope.min_out}+{slope.slope})*({-slope.min_in}+"]
 
 
 @dataclass(repr=True)
 class EyebrowDriverContainer(DriverContainer):
     inputs = [
-        [0.75, 1.85],  # in
+        [0.85, 2.0],  # in
         [0.65, 1.65],  # mid
-        [0.65, 1.66],  # out
+        [0.65, 1.65],  # out
     ]
 
     outputs = [
