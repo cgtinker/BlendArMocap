@@ -56,10 +56,10 @@ class RigifyFace(BpyRigging):
             FACE.mouth_r:     [mouth_bone_names[1][1], "COPY_LOCATION_OFFSET"],
 
             FACE.eyebrow_in_l:   [eyebrow_bone_names[0][0], "COPY_LOCATION_OFFSET"],
-            FACE.eyebrow_mid_l:  [eyebrow_bone_names[1][0], "COPY_LOCATION_OFFSET"],
+            # FACE.eyebrow_mid_l:  [eyebrow_bone_names[1][0], "COPY_LOCATION_OFFSET"],
             FACE.eyebrow_out_l:  [eyebrow_bone_names[2][0], "COPY_LOCATION_OFFSET"],
             FACE.eyebrow_in_r:   [eyebrow_bone_names[3][0], "COPY_LOCATION_OFFSET"],
-            FACE.eyebrow_mid_r:  [eyebrow_bone_names[4][0], "COPY_LOCATION_OFFSET"],
+            # FACE.eyebrow_mid_r:  [eyebrow_bone_names[4][0], "COPY_LOCATION_OFFSET"],
             FACE.eyebrow_out_r:  [eyebrow_bone_names[5][0], "COPY_LOCATION_OFFSET"],
 
             FACE.head:        ["head", "COPY_ROTATION_WORLD"],
@@ -75,7 +75,6 @@ class RigifyFace(BpyRigging):
         driver_names = [obj.name for obj in driver_objects]
 
         single_prop_drivers = [self.eye_drivers, self.mouth_drivers, self.eyebrow_drivers]
-        print(self.eye_drivers, "\n", self.mouth_drivers, "\n", self.eyebrow_drivers)
         self.set_single_prop_relation(single_prop_drivers, driver_names, driver_objects)
         self.set_constraint_relation(self.constraint_dict, driver_names, driver_objects)
 

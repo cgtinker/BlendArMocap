@@ -110,6 +110,6 @@ class EyebrowDriverContainer(DriverContainer):
             ["", "", "scale.z"]
         ]
         self.pose_drivers = [
-            EyebrowDriver(driver_targets[i], provider_objs[0], brow_distances[i], tar_path[i], 1) if i < 3  # left
-            else EyebrowDriver(driver_targets[i], provider_objs[1], brow_distances[i], tar_path[i - 3], 1)  # right
+            EyebrowDriver(driver_targets[i], provider_objs[0], brow_distances[i], tar_path[i], .02) if i < 3  # left
+            else EyebrowDriver(driver_targets[i], provider_objs[1], brow_distances[i], tar_path[i - 3], .02)  # right
             for i in range(0, 6)]

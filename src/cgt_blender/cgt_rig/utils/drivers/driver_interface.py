@@ -59,6 +59,7 @@ class Driver(DriverProperties):
 
     def is_custom_property_assigned(self):
         # return if custom prop has been assigned
+        print("TARGET:", self.target_object, self.property_name)
         self.assigned = objects.set_custom_property(self.target_object, self.property_name, True)
 
     def __init__(self, expression: DriverProperties):

@@ -109,9 +109,10 @@ def add_constraint(bone, target, constraint, values):
         # prepare target constraint
         target_constraint = constraint
         if "_WORLD" in constraint:
-            target_constraint.replace("_WORLD", "")
+            target_constraint = target_constraint.replace("_WORLD", "")
         elif "_OFFSET" in constraint:
-            target_constraint.replace("_OFFSET", "")
+            target_constraint = target_constraint.replace("_OFFSET", "")
+            print(target_constraint)
 
         # match syntax of bpy constraint
         constraint_name = c.name
