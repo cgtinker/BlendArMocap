@@ -141,7 +141,7 @@ class BridgeHand(abs_assignment.DataAssignment):
                 joint_angle = [idx, Euler((x_angles[idx], 0, z_angles[idx]))]
                 data.append(joint_angle)
 
-        self.print_angle_matrix(z_angles)
+        # self.print_angle_matrix(z_angles)
         return data
 
     def print_angle_matrix(self, angles):
