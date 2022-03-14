@@ -111,13 +111,13 @@ class BridgeFace(abs_assignment.DataAssignment):
         self.eye_driver_R.sca = [1.5, 0.001, eye_r]
 
     def eyebrow_drivers(self, avg_scale):
-        eyebrow_in_l = self.average_length_at_scale(285, 388, avg_scale)
-        eyebrow_mid_l = self.average_length_at_scale(295, 297, avg_scale)
-        eyebrow_out_l = self.average_length_at_scale(282, 332, avg_scale)
+        eyebrow_in_l = self.average_length_at_scale(336, 338, avg_scale)
+        eyebrow_mid_l = self.average_length_at_scale(296, 297, avg_scale)
+        eyebrow_out_l = self.average_length_at_scale(334, 332, avg_scale)
 
-        eyebrow_in_r = self.average_length_at_scale(55, 109, avg_scale)
-        eyebrow_mid_r = self.average_length_at_scale(65, 67, avg_scale)
-        eyebrow_out_r = self.average_length_at_scale(52, 103, avg_scale)
+        eyebrow_in_r = self.average_length_at_scale(107, 109, avg_scale)
+        eyebrow_mid_r = self.average_length_at_scale(66, 67, avg_scale)
+        eyebrow_out_r = self.average_length_at_scale(105, 103, avg_scale)
 
         self.eyebrow_L.sca = [eyebrow_in_l, eyebrow_mid_l, eyebrow_out_l]
         self.eyebrow_R.sca = [eyebrow_in_r, eyebrow_mid_r, eyebrow_out_r]

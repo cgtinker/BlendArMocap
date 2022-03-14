@@ -91,17 +91,16 @@ class EyebrowDriver(DriverProperties):
     target_object: str
     functions: list
 
-    def __init__(self, driver_target, provider_obj, bone_distance, target_path, factor):
+    def __init__(self, driver_target, provider_obj, bone_distance, target_path):
         self.target_object = driver_target
         self.driver_type = DriverType.SINGLE
         self.provider_obj = provider_obj
         self.property_type = "location"
         self.property_name = "scale"
         self.data_paths = target_path
-        # self.overwrite = True
-        self.functions = [f"0*",
-                          f"0*",
-                          f"-{bone_distance}*{factor}+{bone_distance}*"]
+        self.overwrite = True
+        # requires a slope!
+        self.functions = ["0*", "0*", f"{bone_distance}*.15) + ({bone_distance}*-.3)*(-1+"]
 
 
 @dataclass(repr=True)
@@ -113,6 +112,6 @@ class EyebrowDriverContainer(DriverContainer):
             ["scale.z", "scale.z", "scale.z"]
         ]
         self.pose_drivers = [
-            EyebrowDriver(driver_targets[i], provider_objs[0], brow_distances[i], tar_path[i], .005) if i < 3  # left
-            else EyebrowDriver(driver_targets[i], provider_objs[1], brow_distances[i], tar_path[i - 3], .005)  # right
+            EyebrowDriver(driver_targets[i], provider_objs[0], brow_distances[i], tar_path[i]) if i < 3
+            else EyebrowDriver(driver_targets[i], provider_objs[1], brow_distances[i], tar_path[i - 3])
             for i in range(0, 6)]
