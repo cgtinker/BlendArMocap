@@ -88,6 +88,7 @@ class BridgeHand(abs_assignment.DataAssignment):
     def init_data(self):
         """ prepares data before setting """
         self.left_hand_data, self.right_hand_data = self.landmarks_to_hands(list(zip(self.data[0], self.data[1])))
+
         self.left_angles = self.finger_angles(self.left_hand_data)
         self.right_angles = self.finger_angles(self.right_hand_data)
 
@@ -102,8 +103,13 @@ class BridgeHand(abs_assignment.DataAssignment):
 
     def update(self):
         """ applies gathered data to references """
+        if self.has_duplicated_results():
+            return
+
         self.set_position()
         self.set_rotation()
+
+        self.prev_data = self.left_hand_data
 
     def set_position(self):
         """ keyframe the input data."""

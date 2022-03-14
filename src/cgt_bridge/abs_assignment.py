@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from math import pi
-
+import numpy as np
 from mathutils import Vector, Euler
 
 from ..cgt_blender.utils import objects
@@ -18,6 +18,8 @@ class CustomData:
 
 class DataAssignment(ABC):
     data = None
+    # array for comparison, as noise is present every frame values should change
+    prev_data = [["", ""]]*21
     frame = 0
     references = None
     prev_rotation = {}
@@ -68,6 +70,12 @@ class DataAssignment(ABC):
         objects.add_obj_to_collection(col_name, driver.obj, self.driver_col)
         return driver.obj
 
+    def has_duplicated_results(self):
+        for i in range(0, 11):
+            if np.array_equal(self.data[0][1], self.prev_data[0][1]):
+                return True
+
+        return False
     # endregion
 
     # region bpy object oriented
