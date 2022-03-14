@@ -81,7 +81,8 @@ class BridgeFace(abs_assignment.DataAssignment):
     def set_scale_driver_data(self):
         """ prepares mouth and eye driver data. """
         # setting up drivers
-        avg_scale = m_V.vector_length_2d(self.data[362][1], self.data[263][1], 'Z')  # eye dist as avg scale
+        avg_scale = m_V.vector_length(m_V.to_vector(self.data[362][1], self.data[263][1]))  # eye dist as avg scale
+        # avg_scale = m_V.vector_length_2d(self.data[362][1], self.data[263][1], 'Z')  # eye dist as avg scale
         self.mouth_driver(avg_scale)
         self.eye_driver(avg_scale)
         self.eyebrow_drivers(avg_scale)
@@ -171,7 +172,8 @@ class BridgeFace(abs_assignment.DataAssignment):
     # region cgt_utils
     def average_length_at_scale(self, p1, p2, scale):
         """ get length of 2d vector and normalize by 1d scale """
-        length = m_V.vector_length_2d(self.data[p1][1], self.data[p2][1], 'Z')
+        length = m_V.vector_length(m_V.to_vector(self.data[p1][1], self.data[p2][1]))
+        # length = m_V.vector_length_2d(self.data[p1][1], self.data[p2][1], 'Z')
         return m_V.vector_length(length / scale)
 
     def custom_landmark_origin(self):

@@ -1,5 +1,6 @@
-from .driver_interface import DriverProperties, DriverContainer, DriverType
 from dataclasses import dataclass
+
+from .driver_interface import DriverProperties, DriverContainer, DriverType
 
 
 @dataclass(repr=True)
@@ -79,7 +80,36 @@ class MouthDriverContainer(DriverContainer):
     def __init__(self, driver_targets, provider_obj, mouth_distances):
         upper_lip = MouthDriver(driver_targets[0][0], provider_obj, mouth_distances[0], 0.3, "up")
         lower_lip = MouthDriver(driver_targets[0][1], provider_obj, mouth_distances[0], -0.3, "down")
-        left_lip = MouthDriver(driver_targets[1][0], provider_obj, mouth_distances[1], .05, "left")
-        right_lip = MouthDriver(driver_targets[1][1], provider_obj, mouth_distances[1], -.01, "right")
+        left_lip = MouthDriver(driver_targets[1][0], provider_obj, mouth_distances[1], .02, "left")
+        right_lip = MouthDriver(driver_targets[1][1], provider_obj, mouth_distances[1], -.02, "right")
 
         self.pose_drivers = [upper_lip, lower_lip, left_lip, right_lip]
+
+
+@dataclass(repr=True)
+class EyebrowDriver(DriverProperties):
+    target_object: str
+    functions: list
+
+    def __init__(self, driver_target, provider_obj, bone_distance, target_path, factor):
+        self.target_object = driver_target
+        self.driver_type = DriverType.SINGLE
+        self.provider_obj = provider_obj
+        self.property_type = "location"
+        self.property_name = "scale"
+        self.data_paths = target_path
+        self.functions = ["", "", f"-{bone_distance}*{factor}+{bone_distance}*"]
+
+
+@dataclass(repr=True)
+class EyebrowDriverContainer(DriverContainer):
+    def __init__(self, driver_targets, provider_objs, brow_distances):
+        tar_path = [
+            ["", "", "scale.x"],
+            ["", "", "scale.y"],
+            ["", "", "scale.z"]
+        ]
+        self.pose_drivers = [
+            EyebrowDriver(driver_targets[i], provider_objs[0], brow_distances[i], tar_path[i], 1) if i < 3  # left
+            else EyebrowDriver(driver_targets[i], provider_objs[1], brow_distances[i], tar_path[i - 3], 1)  # right
+            for i in range(0, 6)]

@@ -30,6 +30,7 @@ class DriverProperties:
     overwrite: bool = False
 
 
+@dataclass(repr=True)
 class DriverContainer:
     """
     Container for storing multiple drivers.
@@ -48,12 +49,13 @@ class DriverContainer:
             driver.driver_type = driver_type
 
 
+@dataclass(repr=True)
 class Driver(DriverProperties):
     """ Applies a driver to a targeted object using values gathered from a
         provider object. May stores multiple drivers and variables. """
     drivers: list
-    assigned: bool = False
     variables: list
+    assigned: bool = False
 
     def is_custom_property_assigned(self):
         # return if custom prop has been assigned
