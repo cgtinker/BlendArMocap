@@ -65,7 +65,7 @@ class RigifyPose(abs_rigging.BpyRigging):
     # endregion
 
     def __init__(self, armature, driver_objects: list):
-        self.pose_bones = armature.pose.bones
+        super().__init__(armature)
 
         # region bone center driver setup
         self.m_shoulder_center = m_V.center_point(

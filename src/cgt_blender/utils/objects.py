@@ -228,6 +228,7 @@ def add_copy_rotation_constraint(obj, target_obj, invert_y):
 
 # region CUSTOM PROPERTIES
 def set_custom_property(target_obj, prop_name, prop):
+    print("set custom prop", target_obj, prop_name, prop)
     if get_custom_property(target_obj, prop_name) == None:
         target_obj[prop_name] = prop
         return False

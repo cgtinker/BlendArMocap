@@ -7,7 +7,7 @@ from ...cgt_naming import FACE
 
 class RigifyFace(BpyRigging):
     def __init__(self, armature: bpy.types.Object, driver_objects: list):
-        self.pose_bones = armature.pose.bones
+        super().__init__(armature)
 
         # region eye drivers
         eye_driver_names = [[FACE.right_eye_t, FACE.right_eye_b], [FACE.left_eye_t, FACE.left_eye_b]]

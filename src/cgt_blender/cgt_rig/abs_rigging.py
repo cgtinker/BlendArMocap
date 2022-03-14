@@ -8,12 +8,17 @@ from ...cgt_utils import m_V
 
 class BpyRigging(ABC):
     pose_bones: list = None
-    mapping_relation_list: list = []
+    mapping_relation_list: list = None
     method_mapping = {
         driver_interface.DriverType.CONSTRAINT: constraints.add_constraint,
         driver_interface.DriverType.SINGLE:     driver_types.SinglePropDriver,
         driver_interface.DriverType.BONE:       driver_types.BonePropDriver
     }
+
+    def __init__(self, armature):
+        self.mapping_relation_list = []
+        self.pose_bones = armature.pose.bones
+
 
     @abstractmethod
     def set_relation_dict(self, driver_objects: list):
@@ -26,7 +31,7 @@ class BpyRigging(ABC):
         pose_bone_names = [bone.name for bone in self.pose_bones]
 
         def apply_by_type(mapping_relation):
-            print("PROCESSING", mapping_relation)
+            print("Attempt to apply", mapping_relation)
 
             def constraint():
                 if mapping_relation.driver_target in pose_bone_names:
@@ -79,10 +84,10 @@ class BpyRigging(ABC):
                 relation = mapping.MappingRelation(driver_obj, pose_driver.driver_type, pose_driver)
                 self.mapping_relation_list.append(relation)
 
-        for drivers in driver_containers:
-            print("Processing", drivers)
-            for driver in drivers.pose_drivers:
-                print("Preparing", driver)
+        for containers in driver_containers:
+            print("Processing Container", containers)
+            for driver in containers.pose_drivers:
+                print("Preparing Driver", driver)
                 setup_relation(driver)
 
     def set_single_prop_relation(self, driver_containers: list, driver_names: list, driver_objects: list):
@@ -90,14 +95,15 @@ class BpyRigging(ABC):
             # get the provider object by name
             if pose_driver.provider_obj in driver_names:
                 driver_obj = self.get_driver_object(pose_driver.provider_obj, driver_names, driver_objects)
+                print("\nDRIVER OB", driver_obj)
                 # create a mapping relation
                 relation = mapping.MappingRelation(driver_obj, pose_driver.driver_type, pose_driver)
                 self.mapping_relation_list.append(relation)
 
         for containers in driver_containers:
-            print("Processing", containers)
+            print("Processing Container", containers)
             for driver in containers.pose_drivers:
-                print("Preparing", driver)
+                print("Preparing Driver", driver)
                 setup_relation(driver)
 
     def set_constraint_relation(self, constraint_dict: dict, driver_names: list, driver_objects: list):
@@ -112,7 +118,7 @@ class BpyRigging(ABC):
                     driver_type=driver_type,
                     driver_target=constraint_dict[name][0],
                     values=constraint_dict[name][1:])
-                print("\nACTIVE REL:", relation)
+                print("Setting constraint", relation)
                 self.mapping_relation_list.append(relation)
     # endregion
 

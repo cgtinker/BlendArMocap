@@ -5,8 +5,8 @@ from ...cgt_naming import HAND
 
 class RigifyHands(abs_rigging.BpyRigging):
     def __init__(self, armature, driver_objects):
+        super().__init__(armature)
         # driver to rigify cgt_rig transfer name references
-        self.pose_bones = armature.pose.bones
 
         self.bone_limits = [
             [-0.261, 3.1421], [-0.261, 3.1421], [-0.349, 3.1421],  # thumb
