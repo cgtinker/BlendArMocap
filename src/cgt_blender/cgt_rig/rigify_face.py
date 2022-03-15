@@ -22,9 +22,9 @@ class RigifyFace(BpyRigging):
         # region mouth drivers
         mouth_driver_names = [[FACE.mouth_t, FACE.mouth_b], [FACE.mouth_r, FACE.mouth_l]]
         mouth_bone_names = [["lip.T", "lip.B"], ["lips.R", "lips.L"]]
-        mouth_provider_obj = FACE.mouth
+        mouth_provider_objs = [FACE.mouth, FACE.mouth_corners]
         mouth_distances = self.get_bone_distances(mouth_bone_names)
-        self.mouth_drivers = face_drivers.MouthDriverContainer(mouth_driver_names, mouth_provider_obj, mouth_distances)
+        self.mouth_drivers = face_drivers.MouthDriverContainer(mouth_driver_names, mouth_provider_objs, mouth_distances)
         # endregion
 
         # region eyebrow drivers

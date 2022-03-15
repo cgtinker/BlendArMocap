@@ -126,6 +126,7 @@ class FACE:
     head = "CGT_FACE_ROTATION"
     chin = "CGT_CHIN_ROTATION"
     mouth = "CGT_MOUTH_DRIVER"
+    mouth_corners = "CGT_MOUTH_CORNER_DRIVER"
     left_eye = "CGT_LEFT_EYE_DRIVER"
     right_eye = "CGT_RIGHT_EYE_DRIVER"
     right_eyebrow = "CGT_RIGHT_EYEBROW_DRIVER"

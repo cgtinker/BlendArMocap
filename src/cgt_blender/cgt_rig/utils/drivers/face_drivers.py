@@ -43,6 +43,27 @@ class EyeDriverContainer(DriverContainer):
 
 
 @dataclass(repr=True)
+class MouthCornerDriver(DriverProperties):
+    target_object: str
+    functions: list
+
+    def __init__(self, driver_target, provider_obj, direction):
+        self.target_object = driver_target
+        self.provider_obj = provider_obj
+        self.property_type = "location"
+        self.property_name = "corner"
+        self.driver_type = DriverType.SINGLE
+        self.overwrite = True
+
+        if direction == "left":
+            self.data_paths = ["scale.x", "scale.x", "scale.x"]
+        else:
+            self.data_paths = ["scale.z", "scale.z", "scale.z"]
+
+        self.functions = ["", "", ""]
+
+
+@dataclass(repr=True)
 class MouthDriver(DriverProperties):
     target_object: str
     functions: list
@@ -61,30 +82,34 @@ class MouthDriver(DriverProperties):
         self.property_type = "location"
         self.property_name = "scale"
         self.get_data_paths(direction)
+        self.overwrite = True
         self.get_functions(direction, bone_distance, factor)
 
     def get_data_paths(self, direction):
         if direction in ["up", "down"]:
-            self.data_paths = ["", "", "scale.z"]
+            self.data_paths = ["scale.z", "scale.z", "scale.z"]
         elif direction in ["left", "right"]:
-            self.data_paths = ["scale.x", "", ""]
+            self.data_paths = ["scale.x", "scale.x", "scale.x"]
 
     def get_functions(self, direction, bone_distance, factor):
         if direction in ["up", "down"]:
-            self.functions = ["", "", f"{bone_distance}*{factor}*"]
+            self.functions = ["0", "0", f"{bone_distance}*{factor}*"]
         elif direction in ["left", "right"]:
-            self.functions = [f"{bone_distance}*{factor}*", "", ""]
+            self.functions = [f"{bone_distance}*{factor}*", "0*", f"corner*{factor})+(0*"]
 
 
 @dataclass(repr=True)
 class MouthDriverContainer(DriverContainer):
     def __init__(self, driver_targets, provider_obj, mouth_distances):
-        upper_lip = MouthDriver(driver_targets[0][0], provider_obj, mouth_distances[0], 0.3, "up")
-        lower_lip = MouthDriver(driver_targets[0][1], provider_obj, mouth_distances[0], -0.3, "down")
-        left_lip = MouthDriver(driver_targets[1][0], provider_obj, mouth_distances[1], .02, "left")
-        right_lip = MouthDriver(driver_targets[1][1], provider_obj, mouth_distances[1], -.02, "right")
+        left_corner = MouthCornerDriver(driver_targets[1][0], provider_obj[1], "left")
+        right_corner = MouthCornerDriver(driver_targets[1][1], provider_obj[1], "right")
 
-        self.pose_drivers = [upper_lip, lower_lip, left_lip, right_lip]
+        upper_lip = MouthDriver(driver_targets[0][0], provider_obj[0], mouth_distances[0], 0.3, "up")
+        lower_lip = MouthDriver(driver_targets[0][1], provider_obj[0], mouth_distances[0], -0.3, "down")
+        left_lip = MouthDriver(driver_targets[1][0], provider_obj[0], mouth_distances[1], .02, "left")
+        right_lip = MouthDriver(driver_targets[1][1], provider_obj[0], mouth_distances[1], -.02, "right")
+
+        self.pose_drivers = [left_corner, right_corner, upper_lip, lower_lip, left_lip, right_lip]
 
 
 @dataclass(repr=True)
@@ -99,7 +124,6 @@ class EyebrowDriver(DriverProperties):
         self.property_type = "location"
         self.property_name = "scale"
         self.data_paths = target_path
-        self.overwrite = True
         self.functions = ["0*", "0*",
                           f"{bone_distance}*.125)-({bone_distance}*.25)*"
                           f"({slope.min_out}+{slope.slope})*({-slope.min_in}+"]
@@ -132,5 +156,5 @@ class EyebrowDriverContainer(DriverContainer):
         ]
         self.pose_drivers = [
             EyebrowDriver(driver_targets[i], provider_objs[0], brow_distances[i], tar_path[i], slopes[i]) if i < 3
-            else EyebrowDriver(driver_targets[i], provider_objs[1], brow_distances[i], tar_path[i - 3], slopes[i-3])
+            else EyebrowDriver(driver_targets[i], provider_objs[1], brow_distances[i], tar_path[i - 3], slopes[i - 3])
             for i in range(0, 6)]

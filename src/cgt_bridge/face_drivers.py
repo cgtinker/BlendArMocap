@@ -12,6 +12,7 @@ class BridgeFace(abs_assignment.DataAssignment):
         self.face = []
 
         self._mouth_driver = abs_assignment.CustomData()
+        self._mouth_corner_driver = abs_assignment.CustomData()
         self.pivot, self.chin_driver = abs_assignment.CustomData(), abs_assignment.CustomData()
         self.eye_driver_L, self.eye_driver_R = abs_assignment.CustomData(), abs_assignment.CustomData()
         self.eyebrow_L, self.eyebrow_R = abs_assignment.CustomData(), abs_assignment.CustomData()
@@ -45,6 +46,7 @@ class BridgeFace(abs_assignment.DataAssignment):
         drivers_array = [
             [self.pivot, 0.025, FACE.head, "SPHERE", [0, 0, 0]],
             [self._mouth_driver, 0.025, FACE.mouth, "CIRCLE", [0, -.1, -.1]],
+            [self._mouth_corner_driver, 0.025, FACE.mouth_corners, "CIRCLE", [0, -.1, -.1]],
             [self.eye_driver_L, .01, FACE.left_eye, "CIRCLE", [-.05, -.05, .075]],
             [self.eye_driver_R, .01, FACE.right_eye, "CIRCLE", [.05, .05, .075]],
             [self.chin_driver, .01, FACE.chin, "SPHERE", [.0, -.05, -.25]],
@@ -94,6 +96,7 @@ class BridgeFace(abs_assignment.DataAssignment):
 
         # prep data
         self.driver_scale_data = [
+            [self._mouth_corner_driver.idx, self._mouth_corner_driver.sca],
             [self._mouth_driver.idx, self._mouth_driver.sca],
             [self.eye_driver_L.idx, self.eye_driver_L.sca],
             [self.eye_driver_R.idx, self.eye_driver_R.sca],
@@ -103,9 +106,14 @@ class BridgeFace(abs_assignment.DataAssignment):
 
     def mouth_driver(self, avg_scale):
         """ get mouth driver scale data. """
-        mouth_w = self.average_length_at_scale(62, 292, avg_scale)  # mouth width
-        mouth_h = self.average_length_at_scale(13, 14, avg_scale)  # mouth height
+        # mouth width and height
+        mouth_w = self.average_length_at_scale(62, 292, avg_scale)
+        mouth_h = self.average_length_at_scale(13, 14, avg_scale)
+        # mouth corners (smile)
+        left_corner = self.average_length_at_scale(61, 92, avg_scale)
+        right_corner = self.average_length_at_scale(291, 322, avg_scale)
         self._mouth_driver.sca = [mouth_w, 0.001, mouth_h]
+        self._mouth_corner_driver.sca = [left_corner, 0.001, right_corner]
 
     def eye_driver(self, avg_scale):
         """ get eye driver scale data. """
