@@ -27,7 +27,7 @@ class RightBone(DriverProperties):
         self.property_type = "location"
         self.property_name = "right"
         self.data_paths = ["location.x", "location.y", "location.z"]
-        self.functions = [".5)*(left+", ".5)*(left+", ".5)*(left+"]
+        self.functions = [".5*((left)+(right))"]*3
 
 
 # endregion
@@ -96,9 +96,9 @@ class MainExpression(DriverProperties):
         self.property_name = "loc"
         self.data_paths = ["location.x", "location.y", "location.z"]
 
-        self.functions = [f"(origin))+{bone_length}/(length)*(-(prev_pos)+",
-                          f"(origin))+{bone_length}/(length)*(-(prev_pos)+",
-                          f"(origin))+{bone_length}/(length)*(-(prev_pos)+"]
+        self.functions = [f"(origin)+{bone_length}/(length)*(-(prev_pos)+(loc))",
+                          f"(origin)+{bone_length}/(length)*(-(prev_pos)+(loc))",
+                          f"(origin)+{bone_length}/(length)*(-(prev_pos)+(loc))"]
 
 
 # endregion

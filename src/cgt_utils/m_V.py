@@ -87,6 +87,15 @@ def project_vec_on_vec(target, destination):
     return proj_of_u_on_v
 
 
+def project_point_on_vector(proj_point, a, b):
+    # project vector AP onto vector AB, then add the resulting vector to point A.
+    # A + dot(AP,AB) / dot(AB,AB) * AB
+    ap = to_vector(a, proj_point)
+    ab = to_vector(a, b)
+    proj = a + np.dot(ap, ab) / np.dot(ab, ab) * ab
+    return proj
+
+
 def project_vec_on_plane(triangle: np.array, faces: np.array, vec: np.array):
     """ project a vector on input plane
     :param triangle - [[0, 0, 0], [1, 0, 1] [1, 3, 1]] vertex triplet

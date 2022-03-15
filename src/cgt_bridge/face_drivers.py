@@ -109,11 +109,27 @@ class BridgeFace(abs_assignment.DataAssignment):
         # mouth width and height
         mouth_w = self.average_length_at_scale(62, 292, avg_scale)
         mouth_h = self.average_length_at_scale(13, 14, avg_scale)
-        # mouth corners (smile)
-        left_corner = self.average_length_at_scale(61, 92, avg_scale)
-        right_corner = self.average_length_at_scale(291, 322, avg_scale)
+        self.mouth_corners(avg_scale)
         self._mouth_driver.sca = [mouth_w, 0.001, mouth_h]
-        self._mouth_corner_driver.sca = [left_corner, 0.001, right_corner]
+
+    def mouth_corners(self, avg_scale):
+        corner_center = m_V.center_point(self.data[61][1], self.data[291][1])
+        projected_center = m_V.project_point_on_vector(corner_center, self.data[0][1], self.data[17][1])
+        mouth_height_center = m_V.center_point(self.data[0][1], self.data[17][1])
+
+        left_vec = m_V.to_vector(projected_center, self.data[61][1])
+        left_hv = m_V.to_vector(mouth_height_center, self.data[61][1])
+        right_vec = m_V.to_vector(projected_center, self.data[291][1])
+        right_hv = m_V.to_vector(mouth_height_center, self.data[291][1])
+
+        right_corner_angle = m_V.angle_between(left_vec, left_hv)
+        left_corner_angle = m_V.angle_between(right_vec, right_hv)
+
+        # mouth corners (smile)
+        # left_corner = self.average_length_at_scale(61, 92, avg_scale)
+        # right_corner = self.average_length_at_scale(291, 322, avg_scale)
+
+        self._mouth_corner_driver.sca = [left_corner_angle, 0.001, right_corner_angle]
 
     def eye_driver(self, avg_scale):
         """ get eye driver scale data. """

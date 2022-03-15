@@ -21,14 +21,15 @@ class EyeDriver(DriverProperties):
         self.provider_obj = provider_obj
         self.property_type = "location"
         self.property_name = "scale"
-        self.data_paths = ["", "", "scale.z"]
+        self.data_paths = ["scale.z"] * 3
         self.get_functions(direction, bone_distance, factor)
+        # self.overwrite = True
 
     def get_functions(self, direction, bone_distance, factor):
         if direction == "down":
-            self.functions = ["", "", f"-{bone_distance}*{factor}+{bone_distance}*"]
+            self.functions = ["", "", f"-{bone_distance}*{factor}+{bone_distance}*(scale)"]
         elif direction == "up":
-            self.functions = ["", "", f"-{bone_distance}*{factor}*"]
+            self.functions = ["", "", f"-{bone_distance}*{factor}*(scale)"]
 
 
 @dataclass(repr=True)
@@ -53,14 +54,13 @@ class MouthCornerDriver(DriverProperties):
         self.property_type = "location"
         self.property_name = "corner"
         self.driver_type = DriverType.SINGLE
-        self.overwrite = True
 
         if direction == "left":
-            self.data_paths = ["scale.x", "scale.x", "scale.x"]
+            self.data_paths = ["scale.x"] * 3
         else:
-            self.data_paths = ["scale.z", "scale.z", "scale.z"]
+            self.data_paths = ["scale.z"] * 3
 
-        self.functions = ["", "", ""]
+        self.functions = [""] * 3
 
 
 @dataclass(repr=True)
@@ -82,32 +82,47 @@ class MouthDriver(DriverProperties):
         self.property_type = "location"
         self.property_name = "scale"
         self.get_data_paths(direction)
-        self.overwrite = True
         self.get_functions(direction, bone_distance, factor)
 
     def get_data_paths(self, direction):
         if direction in ["up", "down"]:
-            self.data_paths = ["scale.z", "scale.z", "scale.z"]
+            self.data_paths = ["scale.z"] * 3
         elif direction in ["left", "right"]:
-            self.data_paths = ["scale.x", "scale.x", "scale.x"]
+            self.data_paths = ["scale.x"] * 3
 
     def get_functions(self, direction, bone_distance, factor):
         if direction in ["up", "down"]:
-            self.functions = ["0", "0", f"{bone_distance}*{factor}*"]
+            self.functions = ["", "", f"{bone_distance}*{factor}*scale"]
         elif direction in ["left", "right"]:
-            self.functions = [f"{bone_distance}*{factor}*", "0*", f"corner*{factor})+(0*"]
+            if factor > 0:
+                sign = "-"
+            else:
+                sign = "+"
+            self.functions = [f"{bone_distance}*{factor}*scale{sign}{bone_distance}/5",
+                              "",
+                              f"({bone_distance}*(corner) - {bone_distance}/5)*-.5"]
 
 
 @dataclass(repr=True)
 class MouthDriverContainer(DriverContainer):
+    inputs = [
+        [1.55, 2.425],  # left / right
+        [0, .75],  # up / down
+        [0, 1.5]]  # corners
+
     def __init__(self, driver_targets, provider_obj, mouth_distances):
+        slopes = [Slope(self.inputs[idx][0], self.inputs[idx][1], 0, 1) for idx in range(0, 3)]
         left_corner = MouthCornerDriver(driver_targets[1][0], provider_obj[1], "left")
         right_corner = MouthCornerDriver(driver_targets[1][1], provider_obj[1], "right")
 
-        upper_lip = MouthDriver(driver_targets[0][0], provider_obj[0], mouth_distances[0], 0.3, "up")
-        lower_lip = MouthDriver(driver_targets[0][1], provider_obj[0], mouth_distances[0], -0.3, "down")
-        left_lip = MouthDriver(driver_targets[1][0], provider_obj[0], mouth_distances[1], .02, "left")
-        right_lip = MouthDriver(driver_targets[1][1], provider_obj[0], mouth_distances[1], -.02, "right")
+        upper_lip = MouthDriver(
+            driver_targets[0][0], provider_obj[0], mouth_distances[0], 0.3, "up")
+        lower_lip = MouthDriver(
+            driver_targets[0][1], provider_obj[0], mouth_distances[0], -0.3, "down")
+        left_lip = MouthDriver(
+            driver_targets[1][0], provider_obj[0], mouth_distances[1], .1, "left")
+        right_lip = MouthDriver(
+            driver_targets[1][1], provider_obj[0], mouth_distances[1], -.1, "right")
 
         self.pose_drivers = [left_corner, right_corner, upper_lip, lower_lip, left_lip, right_lip]
 
@@ -125,8 +140,8 @@ class EyebrowDriver(DriverProperties):
         self.property_name = "scale"
         self.data_paths = target_path
         self.functions = ["0*", "0*",
-                          f"{bone_distance}*.125)-({bone_distance}*.25)*"
-                          f"({slope.min_out}+{slope.slope})*({-slope.min_in}+"]
+                          f"{bone_distance}*.125-({bone_distance}*.25)*"
+                          f"({slope.min_out}+{slope.slope})*({-slope.min_in}+(scale))"]
 
 
 @dataclass(repr=True)
@@ -150,9 +165,9 @@ class EyebrowDriverContainer(DriverContainer):
             for idx in range(0, 3)
         ]
         tar_path = [
-            ["scale.x", "scale.x", "scale.x"],
-            ["scale.y", "scale.y", "scale.y"],
-            ["scale.z", "scale.z", "scale.z"]
+            ["scale.x"] * 3,
+            ["scale.y"] * 3,
+            ["scale.z"] * 3
         ]
         self.pose_drivers = [
             EyebrowDriver(driver_targets[i], provider_objs[0], brow_distances[i], tar_path[i], slopes[i]) if i < 3

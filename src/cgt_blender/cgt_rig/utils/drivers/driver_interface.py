@@ -76,13 +76,12 @@ class Driver(DriverProperties):
 
         # overwrite driver expression
         if self.overwrite is True:
+
             try:
-                print("ok doi")
-            # try:
-            #     self.drivers = [
-            #         self.target_object.animation_data.drivers.remove(
-            #             self.target_object.animation_data.drivers[index]
-            #         ) for index in range(3)]
+                self.drivers = [
+                    self.target_object.animation_data.drivers.remove(
+                        self.target_object.animation_data.drivers[index]
+                    ) for index in range(3)]
             except IndexError:
                 pass
 
@@ -109,4 +108,4 @@ class Driver(DriverProperties):
 
     def apply(self):
         for idx, d in enumerate(self.drivers):
-            d.driver.expression = self.functions[idx]
+            d.driver.expression = self.functions[idx] if self.functions[idx] else "0"
