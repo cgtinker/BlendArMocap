@@ -8,12 +8,12 @@ class RigifyHands(abs_rigging.BpyRigging):
         super().__init__(armature)
         # driver to rigify cgt_rig transfer name references
 
-        self.bone_limits = [
-            [-0.261, 3.1421], [-0.261, 3.1421], [-0.349, 3.1421],  # thumb
-            [-0.261, 3.1421], [-0.136, 3.1421], [-0.136, 3.1421],  # index
-            [-0.349, 3.1421], [-0.136, 3.1421], [-0.136, 3.1421],  # middle
-            [-0.436, 3.1421], [-0.136, 3.1421], [-0.136, 3.1421],  # ring
-            [-0.698, 3.1421], [-0.136, 3.1421], [-0.136, 3.1421],  # pinky
+        self.constraint_limits = [
+            [-0.261, 3.1415926], [-0.261, 3.1415926], [-0.349, 3.1415926],  # thumb
+            [-0.261, 1.3962634], [-0.136, 1.3962634], [-0.136, 1.3962634],  # index
+            [-0.349, 1.3962634], [-0.136, 1.3962634], [-0.136, 1.3962634],  # middle
+            [-0.436, 1.3962634], [-0.136, 1.3962634], [-0.136, 1.3962634],  # ring
+            [-0.698, 1.3962634], [-0.136, 1.3962634], [-0.136, 1.3962634],  # pinky
         ]
 
         self.no_limits = [[-3.142, 3.142]*15]
@@ -120,7 +120,7 @@ class RigifyHands(abs_rigging.BpyRigging):
             try:
                 index, bone_name = self.get_reference_bone(name, extension)
                 self.rot_constraint_dict[empty.name] = [bone_name, "COPY_ROTATION"]
-                self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.bone_limits[index]]
+                self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.constraint_limits[index]]
                 # self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.no_limits[index]]
             except KeyError:
                 print("driver empty does not exist:", empty.name)
