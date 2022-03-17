@@ -13,7 +13,8 @@ class FingerAngleDriver(DriverProperties):
                  driver_target: str,
                  provider_obj: object,
                  x_slope: Slope,
-                 z_slope: Slope):
+                 z_slope: Slope,
+                 expansion: list):
         """ Provides eye driver properties to animate the lids.
             :param provider_obj: object providing rotation values.
             :param slope: factor to multiply and offset the rotation
@@ -27,14 +28,32 @@ class FingerAngleDriver(DriverProperties):
         self.property_name = "rotation"
         self.overwrite = True
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
-        self.functions = [f"{x_slope.min_out}+{x_slope.slope}*({-x_slope.min_in}+(rotation))",
-                          "",
-                          ""]
-                          #f"{z_slope.min_out}+{z_slope.slope}*({-z_slope.min_in}+(rotation))"]
+        self.functions = [
+            # f"{x_slope.min_out}+{x_slope.slope}*({-x_slope.min_in}+(rotation))",
+            f"(rotation+{expansion[0]})*(rotation+{expansion[1]})",
+            # "rotation",
+            "",
+            ""]
+        # f"{z_slope.min_out}+{z_slope.slope}*({-z_slope.min_in}+(rotation))"]
 
 
 @dataclass(repr=True)
 class FingerDriverContainer(DriverContainer):
+    # polynomial_expansion = [
+    #     [-.5, .15], [-.65, .1], [-.5, .15],  # thumb
+    #     [-.5, .15], [-.65, .1], [-.75, 2.0],  # index
+    #     [-.5, .15], [-.65, .1], [-1., 0.0],  # middle
+    #     [-.5, .15], [-.65, .1], [-.5, .15],  # ring
+    #     [-.5, 1.5], [-.65, .1], [-.5, .15],  # pinky
+    # ]
+    polynomial_expansion = [
+        [-.5, .5], [-.65, .1], [-.5, .15],  # thumb
+        [-.5, .5], [-.65, .1], [-.75, 2.0],  # index
+        [-.5, .5], [-.65, .1], [-1., 0.0],  # middle
+        [-.5, .5], [-.65, .1], [-.5, .15],  # ring
+        [-.5, 2.], [-.65, .1], [-.5, .15],  # pinky
+    ]
+
     # shifting avgs for L / R hand z-angles
     # thumb / index / middle / ring / pinky
     z_inputs_r = [
@@ -61,19 +80,24 @@ class FingerDriverContainer(DriverContainer):
         [0.6108652381980153, -0.4363323129985824]
     ]
 
-    x_inputs = [
-        [0.00383972435438, 0.746302788152], [0.01396263401595, 1.015607091735], [0.010297442586766, 1.626472329933],
-        [0.08831366015091, 2.042035224833], [0.01151917306316, 2.029817920069], [0.020420352248333, 1.513374994404],
-        [0.01937315469713, 1.829105056090], [0.01710422666954, 1.961750079241], [0.007155849933176, 1.937315469713],
-        [0.01082104136236, 2.117084382669], [0.02827433388230, 1.888446250657], [0.000872664625997, 1.730668486277],
-        [0.09093165402890, 2.162462943220], [0.04014257279586, 1.658760921095], [0.012391837689159, 2.055997858849]]
+    # x_inputs = [
+    #     [0.004, 0.746], [0.013, 1.015], [0.010, 1.626], # thumb
+    #     [0.085, 2.042], [0.011, 2.029], [0.020, 1.513], # index
+    #     [0.019, 1.829], [0.017, 1.961], [0.007, 1.937], # middle
+    #     [0.010, 2.117], [0.028, 1.888], [0.000, 1.730], # ring
+    #     [0.090, 2.162], [0.040, 1.658], [0.012, 2.055] # pinky
+    # ]
 
-    x_outputs = [
-        [-0.8290313946973066, 0.746302788152], [-0.305432619099, 1.015607091735], [-0.218166156499, 1.626472329933],
-        [-1.090830782496456, 2.0420352248333], [-0.567232006898, 2.029817920069], [-1.527163095495, 1.513374994404],
-        [-0.6544984694978736, 1.829105056090], [-1.090830782496, 1.961750079241], [-0.218166156499, 1.937315469713],
-        [-0.7417649320975901, 2.117084382669], [-0.567232006898, 1.888446250657], [-0.479965544298, 1.730668486277],
-        [-1.4398966328953218, 2.162462943220], [-1.047197551196, 1.658760921095], [-0.654498469497, 2.055997858849]]
+    x_inputs = [[0, 1.521]] * 15
+    x_outputs = [[-.523, 1.521]] * 15
+
+    # x_outputs = [
+    #     [-0.830, 0.746], [-0.305, 1.015], [-0.215, 1.626],  # thumb
+    #     [-0.590, 2.042], [-0.360, 2.029], [-1.525, 1.513],  # index
+    #     [-0.555, 1.829], [-0.790, 1.961], [-0.210, 1.937],  # middle
+    #     [-0.540, 2.117], [-0.465, 1.888], [-0.480, 1.730],  # ring
+    #     [-0.950, 3.462], [-0.445, 1.668], [-0.455, 2.055]  # pinky
+    # ]
 
     def __init__(self, driver_targets: list, provider_objs: list, orientation: str):
         x_slopes = [
@@ -108,4 +132,5 @@ class FingerDriverContainer(DriverContainer):
                 provider_objs[idx],
                 x_slopes[idx],
                 get_z_slope(idx),
+                self.polynomial_expansion[idx]
             ) for idx, _ in enumerate(driver_targets)]

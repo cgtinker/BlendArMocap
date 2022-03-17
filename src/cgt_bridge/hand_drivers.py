@@ -74,7 +74,6 @@ class BridgeHand(abs_assignment.DataAssignment):
     #  position and joint angle
     left_hand_data, right_hand_data = None, None
     left_angles, right_angles = None, None
-
     frame = 0
     col_name = COLLECTIONS.hands
 

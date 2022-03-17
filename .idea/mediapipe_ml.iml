@@ -3,6 +3,7 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/venv" />
+      <excludeFolder url="file://$MODULE_DIR$/env" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.7 (mediapipe_ml)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
