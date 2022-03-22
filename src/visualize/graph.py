@@ -44,12 +44,19 @@ def get_sloped_values(min_out, max_out):
     return [min_out + slope * (min_in + value) for value in values]
 
 
+def get_sloped_values2(_in, _out):
+    slope = (_out[1] - _out[0]) / (_in[1] - _in[0])
+    return [_out[0] + slope * (_in[0] + value) for value in values]
+
+
 def get_expanded_values(min_ex, max_ex):
     return [(value + min_ex) * (value + max_ex) for value in values]
 
 
+min_max = [0.01120601124428113, 0.6298811772166859]
+m_out = [-.60, 0.6298811772166859]
 b_curve = get_sloped_values(-.5, .6)
-g_curve = get_expanded_values(-.5, .6)
+g_curve = get_sloped_values2(min_max, m_out)
 
 plt.plot(b_curve, c="b")
 plt.plot(g_curve, c="g")

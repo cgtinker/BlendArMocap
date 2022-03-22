@@ -193,8 +193,8 @@ class BridgeHand(abs_assignment.DataAssignment):
                 # thumb based plane
                 plane = np.array([
                     np.array([0, 0, 0]),
-                    hand[plane_tris[idx][0]][1],
-                    hand[plane_tris[idx][1]][1]
+                    hand[1][1],
+                    hand[5][1]
                 ])
 
             # PROJ MCP ON PLANE
@@ -206,18 +206,17 @@ class BridgeHand(abs_assignment.DataAssignment):
             # PROJ PIP ON PLANE
             pip = hand[finger[0] + 1]
             proj_pip = m_V.project_vec_on_plane(
-                plane, joints, np.array(pip[1]))
+                plane, joints, np.array(pip[1])*2)
 
-            # vector to chain mcps
-            if idx < 4:
+            if idx < 4:  # mcp "joint" as vector
                 mcp_vector = m_V.to_vector(proj_mcp, proj_mcp_b)
 
             else:  # change vector direction
                 mcp_vector = m_V.to_vector(proj_mcp_b, proj_mcp)
 
             # mcp to pip vec
-            tar_vec = m_V.to_vector(np.array(proj_mcp), np.array(proj_pip))
-            angle = m_V.angle_between(np.array(tar_vec), np.array(mcp_vector))
+            pip_vec = m_V.to_vector(np.array(proj_mcp), np.array(proj_pip))
+            angle = m_V.angle_between(np.array(pip_vec), np.array(mcp_vector))
 
             if angle is None:
                 break

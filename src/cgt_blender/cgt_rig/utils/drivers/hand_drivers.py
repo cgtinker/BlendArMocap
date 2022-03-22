@@ -26,26 +26,17 @@ class FingerAngleDriver(DriverProperties):
         self.provider_obj = provider_obj
         self.property_type = "rotation_euler"
         self.property_name = "rotation"
-        self.overwrite = True
+        #self.overwrite = True
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
         self.functions = [
             f"{x_slope.min_out}+{x_slope.slope}*({-x_slope.min_in}+(rotation))",
-            # f"(rotation+{expansion[0]})*(rotation+{expansion[1]})",
-            # "rotation",
             "",
-            ""]
-        # f"{z_slope.min_out}+{z_slope.slope}*({-z_slope.min_in}+(rotation))"]
+            # ""]
+            f"{z_slope.min_out}+{z_slope.slope}*({-z_slope.min_in}+(rotation))"]
 
 
 @dataclass(repr=True)
 class FingerDriverContainer(DriverContainer):
-    # polynomial_expansion = [
-    #     [-.5, .15], [-.65, .1], [-.5, .15],  # thumb
-    #     [-.5, .15], [-.65, .1], [-.75, 2.0],  # index
-    #     [-.5, .15], [-.65, .1], [-1., 0.0],  # middle
-    #     [-.5, .15], [-.65, .1], [-.5, .15],  # ring
-    #     [-.5, 1.5], [-.65, .1], [-.5, .15],  # pinky
-    # ]
     polynomial_expansion = [
         [-.5, .5], [-.65, .1], [-.5, .15],  # thumb
         [-.5, .5], [-.65, .1], [-.75, 2.0],  # index
@@ -80,14 +71,6 @@ class FingerDriverContainer(DriverContainer):
         [0.6108652381980153, -0.4363323129985824]
     ]
 
-    # x_inputs = [
-    #     [0.004, 0.746], [0.013, 1.015], [0.010, 1.626], # thumb
-    #     [0.085, 2.042], [0.011, 2.029], [0.020, 1.513], # index
-    #     [0.019, 1.829], [0.017, 1.961], [0.007, 1.937], # middle
-    #     [0.010, 2.117], [0.028, 1.888], [0.000, 1.730], # ring
-    #     [0.090, 2.162], [0.040, 1.658], [0.012, 2.055] # pinky
-    # ]
-
     x_inputs = [
         [0.01120601124428113, 0.6298811772166859], [0.010113584756535735, 0.5358833537484959],
         [0.0078838400016262, 1.0348199950476649],
@@ -109,13 +92,6 @@ class FingerDriverContainer(DriverContainer):
         [-.70, 1.3220586467674347], [-.50, 1.5838035965244931], [-.30, 1.9369007101977114]
 
     ]
-    # x_outputs = [
-    #     [-0.830, 0.746], [-0.305, 1.015], [-0.215, 1.626],  # thumb
-    #     [-0.590, 2.042], [-0.360, 2.029], [-1.525, 1.513],  # index
-    #     [-0.555, 1.829], [-0.790, 1.961], [-0.210, 1.937],  # middle
-    #     [-0.540, 2.117], [-0.465, 1.888], [-0.480, 1.730],  # ring
-    #     [-0.950, 3.462], [-0.445, 1.668], [-0.455, 2.055]  # pinky
-    # ]
 
     def __init__(self, driver_targets: list, provider_objs: list, orientation: str):
         x_slopes = [

@@ -31,11 +31,14 @@ def vector_length_2d(v1, v2, del_axis: str = ""):
 
 def get_vector_distance(v1, v2):
     """ return distance between two points. """
-    return math.sqrt(
-        (v2[0] - v1[0]) ** 2 +
-        (v2[1] - v1[1]) ** 2 +
-        (v2[2] - v1[2]) ** 2
-    )
+    sqrd_dist = np.sum((v1-v2) ** 2, axis=0)
+    dist = np.sqrt(sqrd_dist)
+    # return math.sqrt(
+    #     (v2[0] - v1[0]) ** 2 +
+    #     (v2[1] - v1[1]) ** 2 +
+    #     (v2[2] - v1[2]) ** 2
+    # )
+    return dist
 
 
 # region axis helper
