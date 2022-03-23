@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+import numpy as np
+
 from .utils import constraints, mapping
 from .utils.drivers import driver_types, driver_interface
 from ..utils import objects
@@ -18,7 +20,6 @@ class BpyRigging(ABC):
     def __init__(self, armature):
         self.mapping_relation_list = []
         self.pose_bones = armature.pose.bones
-
 
     @abstractmethod
     def set_relation_dict(self, driver_objects: list):
@@ -71,6 +72,7 @@ class BpyRigging(ABC):
         # apply all mapping relation based on their types
         for m_mapping_relation in self.mapping_relation_list:
             apply_by_type(m_mapping_relation)
+
     # endregion
 
     # region mapping
@@ -120,6 +122,7 @@ class BpyRigging(ABC):
                     values=constraint_dict[name][1:])
                 print("Setting constraint", relation)
                 self.mapping_relation_list.append(relation)
+
     # endregion
 
     @staticmethod
@@ -142,7 +145,7 @@ class BpyRigging(ABC):
     def get_average_length(joint_array):
         distances = []
         for joint in joint_array:
-            dist = m_V.get_vector_distance(joint[0], joint[1])
+            dist = m_V.get_vector_distance(np.array(joint[0]), np.array(joint[1]))
             distances.append(dist)
         avg_dist = sum(distances) / len(distances)
         return avg_dist

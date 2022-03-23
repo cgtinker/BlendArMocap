@@ -57,6 +57,7 @@ def damped_track(constraint, target, values):
     constraint.influence = 1
     constraint.track_axis = 'TRACK_Y'
     constraint.owner_space = 'POSE'
+    constraint.track_axis = 'TRACK_NEGATIVE_Y'
 
 
 def track_to(constraint, target, values):

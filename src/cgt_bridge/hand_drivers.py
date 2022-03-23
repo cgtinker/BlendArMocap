@@ -1,7 +1,7 @@
-from math import degrees
+from math import degrees, radians
 
 import numpy as np
-from mathutils import Euler
+from mathutils import Euler, Quaternion
 
 from . import abs_assignment
 from ..cgt_blender.utils import objects
@@ -138,7 +138,7 @@ class BridgeHand(abs_assignment.DataAssignment):
             return None
 
         x_angles = self.get_x_angles(hand)
-        z_angles = self.get_y_angles_circular(hand)
+        z_angles = self.get_z_angles(hand)
 
         data = []
         for idx in range(0, 20):
@@ -166,7 +166,13 @@ class BridgeHand(abs_assignment.DataAssignment):
             if d < self.min_values[idx]:
                 self.min_values[idx] = d
 
-    def get_y_angles_circular(self, hand):
+    def get_z_angles(self, hand):
+        """ Project finger mcps on a vector between index and pinky mcp.
+            Create circles around the mcps circles facing in the direction of vectors depending on the palm.
+            Searching for the closest point on the circle to the fingers dip and calculate the angle.
+            Thumb gets projected on a plane between thumb mcp, index mcp and wrist to calculate the z-angle.
+        """
+
         joints = np.array([[0, 1, 2]])
         data = [0] * 20
 
@@ -213,110 +219,6 @@ class BridgeHand(abs_assignment.DataAssignment):
 
         # angles = [int(degrees(d)) for d in data if d != 0]
         # print(angles)
-        return data
-
-    def get_nz_angles(self, hand):
-        """ get approximate z angle
-            by projecting mcp and dip on a plane based on the palm
-            calculating the angle based on the mcps and dips """
-        joints = np.array([[0, 1, 2]])
-        data = [0] * 20
-        plane_tris = [
-            [1, 5],  # thumb
-            [5, 9],  # index
-            [9, 13],  # middle
-            [13, 17],  # ring
-            [17, 13]  # pinky -> [17, 13]
-        ]
-
-        # project proximal phalanges on plane based on surrounding metacarpals
-        for idx, finger in enumerate(self.fingers):
-            if idx != 0:
-                # palm based plane
-                plane = np.array([
-                    np.array([0, 0, 0]),
-                    hand[5][1],
-                    hand[17][1]
-                ])
-            else:
-                # thumb based plane
-                plane = np.array([
-                    np.array([0, 0, 0]),
-                    hand[1][1],
-                    hand[5][1]
-                ])
-
-            # PROJ MCP ON PLANE
-            proj_mcp = m_V.project_vec_on_plane(
-                plane, joints, hand[plane_tris[idx][0]][1])
-            proj_mcp_b = m_V.project_vec_on_plane(
-                plane, joints, hand[plane_tris[idx][1]][1])
-
-            # PROJ PIP ON PLANE
-            pip = hand[finger[0] + 1]
-            proj_pip = m_V.project_vec_on_plane(
-                plane, joints, np.array(pip[1])*2)
-
-            if idx < 4:  # mcp "joint" as vector
-                mcp_vector = m_V.to_vector(proj_mcp, proj_mcp_b)
-
-            else:  # change vector direction
-                mcp_vector = m_V.to_vector(proj_mcp_b, proj_mcp)
-
-            # mcp to pip vec
-            pip_vec = m_V.to_vector(np.array(proj_mcp), np.array(proj_pip))
-            angle = m_V.angle_between(np.array(pip_vec), np.array(mcp_vector))
-
-            if angle is None:
-                break
-
-            data[finger[0]] = angle # noqa
-
-        return data
-
-    def get_z_angles(self, hand):
-        """ get approximate y angle
-            by projecting the proximal phalanges on a plane
-            taking the vector from wrist to knuckle
-            and calculating the angle offset."""
-        joints = np.array([[0, 1, 2]])
-        data = [0] * 20
-        plane_tris = [
-            [1, 5],
-            [5, 9],
-            [9, 13],
-            [13, 17],
-            [13, 17]
-        ]
-
-        # project proximal phalanges on plane based on surrounding metacarpals
-        for idx, finger in enumerate(self.fingers):
-            mcp = hand[finger[0]][1]
-            plane = np.array([
-                np.array([0, 0, 0]),
-                hand[plane_tris[idx][0]][1],
-                hand[plane_tris[idx][1]][1]
-            ])
-
-            proj_mcp = m_V.project_vec_on_plane(
-                plane,
-                joints,
-                np.array(mcp)
-            )
-
-            dip = hand[finger[0] + 1][1]
-            proj_dip = m_V.project_vec_on_plane(
-                plane,
-                joints,
-                np.array(dip)
-            )
-
-            angle = m_V.angle_between(np.array(proj_dip), np.array(proj_mcp))
-
-            if angle is None:
-                break
-
-            data[finger[0]] = angle
         return data
 
     def get_x_angles(self, hand):
@@ -372,11 +274,30 @@ class BridgeHand(abs_assignment.DataAssignment):
             palm_center,
             hand[17][1]
         ))
-
+        # mcp_center = m_V.normalize(m_V.center_point(hand[5][1], hand[17][1]))
+        # mcp_center_b = m_V.normalize(m_V.center_point(hand[0][1], hand[1][1]))
+        # tangent = m_V.normalize(m_V.to_vector(
+        #     hand[0][1],
+        #     hand[13][1]
+        # ))
+        # binormal = m_V.normalize(m_V.to_vector(
+        #     hand[9][1],
+        #     hand[17][1],
+        # ))
+        # normal = m_V.normalize(np.cross(binormal, tangent))
         # rotation from matrix
         matrix = m_V.generate_matrix(normal, tangent, binormal)
         loc, quart, sca = m_V.decompose_matrix(matrix)
-
+        if orientation is "R":
+            #quat_b = Quaternion((-1.5, 1, .5), radians(-45))
+            quat_b = Quaternion((-2, 0, 2), radians(90))
+        else:
+            #quat_b = Quaternion((-1.5, 1, .5), radians(-45))
+            quat_b = Quaternion((-2, 0, -2), radians(90))
+        # quart = quart @ quat_b
+        quart = quart.to_exponential_map() + quat_b.to_exponential_map()
+        quart = Quaternion(quart)
+        # quart = quart.cross(quat_b)
         offset = [0, 0, 0]
         euler = self.try_get_euler(quart, offset, combat_idx_offset)
         euler = self.offset_euler(euler, offset)

@@ -139,7 +139,7 @@ class EyebrowDriver(DriverProperties):
         self.property_type = "location"
         self.property_name = "scale"
         self.data_paths = target_path
-        self.functions = ["0*", "0*",
+        self.functions = ["", "",
                           f"{bone_distance}*.125-({bone_distance}*.25)*"
                           f"({slope.min_out}+{slope.slope})*({-slope.min_in}+(scale))"]
 

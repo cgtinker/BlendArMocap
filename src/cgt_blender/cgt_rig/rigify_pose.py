@@ -2,7 +2,7 @@ from . import abs_rigging
 from .utils.drivers import limb_drivers
 from ...cgt_naming import POSE
 from ...cgt_utils import m_V
-
+import numpy as np
 
 class RigifyPose(abs_rigging.BpyRigging):
     pose_constraints = {
@@ -105,7 +105,7 @@ class RigifyPose(abs_rigging.BpyRigging):
                 joint_locs = [self.hip_center, self.bone_head(joint[1])]
             else:
                 joint_locs = [self.bone_head(name) for name in joint]
-            length = m_V.get_vector_distance(joint_locs[0], joint_locs[1])
+            length = m_V.get_vector_distance(np.array(joint_locs[0]), np.array(joint_locs[1]))
             joint_lengths.append(length)
         return joint_lengths
 
