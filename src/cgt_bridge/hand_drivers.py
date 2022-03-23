@@ -244,64 +244,42 @@ class BridgeHand(abs_assignment.DataAssignment):
 
         return data
 
+    def glob_hand_rotation(self, hand, combat_idx_offset=0, orientation="R"):
+        pass
+
     def global_hand_rotation(self, hand, combat_idx_offset=0, orientation="R"):
         """ calculates approximate hand rotation by generating
             a matrix using the palm as approximate triangle. """
         if hand == []:
             return None
 
-        palm_center = m_V.center_point(hand[5][1], hand[17][1])
-
-        # generate triangle
-        vertices = np.array(
-            [hand[0][1],
-             hand[5][1],
-             hand[17][1]])
-        connections = np.array([[0, 1, 2]])
-
-        # normal from triangle
-        normal, norm = m_V.create_normal_array(vertices, connections)
-        normal = m_V.normalize(normal[0])
-
-        # origin to palm center
+        # setup vectors to create an matrix
         tangent = m_V.normalize(m_V.to_vector(
-            hand[0][1],
-            palm_center
+            hand[1][1],
+            hand[5][1]
         ))
-
-        # palm dir
         binormal = m_V.normalize(m_V.to_vector(
-            palm_center,
-            hand[17][1]
+            hand[5][1],
+            hand[17][1],
         ))
-        # mcp_center = m_V.normalize(m_V.center_point(hand[5][1], hand[17][1]))
-        # mcp_center_b = m_V.normalize(m_V.center_point(hand[0][1], hand[1][1]))
-        # tangent = m_V.normalize(m_V.to_vector(
-        #     hand[0][1],
-        #     hand[13][1]
-        # ))
-        # binormal = m_V.normalize(m_V.to_vector(
-        #     hand[9][1],
-        #     hand[17][1],
-        # ))
-        # normal = m_V.normalize(np.cross(binormal, tangent))
+        normal = m_V.normalize(np.cross(binormal, tangent))
+
         # rotation from matrix
         matrix = m_V.generate_matrix(normal, tangent, binormal)
+        # matrix = m_V.generate_matrix(normal, binormal, binormal)
+        # matrix = m_V.generate_matrix(tangent, binormal, normal)
+        # matrix = m_V.generate_matrix(binormal, binormal, normal)
         loc, quart, sca = m_V.decompose_matrix(matrix)
-        if orientation is "R":
-            #quat_b = Quaternion((-1.5, 1, .5), radians(-45))
-            quat_b = Quaternion((-2, 0, 2), radians(90))
-        else:
-            #quat_b = Quaternion((-1.5, 1, .5), radians(-45))
-            quat_b = Quaternion((-2, 0, -2), radians(90))
+        #if orientation is "R":
+        #    quat_b = Quaternion((1,.5,0), radians(45))
+        #else:
+        #    quat_b = Quaternion((1,.5,0), radians(45))
+        # quat_b = Quaternion((1, 0, 0), radians(90))
         # quart = quart @ quat_b
-        quart = quart.to_exponential_map() + quat_b.to_exponential_map()
-        quart = Quaternion(quart)
-        # quart = quart.cross(quat_b)
-        offset = [0, 0, 0]
-        euler = self.try_get_euler(quart, offset, combat_idx_offset)
-        euler = self.offset_euler(euler, offset)
-
+        quat_b = Quaternion((1, 1, 0, 0))
+        quart = quart @ quat_b
+        # to euler
+        euler = self.try_get_euler(quart, offset=[0, 0, 0], prev_rot_idx=combat_idx_offset)
         hand_rotation = ([0, euler])
         return hand_rotation
 
