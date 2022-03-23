@@ -19,7 +19,7 @@ class RigifyHands(abs_rigging.BpyRigging):
         self.no_limits = [[-3.142, 3.142]]*15
 
         self.rigify_bone_refs = {
-            # HAND.wrist:                    "hand_ik",
+            HAND.wrist:                    "hand_ik",
             HAND.driver_thumb_cmc:         "thumb.01",
             HAND.driver_thumb_mcp:         "thumb.02",
             HAND.driver_thumb_ip:          "thumb.03",
@@ -98,7 +98,7 @@ class RigifyHands(abs_rigging.BpyRigging):
             pass
 
         if "TIP" in key:
-            # rigify finger tip has .001 extension (why ever..)
+            # rigify finger tip haµs .001 extension (why ever..)
             bone_name = self.rigify_bone_refs[key] + extension + ".001"
             return index, bone_name
 
@@ -120,8 +120,10 @@ class RigifyHands(abs_rigging.BpyRigging):
             try:
                 index, bone_name = self.get_reference_bone(name, extension)
                 self.rot_constraint_dict[empty.name] = [bone_name, "COPY_ROTATION"]
-                self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.constraint_limits[index]]
-                # self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.no_limits[index]]
+                if index != 0:
+                    index -= 1
+                    self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.constraint_limits[index]]
+                    # self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.no_limits[index]]
             except KeyError:
                 print("driver empty does not exist:", empty.name)
 

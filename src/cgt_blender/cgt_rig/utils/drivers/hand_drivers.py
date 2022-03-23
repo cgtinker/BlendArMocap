@@ -48,12 +48,20 @@ class FingerDriverContainer(DriverContainer):
 
     # shifting avgs for L / R hand z-angles
     # thumb / index / middle / ring / pinky
-    z_inputs = [
+    z_inputs_r = [
         [20, 60],
         [0, 35],
         [5, 25],
         [0, 20],
         [0, 25],
+    ]
+
+    z_inputs_l = [
+        [20, 60],
+        [0, 40],
+        [0, 30],
+        [-5, 15],
+        [-5, 25],
     ]
 
     z_outputs = [
@@ -82,7 +90,7 @@ class FingerDriverContainer(DriverContainer):
         [-.50, 1.3311993710360535], [-.20, 1.8579332742510741], [-.55, 1.5229143915770624],
         [-.50, 1.3258548962628658], [-.30, 1.8030113110176618], [-.15, 1.9106269519875598],
         [-.60, 1.4768117638194921], [-.30, 1.6741122935529367], [-.30, 1.614440408893201],
-        [-.70, 1.3220586467674347], [-.50, 1.5838035965244931], [-.30, 1.9369007101977114]
+        [-.80, 1.3220586467674347], [-.50, 1.5838035965244931], [-.30, 1.9369007101977114]
 
     ]
 
@@ -92,18 +100,19 @@ class FingerDriverContainer(DriverContainer):
             for idx in range(0, 15)
         ]
 
-        self.z_inputs = [[radians(v[0]), radians(v[1])] for v in self.z_inputs]
+        self.z_inputs_r = [[radians(v[0]), radians(v[1])] for v in self.z_inputs_r]
+        self.z_inputs_l = [[radians(v[0]), radians(v[1])] for v in self.z_inputs_l]
         self.z_outputs = [[radians(v[0]), radians(v[1])] for v in self.z_outputs]
 
         z_slopes_r = [
-            Slope(self.z_inputs[idx][0], self.z_inputs[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1])
+            Slope(self.z_inputs_r[idx][0], self.z_inputs_r[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1])
             for idx in range(0, 5)
         ]
 
         # values have to be mirrored to fit angles
         self.z_outputs = [[i[0] * -1, i[1] * -1] for idx, i in enumerate(self.z_outputs)]
         z_slopes_l = [
-            Slope(self.z_inputs[idx][0], self.z_inputs[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1])
+            Slope(self.z_inputs_l[idx][0], self.z_inputs_l[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1])
             for idx in range(0, 5)
         ]
 
