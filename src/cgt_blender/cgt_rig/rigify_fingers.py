@@ -120,8 +120,8 @@ class RigifyHands(abs_rigging.BpyRigging):
             try:
                 index, bone_name = self.get_reference_bone(name, extension)
                 self.rot_constraint_dict[empty.name] = [bone_name, "COPY_ROTATION"]
-                # self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.constraint_limits[index]]
-                self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.no_limits[index]]
+                self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.constraint_limits[index]]
+                # self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.no_limits[index]]
             except KeyError:
                 print("driver empty does not exist:", empty.name)
 

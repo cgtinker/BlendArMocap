@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from .driver_interface import DriverProperties, DriverContainer, DriverType
 from ..mapping import Slope
+from math import radians
 
 
 @dataclass(repr=True)
@@ -26,7 +27,7 @@ class FingerAngleDriver(DriverProperties):
         self.provider_obj = provider_obj
         self.property_type = "rotation_euler"
         self.property_name = "rotation"
-        #self.overwrite = True
+        self.overwrite = True
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
         self.functions = [
             f"{x_slope.min_out}+{x_slope.slope}*({-x_slope.min_in}+(rotation))",
@@ -47,28 +48,20 @@ class FingerDriverContainer(DriverContainer):
 
     # shifting avgs for L / R hand z-angles
     # thumb / index / middle / ring / pinky
-    z_inputs_r = [
-        [0.3490658503988659, 1.090830782496456],
-        [0.3490658503988659, 1.9198621771937625],
-        [0.8726646259971648, 2.007128639793479],
-        [1.4835298641951802, 3.141592653589793],
-        [1.3089969389957472, 2.8797932657906435]
-    ]
-
-    z_inputs_l = [
-        [0.3490658503988659, 1.090830782496456],
-        [0.5235987755982988, 1.9198621771937625],
-        [1.0471975511965976, 2.007128639793479],
-        [1.5707963267948966, 2.8797932657906435],
-        [1.3089969389957472, 2.792526803190927]
+    z_inputs = [
+        [20, 60],
+        [0, 35],
+        [5, 25],
+        [0, 20],
+        [0, 25],
     ]
 
     z_outputs = [
-        [-0.4363323129985824, 0.4363323129985824],
-        [0.6108652381980153, -0.3490658503988659],
-        [0.5235987755982988, -0.2617993877991494],
-        [0.6108652381980153, -0.4363323129985824],
-        [0.6108652381980153, -0.4363323129985824]
+        [-25, 25],
+        [10, -20],
+        [8, -8],
+        [-10, 10],
+        [-10, 10],
     ]
 
     x_inputs = [
@@ -99,15 +92,18 @@ class FingerDriverContainer(DriverContainer):
             for idx in range(0, 15)
         ]
 
+        self.z_inputs = [[radians(v[0]), radians(v[1])] for v in self.z_inputs]
+        self.z_outputs = [[radians(v[0]), radians(v[1])] for v in self.z_outputs]
+
         z_slopes_r = [
-            Slope(self.z_inputs_r[idx][0], self.z_inputs_r[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1])
+            Slope(self.z_inputs[idx][0], self.z_inputs[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1])
             for idx in range(0, 5)
         ]
 
         # values have to be mirrored to fit angles
         self.z_outputs = [[i[0] * -1, i[1] * -1] for idx, i in enumerate(self.z_outputs)]
         z_slopes_l = [
-            Slope(self.z_inputs_l[idx][0], self.z_inputs_l[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1])
+            Slope(self.z_inputs[idx][0], self.z_inputs[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1])
             for idx in range(0, 5)
         ]
 

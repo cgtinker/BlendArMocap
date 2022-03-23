@@ -211,8 +211,9 @@ class BridgeHand(abs_assignment.DataAssignment):
             angle = m_V.angle_between(np.array(mcp_pip), np.array(mcp_facing))
             data[self.fingers[i + 1][0]] = angle
 
-        angles = [int(degrees(d)) for d in data if d != 0]
-        return angles
+        # angles = [int(degrees(d)) for d in data if d != 0]
+        # print(angles)
+        return data
 
     def get_nz_angles(self, hand):
         """ get approximate z angle
