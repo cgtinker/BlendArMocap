@@ -138,7 +138,7 @@ class BridgeHand(abs_assignment.DataAssignment):
             return None
 
         x_angles = self.get_x_angles(hand)
-        z_angles = self.get_nz_angles(hand)
+        z_angles = self.get_y_angles_circular(hand)
 
         data = []
         for idx in range(0, 20):
@@ -165,6 +165,54 @@ class BridgeHand(abs_assignment.DataAssignment):
                 self.max_values[idx] = d
             if d < self.min_values[idx]:
                 self.min_values[idx] = d
+
+    def get_y_angles_circular(self, hand):
+        joints = np.array([[0, 1, 2]])
+        data = [0] * 20
+
+        # create plane to calc thumb angle
+        plane = np.array([np.array([0, 0, 0]), hand[1][1], hand[5][1]])
+
+        # project mcps & pip on plane
+        proj_mcp = m_V.project_vec_on_plane(plane, joints, hand[1][1])
+        proj_mcp_b = m_V.project_vec_on_plane(plane, joints, hand[5][1])
+        proj_pip = m_V.project_vec_on_plane(plane, joints, np.array(hand[2][1]))
+
+        # vectors for angle calculation
+        mcp_vector = m_V.to_vector(proj_mcp, proj_mcp_b)
+        tar_vec = m_V.to_vector(np.array(proj_mcp), np.array(proj_pip))
+
+        # thumb angle
+        angle = m_V.angle_between(np.array(tar_vec), np.array(mcp_vector))
+        data[1] = angle
+
+        # calculate other finger angles
+        tangent = m_V.to_vector(np.array(hand[5][1]), np.array(hand[17][1]))
+
+        # get pips, mcps and their dists (mcps projected on tangent)
+        mcps = [m_V.project_point_on_vector(
+            np.array(hand[finger[0]][1]), np.array(hand[5][1]), np.array(hand[17][1]))
+            for finger in self.fingers[1:]]
+        pips = [np.array(hand[finger[1] - 2][1]) for finger in self.fingers[1:]]
+        dists = [m_V.get_vector_distance(mcps[i], pips[i]) for i in range(0, 4)]
+
+        # circle direction vectors related to the hand to calc angles
+        pinky_vec = m_V.to_vector(np.array(hand[0][1]), np.array(hand[17][1]))
+        thumb_vec = m_V.to_vector(np.array(hand[1][1]), np.array(hand[5][1]))
+        dirs = [pinky_vec, pinky_vec, thumb_vec, thumb_vec]
+
+        # circle around tangent
+        for i in range(0, 4):
+            circle = m_V.create_circle_around_vector(tangent, mcps[i], dists[i], 20, dirs[i])
+            closest = m_V.get_closest_point(pips[i], circle)
+            # angle between the closest point on circle to mcp and pip to mcp vectors
+            mcp_pip = m_V.to_vector(mcps[i], pips[i])
+            mcp_facing = m_V.to_vector(mcps[i], closest)
+            angle = m_V.angle_between(np.array(mcp_pip), np.array(mcp_facing))
+            data[self.fingers[i + 1][0]] = angle
+
+        angles = [int(degrees(d)) for d in data if d != 0]
+        return angles
 
     def get_nz_angles(self, hand):
         """ get approximate z angle
