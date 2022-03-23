@@ -1,5 +1,3 @@
-import math
-
 import numpy as np
 from mathutils import Euler, Matrix, Vector
 
@@ -31,7 +29,7 @@ def vector_length_2d(v1, v2, del_axis: str = ""):
 
 def get_vector_distance(v1, v2):
     """ return distance between two points. """
-    sqrd_dist = np.sum((v1-v2) ** 2, axis=0)
+    sqrd_dist = np.sum((v1 - v2) ** 2, axis=0)
     dist = np.sqrt(sqrd_dist)
     # return math.sqrt(
     #     (v2[0] - v1[0]) ** 2 +
@@ -167,6 +165,10 @@ def center_point(p1: np.array, p2: np.array):
     return (p1 + p2) / 2
 
 
+def get_closest_point(target, points):
+    distances = np.sum((points - target) ** 2, axis=1)
+    closest = points[np.argmin(distances)]
+    return closest
 # endregion
 
 
@@ -212,6 +214,71 @@ def seg_intersect(a1, a2, b1, b2):
     return (num / denom.astype(float)) * dist_b + b1
 
 
+# endregion
+
+
+# region circles
+def create_angled_circle(center, radius, angle=90, points=10):
+    """ circle in x direction at an angle using x- points.
+        returns the points of the circle. """
+    rot = angle
+    thetha = np.linspace(0, 2 * np.pi, points)
+
+    y = np.cos(thetha)
+    z = np.sin(thetha)
+
+    # set angle
+    phi = np.deg2rad(rot)
+    x = center[0] + y * np.cos(phi) * radius
+    y = center[1] + y * np.sin(phi) * radius
+    z = center[2] + z * radius
+
+    circle = [[x[i], y[i], z[i]] for i in range(0, len(x))]
+    return circle
+
+
+def circle_along_UV(center=np.array([0, 0, 0]),
+                    U=np.array([0, 1, 0]),
+                    V=np.array([0, 0, 1]),
+                    r=0.025,
+                    points=21):
+    # C(t) = c + r*U*cos(t)+e*V*sin(t)
+    thetha = np.linspace(0, np.pi * 2, points)
+
+    U = normalize(U)
+    V = normalize(V)
+
+    cos_t = np.cos(thetha)
+    sin_t = np.sin(thetha)
+
+    x = center[0] + r * U[0] * cos_t + r * V[0] * sin_t
+    y = center[1] + r * U[1] * cos_t + r * V[1] * sin_t
+    z = center[2] + r * U[2] * cos_t + r * V[2] * sin_t
+
+    circle = [[x[i], y[i], z[i]] for i in range(0, len(x))]
+    return circle
+
+
+def create_circle_around_vector(vector, center, radius, points, normal=None):
+    Q = vector
+    # thanks@ https://stackoverflow.com/questions/36760771/how-to-calculate-a-circle-perpendicular-to-a-vector
+    # vectors U & V mutally perpendicular and perpendicular to Q
+    # (Qx, Qy, Qz)·(Ux, Uy, Uz) = Qx·Ux + Qy·Uy + Qz·Uz = Qx·-Qy/Qx + Qy·1 + Qz·0 = -Qy + Qy + 0 = 0
+    if Q[0] != 0:
+        U = np.array([-Q[1] / Q[0], 1, 0])
+    elif Q[1] != 0:
+        U = np.array([0, -Q[2] / Q[1], 1])
+    else:
+        U = np.array([1, 0, -Q[0] / Q[2]])
+
+    # The cross product of two vectors is perpendicular to both
+    # (Vx, Vy, Vz) = (Qx, Qy, Qz)×(Ux, Uy, Uz) = (Qy×Uz - Qz×Uy, Qz×Ux - Qx×Uz, Qx×Uy - Qy×Ux)
+    if normal is not None:
+        U = normal
+
+    V = np.cross(Q, U)
+    circle = circle_along_UV(center, U, V, radius, points)
+    return circle
 # endregion
 
 

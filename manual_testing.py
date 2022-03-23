@@ -193,9 +193,6 @@ def create_angled_circle(c, r, angle=90, points=10, axis="x"):
 
 
 def circle():
-    create_circle()
-    return
-
     r = .01
     thetha = np.linspace(0, 2 * np.pi, 10)
     origin = np.array([.01, 0, 0])
@@ -283,6 +280,7 @@ def get_y_angles_circular(hand):
     angle = m_V.angle_between(np.array(tar_vec), np.array(mcp_vector))
     data[1] = angle
 
+
     # calculate other finger angles
     tangent = m_V.to_vector(np.array(hand[5][1]), np.array(hand[17][1]))
     tangent_dist = m_V.vector_length(tangent)
@@ -292,29 +290,21 @@ def get_y_angles_circular(hand):
         np.array(hand[finger[0]][1]), np.array(hand[5][1]), np.array(hand[17][1]))
         for finger in fingers[1:]]
     # mcps = [np.array(hand[finger[0]][1]) for finger in fingers[1:]]
-    pips = [np.array(hand[finger[0] + 1][1]) for finger in fingers[1:]]
+    pips = [np.array(hand[finger[1] -2][1]) for finger in fingers[1:]]
     dists = [m_V.get_vector_distance(mcps[i], pips[i]) for i in range(0, 4)]
 
-    # normal as dir for circ failed
-    normal, n = m_V.create_normal_array(
-        np.array([np.array(hand[0][1]), np.array(hand[5][1]), np.array(hand[17][1])]),
-        np.array([[0, 1, 2]])
-    )
-    normal = m_V.normalize(normal[0])
-    # dir for circle
-    center = (np.array(hand[5][1]) + np.array(hand[17][1])) / 2
-    dir = m_V.to_vector(center, np.array([0, 0, 0]))
-    dir = m_V.normalize(dir)
+    # circle direction vectors related to the hand to calc angles
+    pinky_vec =  m_V.to_vector(np.array(hand[0][1]), np.array(hand[17][1]))
+    thumb_vec = m_V.to_vector(np.array(hand[1][1]), np.array(hand[5][1]))
+    dirs = [pinky_vec, pinky_vec, thumb_vec, thumb_vec]
 
     # circle around tangent
     for i in range(0, 4):
-        circle = create_circle_around_vector(tangent, mcps[i], dists[i], 15, dir)
+        circle = create_circle_around_vector(tangent, mcps[i], dists[i], 20, dirs[i])
         closest = get_closest_point(pips[i], circle)
         # angle between closest point on circle to mcp and pip to mcp vectors
         mcp_pip = m_V.to_vector(mcps[i], pips[i])
         mcp_facing = m_V.to_vector(mcps[i], closest)
-        mcp_pip = m_V.normalize(mcp_pip)
-        mcp_facing = m_V.normalize(mcp_facing)
         angle = m_V.angle_between(np.array(mcp_pip), np.array(mcp_facing))
         data[fingers[i + 1][0]] = angle
 
@@ -334,6 +324,7 @@ def do_stuff():
 
     center = (np.array(hand[5][1]) + np.array(hand[17][1])) / 2
     dir = m_V.to_vector(center, np.array([0, 0, 0]))
+    dir = m_V.to_vector(np.array(hand[1][1]), np.array(hand[5][1]))
     dir = m_V.normalize(dir)
 
     mcps = [m_V.project_point_on_vector(
@@ -369,6 +360,6 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
+    main()
     # get_y_angles_circular(m_hand())
-    do_stuff()
+    #do_stuff()
