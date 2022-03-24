@@ -73,7 +73,7 @@ class RigifyPose(abs_rigging.BpyRigging):
 
         # legs
         POSE.hip_center_ik, POSE.left_hip_ik, POSE.left_shin_ik,
-        POSE.hip_center_ik, POSE.right_hip_ik, POSE.left_shin_ik
+        POSE.hip_center_ik, POSE.right_hip_ik, POSE.right_shin_ik
     ]
 
     detected_joints = [
