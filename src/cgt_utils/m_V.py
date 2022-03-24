@@ -1,5 +1,6 @@
 import numpy as np
 from mathutils import Euler, Matrix, Vector
+from math import radians
 
 
 # region vector cgt_utils
@@ -279,6 +280,62 @@ def create_circle_around_vector(vector, center, radius, points, normal=None):
     V = np.cross(Q, U)
     circle = circle_along_UV(center, U, V, radius, points)
     return circle
+# endregion
+
+
+# region rotation
+def rotate_point_euler(
+        point: np.array = None,
+        euler: list = None,
+        origin: np.array = np.array([0, 0, 0])):
+    """ Returns the location of a point rotated counterclockwise around an origin. """
+    point -= origin
+    phi = [radians(angle) for angle in euler]
+
+    def rx(theta):
+        return np.matrix([
+            [1, 0, 0],
+            [0, np.cos(theta), -np.sin(theta)],
+            [0, np.sin(theta), np.cos(theta)]
+        ])
+
+    def ry(theta):
+        return np.matrix([
+            [np.cos(theta), 0, np.sin(theta)],
+            [0, 1, 0],
+            [-np.sin(theta), 0, np.cos(theta)]
+        ])
+
+    def rz(theta):
+        return np.matrix([
+            [np.cos(theta), -np.sin(theta), 0],
+            [np.sin(theta), np.cos(theta), 0],
+            [0, 0, 1],
+        ])
+
+    matrix = rx(phi[0]) * ry(phi[1]) * rz(phi[2])
+    loc = point * matrix
+    loc = np.asarray(loc)[0] + origin
+    return loc
+
+
+def rotate_point(point, axis, angle):
+    """
+    Return the point location associated with counterclockwise rotation about
+    the given axis by theta radians.
+    """
+    theta = 2*np.pi/360
+    theta = theta*angle
+    axis = axis / np.sqrt(np.dot(axis, axis))
+    a = np.cos(theta / 2.0)
+    b, c, d = -axis * np.sin(theta / 2.0)
+    aa, bb, cc, dd = a * a, b * b, c * c, d * d
+    bc, ad, ac, = Noneab, bd, cd = b * c, a * d, a * c, a * b, b * d, c * d
+    rotation_matrix =  np.array([[aa + bb - cc - dd, 2 * (bc + ad), 2 * (bd - ac)],
+                                [2 * (bc - ad), aa + cc - bb - dd, 2 * (cd + ab)],
+                                [2 * (bd + ac), 2 * (cd - ab), aa + dd - bb - cc]])
+    loc = np.dot(rotation_matrix, point)
+    return loc
 # endregion
 
 

@@ -253,31 +253,29 @@ class BridgeHand(abs_assignment.DataAssignment):
         if hand == []:
             return None
 
+        if orientation == "R":
+            rotation = [-60, 60, 0]
+        else:
+            rotation = [-60, -60, 0]
+
+        rotated_points = [m_V.rotate_point_euler(np.array(hand[idx][1]), rotation) for idx in [1, 5, 13]]
+
         # setup vectors to create an matrix
         tangent = m_V.normalize(m_V.to_vector(
-            hand[1][1],
-            hand[5][1]
+            rotated_points[0],
+            rotated_points[1]
         ))
         binormal = m_V.normalize(m_V.to_vector(
-            hand[5][1],
-            hand[17][1],
+            rotated_points[1],
+            rotated_points[2]
         ))
         normal = m_V.normalize(np.cross(binormal, tangent))
 
         # rotation from matrix
         matrix = m_V.generate_matrix(normal, tangent, binormal)
-        # matrix = m_V.generate_matrix(normal, binormal, binormal)
-        # matrix = m_V.generate_matrix(tangent, binormal, normal)
-        # matrix = m_V.generate_matrix(binormal, binormal, normal)
         loc, quart, sca = m_V.decompose_matrix(matrix)
-        #if orientation is "R":
-        #    quat_b = Quaternion((1,.5,0), radians(45))
-        #else:
-        #    quat_b = Quaternion((1,.5,0), radians(45))
-        # quat_b = Quaternion((1, 0, 0), radians(90))
+        # quat_b = Quaternion((1, 1, 0, 0))
         # quart = quart @ quat_b
-        quat_b = Quaternion((1, 1, 0, 0))
-        quart = quart @ quat_b
         # to euler
         euler = self.try_get_euler(quart, offset=[0, 0, 0], prev_rot_idx=combat_idx_offset)
         hand_rotation = ([0, euler])
