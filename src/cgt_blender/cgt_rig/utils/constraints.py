@@ -55,7 +55,6 @@ def copy_location_world(bone, target, values):
 def damped_track(constraint, target, values):
     constraint.target = target
     constraint.influence = 1
-    constraint.track_axis = 'TRACK_Y'
     constraint.owner_space = 'POSE'
     constraint.track_axis = 'TRACK_NEGATIVE_Y'
 
@@ -63,7 +62,16 @@ def damped_track(constraint, target, values):
 def track_to(constraint, target, values):
     constraint.target = target
     constraint.influence = 1
-    constraint.owner_space = 'POSE'
+    constraint.owner_space = 'LOCAL'
+    constraint.up_axis = 'UP_X'
+    constraint.track_axis = 'TRACK_Y'
+
+
+def locked_track(constraint, target, values):
+    constraint.target = target
+    constraint.influence = 1
+    constraint.track_axis = 'TRACK_Y'
+    constraint.lock_axis = 'LOCK_Z'
 
 
 constraint_mapping = {
@@ -87,7 +95,7 @@ constraint_mapping = {
     "CLAMP_TO":             14,
     "DAMPED_TRACK":         damped_track,
     "IK":                   16,
-    "LOCKED_TRACK":         17,
+    "LOCKED_TRACK":         locked_track,
     "SPLINE_IK":            18,
     "STRETCH_TO":           19,
     "TRACK_TO":             track_to,
@@ -133,4 +141,5 @@ def add_constraint(bone, target, constraint, values):
         constraint_mapping[constraint](m_constraint, target, values)
     except TypeError or KeyError:
         # call custom method with bone
+        print("KEYERROR")
         constraint_mapping[constraint](bone, target, values)

@@ -17,8 +17,8 @@ class RigifyPose(abs_rigging.BpyRigging):
         POSE.right_forearm_ik: ["forearm_tweak.L", "COPY_LOCATION_WORLD"],
 
         # damped track to pose driver
-        POSE.left_index_ik:    ["hand_ik.R", "DAMPED_TRACK"],
-        POSE.right_index_ik:   ["hand_ik.L", "DAMPED_TRACK"]
+        POSE.left_index_ik:    ["hand_ik.R", "LOCKED_TRACK"],
+        POSE.right_index_ik:   ["hand_ik.L", "LOCKED_TRACK"]
     }
 
     # region bone center drivers
