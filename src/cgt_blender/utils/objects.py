@@ -253,4 +253,8 @@ def get_frame_start():
     except AttributeError:
         return 0
     return frame_start
+
+
+def user_pref():
+    return bpy.context.scene.m_cgtinker_mediapipe
 # endregion

@@ -1,5 +1,5 @@
 import bpy
-from bpy.props import StringProperty, EnumProperty, IntProperty
+from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty
 from bpy.types import PropertyGroup
 
 
@@ -14,7 +14,13 @@ class CgtProperties(PropertyGroup):
     button_transfer_animation: StringProperty(
         name="",
         description="Armature as target for detected results.",
-        default="Start Transfer"
+        default="Transfer Animation"
+    )
+
+    experimental_feature_bool: BoolProperty(
+        name="Experimental Leg Transfer",
+        description="Adds experimental leg detection transfer when transferring Pose data",
+        default=True
     )
 
     # custom ui prop search
@@ -38,7 +44,7 @@ class CgtProperties(PropertyGroup):
         name="Target",
         description="Select detection type for motion tracking.",
         items=(
-            ("HAND", "Fingers", ""),
+            ("HAND", "Hands", ""),
             ("FACE", "Face", ""),
             ("POSE", "Pose", ""),
         )

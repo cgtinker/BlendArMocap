@@ -50,9 +50,9 @@ class BridgePose(abs_assignment.DataAssignment):
             34: POSE.right_forearm_ik,
             35: POSE.left_hand_ik,
             36: POSE.right_hand_ik,
-
             37: POSE.left_index_ik,
             38: POSE.right_index_ik,
+
             39: POSE.right_foot_ik,
             40: POSE.left_foot_ik,
             41: POSE.left_shin_ik,
@@ -62,7 +62,8 @@ class BridgePose(abs_assignment.DataAssignment):
             44: POSE.right_shoulder_ik,
             45: POSE.left_hip_ik,
             46: POSE.right_hip_ik,
-            47: POSE.shoulder_center_ik
+            47: POSE.shoulder_center_ik,
+            48: POSE.hip_center_ik
         }
 
         self.arms = [

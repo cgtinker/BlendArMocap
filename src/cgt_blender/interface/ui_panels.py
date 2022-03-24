@@ -57,7 +57,7 @@ class UI_PT_main_panel(DefaultPanel, Panel):
                                         search_property="objects",
                                         text="Armature",
                                         icon="ARMATURE_DATA")
-
+        box.row().prop(user, "experimental_feature_bool") # , icon="ERROR")
         box.row(align=True).operator("button.cgt_transfer_animation_button", text=user.button_transfer_animation)
 
 
