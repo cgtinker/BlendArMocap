@@ -14,8 +14,7 @@ class FingerAngleDriver(DriverProperties):
                  driver_target: str,
                  provider_obj: object,
                  x_slope: Slope,
-                 z_slope: Slope,
-                 expansion: list):
+                 z_slope: Slope):
         """ Provides eye driver properties to animate the lids.
             :param provider_obj: object providing rotation values.
             :param slope: factor to multiply and offset the rotation
@@ -27,7 +26,7 @@ class FingerAngleDriver(DriverProperties):
         self.provider_obj = provider_obj
         self.property_type = "rotation_euler"
         self.property_name = "rotation"
-        self.overwrite = True
+        # self.overwrite = True
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
         self.functions = [
             f"{x_slope.min_out}+{x_slope.slope}*({-x_slope.min_in}+(rotation))",
@@ -38,14 +37,6 @@ class FingerAngleDriver(DriverProperties):
 
 @dataclass(repr=True)
 class FingerDriverContainer(DriverContainer):
-    polynomial_expansion = [
-        [-.5, .5], [-.65, .1], [-.5, .15],  # thumb
-        [-.5, .5], [-.65, .1], [-.75, 2.0],  # index
-        [-.5, .5], [-.65, .1], [-1., 0.0],  # middle
-        [-.5, .5], [-.65, .1], [-.5, .15],  # ring
-        [-.5, 2.], [-.65, .1], [-.5, .15],  # pinky
-    ]
-
     # shifting avgs for L / R hand z-angles
     # thumb / index / middle / ring / pinky
     z_inputs_r = [
@@ -130,6 +121,5 @@ class FingerDriverContainer(DriverContainer):
                 driver_targets[idx],
                 provider_objs[idx],
                 x_slopes[idx],
-                get_z_slope(idx),
-                self.polynomial_expansion[idx]
+                get_z_slope(idx)
             ) for idx, _ in enumerate(driver_targets)]
