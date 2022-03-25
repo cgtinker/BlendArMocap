@@ -1,7 +1,7 @@
 import mediapipe as mp
 
 from . import abstract_detector
-from ..cgt_bridge import events, pose_drivers
+from ..cgt_bridge import events, pose_processing
 from ..cgt_utils import stream
 
 
@@ -35,12 +35,12 @@ class PoseDetector(abstract_detector.RealtimeDetector):
         self.solution = mp.solutions.pose
 
     def init_bpy_bridge(self):
-        target = pose_drivers.BridgePose()
+        target = pose_processing.BridgePose()
         self.observer = events.BpyUpdateReceiver(target)
         self.listener = events.UpdateListener()
 
     def init_driver_logs(self):
-        target = pose_drivers.BridgePose()
+        target = pose_processing.BridgePose()
         self.observer = events.DriverDebug(target)
         self.listener = events.UpdateListener()
 

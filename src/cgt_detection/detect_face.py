@@ -1,7 +1,7 @@
 import mediapipe as mp
 
 from . import abstract_detector
-from ..cgt_bridge import events, face_drivers
+from ..cgt_bridge import events, face_processing
 from ..cgt_utils import stream
 
 
@@ -31,12 +31,12 @@ class FaceDetector(abstract_detector.RealtimeDetector):
         self.solution = mp.solutions.face_mesh
 
     def init_bpy_bridge(self):
-        target = face_drivers.BridgeFace()
+        target = face_processing.BridgeFace()
         self.observer = events.BpyUpdateReceiver(target)
         self.listener = events.UpdateListener()
 
     def init_driver_logs(self):
-        target = face_drivers.BridgeFace()
+        target = face_processing.BridgeFace()
         self.observer = events.DriverDebug(target)
         self.listener = events.UpdateListener()
 

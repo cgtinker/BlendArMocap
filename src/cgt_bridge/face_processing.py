@@ -123,10 +123,6 @@ class BridgeFace(abs_assignment.DataAssignment):
         right_corner_angle = m_V.angle_between(left_vec, left_hv)
         left_corner_angle = m_V.angle_between(right_vec, right_hv)
 
-        # mouth corners (smile)
-        # left_corner = self.average_length_at_scale(61, 92, avg_scale)
-        # right_corner = self.average_length_at_scale(291, 322, avg_scale)
-
         self._mouth_corner_driver.sca = [left_corner_angle, 0.001, right_corner_angle]
 
     def eye_driver(self, avg_scale):

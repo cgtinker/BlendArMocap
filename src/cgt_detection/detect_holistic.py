@@ -1,7 +1,7 @@
 import mediapipe as mp
 
 from . import abstract_detector
-from ..cgt_bridge import events, pose_drivers
+from ..cgt_bridge import events, pose_processing
 from ..cgt_utils import stream
 
 
@@ -29,7 +29,7 @@ class HolisticDetector(abstract_detector.RealtimeDetector):
 
     def init_bpy_bridge(self):
         # TODO: requires multiple listeners. also requires a special observer pattern.
-        target = pose_drivers.BridgePose()
+        target = pose_processing.BridgePose()
         self.observer = events.BpyUpdateReceiver(target)
         self.listener = events.UpdateListener()
 

@@ -1,7 +1,7 @@
 import mediapipe as mp
 
 from . import abstract_detector
-from ..cgt_bridge import events, hand_drivers
+from ..cgt_bridge import events, hand_processing
 from ..cgt_utils import stream
 
 
@@ -29,12 +29,12 @@ class HandDetector(abstract_detector.RealtimeDetector):
         self.solution = mp.solutions.hands
 
     def init_bpy_bridge(self):
-        target = hand_drivers.BridgeHand()
+        target = hand_processing.BridgeHand()
         self.observer = events.BpyUpdateReceiver(target)
         self.listener = events.UpdateListener()
 
     def init_debug_logs(self):
-        target = hand_drivers.BridgeHand()
+        target = hand_processing.BridgeHand()
         # self.observer = events.DriverDebug(target)
         self.observer = events.PrintRawDataUpdate()
         self.listener = events.UpdateListener()
