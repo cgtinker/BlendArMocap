@@ -7,7 +7,7 @@ class CgtProperties(PropertyGroup):
     # BUTTONS
     button_start_detection: StringProperty(
         name="",
-        description="Detects features and record results in cgt_blender.",
+        description="Detects features and record results in stored in the cgt_driver collection.",
         default="Start Detection"
     )
 
@@ -19,8 +19,8 @@ class CgtProperties(PropertyGroup):
 
     experimental_feature_bool: BoolProperty(
         name="Experimental Leg Transfer",
-        description="Adds experimental leg detection transfer when transferring Pose data",
-        default=True
+        description="Experimental feature to transfer legs when transferring pose data",
+        default=False
     )
 
     # custom ui prop search
