@@ -102,13 +102,11 @@ class BridgeHand(abs_assignment.DataAssignment):
 
     def update(self):
         """ applies gathered data to references """
-        # if self.has_duplicated_results(self.left_hand_data[0][0]):
-        #     return
+        if self.has_duplicated_results(self.left_hand_data):
+            return
 
         self.set_position()
         self.set_rotation()
-
-        # self.prev_data = self.left_hand_data[0][0]
 
     def set_position(self):
         """ keyframe the input data."""
@@ -244,9 +242,6 @@ class BridgeHand(abs_assignment.DataAssignment):
 
         return data
 
-    def glob_hand_rotation(self, hand, combat_idx_offset=0, orientation="R"):
-        pass
-
     def global_hand_rotation(self, hand, combat_idx_offset=0, orientation="R"):
         """ calculates approximate hand rotation by generating
             a matrix using the palm as approximate triangle. """
@@ -274,9 +269,7 @@ class BridgeHand(abs_assignment.DataAssignment):
         # rotation from matrix
         matrix = m_V.generate_matrix(normal, tangent, binormal)
         loc, quart, sca = m_V.decompose_matrix(matrix)
-        # quat_b = Quaternion((1, 1, 0, 0))
-        # quart = quart @ quat_b
-        # to euler
+
         euler = self.try_get_euler(quart, offset=[0, 0, 0], prev_rot_idx=combat_idx_offset)
         hand_rotation = ([0, euler])
         return hand_rotation

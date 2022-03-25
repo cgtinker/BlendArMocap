@@ -19,12 +19,12 @@ class CustomData:
 class DataAssignment(ABC):
     data = None
     # array for comparison, as noise is present every frame values should change
-    prev_data = [["", ""]]*21
     frame = 0
     references = None
     prev_rotation = {}
     memory_stack = {}
     driver_col = COLLECTIONS.drivers
+    prev_sum = 0.0
 
     # region abstract methods
     @abstractmethod
@@ -41,7 +41,6 @@ class DataAssignment(ABC):
     def update(self):
         """ updates every mp solution received. """
         pass
-
     # endregion
 
     # region init helper
@@ -71,14 +70,14 @@ class DataAssignment(ABC):
         return driver.obj
 
     def has_duplicated_results(self, data=None):
-        if data is None:
-            data = self.data
-        for i in range(0, 11):
-            print(i, self.data[i])
-            print(i, self.prev_data[i])
-            if np.array_equal(data[i][1], self.prev_data[i][1]):
-                return True
+        """ sums data array values and compares them each frame to avoid duplicated values
+            in the timeline. this fixes an issue mainly occurring on Windows. """
+        summed = np.sum([v[1] for v in data[:21]])
+        if summed == self.prev_sum:
+            print("skipping duplicate keyframe", self.frame)
+            return True
 
+        self.prev_sum = summed
         return False
     # endregion
 
@@ -161,7 +160,6 @@ class DataAssignment(ABC):
             )
         except KeyError:
             m_rot = m_V.to_euler(quart_rotation)
-            print(f"invalid id to euler combat {m_rot}, {self.frame}")
 
         return m_rot
 
