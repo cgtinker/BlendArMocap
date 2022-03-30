@@ -8,7 +8,7 @@ alt="" width="240" height="180" border="10" /></a>
 
 
 ## Setup Instructions<br>
-Blender has to be started with **elevated permissions** in order to install the required packages [_opencv_](https://opencv.org) and [_mediapipe_]((https://google.github.io/mediapipe/)) via the add-ons preferences. 
+Blender has to be started with **elevated permissions** in order to install the required packages [_opencv_](https://opencv.org) and [_mediapipe_](https://google.github.io/mediapipe/) via the add-ons preferences. 
 Internet connection is required to install the required packages. It's recommended to disable VPN's during the installation processes. 
 Also Blender may has to be restarted during the installation process. To access the webcam feed blender usually has to be started with elevated permissions.<br><br>
 
@@ -175,4 +175,4 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 <br><br>
 If you want to support the development you can either donate at [Gumroad](https://cgtinker.gumroad.com/) or become a [Patreon](https://www.patreon.com/cgtinker).
-Would be lovely, thanks!
+<br>Would be lovely, thanks!
