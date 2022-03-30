@@ -1,6 +1,6 @@
 # BlendArMocap <br>
-BlendArMocap is a Blender add-on to preform Hand, Face and Pose Detection in Blender using just a Webcam. 
-The detected data can be easily transferred to rifigy rigs. <br>
+BlendArMocap is a [Blender](https://www.blender.org/) add-on to preform Hand, Face and Pose Detection using [Googles Mediapipe](https://google.github.io/mediapipe/) requiring just a Webcam. 
+The detected data can be easily transferred to [rifigy rigs](https://docs.blender.org/manual/en/2.81/addons/rigging/rigify.html). <br>
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=pji6IHNCnAk
 " target="_blank"><img src="http://img.youtube.com/vi/pji6IHNCnAk/0.jpg" 
@@ -8,8 +8,9 @@ alt="" width="240" height="180" border="10" /></a>
 
 
 ## Setup Instructions<br>
-Blender has to be started with **elevated permissions** in order to install the required packages _opencv_ and _mediapipe_ via the add-ons preferences. 
-Internet connection is required to install the required packages. To access the webcam feed blender has to be started with elevated permissions.<br><br>
+Blender has to be started with **elevated permissions** in order to install the required packages [_opencv_](https://opencv.org) and [_mediapipe_]((https://google.github.io/mediapipe/)) via the add-ons preferences. 
+Internet connection is required to install the required packages. It's recommended to disable VPN's during the installation processes. 
+Also Blender may has to be restarted during the installation process. To access the webcam feed blender usually has to be started with elevated permissions.<br><br>
 
 
 ### Starting Blender with elevated permissions<br>
@@ -38,18 +39,24 @@ The detected data can be used to drive a rigify rig.<br>
 **Hands**<br>
 - Hand rotation
 - Finger x-angles
+- Finger y-angles
 
 **Face**<br>
 - Head rotation
-- Open and close mouth 
+- Open and close Mouth
+- Relative Mouth Corners
 - Open and close eyes
+- Eyebrow Movement
 
 **Pose**<br>
 - Hand position
 - Hand orientation
-- Elbow rotation
+- Elbow position
+- Shoulder position
 - Shoulder rotation
 - Hip rotation
+- Knee position
+- Ankle position
 
 ### Detection<br>
 **Webcam Device Slot**<br>
@@ -93,16 +100,19 @@ So there is no need to transfer twice.<br>
 
 ### Data Assignment<br>
 
-| Driver Source     | Constraint type | Rigify Pose Bone | 
-|-------------------|-----------------|------------------|
-| hip_center        | copy rotation   | torso            |
-| shoulder_center   | copy rotation   | chest            | 
-| left_hand_ik      | copy location   | hand_ik.R        | 
-| right_hand_ik     | copy location   | hand_ik.L        | 
-| left_forearm_ik   | copy location   | forearm_tweak.L  | 
-| right_forearm_ik  | copy location   | forearm_tweak.R  | 
-| left_index_ik     | copy location   | hand_ik.R        | 
-| right_index_ik    | copy location   | hand_ik.L        |
+| Driver Source    | Constraint type | Rigify Pose Bone | 
+|------------------|-----------------|------------------|
+| hip_center       | copy rotation   | torso            |
+| shoulder_center  | copy rotation   | chest            | 
+| left_hand_ik     | copy location   | hand_ik.R        | 
+| right_hand_ik    | copy location   | hand_ik.L        | 
+| left_forearm_ik  | copy location   | forearm_tweak.L  | 
+| right_forearm_ik | copy location   | forearm_tweak.R  | 
+| left_index_ik    | copy location   | hand_ik.R        | 
+| right_shin_ik    | copy location   | shin_tweak.L     |
+| left_shin_ik     | copy location   | shin_tweak.R     |
+| left_foot_ik     | copy location   | foot_ik.R        |
+| right_foot_ik    | copy location   | foot_ik.L        |
 
 | Hand Driver Source | Constraint type | Rigify Hand Bone |
 |--------------------|-----------------|------------------|
@@ -140,6 +150,10 @@ So there is no need to transfer twice.<br>
 | mouth_b            | copy location   | lip.B            |
 | mouth_l            | copy location   | lips.R           |
 | mouth_r            | copy location   | lips.L           |
+| eyebrow_in_l       | copy location   | brow.T.L.001     |
+| eyebrow_out_l      | copy location   | brow.T.L.003     |
+| eyebrow_in_r       | copy location   | brow.T.R.001     |
+| eyebrow_out_r      | copy location   | brow.T.R.003     |
 
 
 ## License
@@ -157,3 +171,8 @@ So there is no need to transfer twice.<br>
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
+
+
+<br><br>
+If you want to support the development you can either donate at [Gumroad](https://cgtinker.gumroad.com/) or become a [Patreon](https://www.patreon.com/cgtinker).
+Would be lovely, thanks!
