@@ -10,7 +10,7 @@ from ..utils import install_dependencies
 class DefaultPanel:
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = cgt_naming.ADDON_NAME
+    bl_category = "BlendAR"
     bl_context = "objectmode"
     bl_options = {"DEFAULT_CLOSED"}
 
@@ -18,7 +18,7 @@ class DefaultPanel:
 class ExpandedPanel:
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = cgt_naming.ADDON_NAME
+    bl_category = "BlendAR"
     bl_context = "objectmode"
     bl_options = {"HEADER_LAYOUT_EXPAND"}
 
