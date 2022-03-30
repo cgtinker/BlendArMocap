@@ -24,12 +24,12 @@ PACKAGE_NAME = PACKAGE_PATH.name
 
 
 def import_module(module):
-    print(f"importing {PACKAGE_NAME}{module}...")
+    # print(f"importing {PACKAGE_NAME}{module}...")
     importlib.import_module(f"{PACKAGE_NAME}{module}")
 
 
 def reload_module(module):
-    print(f"reloading {PACKAGE_NAME}{module}...")
+    # print(f"reloading {PACKAGE_NAME}{module}...")
     importlib.reload(sys.modules[f"{PACKAGE_NAME}{module}"])
 
 
@@ -56,15 +56,15 @@ def get_parents(file: Path, parents: list):
 
 
 def manage_imports(reload: bool = False):
+    print(f"{PACKAGE_NAME} - Initializing...")
     for module in INIT_MODULES:
-        print("module to import:", module)
         import_module(module)
 
     from .cgt_blender.utils import install_dependencies
-    print("DEPENDENCIES INSTALLED:", install_dependencies.dependencies_installed)
+    print(f"{PACKAGE_NAME} - Dependencies installed: {install_dependencies.dependencies_installed}")
 
     if install_dependencies.dependencies_installed is True:
-        print(f"Attempt to reload {PACKAGE_NAME}")
+        print(f"{PACKAGE_NAME} - Attempt to reload...")
         sub_dirs = [PACKAGE_PATH / sub_dir for sub_dir in SUB_DIRS]
         reload_list = get_reload_list(sub_dirs)
 
@@ -74,7 +74,7 @@ def manage_imports(reload: bool = False):
                 reload_module(module)
             else:
                 import_module(module)
-        print(f"Reloaded {PACKAGE_NAME} successfully")
+        print(f"{PACKAGE_NAME} - Reload successful!")
 
 
 if __name__ == '__main__':

@@ -23,11 +23,11 @@ def python_exe():
     # blender vers =< 2.91 contain a path to their py executable
     if version[0] == 2 and version[1] <= 91:
         executable = bpy.app.binary_path_python
-        print(version, executable)
+        print("blender version:", version, "exe:", executable)
     # newer versions sys.executable should point to the py executable
     else:
         executable = sys.executable
-        print(version, executable)
+        print("blender version:", version, "exe:", executable)
 
     # some version point to the binary path instead of the py executable
     if executable == bpy.app.binary_path:

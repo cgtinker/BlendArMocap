@@ -26,7 +26,6 @@ class ExpandedPanel:
 class UI_PT_main_panel(DefaultPanel, Panel):
     bl_label = cgt_naming.ADDON_NAME
     bl_idname = "OBJECT_PT_cgt_main_panel"
-    print("new test")
     # define the filter method
 
     def draw(self, context):
