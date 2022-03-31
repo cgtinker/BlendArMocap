@@ -9,11 +9,17 @@ class Webcam:
                  title: str = "Stream Detection",
                  width: int = 640,
                  height: int = 480):
-
+        # improved backend for windows
         self.capture = cv2.VideoCapture(camera_index, cv2.CAP_DSHOW)
-        time.sleep(0.25)
+        time.sleep(.25)
+
         if not self.capture.isOpened():
-            raise IOError("Cannot open webcam")
+            # if backend cannot open capture use random backend
+            self.capture = cv2.VideoCapture(camera_index)
+            time.sleep(.25)
+
+            if not self.capture.isOpened():
+                raise IOError("Cannot open webcam")
 
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, width)
         self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
