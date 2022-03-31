@@ -10,8 +10,8 @@ class Webcam:
                  width: int = 640,
                  height: int = 480):
 
-        self.capture = cv2.VideoCapture(camera_index)
-        time.sleep(1.000)
+        self.capture = cv2.VideoCapture(camera_index, cv2.CAP_DSHOW)
+        time.sleep(0.25)
         if not self.capture.isOpened():
             raise IOError("Cannot open webcam")
 
