@@ -32,8 +32,7 @@ class BpyRigging(ABC):
         pose_bone_names = [bone.name for bone in self.pose_bones]
 
         def apply_by_type(mapping_relation):
-            print("Attempt to apply", mapping_relation)
-
+            # print("Attempt to apply", mapping_relation)
             def constraint():
                 if mapping_relation.driver_target in pose_bone_names:
 
@@ -87,9 +86,9 @@ class BpyRigging(ABC):
                 self.mapping_relation_list.append(relation)
 
         for containers in driver_containers:
-            print("Processing Container", containers)
+            # print("Processing Container", containers)
             for driver in containers.pose_drivers:
-                print("Preparing Driver", driver)
+                # print("Preparing Driver", driver)
                 setup_relation(driver)
 
     def set_single_prop_relation(self, driver_containers: list, driver_names: list, driver_objects: list):
@@ -97,15 +96,14 @@ class BpyRigging(ABC):
             # get the provider object by name
             if pose_driver.provider_obj in driver_names:
                 driver_obj = self.get_driver_object(pose_driver.provider_obj, driver_names, driver_objects)
-                print("\nDRIVER OB", driver_obj)
                 # create a mapping relation
                 relation = mapping.MappingRelation(driver_obj, pose_driver.driver_type, pose_driver)
                 self.mapping_relation_list.append(relation)
 
         for containers in driver_containers:
-            print("Processing Container", containers)
+            # print("Processing Container", containers)
             for driver in containers.pose_drivers:
-                print("Preparing Driver", driver)
+                # print("Preparing Driver", driver)
                 setup_relation(driver)
 
     def set_constraint_relation(self, constraint_dict: dict, driver_names: list, driver_objects: list):
@@ -120,7 +118,7 @@ class BpyRigging(ABC):
                     driver_type=driver_type,
                     driver_target=constraint_dict[name][0],
                     values=constraint_dict[name][1:])
-                print("Setting constraint", relation)
+                # print("Setting constraint", relation)
                 self.mapping_relation_list.append(relation)
 
     # endregion

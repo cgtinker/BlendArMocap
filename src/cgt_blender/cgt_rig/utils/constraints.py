@@ -110,7 +110,7 @@ constraint_mapping = {
 
 
 def add_constraint(bone, target, constraint, values):
-    print("ADD CONST", values)
+    # print("ADD CONST", values)
     m_constraints = [c for c in bone.constraints]
     # overwriting constraint by
     # removing previously added constraints if types match
@@ -121,7 +121,6 @@ def add_constraint(bone, target, constraint, values):
             target_constraint = target_constraint.replace("_WORLD", "")
         elif "_OFFSET" in constraint:
             target_constraint = target_constraint.replace("_OFFSET", "")
-            print(target_constraint)
 
         # match syntax of bpy constraint
         constraint_name = c.name
@@ -141,5 +140,4 @@ def add_constraint(bone, target, constraint, values):
         constraint_mapping[constraint](m_constraint, target, values)
     except TypeError or KeyError:
         # call custom method with bone
-        print("KEYERROR")
         constraint_mapping[constraint](bone, target, values)
