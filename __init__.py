@@ -19,7 +19,7 @@ bl_info = {
     "name":        "BlendArMocap",
     "description": "Mediapipe implementation for Blender 2.9+.",
     "author":      "cgtinker",
-    "version":     (1, 2, 0),
+    "version":     (1, 4, 0),
     "blender":     (2, 90, 0),
     "location":    "3D View > Tool",
     "warning":     "Requires external packages and elevated privileges",
@@ -31,14 +31,14 @@ bl_info = {
 
 
 def reload_modules():
-    from . import cgt_imports
-    cgt_imports.manage_imports(reload=True)
+    from .src import cgt_imports
+    cgt_imports.manage_imports(True)
 
 
 if "bl_info" in locals():
     reload_modules()
 
-from .cgt_blender.interface import ui_registration
+from .src.cgt_blender.interface import ui_registration
 
 
 def register():
