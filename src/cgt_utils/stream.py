@@ -43,9 +43,6 @@ class Webcam:
         cv2.imshow(self.title, self.frame)
 
     def exit_stream(self):
-        if not cv2.getWindowProperty(self.title, cv2.WND_PROP_VISIBLE) < 1:
-            print("window prop")
-
         if cv2.waitKey(1) & 0xFF == ord('q'):
             print("ATTEMPT TO EXIT STEAM")
             return True
