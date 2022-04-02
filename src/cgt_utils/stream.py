@@ -44,11 +44,13 @@ class Webcam:
 
     def exit_stream(self):
         if cv2.waitKey(1) & 0xFF == ord('q'):
+            print("ATTEMPT TO EXIT STEAM")
             return True
         else:
             return False
 
     def __del__(self):
+        print("DEL STREAM")
         self.capture.release()
         cv2.destroyAllWindows()
 
