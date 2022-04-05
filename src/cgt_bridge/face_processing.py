@@ -111,19 +111,28 @@ class BridgeFace(abs_assignment.DataAssignment):
         self._mouth_driver.sca = [mouth_w, 0.001, mouth_h]
 
     def mouth_corners(self, avg_scale):
+        # center point of mouth corners gets projected on vector from upper to lower lip
         corner_center = m_V.center_point(self.data[61][1], self.data[291][1])
         projected_center = m_V.project_point_on_vector(corner_center, self.data[0][1], self.data[17][1])
+        # center point between upper and lower lip
         mouth_height_center = m_V.center_point(self.data[0][1], self.data[17][1])
 
+        # vectors from center points to mouth corners
         left_vec = m_V.to_vector(projected_center, self.data[61][1])
         left_hv = m_V.to_vector(mouth_height_center, self.data[61][1])
         right_vec = m_V.to_vector(projected_center, self.data[291][1])
         right_hv = m_V.to_vector(mouth_height_center, self.data[291][1])
 
-        right_corner_angle = m_V.angle_between(left_vec, left_hv)
-        left_corner_angle = m_V.angle_between(right_vec, right_hv)
+        # angle between the vectors expecting users don't record upside down
+        if mouth_height_center[2] > projected_center[2]:
+            right_corner_angle = m_V.angle_between(left_vec, left_hv)
+            left_corner_angle = m_V.angle_between(right_vec, right_hv)
+        else:
+            right_corner_angle = -m_V.angle_between(left_vec, left_hv)
+            left_corner_angle = -m_V.angle_between(right_vec, right_hv)
 
         self._mouth_corner_driver.sca = [left_corner_angle, 0.001, right_corner_angle]
+        self._mouth_corner_driver.rot = [left_corner_angle, 0.001, right_corner_angle]
 
     def eye_driver(self, avg_scale):
         """ get eye driver scale data. """
@@ -156,7 +165,10 @@ class BridgeFace(abs_assignment.DataAssignment):
 
         self.rotation_data = [
             [self.pivot.idx, head_rotation],
-            [self.chin_driver.idx, chin_rotation]
+            [self.chin_driver.idx, chin_rotation],
+            # todo: R
+            [self._mouth_corner_driver.idx, self._mouth_corner_driver.rot]
+
         ]
 
     def chin_rotation(self):

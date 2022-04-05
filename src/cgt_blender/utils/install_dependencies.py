@@ -83,6 +83,7 @@ def install_and_import_module(module_name, package_name=None, global_name=None):
     print("Try to install:", package_name)
     try:
         print(python_exe, "-m", "pip", "install", package_name)
+        # subprocess.check_call([sys.executable, "-m", "pip", "install", package_name])
         subprocess.run([python_exe, "-m", "pip", "install", package_name], check=True, env=environ_copy)
     except Exception as e:
         # shouldn't be required but in rare cases it's required to install as sudo user
