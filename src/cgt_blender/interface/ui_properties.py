@@ -26,8 +26,8 @@ class CgtProperties(PropertyGroup):
         name="Type",
         description="Select detection type for motion tracking.",
         items=(
-            ("movie", "Movie", ""),
             ("stream", "Stream", ""),
+            ("movie", "Movie", ""),
         )
     )
 

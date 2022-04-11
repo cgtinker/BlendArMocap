@@ -35,8 +35,8 @@ class UI_PT_main_panel(DefaultPanel, Panel):
         box = self.layout.box()
         box.label(text='Detect')
         box.row().prop(user, "detection_input_type")
-        # detection type selection
-        if user.detection_input_type == "movie":
+        # todo detection type selection
+        if user.detection_input_type == "moviedd":
             box.row().prop(user, "data_path")
         else:
             box.row().prop(user, "webcam_input_device")
@@ -61,7 +61,10 @@ class UI_PT_main_panel(DefaultPanel, Panel):
                                         search_property="objects",
                                         text="Armature",
                                         icon="ARMATURE_DATA")
-        box.row().prop(user, "experimental_feature_bool") # , icon="ERROR")
+
+        if user.enum_detection_type == "POSE":
+            box.row().prop(user, "experimental_feature_bool") # , icon="ERROR")
+            
         box.row(align=True).operator("button.cgt_transfer_animation_button", text=user.button_transfer_animation)
 
 

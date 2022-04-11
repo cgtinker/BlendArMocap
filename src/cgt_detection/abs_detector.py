@@ -13,7 +13,8 @@ class RealtimeDetector(ABC):
     key_step = 4
     frame = None
 
-    def __init__(self, frame_start=0, key_step=4):
+    def __init__(self, frame_start=0, key_step=4, input_type=None):
+        self.input_type=input_type
         self.drawing_utils = solutions.drawing_utils
         self.drawing_style = solutions.drawing_styles
         # todo: state

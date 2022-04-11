@@ -35,9 +35,17 @@ class WM_modal_detection_operator(bpy.types.Operator):
         except AttributeError:
             print("CGT USER NOT FOUND")
             self.user = None
+        print("tttt")
+        if self.tracking_handler:
+            print("try exit")
+            self.cancel(context)
+            return {'CANCELLED'}
 
         # initialize the detection
-        self.init_detector(detection_type)
+        if self.user.detection_input_type == 'movie':
+            self.init_movie_detector(detection_type)
+        else:
+            self.init_detector(detection_type)
 
         # add a timer property and start running
         wm = context.window_manager
@@ -45,41 +53,31 @@ class WM_modal_detection_operator(bpy.types.Operator):
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
 
-    def get_key_step(self):
-        if self.user.detection_input_type == "movie":
-            return 1, 0
-
-        try:
-            frame_start = bpy.context.scene.frame_start
-            key_step = self.user.key_frame_step
-        except AttributeError:
-            frame_start = 0
-            key_step = 4
-
-        return key_step, frame_start
+    def init_movie_detector(self, detection_type='HAND'):
+        frame_start = bpy.context.scene.frame_start
+        self.tracking_handler = self.set_detection_type(detection_type)(frame_start, 1, "movie")
+        camera_index = self.user.data_path
+        self.init_tracking_handler(camera_index)
 
     def init_detector(self, detection_type='HAND'):
-        from ...cgt_utils import stream
         print(f"INITIALIZING {detection_type} DETECTION")
 
-        # user setting frame start & keystep
-        key_step, frame_start = self.get_key_step()
-
+        frame_start = bpy.context.scene.frame_start
+        key_step = self.user.key_frame_step
         # init detector
         self.tracking_handler = self.set_detection_type(detection_type)(
-            frame_start,
-            key_step
-        )
+            frame_start, key_step, "stream")
+        # self.tracking_handler = self.set_detection_type(detection_type)(
+        #    frame_start, key_step, "stream")
 
-        # default camera index if add-on is not registered properly
-        camera_index = 0
-        if self.user is not None and self.user.detection_input_type != "movie":
-            camera_index = self.user.webcam_input_device
-        else:
-            camera_index = self.user.data_path
+        camera_index = self.user.webcam_input_device
+        self.init_tracking_handler(camera_index)
+
+    def init_tracking_handler(self, cap_input):
+        from ...cgt_utils import stream
 
         # init tracking handler targets
-        self.tracking_handler.stream = stream.Webcam(camera_index=camera_index)
+        self.tracking_handler.stream = stream.Webcam(camera_index=cap_input)
         if not self.tracking_handler.stream.capture.isOpened():
             raise IOError("Initializing Detector failed.")
 
