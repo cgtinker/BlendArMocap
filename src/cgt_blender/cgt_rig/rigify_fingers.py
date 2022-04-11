@@ -67,7 +67,7 @@ class RigifyHands(abs_rigging.BpyRigging):
             # HAND.pinky_tip:         HAND.driver_pinky_tip,
         }
 
-        # setting up finger drivers
+        # setting up finger driver names for L/R
         left_finger_provider = [key + ".L" for key in finger_driver_references.keys()]
         right_finger_provider = [key + ".R" for key in finger_driver_references.keys()]
         left_finger_targets = [value + ".L" for value in finger_driver_references.values()]
@@ -105,6 +105,9 @@ class RigifyHands(abs_rigging.BpyRigging):
         bone_name = self.rigify_bone_refs[key] + extension
 
         return index, bone_name
+
+    def get_rest_pose_finger_angles(self):
+        pass
 
     def set_relation_dict(self, driver_objects):
         """ sets relation dict containing bone name and reference empty obj. """
