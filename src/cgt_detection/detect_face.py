@@ -1,6 +1,6 @@
 import mediapipe as mp
 
-from . import abstract_detector
+from . import abs_detector
 from ..cgt_bridge import events, face_processing
 from ..cgt_utils import stream
 
@@ -9,7 +9,7 @@ from mediapipe.python.solutions import face_mesh_connections
 from mediapipe.python.solutions.drawing_utils import DrawingSpec
 
 
-class FaceDetector(abstract_detector.RealtimeDetector):
+class FaceDetector(abs_detector.RealtimeDetector):
     def image_detection(self):
         with self.solution.FaceMesh(
                 max_num_faces=1,

@@ -22,6 +22,14 @@ class CgtProperties(PropertyGroup):
         description="Experimental feature to transfer legs when transferring pose data",
         default=False
     )
+    detection_input_type: EnumProperty(
+        name="Type",
+        description="Select detection type for motion tracking.",
+        items=(
+            ("movie", "Movie", ""),
+            ("stream", "Stream", ""),
+        )
+    )
 
     # custom ui prop search
     def armature_poll(self, object):

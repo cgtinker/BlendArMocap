@@ -1,11 +1,11 @@
 import mediapipe as mp
 
-from . import abstract_detector
+from . import abs_detector
 from ..cgt_bridge import events, pose_processing
 from ..cgt_utils import stream
 
 
-class HolisticDetector(abstract_detector.RealtimeDetector):
+class HolisticDetector(abs_detector.RealtimeDetector):
     def image_detection(self):
         with self.solution.Holistic(
                 min_detection_confidence=0.7,

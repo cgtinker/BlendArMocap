@@ -3,8 +3,6 @@ from abc import ABC, abstractmethod
 from mediapipe import solutions
 from mediapipe.framework.formats import classification_pb2
 
-from ..cgt_blender import input_manager
-
 
 class RealtimeDetector(ABC):
     stream = None
@@ -15,12 +13,12 @@ class RealtimeDetector(ABC):
     key_step = 4
     frame = None
 
-    def __init__(self):
+    def __init__(self, frame_start=0, key_step=4):
         self.drawing_utils = solutions.drawing_utils
         self.drawing_style = solutions.drawing_styles
         # todo: state
-        self.frame = input_manager.get_frame_start()
-        self.key_step = input_manager.get_keyframe_step()
+        self.frame = frame_start
+        self.key_step = key_step
 
     @abstractmethod
     def image_detection(self):
@@ -79,7 +77,7 @@ class RealtimeDetector(ABC):
     def stream_updated(self):
         self.stream.update()
         if not self.stream.updated:
-            print("Ignoring empty camera frame")
+            print("Stream not updated")
             return False
         return True
 

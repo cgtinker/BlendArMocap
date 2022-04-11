@@ -1,11 +1,11 @@
 import mediapipe as mp
 
-from . import abstract_detector
+from . import abs_detector
 from ..cgt_bridge import events, hand_processing
 from ..cgt_utils import stream
 
 
-class HandDetector(abstract_detector.RealtimeDetector):
+class HandDetector(abs_detector.RealtimeDetector):
     def image_detection(self):
         with self.solution.Hands(
                 static_image_mode=True,

@@ -29,14 +29,19 @@ class UI_PT_main_panel(DefaultPanel, Panel):
     # define the filter method
 
     def draw(self, context):
-        user = context.scene.m_cgtinker_mediapipe
+        user = context.scene.m_cgtinker_mediapipe # noqa
 
         # detection
         box = self.layout.box()
         box.label(text='Detect')
-        box.row().prop(user, "webcam_input_device")
-        # box.row().prop(user, "data_path")
-        box.row().prop(user, "key_frame_step")
+        box.row().prop(user, "detection_input_type")
+        # detection type selection
+        if user.detection_input_type == "movie":
+            box.row().prop(user, "data_path")
+        else:
+            box.row().prop(user, "webcam_input_device")
+            box.row().prop(user, "key_frame_step")
+        # settings
         box.row().prop(user, "enum_detection_type")
         box.row().operator("wm.cgt_feature_detection_operator", text=user.button_start_detection)
 

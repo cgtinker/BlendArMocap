@@ -28,6 +28,7 @@ class WM_modal_detection_operator(bpy.types.Operator):
 
         # default detection type for testing while add-on is not registered
         detection_type = 'HAND'
+
         try:
             self.user = context.scene.m_cgtinker_mediapipe # noqa
             detection_type = self.user.enum_detection_type
@@ -44,16 +45,38 @@ class WM_modal_detection_operator(bpy.types.Operator):
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
 
+    def get_key_step(self):
+        if self.user.detection_input_type == "movie":
+            return 1, 0
+
+        try:
+            frame_start = bpy.context.scene.frame_start
+            key_step = self.user.key_frame_step
+        except AttributeError:
+            frame_start = 0
+            key_step = 4
+
+        return key_step, frame_start
+
     def init_detector(self, detection_type='HAND'):
         from ...cgt_utils import stream
         print(f"INITIALIZING {detection_type} DETECTION")
 
-        self.tracking_handler = self.set_detection_type(detection_type)()
+        # user setting frame start & keystep
+        key_step, frame_start = self.get_key_step()
 
-        # default camera index if add-on is not registered
+        # init detector
+        self.tracking_handler = self.set_detection_type(detection_type)(
+            frame_start,
+            key_step
+        )
+
+        # default camera index if add-on is not registered properly
         camera_index = 0
-        if self.user is not None:
+        if self.user is not None and self.user.detection_input_type != "movie":
             camera_index = self.user.webcam_input_device
+        else:
+            camera_index = self.user.data_path
 
         # init tracking handler targets
         self.tracking_handler.stream = stream.Webcam(camera_index=camera_index)
