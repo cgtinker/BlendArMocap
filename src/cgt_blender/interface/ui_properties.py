@@ -46,7 +46,7 @@ class CgtProperties(PropertyGroup):
     # endregion
 
     # region MOVIE
-    data_path: StringProperty(
+    mov_data_path: StringProperty(
         name="File Path",
         description="File path to .mov file.",
         default="",
@@ -100,12 +100,6 @@ class CgtProperties(PropertyGroup):
     # endregion
 
     # region PREFERENCES
-    pvb: BoolProperty(
-        name="pvb",
-        description="subcontrol",
-        default=False
-    )
-
     enum_stream_dim: EnumProperty(
         name="Stream Dimensions",
         description="Dimensions for video Stream input.",
@@ -124,10 +118,21 @@ class CgtProperties(PropertyGroup):
             ("1", "capdshow", "")
         )
     )
+
+    pvb: BoolProperty(
+        name="pvb",
+        description="subcontrol",
+        default=False
+    )
+
+    transfer_type_path: StringProperty(
+        name="Dir Path",
+        description="Path to folder containing Hand, Pose and Face jsons.",
+        default="",
+        maxlen=1024,
+        subtype='DIR_PATH'
+    )
     # endregion
-
-
-pvb = False
 
 
 def get_user():

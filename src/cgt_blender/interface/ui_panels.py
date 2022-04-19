@@ -40,7 +40,7 @@ class UI_PT_main_panel(DefaultPanel, Panel):
             box.row().prop(user, "detection_input_type")
 
         if user.detection_input_type == "movie":
-            box.row().prop(user, "data_path")
+            box.row().prop(user, "mov_data_path")
         else:
             box.row().prop(user, "webcam_input_device")
             box.row().prop(user, "key_frame_step")

@@ -69,7 +69,7 @@ class WM_modal_detection_operator(bpy.types.Operator):
             frame_start, 1, "movie")
         self.tracking_handler.input_type = 1
 
-        camera_index = self.user.data_path
+        camera_index = self.user.mov_data_path
         self.init_tracking_handler(camera_index)
 
     def init_stream_detector(self, detection_type='HAND'):
