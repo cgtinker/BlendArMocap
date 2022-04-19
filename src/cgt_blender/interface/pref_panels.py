@@ -15,7 +15,8 @@ class BLENDARMOCAP_preferences(bpy.types.AddonPreferences):
         d_box.label(text='Dependencies')
         d_box.row().operator(pref_operators.PREFERENCES_OT_install_dependencies_button.bl_idname, icon="CONSOLE")
 
-        s_box = self.layout.box()
-        s_box.label(text='Camera Settings')
-        s_box.row().prop(user, "enum_stream_dim")
-        s_box.row().prop(user, "enum_stream_type")
+        if user.pvb:
+            s_box = self.layout.box()
+            s_box.label(text='Camera Settings')
+            s_box.row().prop(user, "enum_stream_dim")
+            s_box.row().prop(user, "enum_stream_type")

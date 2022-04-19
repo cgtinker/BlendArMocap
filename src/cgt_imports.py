@@ -7,10 +7,11 @@ This makes sure all modules are reloaded from new files, when the addon is remov
 or when Blender's 'Reload Scripts' operator is run manually.
 """
 
+
 SUB_DIRS = ['src/cgt_blender', 'src/cgt_bridge', 'src/cgt_detection', 'src/cgt_utils']
 INIT_MODULES = [
-    '.src.cgt_naming',
     '.src.cgt_imports',
+    '.src.cgt_naming',
     '.src.cgt_blender.interface.ui_properties',
     '.src.cgt_blender.interface.ui_registration',
     '.src.cgt_blender.input_manager',

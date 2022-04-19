@@ -67,6 +67,8 @@ class WM_modal_detection_operator(bpy.types.Operator):
         frame_start = bpy.context.scene.frame_start
         self.tracking_handler = self.set_detection_type(detection_type)(
             frame_start, 1, "movie")
+        self.tracking_handler.input_type = 1
+
         camera_index = self.user.data_path
         self.init_tracking_handler(camera_index)
 
@@ -79,15 +81,28 @@ class WM_modal_detection_operator(bpy.types.Operator):
         # init detector
         self.tracking_handler = self.set_detection_type(detection_type)(
             frame_start, key_step, "stream")
+        self.tracking_handler.input_type = 0
 
         camera_index = self.user.webcam_input_device
         self.init_tracking_handler(camera_index)
 
     def init_tracking_handler(self, cap_input):
         from ...cgt_utils import stream
+        # cap dimensions
+        dimensions_dict = {
+            "sd": [720, 480],
+            "hd": [1240, 720],
+            "fhd": [1920, 1080]
+        }
+        dim = dimensions_dict[self.user.enum_stream_dim]
 
         # init tracking handler targets
-        self.tracking_handler.stream = stream.Webcam(camera_index=cap_input)
+        self.tracking_handler.stream = stream.Webcam(
+            camera_index=cap_input,
+            width=dim[0],
+            height=dim[1],
+            backend=int(self.user.enum_stream_type)
+        )
         if not self.tracking_handler.stream.capture.isOpened():
             raise IOError("Initializing Detector failed.")
 

@@ -1,9 +1,9 @@
 import bpy
 from bpy.types import Panel
 
-from ... import cgt_naming
 from . import pref_operators
 from ..utils import install_dependencies
+from ... import cgt_naming
 
 
 class DefaultPanel:
@@ -31,18 +31,20 @@ class UI_PT_main_panel(DefaultPanel, Panel):
         return context.mode in {'OBJECT', 'POSE'}  # list all the modes you want here
 
     def draw(self, context):
-        user = context.scene.m_cgtinker_mediapipe # noqa
+        user = context.scene.m_cgtinker_mediapipe  # noqa
 
         # detection
         box = self.layout.box()
         box.label(text='Detect')
-        box.row().prop(user, "detection_input_type")
-        # todo detection type selection
-        if user.detection_input_type == "#movie":
+        if user.pvb:
+            box.row().prop(user, "detection_input_type")
+
+        if user.detection_input_type == "movie":
             box.row().prop(user, "data_path")
         else:
             box.row().prop(user, "webcam_input_device")
             box.row().prop(user, "key_frame_step")
+
         # settings
         box.row().prop(user, "enum_detection_type")
         if user.detection_operator_running:
@@ -68,7 +70,7 @@ class UI_PT_main_panel(DefaultPanel, Panel):
                                         icon="ARMATURE_DATA")
 
         if user.enum_detection_type == "POSE":
-            box.row().prop(user, "experimental_feature_bool") # , icon="ERROR")
+            box.row().prop(user, "experimental_feature_bool")  # , icon="ERROR")
 
         box.row(align=True).operator("button.cgt_transfer_animation_button", text=user.button_transfer_animation)
 
@@ -94,4 +96,3 @@ class UI_PT_warning_panel(DefaultPanel, Panel):
 
         for line in lines:
             layout.label(text=line)
-

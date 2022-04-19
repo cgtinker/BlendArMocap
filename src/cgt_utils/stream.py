@@ -8,9 +8,17 @@ class Webcam:
                  camera_index: int = 0,
                  title: str = "Stream Detection",
                  width: int = 640,
-                 height: int = 480):
+                 height: int = 480,
+                 backend: int = 0):
         # improved backend for windows
-        self.capture = cv2.VideoCapture(camera_index, cv2.CAP_DSHOW)
+        if backend == 0:
+            self.capture = cv2.VideoCapture(camera_index)
+        elif backend == 1:
+            try:
+                self.capture = cv2.VideoCapture(camera_index, cv2.CAP_DSHOW)
+            except EOFError:
+                self.capture = cv2.VideoCapture(camera_index)
+
         time.sleep(.25)
 
         if not self.capture.isOpened():

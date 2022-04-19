@@ -6,6 +6,7 @@ from mediapipe.framework.formats import classification_pb2
 
 class RealtimeDetector(ABC):
     stream = None
+    input_type = 0
     observer, listener, _timer = None, None, None
     solution = None
     drawing_utils, drawing_style, = None, None
@@ -45,8 +46,11 @@ class RealtimeDetector(ABC):
         pass
 
     def exec_detection(self, mp_lib):
-        if not self.stream_updated():
+        updated = self.stream_updated()
+        if not updated and self.input_type == 0:
             return True
+        elif not updated and self.input_type == 1:
+            return False
 
         # detect features in frame
         self.stream.frame.flags.writeable = False

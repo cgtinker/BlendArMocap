@@ -100,6 +100,12 @@ class CgtProperties(PropertyGroup):
     # endregion
 
     # region PREFERENCES
+    pvb: BoolProperty(
+        name="pvb",
+        description="subcontrol",
+        default=False
+    )
+
     enum_stream_dim: EnumProperty(
         name="Stream Dimensions",
         description="Dimensions for video Stream input.",
@@ -114,12 +120,14 @@ class CgtProperties(PropertyGroup):
         name="Stream Backend",
         description="Sets Stream backend.",
         items=(
-            ("default", "automatic", ""),
-            ("dshow", "capdshow", "")
+            ("0", "automatic", ""),
+            ("1", "capdshow", "")
         )
     )
     # endregion
 
+
+pvb = False
 
 
 def get_user():

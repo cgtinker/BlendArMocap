@@ -21,9 +21,7 @@ class HandDetector(abs_detector.RealtimeDetector):
                 max_num_hands=2
         ) as mp_lib:
             while self.stream.capture.isOpened():
-                state = self.exec_detection(mp_lib)
-                if state == {'CANCELLED'}:
-                    return {'CANCELLED'}
+                return self.exec_detection(mp_lib)
 
     def initialize_model(self):
         self.solution = mp.solutions.hands

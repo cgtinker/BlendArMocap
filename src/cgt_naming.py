@@ -1,6 +1,7 @@
 import os
 from dataclasses import dataclass
 
+
 # has to be at root
 PACKAGE = os.path.basename(os.path.dirname(os.path.dirname(__file__)))
 print("PACKAGE:", PACKAGE)
