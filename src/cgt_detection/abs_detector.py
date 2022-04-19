@@ -14,10 +14,9 @@ class RealtimeDetector(ABC):
     frame = None
 
     def __init__(self, frame_start=0, key_step=4, input_type=None):
-        self.input_type=input_type
+        self.input_type = input_type
         self.drawing_utils = solutions.drawing_utils
         self.drawing_style = solutions.drawing_styles
-        # todo: state
         self.frame = frame_start
         self.key_step = key_step
 
@@ -47,7 +46,7 @@ class RealtimeDetector(ABC):
 
     def exec_detection(self, mp_lib):
         if not self.stream_updated():
-            return {'PASS_THROUGH'}
+            return True
 
         # detect features in frame
         self.stream.frame.flags.writeable = False
@@ -59,8 +58,8 @@ class RealtimeDetector(ABC):
         if not self.contains_features(mp_res):
             self.stream.draw()
             if self.stream.exit_stream():
-                return {'CANCELLED'}
-            return {'PASS_THROUGH'}
+                return False
+            return True
 
         # draw results
         self.draw_result(self.stream, mp_res, self.drawing_utils)
@@ -72,8 +71,8 @@ class RealtimeDetector(ABC):
 
         # exit stream
         if self.stream.exit_stream():
-            return {'CANCELLED'}
-        return {'PASS_THROUGH'}
+            return False
+        return True
 
     def stream_updated(self):
         self.stream.update()

@@ -1,4 +1,19 @@
 import bpy
+from .. import input_manager
+
+
+class UI_transfer_anim_button(bpy.types.Operator):
+    bl_label = "Transfer Animation"
+    bl_idname = "button.cgt_transfer_animation_button"
+    bl_description = "Transfer driver animation to cgt_rig"
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode in {'OBJECT'}
+
+    def execute(self, context):
+        input_manager.transfer_animation()
+        return {'FINISHED'}
 
 
 class WM_modal_detection_operator(bpy.types.Operator):
@@ -25,27 +40,22 @@ class WM_modal_detection_operator(bpy.types.Operator):
 
     def execute(self, context):
         print("RUNNING MP AS TIMER DETECTION MODAL")
+        self.user = context.scene.m_cgtinker_mediapipe  # noqa
+        detection_type = self.user.enum_detection_type
 
-        # default detection type for testing while add-on is not registered
-        detection_type = 'HAND'
+        # hacky way to check if operator is running
+        print("IS RUNNING:", self.user.detection_operator_running)
+        if self.user.detection_operator_running is True:
+            self.user.detection_operator_running = False
+            return {'FINISHED'}
+        else:
+            self.user.detection_operator_running = True
 
-        try:
-            self.user = context.scene.m_cgtinker_mediapipe # noqa
-            detection_type = self.user.enum_detection_type
-        except AttributeError:
-            print("CGT USER NOT FOUND")
-            self.user = None
-        print("tttt")
-        if self.tracking_handler:
-            print("try exit")
-            self.cancel(context)
-            return {'CANCELLED'}
-
-        # initialize the detection
+        # initialize the detection model
         if self.user.detection_input_type == 'movie':
             self.init_movie_detector(detection_type)
         else:
-            self.init_detector(detection_type)
+            self.init_stream_detector(detection_type)
 
         # add a timer property and start running
         wm = context.window_manager
@@ -55,20 +65,20 @@ class WM_modal_detection_operator(bpy.types.Operator):
 
     def init_movie_detector(self, detection_type='HAND'):
         frame_start = bpy.context.scene.frame_start
-        self.tracking_handler = self.set_detection_type(detection_type)(frame_start, 1, "movie")
+        self.tracking_handler = self.set_detection_type(detection_type)(
+            frame_start, 1, "movie")
         camera_index = self.user.data_path
         self.init_tracking_handler(camera_index)
 
-    def init_detector(self, detection_type='HAND'):
+    def init_stream_detector(self, detection_type='HAND'):
         print(f"INITIALIZING {detection_type} DETECTION")
-
+        # frame start and key step
         frame_start = bpy.context.scene.frame_start
         key_step = self.user.key_frame_step
+
         # init detector
         self.tracking_handler = self.set_detection_type(detection_type)(
             frame_start, key_step, "stream")
-        # self.tracking_handler = self.set_detection_type(detection_type)(
-        #    frame_start, key_step, "stream")
 
         camera_index = self.user.webcam_input_device
         self.init_tracking_handler(camera_index)
@@ -81,27 +91,32 @@ class WM_modal_detection_operator(bpy.types.Operator):
         if not self.tracking_handler.stream.capture.isOpened():
             raise IOError("Initializing Detector failed.")
 
+        # setup tracking handler and bridge
         self.tracking_handler.initialize_model()
         self.tracking_handler.init_bpy_bridge()
         self.tracking_handler.listener.attach(self.tracking_handler.observer)
 
     @classmethod
     def poll(cls, context):
-        return context.mode == 'OBJECT'
+        return context.mode in {'OBJECT', 'POSE'}
 
     def modal(self, context, event):
         if event.type == "TIMER":
-            rt_event = self.tracking_handler.image_detection()
-            return rt_event
+            running = self.tracking_handler.image_detection()
+            if running:
+                return {'PASS_THROUGH'}
+            else:
+                return self.cancel(context)
 
-        if event.type in {'RIGHTMOUSE', 'ESC', 'Q'}:
+        if event.type in {'Q', 'ESC', 'RIGHT_MOUSE'} or self.user.detection_operator_running is False:
             return self.cancel(context)
 
         return {'PASS_THROUGH'}
 
     def cancel(self, context):
+        bpy.context.scene.m_cgtinker_mediapipe.detection_operator_running = False # noqa
         del self.tracking_handler
         wm = context.window_manager
         wm.event_timer_remove(self._timer)
-        print("CANCELLED DETECTION")
-        return {'CANCELLED'}
+        print("FINISHED DETECTION")
+        return {'FINISHED'}

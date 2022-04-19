@@ -1,8 +1,8 @@
-from . import RigReference
+from . import abs_reference
 from .. import cgt_naming
 
 
-class RigHands(RigReference.BoneNameProvider):
+class RigHands(abs_reference.BoneNameProvider):
     name = "hands"
     rigify_bone_refs = {
         cgt_naming.HAND.wrist + ".R":             "hand_ik.R",
@@ -57,7 +57,7 @@ class RigHands(RigReference.BoneNameProvider):
 def main():
     hands = RigHands()
     refs = hands.provide_bone_names()
-    hands.to_json(refs, "hands")
+    hands.to_json(refs, "rigify_hands")
 
 
 if __name__ == '__main__':

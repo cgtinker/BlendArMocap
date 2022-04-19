@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-import json
+from ..cgt_utils import json_utils
 
 
 class BoneNameProvider(ABC):
@@ -12,19 +12,21 @@ class BoneNameProvider(ABC):
 
     def to_json(self, data, name):
         path = self.path / f"{name}.json"
-        with open(path, 'w', encoding='utf-8') as f:
-            j = json.dumps(data, ensure_ascii=False, indent=4, separators=(',', ':'))
-            f.write(j)
+        j = json_utils.to_json(data, path)
         return j
 
     def from_json(self, name):
         path = self.path / f"{name}.json"
-        with open(path) as f:
-            j = json.load(f)
+        j = json_utils.from_json(path)
         return j
 
+
 def main():
-    pass
+    path = Path(__file__).parent / "data"
+    path = path / f"hands.json"
+    j = json_utils.from_json(path)
+    print(j)
+
 
 if __name__ == '__main__':
     main()

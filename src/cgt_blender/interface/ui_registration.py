@@ -2,7 +2,7 @@ import bpy
 from bpy.props import PointerProperty
 from bpy.utils import register_class, unregister_class
 
-from . import ui_properties, ui_panels, ui_preferences, stream_detection_operator
+from . import ui_properties, ui_panels, pref_operators, pref_panels, ui_operators
 from ..utils import install_dependencies
 
 
@@ -11,8 +11,8 @@ def get_classes():
     classes = (
         ui_properties.CgtProperties,
 
-        ui_panels.UI_transfer_anim_button,
-        stream_detection_operator.WM_modal_detection_operator,
+        ui_operators.UI_transfer_anim_button,
+        ui_operators.WM_modal_detection_operator,
 
         ui_panels.UI_PT_main_panel
     )
@@ -20,8 +20,8 @@ def get_classes():
 
 
 def get_preferences():
-    preference_classes = (ui_preferences.PREFERENCES_OT_install_dependencies_button,
-                          ui_preferences.BLENDARMOCAP_preferences,
+    preference_classes = (pref_operators.PREFERENCES_OT_install_dependencies_button,
+                          pref_panels.BLENDARMOCAP_preferences,
                           ui_panels.UI_PT_warning_panel)
     return preference_classes
 
@@ -69,7 +69,7 @@ def unregister():
         for cls in reversed(classes):
             unregister_class(cls)
 
-        del bpy.types.Scene.m_cgtinker_mediapipe
+        del bpy.types.Scene.m_cgtinker_mediapipe # noqa
 
 
 def manual_unregistration():
@@ -78,7 +78,7 @@ def manual_unregistration():
     for cls in reversed(classes):
         unregister_class(cls)
 
-    del bpy.types.Scene.m_cgtinker_mediapipe
+    del bpy.types.Scene.m_cgtinker_mediapipe # noqa
 
 
 def manual_test_registration():
