@@ -27,3 +27,21 @@ class Slope:
         self.slope = (max_out - min_out) / (max_in - min_in)
         self.min_in = min_in
         self.min_out = min_out
+
+
+@dataclass(repr=True)
+class CustomProperties:
+    name: str
+    prop_name: str
+    value: float
+    v_min: float
+    v_max: float
+    use_soft: bool
+
+    def __init__(self, name, prop_name, value, v_min=None, v_max=None, use_soft=False):
+        self.name = name
+        self.prop_name = prop_name
+        self.value = value
+        self.v_min = v_min
+        self.v_max = v_max
+        self.use_soft = use_soft

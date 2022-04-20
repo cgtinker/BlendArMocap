@@ -17,7 +17,10 @@ def to_vector(origin: np.array, destination: np.array):
 
 
 def normalize(vector: np.array):
-    """ returns the unit vector of the vector. """
+    """ returns the unit vector of the vector.
+    normalized_v = v / np.sqrt(np.sum(v**2))
+    return normalized_v
+    """
     return vector / np.linalg.norm(vector)
 
 
@@ -339,7 +342,17 @@ def rotate_point(point, axis, angle):
 # endregion
 
 
-# region normal from face
+# region planes
+def distance_from_plane(point, normal, plane_point):
+    d = np.sum(np.dot(point-plane_point, normal))
+    return d
+
+
+def normal_from_plane(plane):
+    normal = np.cross(plane[1]-plane[0], plane[2]-plane[0])
+    return normal
+
+
 # https://github.com/vladmandic/human/pull/91
 def create_normal_array(vertices: np.array, faces: np.array):
     """return array of normals per triangle. each vertex triplet

@@ -26,6 +26,11 @@ class BpyRigging(ABC):
         pass
 
     # region apply drivers
+    def add_custom_bone_props(self, custom_prop_list):
+        for props in custom_prop_list:
+            objects.set_custom_property(
+                self.pose_bones[props[0]], props[1], props[2], props[3], props[4])
+
     def apply_drivers(self):
         """ applies all mapping relations for mapping values
             gets target method by driver type."""

@@ -1,5 +1,6 @@
 from . import abs_rigging
 from .utils.drivers.hand_drivers import FingerDriverContainer
+from .utils import mapping
 from ...cgt_naming import HAND
 
 
@@ -86,6 +87,7 @@ class RigifyHands(abs_rigging.BpyRigging):
         # storing relations between rigify and driver cgt_rig (left / right hand)
         self.rot_constraint_dict = {}
         self.limit_constraint_dict = {}
+        self.custom_bone_props = {}
         self.set_relation_dict(driver_objects)
         self.apply_drivers()
 
@@ -103,7 +105,6 @@ class RigifyHands(abs_rigging.BpyRigging):
             return index, bone_name
 
         bone_name = self.rigify_bone_refs[key] + extension
-
         return index, bone_name
 
     def get_rest_pose_finger_angles(self):
@@ -123,6 +124,7 @@ class RigifyHands(abs_rigging.BpyRigging):
             try:
                 index, bone_name = self.get_reference_bone(name, extension)
                 self.rot_constraint_dict[empty.name] = [bone_name, "COPY_ROTATION"]
+                # self.custom_bone_props[bone_name] = mapping.CustomProperties(bone_name, "factor", 1, -5, 5, True)
                 if index != 0:
                     index -= 1
                     self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.constraint_limits[index]]

@@ -36,5 +36,13 @@ class BonePropDriver(Driver):
             variable.targets[0].transform_type = trans_path[self.data_paths[idx]]
 
 
-class CustomPropertyDriver(Driver):
-    pass
+class CustomBonePropDriver(Driver):
+    def prepare(self):
+        for idx, variable in enumerate(self.variables):
+            variable.name = self.property_name
+            variable.type = 'SINGLE_PROP'
+            variable.targets[0].id = self.target_rig
+            """pose.bones["Bone"]["prop"]"""
+            variable.targets[0].bone_target = f'pose.bones["{self.provider_obj.name}"]["{self.property_name}"]'
+            variable.targets[0].id = self.provider_obj
+            variable.targets[0].data_path = self.data_paths[idx]

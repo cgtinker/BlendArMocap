@@ -38,7 +38,11 @@ class BoneCenter(DriverContainer):
         right_bone = RightBone(bones[1])
 
         self.pose_drivers = [left_bone, right_bone]
-        self.set(driver_target, DriverType.BONE, target_rig)
+
+        for driver in self.pose_drivers:
+            driver.target_object = driver_target
+            driver.target_rig = target_rig
+            driver.driver_type = DriverType.BONE
 
 
 # endregion
@@ -115,6 +119,10 @@ class LimbDriver(DriverContainer):
         joint_tail = MainExpression(detected_joint[1], bone_length=rigify_joint_length)
 
         self.pose_drivers = [driver_origin, joint_head, joint_length, joint_tail]
-        self.set(driver_target, DriverType.SINGLE)
+
+        for driver in self.pose_drivers:
+            driver.target_object = driver_target
+            driver.target_rig = None
+            driver.driver_type = DriverType.SINGLE
 
 # endregion

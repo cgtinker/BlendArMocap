@@ -171,10 +171,9 @@ class BridgeHand(abs_assignment.DataAssignment):
             Thumb gets projected on a plane between thumb mcp, index mcp and wrist to calculate the z-angle.
         """
         data = [0] * 20
+        joints = np.array([[0, 1, 2]])
 
         def calculate_thumb_angle():
-            joints = np.array([[0, 1, 2]])
-
             # create plane to project thumb mcp & pip on plane
             plane = np.array([np.array([0, 0, 0]), hand[1][1], hand[5][1]])
             thumb_proj = [m_V.project_vec_on_plane(plane, joints, p)
@@ -204,16 +203,26 @@ class BridgeHand(abs_assignment.DataAssignment):
         thumb_vec = m_V.to_vector(np.array(hand[1][1]), np.array(hand[5][1]))
         dirs = [pinky_vec, pinky_vec, thumb_vec, thumb_vec]
 
-        # circle around tangent
-        for i in range(0, 4):
+        for i in range(0, 1):
+            # circle around tangent in target dir
             circle = m_V.create_circle_around_vector(tangent, mcps[i], dists[i], 20, dirs[i])
             closest = m_V.get_closest_point(pips[i], circle)
 
             # angle between the closest point on circle to mcp and pip to mcp vectors
             mcp_pip = m_V.to_vector(mcps[i], pips[i])
             mcp_closest = m_V.to_vector(mcps[i], closest)
+
             # todo: check for pos / negative
+            plane = np.array([circle[0], circle[7], circle[14]])
+            normal = m_V.normal_from_plane(plane)
+            # normal, norm = m_V.create_normal_array(np.array(plane), np.array(joints))
+            # normal = m_V.normalize(normal)
+            dist = m_V.distance_from_plane(mcps[i], normal, circle[0])
+            print(dist, normal)
+
             angle = m_V.angle_between(np.array(mcp_pip), np.array(mcp_closest))
+            # if dist < 0:
+            #     angle = -angle
 
             data[self.fingers[i + 1][0]] = angle
 

@@ -18,7 +18,10 @@ class DriverType:
 
 class DriverProperties:
     """ Driver expression include Driver Properties same as the Driver Interface.
-        The properties are required to set up the Driver. """
+        The properties are required to set up the Driver.
+        :params
+        target_object - driver gets added to obj
+        provider_obj - obj providing values for driver"""
     target_object = None
     provider_obj = None
 
@@ -33,21 +36,8 @@ class DriverProperties:
 
 @dataclass(repr=True)
 class DriverContainer:
-    """
-    Container for storing multiple drivers.
-    attributes:
-        pose_drivers: list containing drivers
-        driver_target: object to assign drivers to
-        target_rig: targeted rig, default None
-        driver_type: driver type which gets assigned
-    """
+    """ Container for storing multiple drivers. """
     pose_drivers: list = None
-
-    def set(self, driver_target: object, driver_type: int, target_rig: object = None):
-        for driver in self.pose_drivers:
-            driver.target_object = driver_target
-            driver.target_rig = target_rig
-            driver.driver_type = driver_type
 
 
 @dataclass(repr=True)
