@@ -169,10 +169,10 @@ def center_point(p1: np.array, p2: np.array):
     return (p1 + p2) / 2
 
 
-def get_closest_point(target, points):
+def get_closest_idx(target, points):
     distances = np.sum((points - target) ** 2, axis=1)
-    closest = points[np.argmin(distances)]
-    return closest
+    # closest = points[np.argmin(distances)]
+    return np.argmin(distances)
 # endregion
 
 
