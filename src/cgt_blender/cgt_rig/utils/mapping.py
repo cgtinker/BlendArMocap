@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from math import radians
 
 
 @dataclass(repr=True)

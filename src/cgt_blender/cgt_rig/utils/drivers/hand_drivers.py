@@ -6,6 +6,35 @@ from math import radians
 
 
 @dataclass(repr=True)
+class CustomAngleMultiplier(DriverProperties):
+    target_object: str
+    functions: list
+
+    def __init__(self,
+                 driver_target: str,
+                 provider_obj: object,
+                 x_slope: Slope,
+                 z_slope: Slope):
+        """ Provides eye driver properties to animate the lids.
+            :param provider_obj: object providing rotation values.
+            :param slope: factor to multiply and offset the rotation
+            :param offset: offsets the base input value
+        """
+
+        self.target_object = driver_target
+        self.driver_type = DriverType.CUSTOM
+        self.provider_obj = provider_obj
+        self.property_type = "factor"
+        self.property_name = "fac"
+        self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
+        self.functions = [
+            f"{x_slope.min_out}+{x_slope.slope}*({-x_slope.min_in}+(rotation))",
+            "",
+            # ""]
+            f"{z_slope.min_out}+{z_slope.slope}*({-z_slope.min_in}+(rotation))"]
+
+
+@dataclass(repr=True)
 class FingerAngleDriver(DriverProperties):
     target_object: str
     functions: list

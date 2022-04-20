@@ -1,7 +1,7 @@
-from math import degrees, radians
+from math import degrees
 
 import numpy as np
-from mathutils import Euler, Quaternion
+from mathutils import Euler
 
 from . import abs_assignment
 from ..cgt_blender.utils import objects
@@ -170,25 +170,24 @@ class BridgeHand(abs_assignment.DataAssignment):
             Searching for the closest point on the circle to the fingers dip and calculate the angle.
             Thumb gets projected on a plane between thumb mcp, index mcp and wrist to calculate the z-angle.
         """
-
-        joints = np.array([[0, 1, 2]])
         data = [0] * 20
 
-        # create plane to calc thumb angle
-        plane = np.array([np.array([0, 0, 0]), hand[1][1], hand[5][1]])
+        def calculate_thumb_angle():
+            joints = np.array([[0, 1, 2]])
 
-        # project mcps & pip on plane
-        proj_mcp = m_V.project_vec_on_plane(plane, joints, hand[1][1])
-        proj_mcp_b = m_V.project_vec_on_plane(plane, joints, hand[5][1])
-        proj_pip = m_V.project_vec_on_plane(plane, joints, np.array(hand[2][1]))
+            # create plane to project thumb mcp & pip on plane
+            plane = np.array([np.array([0, 0, 0]), hand[1][1], hand[5][1]])
+            thumb_proj = [m_V.project_vec_on_plane(plane, joints, p)
+                          for p in [hand[1][1], hand[5][1], hand[2][1]]]
 
-        # vectors for angle calculation
-        mcp_vector = m_V.to_vector(proj_mcp, proj_mcp_b)
-        tar_vec = m_V.to_vector(np.array(proj_mcp), np.array(proj_pip))
+            # vectors to calculate angle
+            thumb_vecs = [m_V.to_vector(tp[0], tp[1]) for tp in [
+                [thumb_proj[0], thumb_proj[1]],
+                [thumb_proj[0], thumb_proj[2]]]]
 
-        # thumb angle
-        angle = m_V.angle_between(np.array(tar_vec), np.array(mcp_vector))
-        data[1] = angle
+            return m_V.angle_between(np.array(thumb_vecs[0]), np.array(thumb_vecs[1]))
+
+        data[1] = calculate_thumb_angle()
 
         # calculate other finger angles
         tangent = m_V.to_vector(np.array(hand[5][1]), np.array(hand[17][1]))
@@ -209,22 +208,29 @@ class BridgeHand(abs_assignment.DataAssignment):
         for i in range(0, 4):
             circle = m_V.create_circle_around_vector(tangent, mcps[i], dists[i], 20, dirs[i])
             closest = m_V.get_closest_point(pips[i], circle)
+
             # angle between the closest point on circle to mcp and pip to mcp vectors
             mcp_pip = m_V.to_vector(mcps[i], pips[i])
-            mcp_facing = m_V.to_vector(mcps[i], closest)
-            angle = m_V.angle_between(np.array(mcp_pip), np.array(mcp_facing))
+            mcp_closest = m_V.to_vector(mcps[i], closest)
+            # todo: check for pos / negative
+            angle = m_V.angle_between(np.array(mcp_pip), np.array(mcp_closest))
+
             data[self.fingers[i + 1][0]] = angle
 
-        # angles = [int(degrees(d)) for d in data if d != 0]
-        # print(angles)
         return data
 
     def get_x_angles(self, hand):
         """ get finger x angle by calculating the angle between each finger joint """
-        origin = hand[0][1]  # [0, 0, 0]
         # finger vertices - wrist as origin to fingers
         fingers = [[hand[idx][1] for idx in range(finger[0], finger[1])] for finger in self.fingers]
-        fingers = [np.array([origin] + finger) for finger in fingers]
+        fingers = [np.array([np.array([0, 0, 0])] + finger) for finger in fingers]
+
+        joints = np.array([[0, 1, 2]])
+        # straighten fingers by plane projection
+        for idx, finger in enumerate(fingers):
+            plane = np.array([np.array([0, 0, 0]), finger[1], finger[4]])
+            f = [m_V.project_vec_on_plane(plane, joints, p) for p in finger]
+            fingers[idx] = f
 
         # setup joints to calc finger angles
         x_joints = [[0, 1, 2], [1, 2, 3], [2, 3, 4]]
@@ -234,9 +240,8 @@ class BridgeHand(abs_assignment.DataAssignment):
         for idx, angles in enumerate(x_finger_angles):
             if angles is None:
                 break
-            # finger start & end idx
+            # iter over every finger joint and calc angle
             mcp, tip = self.fingers[idx]
-            # iter over every finger joint
             for angle_idx, finger_idx in enumerate(range(mcp, tip - 1)):
                 data[finger_idx] = angles[angle_idx]
 

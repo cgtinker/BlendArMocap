@@ -34,3 +34,7 @@ class BonePropDriver(Driver):
             }
             variable.targets[0].transform_space = 'WORLD_SPACE'
             variable.targets[0].transform_type = trans_path[self.data_paths[idx]]
+
+
+class CustomPropertyDriver(Driver):
+    pass

@@ -227,13 +227,13 @@ def add_copy_rotation_constraint(obj, target_obj, invert_y):
 
 
 # region CUSTOM PROPERTIES
-def set_custom_property(target_obj, prop_name, prop):
-    print("set custom prop", target_obj, prop_name, prop)
-    if get_custom_property(target_obj, prop_name) == None:
-        target_obj[prop_name] = prop
-        return False
-    else:
-        return True
+#def set_custom_property(target_obj, prop_name, prop):
+#    print("set custom prop", target_obj, prop_name, prop)
+#    if get_custom_property(target_obj, prop_name) == None:
+#        target_obj[prop_name] = prop
+#        return False
+#    else:
+#        return True
 
 
 def get_custom_property(target_obj, prop_name):
@@ -243,6 +243,22 @@ def get_custom_property(target_obj, prop_name):
         value = None
     return value
 
+
+def set_custom_property(obj, prop_name, value, v_min=None, v_max=None, use_soft=False):
+    if get_custom_property(obj, prop_name) is None:
+        if v_min is None or v_max is None:
+            obj[prop_name] = value
+            return False
+
+        if "_RNA_UI" not in obj.keys():
+            obj["_RNA_UI"] = {}
+
+        if use_soft:
+            obj["_RNA_UI"].update({prop_name: {"use_soft_limits": use_soft, "soft_min": v_min, "soft_max": v_max}})
+        else:
+            obj["_RNA_UI"].update({prop_name: {"min": v_min, "max": v_max}})
+        return False
+    return True
 
 # endregion
 

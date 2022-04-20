@@ -111,6 +111,7 @@ class MouthDriverContainer(DriverContainer):
         [0, 1.5]]  # corners
 
     def __init__(self, driver_targets, provider_obj, mouth_distances):
+        # todo use slope for 0-1 mapping
         slopes = [Slope(self.inputs[idx][0], self.inputs[idx][1], 0, 1) for idx in range(0, 3)]
         left_corner = MouthCornerDriver(driver_targets[1][0], provider_obj[1], "left")
         right_corner = MouthCornerDriver(driver_targets[1][1], provider_obj[1], "right")

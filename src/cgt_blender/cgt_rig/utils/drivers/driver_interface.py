@@ -13,6 +13,7 @@ class DriverType:
     face_driver: int = 2
     SINGLE: int = 3
     BONE: int = 4
+    CUSTOM: int = 5
 
 
 class DriverProperties:

@@ -123,7 +123,7 @@ class HAND:
 
 @dataclass(frozen=True, init=False)
 class FACE:
-    face = "cgt_face_empty_"
+    face = "FaceEmpty_"
 
     head = "CGT_FACE_ROTATION"
     chin = "CGT_CHIN_ROTATION"
