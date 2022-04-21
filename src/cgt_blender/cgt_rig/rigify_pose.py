@@ -114,7 +114,6 @@ class RigifyPose(abs_rigging.BpyRigging):
         ) for idx, target in enumerate(self.limb_driver_targets)]
         # endregion
 
-        self.set_relation_dict(driver_objects)
         self.n_apply_driver(self.bone_center_drivers)
         self.n_apply_driver(self.limb_drivers)
 
@@ -145,22 +144,4 @@ class RigifyPose(abs_rigging.BpyRigging):
         return joint_lengths
 
         # region mapping relation setup
-
-    def set_relation_dict(self, driver_objects: list):
-        """ Sets a list of relations for further data transfer. """
-        driver_names = [obj.name for obj in driver_objects]
-        self.set_bone_relation(self.bone_center_drivers)
-        self.set_single_prop_relation(self.limb_drivers, driver_names, driver_objects)
-        user = objects.user_pref()
-
-        pose_constraints_copy = self.pose_constraints.copy()
-        if not user.experimental_feature_bool:
-            remove_list = [POSE.left_shin_ik, POSE.right_shin_ik, POSE.left_foot_ik, POSE.right_foot_ik]
-            for c in remove_list:
-                pose_constraints_copy.pop(c, None)
-
-        self.set_constraint_relation(pose_constraints_copy, driver_names, driver_objects)
-
-        # self.n_apply_constraints(pose_constraints_copy)
-
-# endregion
+    # endregion

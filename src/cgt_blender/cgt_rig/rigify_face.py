@@ -68,17 +68,8 @@ class RigifyFace(BpyRigging):
         }
         # endregion
 
-        self.set_relation_dict(driver_objects)
         self.n_apply_driver([self.eye_drivers, self.mouth_drivers, self.eyebrow_drivers])
         self.n_apply_constraints(self.constraint_dict)
-        # self.apply_drivers()
-
-    def set_relation_dict(self, driver_objects):
-        driver_names = [obj.name for obj in driver_objects]
-
-        single_prop_drivers = [self.eye_drivers, self.mouth_drivers, self.eyebrow_drivers]
-        self.set_single_prop_relation(single_prop_drivers, driver_names, driver_objects)
-        self.set_constraint_relation(self.constraint_dict, driver_names, driver_objects)
 
     def get_bone_distances(self, bone_pairs):
         distances = []

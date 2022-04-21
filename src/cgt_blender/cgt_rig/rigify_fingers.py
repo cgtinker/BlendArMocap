@@ -91,10 +91,10 @@ class RigifyHands(abs_rigging.BpyRigging):
         self.limit_constraint_dict = {}
         self.custom_bone_props = {}
         self.set_relation_dict(driver_objects)
+
         self.n_apply_driver([self.left_finger_angle_drivers, self.right_finger_angle_drivers])
         self.n_apply_constraints(self.rot_constraint_dict)
         self.n_apply_constraints(self.limit_constraint_dict)
-        # self.apply_drivers()
 
     def get_reference_bone(self, key, extension):
         """ get reference bone and index by driver empty name. """
@@ -111,9 +111,6 @@ class RigifyHands(abs_rigging.BpyRigging):
 
         bone_name = self.rigify_bone_refs[key] + extension
         return index, bone_name
-
-    def get_rest_pose_finger_angles(self):
-        pass
 
     def set_relation_dict(self, driver_objects):
         """ sets relation dict containing bone name and reference empty obj. """
@@ -135,24 +132,3 @@ class RigifyHands(abs_rigging.BpyRigging):
                     # self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.no_limits[index]]
             except KeyError:
                 pass
-
-        # prepare drivers
-        # self.set_single_prop_relation(
-        #     [self.left_finger_angle_drivers, self.right_finger_angle_drivers],
-        #     [obj.name for obj in driver_objects], driver_objects)
-        # # prepare constraints
-        # self.set_constraint_relation(self.rot_constraint_dict, [obj.name for obj in driver_objects], driver_objects)
-        # self.set_constraint_relation(self.limit_constraint_dict, [obj.name for obj in driver_objects], driver_objects)
-
-    def apply_d(self):
-        print("attempt to appy drivers")
-
-        containers = [self.left_finger_angle_drivers, self.right_finger_angle_drivers]
-        for container in containers:
-            for driver in container.pose_drivers:
-                driver.provider_obj = objects.get_object_by_name(driver.provider_obj)
-                driver.target_object = objects.get_object_by_name(driver.target_object)
-                print(driver)
-                driver_types.SinglePropDriver(driver)
-
-
