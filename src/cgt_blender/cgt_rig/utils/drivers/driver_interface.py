@@ -67,14 +67,18 @@ class Driver(DriverProperties):
 
         # overwrite driver expression
         if self.overwrite is True:
-
+            print(self.target_object, self.property_name, "overwrite:", True)
             try:
-                self.drivers = [
-                    self.target_object.animation_data.drivers.remove(
-                        self.target_object.animation_data.drivers[index]
-                    ) for index in range(3)]
+                preassigned = self.target_object.animation_data.drivers
+                for i, d in enumerate(preassigned):
+                    self.target_object.animation_data.drivers.remove(d)
+                    # self.target_object.animation_data.driver_remove(d)
+                # self.drivers = [
+                #     self.target_object.animation_data.drivers.remove(
+                #         self.target_object.animation_data.drivers[index]
+                #     ) for index in range(3)]
             except Exception:
-                print("driver issue", self.driver)
+                print("Exception occured.")
                 pass
 
         # setup vars for new driver
@@ -89,7 +93,7 @@ class Driver(DriverProperties):
         # generate drivers
         self.drivers = [self.target_object.driver_add(self.property_type, index) for index in range(3)]
         self.variables = [d.driver.variables.new() for d in self.drivers]
-
+        print("prepare and apply")
         # prepare and apply driver to obj
         self.prepare()
         self.apply()
@@ -99,5 +103,7 @@ class Driver(DriverProperties):
         pass
 
     def apply(self):
+        print(self.functions)
+
         for idx, d in enumerate(self.drivers):
             d.driver.expression = self.functions[idx] if self.functions[idx] else "0"

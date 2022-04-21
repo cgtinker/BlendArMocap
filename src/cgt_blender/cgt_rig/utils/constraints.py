@@ -7,7 +7,7 @@ def copy_rotation(constraint, target, values):
 
 
 def limit_rotation(constraint, target, values):
-    print("CURRENT", constraint, values)
+    # print("CURRENT", constraint, values)
     constraint.use_limit_x = True
     # constraint.min_x = -0.136
     constraint.min_x = values[0][0]
@@ -127,10 +127,10 @@ def add_constraint(bone, target, constraint, values):
         constraint_name = constraint_name.replace(" ", "_")
         constraint_name = constraint_name.upper()
         constraint_name = constraint_name.rsplit('.', 1)[0]
-        print("preassigned constraint:", constraint_name, "attempt to assign", target_constraint)
+        # print("preassigned constraint:", constraint_name, "attempt to assign", target_constraint)
         # remove if names match
         if constraint_name == target_constraint:
-            print("removing preassigned constraint", c)
+            # print("removing preassigned constraint", c)
             bone.constraints.remove(c)
     try:
         # adding a new constraint

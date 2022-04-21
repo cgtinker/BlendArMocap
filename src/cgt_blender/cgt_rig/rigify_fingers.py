@@ -129,7 +129,9 @@ class RigifyHands(abs_rigging.BpyRigging):
                     self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.constraint_limits[index]]
                     # self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.no_limits[index]]
             except KeyError:
-                print("driver empty does not exist:", empty.name)
+                # if "TIP" not in empty.name:
+                #     print("driver empty does not exist:", empty.name)
+                pass
 
         # prepare drivers
         self.set_single_prop_relation(

@@ -1,8 +1,8 @@
 from dataclasses import dataclass
+from math import radians
 
 from .driver_interface import DriverProperties, DriverContainer, DriverType
 from ..mapping import Slope
-from math import radians
 
 
 @dataclass(repr=True)
@@ -12,9 +12,7 @@ class CustomAngleMultiplier(DriverProperties):
 
     def __init__(self,
                  driver_target: str,
-                 provider_obj: object,
-                 x_slope: Slope,
-                 z_slope: Slope):
+                 provider_obj: object):
         """ Provides eye driver properties to animate the lids.
             :param provider_obj: object providing rotation values.
             :param slope: factor to multiply and offset the rotation
@@ -27,11 +25,7 @@ class CustomAngleMultiplier(DriverProperties):
         self.property_type = "factor"
         self.property_name = "fac"
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
-        self.functions = [
-            f"{x_slope.min_out}+{x_slope.slope}*({-x_slope.min_in}+(rotation))",
-            "",
-            # ""]
-            f"{z_slope.min_out}+{z_slope.slope}*({-z_slope.min_in}+(rotation))"]
+        self.functions = ["", "", ""]
 
 
 @dataclass(repr=True)
@@ -55,12 +49,11 @@ class FingerAngleDriver(DriverProperties):
         self.provider_obj = provider_obj
         self.property_type = "rotation_euler"
         self.property_name = "rotation"
-        self.overwrite = True
+        # self.overwrite = True
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
         self.functions = [
             f"{x_slope.min_out}+{x_slope.slope}*({-x_slope.min_in}+(rotation))",
             "",
-            # ""]
             f"{z_slope.min_out}+{z_slope.slope}*({-z_slope.min_in}+(rotation))"]
 
 
@@ -68,50 +61,36 @@ class FingerAngleDriver(DriverProperties):
 class FingerDriverContainer(DriverContainer):
     # shifting avgs for L / R hand z-angles
     # thumb / index / middle / ring / pinky
-    z_inputs_r = [
+    z_inputs = [
         [20, 60],
-        [-20, 45],
-        [-20, 35],
+        [-25, 60],
+        [-35, 40],
+        [-25, 40],
+        [-40, 50],
+    ]
+
+    z_outputs = [
         [-25, 25],
-        [-40, 25],
+        [25., -40],
+        [35., -25],
+        [10., -30],
+        [20., -30],
     ]
-
-    z_inputs_l = z_outputs = [
-        [20, 60],
-        [-15, 15],
-        [-15, 15],
-        [-15, 15],
-        [-15, 15],
-    ]
-
-    # z_outputs = [
-    #     [-25, 25],
-    #     [10, -20],
-    #     [8, -8],
-    #     [-10, 10],
-    #     [-10, 10],
-    # ]
 
     x_inputs = [
-        [0.01120601124428113, 0.6298811772166859], [0.010113584756535735, 0.5358833537484959],
-        [0.0078838400016262, 1.0348199950476649],
-        [0.10534613324031182, 1.3311993710360535], [0.014027929045808409, 1.8579332742510741],
-        [0.3395665001747216, 1.5229143915770624],
-        [0.046080024235105745, 1.3258548962628658], [0.32980177197508853, 1.8030113110176618],
-        [0.0070451571969223845, 1.9106269519875598],
-        [0.011509957240284703, 1.476811763819492], [0.2437217924936575, 1.6741122935529367],
-        [0.021420949714516063, 1.614440408893201],
-        [0.11983047278754368, 1.3220586467674347], [0.21275691282569745, 1.583803596524493],
-        [0.017777100886813477, 1.9369007101977114]
+        [0.011, 0.630], [0.010, 0.536], [0.008, 1.035],
+        [0.105, 1.331], [0.014, 1.858], [0.340, 1.523],
+        [0.046, 1.326], [0.330, 1.803], [0.007, 1.911],
+        [0.012, 1.477], [0.244, 1.674], [0.021, 1.614],
+        [0.120, 1.322], [0.213, 1.584], [0.018, 1.937]
     ]
 
     x_outputs = [
-        [-.60, 0.6298811772166859], [-.30, 0.5358833537484959], [-.15, 1.0348199950476649],
-        [-.50, 1.3311993710360535], [-.20, 1.8579332742510741], [-.55, 1.5229143915770624],
-        [-.50, 1.3258548962628658], [-.30, 1.8030113110176618], [-.15, 1.9106269519875598],
-        [-.60, 1.4768117638194921], [-.30, 1.6741122935529367], [-.30, 1.614440408893201],
-        [-.80, 1.3220586467674347], [-.50, 1.5838035965244931], [-.30, 1.9369007101977114]
-
+        [-.60, 0.63], [-.30, 0.54], [-.15, 1.03],
+        [-.50, 1.33], [-.20, 1.86], [-.55, 1.52],
+        [-.50, 1.33], [-.30, 1.80], [-.15, 1.91],
+        [-.60, 1.48], [-.30, 1.67], [-.30, 1.61],
+        [-.80, 1.32], [-.50, 1.58], [-.30, 1.94]
     ]
 
     def __init__(self, driver_targets: list, provider_objs: list, orientation: str):
@@ -120,8 +99,8 @@ class FingerDriverContainer(DriverContainer):
             for idx in range(0, 15)
         ]
 
-        self.z_inputs_r = [[radians(v[0]), radians(v[1])] for v in self.z_inputs_r]
-        self.z_inputs_l = [[radians(v[0]), radians(v[1])] for v in self.z_inputs_l]
+        self.z_inputs_r = [[radians(v[0]), radians(v[1])] for v in self.z_inputs]
+        self.z_inputs_l = [[radians(v[0]), radians(v[1])] for v in self.z_inputs]
         self.z_outputs = [[radians(v[0]), radians(v[1])] for v in self.z_outputs]
 
         z_slopes_r = [
@@ -144,7 +123,7 @@ class FingerDriverContainer(DriverContainer):
                 return z_slopes_r[int(idx / 3)]
             else:
                 return z_slopes_l[int(idx / 3)]
-
+        print(z_slopes_r)
         self.pose_drivers = [
             FingerAngleDriver(
                 driver_targets[idx],
