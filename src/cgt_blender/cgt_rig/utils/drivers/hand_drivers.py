@@ -49,7 +49,7 @@ class FingerAngleDriver(DriverProperties):
         self.provider_obj = provider_obj
         self.property_type = "rotation_euler"
         self.property_name = "rotation"
-        # self.overwrite = True
+        self.overwrite = True
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
         self.functions = [
             f"{x_slope.min_out}+{x_slope.slope}*({-x_slope.min_in}+(rotation))",
@@ -70,7 +70,7 @@ class FingerDriverContainer(DriverContainer):
     ]
 
     z_outputs = [
-        [-25, 25],
+        [-25, 25.],
         [25., -40],
         [35., -25],
         [10., -30],
@@ -123,7 +123,7 @@ class FingerDriverContainer(DriverContainer):
                 return z_slopes_r[int(idx / 3)]
             else:
                 return z_slopes_l[int(idx / 3)]
-        print(z_slopes_r)
+
         self.pose_drivers = [
             FingerAngleDriver(
                 driver_targets[idx],

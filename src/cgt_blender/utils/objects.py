@@ -245,6 +245,7 @@ def get_custom_property(target_obj, prop_name):
 
 
 def set_custom_property(obj, prop_name, value, v_min=None, v_max=None, use_soft=False):
+    print(obj, prop_name, value)
     if get_custom_property(obj, prop_name) is None:
         if v_min is None or v_max is None:
             obj[prop_name] = value

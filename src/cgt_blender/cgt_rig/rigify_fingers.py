@@ -1,7 +1,9 @@
 from . import abs_rigging
+from .utils.drivers import driver_types
 from .utils.drivers.hand_drivers import FingerDriverContainer
 from .utils import mapping
 from ...cgt_naming import HAND
+from ..utils import objects
 
 
 class RigifyHands(abs_rigging.BpyRigging):
@@ -89,7 +91,8 @@ class RigifyHands(abs_rigging.BpyRigging):
         self.limit_constraint_dict = {}
         self.custom_bone_props = {}
         self.set_relation_dict(driver_objects)
-        self.apply_drivers()
+        self.apply_d()
+        # self.apply_drivers()
 
     def get_reference_bone(self, key, extension):
         """ get reference bone and index by driver empty name. """
@@ -129,8 +132,6 @@ class RigifyHands(abs_rigging.BpyRigging):
                     self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.constraint_limits[index]]
                     # self.limit_constraint_dict[empty.name] = [bone_name, "LIMIT_ROTATION", self.no_limits[index]]
             except KeyError:
-                # if "TIP" not in empty.name:
-                #     print("driver empty does not exist:", empty.name)
                 pass
 
         # prepare drivers
@@ -140,3 +141,16 @@ class RigifyHands(abs_rigging.BpyRigging):
         # prepare constraints
         self.set_constraint_relation(self.rot_constraint_dict, [obj.name for obj in driver_objects], driver_objects)
         self.set_constraint_relation(self.limit_constraint_dict, [obj.name for obj in driver_objects], driver_objects)
+
+    def apply_d(self):
+        print("attempt to appy drivers")
+
+        containers = [self.left_finger_angle_drivers, self.right_finger_angle_drivers]
+        for container in containers:
+            for driver in container.pose_drivers:
+                driver.provider_obj = objects.get_object_by_name(driver.provider_obj)
+                driver.target_object = objects.get_object_by_name(driver.target_object)
+                print(driver)
+                driver_types.SinglePropDriver(driver)
+
+

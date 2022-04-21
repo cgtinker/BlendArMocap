@@ -119,10 +119,13 @@ class CgtProperties(PropertyGroup):
         )
     )
 
+    def set_bool(self, value):
+        return None
+
     pvb: BoolProperty(
         name="pvb",
-        description="subcontrol",
-        default=False
+        default=False,
+        set=set_bool
     )
 
     transfer_type_path: StringProperty(

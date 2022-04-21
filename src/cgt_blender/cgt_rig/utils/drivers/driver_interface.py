@@ -16,6 +16,13 @@ class DriverType:
     CUSTOM: int = 5
 
 
+@dataclass(frozen=True)
+class ObjectType:
+    OBJECT: int = 0
+    BONE: int = 1
+    RIG: int = 2
+
+
 class DriverProperties:
     """ Driver expression include Driver Properties same as the Driver Interface.
         The properties are required to set up the Driver.
@@ -23,14 +30,20 @@ class DriverProperties:
         target_object - driver gets added to obj
         provider_obj - obj providing values for driver"""
     target_object = None
+    target_type: ObjectType = ObjectType.OBJECT
+
     provider_obj = None
+    provider_type: ObjectType = ObjectType.OBJECT
 
     property_type: str
     property_name: str
 
     data_paths: list
     functions: list = None
+
     target_rig: bpy.types.Object = None
+    rig_type: ObjectType = ObjectType.RIG
+
     overwrite: bool = False
 
 
