@@ -42,8 +42,8 @@ class DriverProperties:
     functions: list = None
 
     target_rig: bpy.types.Object = None
-    rig_type: ObjectType = ObjectType.RIG
 
+    driver_type: DriverType = 3
     overwrite: bool = False
 
 

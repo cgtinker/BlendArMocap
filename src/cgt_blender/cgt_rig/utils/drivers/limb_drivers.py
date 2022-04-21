@@ -1,4 +1,4 @@
-from .driver_interface import DriverProperties, DriverContainer, DriverType
+from .driver_interface import DriverProperties, DriverContainer, DriverType, ObjectType
 from dataclasses import dataclass
 
 
@@ -11,6 +11,7 @@ class LeftBone(DriverProperties):
 
     def __init__(self, provider_obj):
         self.provider_obj = provider_obj
+        self.provider_type = ObjectType.BONE
         self.property_type = "location"
         self.property_name = "left"
         self.data_paths = ["location.x", "location.y", "location.z"]
@@ -24,6 +25,7 @@ class RightBone(DriverProperties):
 
     def __init__(self, provider_obj):
         self.provider_obj = provider_obj
+        self.provider_type = ObjectType.BONE
         self.property_type = "location"
         self.property_name = "right"
         self.data_paths = ["location.x", "location.y", "location.z"]
@@ -43,8 +45,6 @@ class BoneCenter(DriverContainer):
             driver.target_object = driver_target
             driver.target_rig = target_rig
             driver.driver_type = DriverType.BONE
-
-
 # endregion
 
 

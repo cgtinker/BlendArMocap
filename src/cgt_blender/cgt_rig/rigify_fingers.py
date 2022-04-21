@@ -91,7 +91,9 @@ class RigifyHands(abs_rigging.BpyRigging):
         self.limit_constraint_dict = {}
         self.custom_bone_props = {}
         self.set_relation_dict(driver_objects)
-        self.apply_d()
+        self.n_apply_driver([self.left_finger_angle_drivers, self.right_finger_angle_drivers])
+        self.n_apply_constraints(self.rot_constraint_dict)
+        self.n_apply_constraints(self.limit_constraint_dict)
         # self.apply_drivers()
 
     def get_reference_bone(self, key, extension):
@@ -135,12 +137,12 @@ class RigifyHands(abs_rigging.BpyRigging):
                 pass
 
         # prepare drivers
-        self.set_single_prop_relation(
-            [self.left_finger_angle_drivers, self.right_finger_angle_drivers],
-            [obj.name for obj in driver_objects], driver_objects)
-        # prepare constraints
-        self.set_constraint_relation(self.rot_constraint_dict, [obj.name for obj in driver_objects], driver_objects)
-        self.set_constraint_relation(self.limit_constraint_dict, [obj.name for obj in driver_objects], driver_objects)
+        # self.set_single_prop_relation(
+        #     [self.left_finger_angle_drivers, self.right_finger_angle_drivers],
+        #     [obj.name for obj in driver_objects], driver_objects)
+        # # prepare constraints
+        # self.set_constraint_relation(self.rot_constraint_dict, [obj.name for obj in driver_objects], driver_objects)
+        # self.set_constraint_relation(self.limit_constraint_dict, [obj.name for obj in driver_objects], driver_objects)
 
     def apply_d(self):
         print("attempt to appy drivers")

@@ -19,6 +19,7 @@ class BpyRigging(ABC):
 
     def __init__(self, armature):
         self.mapping_relation_list = []
+        self.armature = armature
         self.pose_bones = armature.pose.bones
 
     @abstractmethod
@@ -30,6 +31,48 @@ class BpyRigging(ABC):
         for props in custom_prop_list:
             objects.set_custom_property(
                 self.pose_bones[props[0]], props[1], props[2], props[3], props[4])
+
+    def n_apply_constraints(self, constraint_dict):
+        for key, pair in constraint_dict.items():
+            provider = objects.get_object_by_name(key)
+            bone = self.pose_bones[pair[0]]
+            constraint_name = pair[1]
+            args = pair[2:]
+            constraints.add_constraint(bone, provider, constraint_name, args)
+
+    def n_apply_driver(self, containers):
+        driver_type_dict = {
+            driver_interface.DriverType.SINGLE:     driver_types.SinglePropDriver,
+            driver_interface.DriverType.BONE:       driver_types.BonePropDriver
+        }
+        print(containers)
+        driver_props = [driver for container in containers for driver in container.pose_drivers]
+        for prop in driver_props:
+            print(prop)
+            # find objs for drivers
+            objs = []
+            for p in [[prop.provider_obj, prop.provider_type],
+                      [prop.target_object, prop.target_type],
+                      [prop.target_rig, None]]:
+
+                ob = None
+                if p[1] == driver_interface.ObjectType.OBJECT:
+                    ob = objects.get_object_by_name(p[0])
+                elif p[1] == driver_interface.ObjectType.BONE:
+                    ob = self.pose_bones[p[0]]
+                elif p[1] is None and p[0] is not None:
+                    ob = self.armature
+
+                objs.append(ob)
+
+            # assign objects
+            prop.provider_obj = objs[0]
+            prop.target_object = objs[1]
+            prop.target_rig = objs[2]
+
+            print(prop)
+            driver = driver_type_dict[prop.driver_type]
+            driver(prop)
 
     def apply_drivers(self):
         """ applies all mapping relations for mapping values

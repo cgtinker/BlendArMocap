@@ -69,7 +69,9 @@ class RigifyFace(BpyRigging):
         # endregion
 
         self.set_relation_dict(driver_objects)
-        self.apply_drivers()
+        self.n_apply_driver([self.eye_drivers, self.mouth_drivers, self.eyebrow_drivers])
+        self.n_apply_constraints(self.constraint_dict)
+        # self.apply_drivers()
 
     def set_relation_dict(self, driver_objects):
         driver_names = [obj.name for obj in driver_objects]

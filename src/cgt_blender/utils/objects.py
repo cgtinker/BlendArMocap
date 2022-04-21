@@ -20,10 +20,12 @@ def add_empty(size, name, display='ARROWS'):
 
 
 def get_object_by_name(name):
+    print(name)
     try:
         ob = bpy.data.objects[name]
         return ob
     except KeyError:
+        print("didnt find ob")
         return None
 
 

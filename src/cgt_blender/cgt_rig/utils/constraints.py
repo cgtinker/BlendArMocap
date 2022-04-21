@@ -7,6 +7,7 @@ def copy_rotation(constraint, target, values):
 
 
 def limit_rotation(constraint, target, values):
+    print(constraint, target, values)
     # print("CURRENT", constraint, values)
     constraint.use_limit_x = True
     # constraint.min_x = -0.136
