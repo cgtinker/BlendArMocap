@@ -118,7 +118,6 @@ class RigifyHands(abs_rigging.BpyRigging):
                 extension = ".L"
             else:
                 extension = ".R"
-
             # remove extension from driver name
             name = empty.name.replace(extension, "")
             try:

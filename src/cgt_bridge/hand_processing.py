@@ -213,25 +213,23 @@ class BridgeHand(abs_assignment.DataAssignment):
             mcp_closest = m_V.to_vector(mcps[i], circle[closest])
 
             # todo: check for pos / negative
-            # expanded_circle = circle + circle + circle
-            # a = expanded_circle[closest + points + 1]
-            # b = expanded_circle[closest + points - 1]
-            # if np.sum((closest - a) ** 2) > np.sum((closest - b) ** 2):
-            #     c = b
-            #     b = a
-            #     a = c
+            expanded_circle = circle + circle + circle
+            a = expanded_circle[closest + points + 6]
+            b = expanded_circle[closest + points - 6]
 
-            # plane = np.array([a, circle[closest], b])
-            # normal = m_V.normal_from_plane(plane)
-            # # normal, norm = m_V.create_normal_array(np.array(plane), np.array(joints))
-            # normal = m_V.normalize(normal)
-            # dist = m_V.distance_from_plane(mcps[i], normal, circle[closest])
+            plane = np.array([a, circle[closest], b])
+            normal = m_V.normal_from_plane(plane)
+            # normal, norm = m_V.create_normal_array(np.array(plane), np.array(joints))
+            normal = m_V.normalize(normal)
+            dist = m_V.distance_from_plane(pips[i], normal, circle[closest])
             # print("dist", dist, "norm", normal)
 
             angle = m_V.angle_between(np.array(mcp_pip), np.array(mcp_closest))
-            # if dist < 0:
-            #     angle = -angle
-            #     print("RDC DIST", dist, angle, normal)
+            if dist < 0:
+                angle = -angle
+                print("RDC DIST", dist, angle, normal)
+            else:
+                print("NRM DIST", dist, angle)
 
             data[self.fingers[i + 1][0]] = angle
 

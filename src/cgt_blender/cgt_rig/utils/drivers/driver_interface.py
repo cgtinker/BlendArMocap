@@ -73,7 +73,8 @@ class Driver(DriverProperties):
                     self.target_object.animation_data.drivers.remove(
                         self.target_object.animation_data.drivers[index]
                     ) for index in range(3)]
-            except IndexError:
+            except Exception:
+                print("driver issue", self.driver)
                 pass
 
         # setup vars for new driver
