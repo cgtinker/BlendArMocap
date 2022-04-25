@@ -1,30 +1,40 @@
 from dataclasses import dataclass
 from math import radians
 
-from .driver_interface import DriverProperties, DriverContainer, DriverType
-from ..mapping import Slope
+from .driver_interface import DriverProperties, DriverContainer, DriverType, ObjectType
+from ..mapping import Slope, CustomProps
 
 
 @dataclass(repr=True)
 class CustomAngleMultiplier(DriverProperties):
     target_object: str
+    provider_obj = str
     functions: list
 
     def __init__(self,
                  driver_target: str,
-                 provider_obj: object):
+                 provider_obj: str,
+                 x_slope: Slope,
+                 z_slope: Slope):
         """ Provides eye driver properties to animate the lids.
             :param provider_obj: object providing rotation values.
             :param slope: factor to multiply and offset the rotation
             :param offset: offsets the base input value
         """
-
+        prop_name = "fac"
         self.target_object = driver_target
-        self.driver_type = DriverType.CUSTOM
+        self.target_type = ObjectType.OBJECT
+        self.custom_target_props = CustomProps(prop_name, x_slope.slope)
         self.provider_obj = provider_obj
-        self.property_type = "factor"
+        self.provider_type = ObjectType.BONE
+        self.target_rig = "something"
+        self.driver_type = DriverType.CUSTOM   # ? or single prop ?
+
+        self.overwrite = True
+        self.property_type = "rotation_euler"
         self.property_name = "fac"
-        self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
+        self.data_paths = [f'pose.bones["{provider_obj}"]["{prop_name}"]']*3
+        # self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
         self.functions = ["", "", ""]
 
 
@@ -49,10 +59,11 @@ class FingerAngleDriver(DriverProperties):
         self.provider_obj = provider_obj
         self.property_type = "rotation_euler"
         self.property_name = "rotation"
-        # self.overwrite = True
+        self.overwrite = True
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
         self.functions = [
-            f"{x_slope.min_out}+{x_slope.slope}*({-x_slope.min_in}+(rotation))",
+            # f"{x_slope.min_out}+{x_slope.slope}*({-x_slope.min_in}+(rotation))",
+            f"{x_slope.min_out}+fac*({-x_slope.min_in}+(rotation))",
             "",
             f"{z_slope.min_out}+{z_slope.slope}*({-z_slope.min_in}+(rotation))"]
 
@@ -93,7 +104,8 @@ class FingerDriverContainer(DriverContainer):
         [-.80, 1.32], [-.50, 1.58], [-.30, 1.94]
     ]
 
-    def __init__(self, driver_targets: list, provider_objs: list, orientation: str):
+    def __init__(self, driver_targets: list, provider_objs: list, orientation: str, bone_names: list):
+        print(bone_names)
         x_slopes = [
             Slope(self.x_inputs[idx][0], self.x_inputs[idx][1], self.x_outputs[idx][0], self.x_outputs[idx][1])
             for idx in range(0, 15)
@@ -123,8 +135,15 @@ class FingerDriverContainer(DriverContainer):
                 return z_slopes_r[int(idx / 3)]
             else:
                 return z_slopes_l[int(idx / 3)]
-
+        # todo: set slope properly
         self.pose_drivers = [
+            CustomAngleMultiplier(
+                driver_targets[idx],
+                bone_names[idx],
+                x_slopes[idx],
+                get_z_slope(idx)
+            ) for idx, _ in enumerate(driver_targets)]
+        self.pose_drivers += [
             FingerAngleDriver(
                 driver_targets[idx],
                 provider_objs[idx],

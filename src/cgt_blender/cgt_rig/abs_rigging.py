@@ -34,24 +34,42 @@ class BpyRigging(ABC):
     def n_apply_driver(self, containers):
         driver_type_dict = {
             driver_interface.DriverType.SINGLE:     driver_types.SinglePropDriver,
-            driver_interface.DriverType.BONE:       driver_types.BonePropDriver
+            driver_interface.DriverType.BONE:       driver_types.BonePropDriver,
+            driver_interface.DriverType.CUSTOM:     driver_types.CustomBonePropDriver
         }
 
         driver_props = [driver for container in containers for driver in container.pose_drivers]
+
+        drivers = []
+        props = []
         for prop in driver_props:
             # find objs for drivers
             objs = []
             for p in [[prop.provider_obj, prop.provider_type],
                       [prop.target_object, prop.target_type],
-                      [prop.target_rig, None]]:
+                      [prop.target_rig, "rig"],
+                      [prop.custom_target_props, "custom"]]:
 
                 ob = None
                 if p[1] == driver_interface.ObjectType.OBJECT:
                     ob = objects.get_object_by_name(p[0])
+                    # overwrite drivers
+                    if prop.overwrite is True:
+                        try:
+                            preassigned = ob.animation_data.drivers
+                            for i, d in enumerate(preassigned):
+                                ob.animation_data.drivers.remove(d)
+                        except Exception:
+                            pass
+
                 elif p[1] == driver_interface.ObjectType.BONE:
                     ob = self.pose_bones[p[0]]
-                elif p[1] is None and p[0] is not None:
+                elif p[1] is "rig" and p[0] is not None:
                     ob = self.armature
+                elif p[1] is "custom" and p[0] is not None:
+                    objects.set_custom_property(objs[0],
+                                                prop.custom_target_props.name,
+                                                prop.custom_target_props.value)
 
                 objs.append(ob)
 
@@ -61,7 +79,11 @@ class BpyRigging(ABC):
             prop.target_rig = objs[2]
 
             driver = driver_type_dict[prop.driver_type]
-            driver(prop)
+            drivers.append(driver)
+            props.append(prop)
+
+        for i in range(0, len(drivers)):
+            drivers[i](props[i])
 
     # endregion
     def bone_head(self, bone_name):

@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from dataclasses import dataclass
-
+from ..mapping import CustomProps
 import bpy
 
 from ....utils import objects
@@ -44,6 +44,8 @@ class DriverProperties:
     target_rig: bpy.types.Object = None
 
     driver_type: DriverType = 3
+    custom_target_props: CustomProps = None
+
     overwrite: bool = False
 
 
@@ -79,20 +81,16 @@ class Driver(DriverProperties):
         self.functions = expression.functions
 
         # overwrite driver expression
-        if self.overwrite is True:
-            print(self.target_object, self.property_name, "overwrite:", True)
-            try:
-                preassigned = self.target_object.animation_data.drivers
-                for i, d in enumerate(preassigned):
-                    self.target_object.animation_data.drivers.remove(d)
-                    # self.target_object.animation_data.driver_remove(d)
-                # self.drivers = [
-                #     self.target_object.animation_data.drivers.remove(
-                #         self.target_object.animation_data.drivers[index]
-                #     ) for index in range(3)]
-            except Exception:
-                print("Exception occured.")
-                pass
+        # if self.overwrite is True:
+        #     print(self.target_object, self.property_name, "overwrite:", True)
+        #     try:
+        #         preassigned = self.target_object.animation_data.drivers
+        #         for i, d in enumerate(preassigned):
+        #             self.target_object.animation_data.drivers.remove(d)
+
+        #     except Exception:
+        #         print("Exception occured.")
+        #         pass
 
         # setup vars for new driver
         self.property_type = expression.property_type
