@@ -75,6 +75,26 @@ class UI_PT_main_panel(DefaultPanel, Panel):
         box.row(align=True).operator("button.cgt_transfer_animation_button", text=user.button_transfer_animation)
 
 
+class UI_PT_RemappingPanel(DefaultPanel, Panel):
+    bl_label = "Utils"
+    bl_idname = "OBJECT_PT_cgt_remapping_panel"
+    bl_parent_id = "OBJECT_PT_cgt_main_panel"
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode in {'POSE', 'OBJECT'}  # list all the modes you want here
+
+    def draw(self, context):
+        user = context.scene.m_cgtinker_mediapipe  # noqa
+        self.layout.use_property_decorate = True  # No animation.
+
+        # detection
+        box = self.layout.box()
+        box.label(text='Remapping')
+
+
+
+
 class UI_PT_warning_panel(DefaultPanel, Panel):
     bl_label = cgt_naming.ADDON_NAME
     bl_idname = "OBJECT_PT_warning_panel"

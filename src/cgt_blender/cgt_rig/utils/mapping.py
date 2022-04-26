@@ -4,6 +4,8 @@ from dataclasses import dataclass
 @dataclass(repr=True)
 class Slope:
     slope: float
+    max_in: float
+    max_out: float
     min_in: float
     min_out: float
 
@@ -11,6 +13,8 @@ class Slope:
         self.slope = (max_out - min_out) / (max_in - min_in)
         self.min_in = min_in
         self.min_out = min_out
+        self.max_in = max_in
+        self.max_out = max_out
 
 
 @dataclass(repr=True)

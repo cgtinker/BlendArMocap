@@ -224,7 +224,8 @@ def add_copy_rotation_constraint(obj, target_obj, invert_y):
     if invert_y:
         constraint.invert_y = True
 
-
+def mute_constraint(ob, mute=False):
+    constraint = ob.constraints
 # endregion
 
 
@@ -246,12 +247,10 @@ def get_custom_property(target_obj, prop_name):
     return value
 
 
-def set_custom_property(obj, prop_name, value, v_min=None, v_max=None, use_soft=False):
+def set_custom_property(obj, prop_name, value, v_min=None, v_max=None, use_soft=False, overwrite=False):
     print(obj, prop_name, value)
-    if get_custom_property(obj, prop_name) is None:
-        if v_min is None or v_max is None:
-            obj[prop_name] = value
-            return False
+    if get_custom_property(obj, prop_name) is None or overwrite is True:
+        obj[prop_name] = value
 
         if "_RNA_UI" not in obj.keys():
             obj["_RNA_UI"] = {}
@@ -263,6 +262,28 @@ def set_custom_property(obj, prop_name, value, v_min=None, v_max=None, use_soft=
         return False
     return True
 
+# endregion
+
+
+# region DRIVERS
+def mute_driver(ob, mute=False):
+    try:
+        drivers = ob.animation_data.drivers
+        for d in drivers:
+            d.mute = mute
+        return True
+    except Exception:
+        return False
+
+
+def remove_drivers(ob):
+    try:
+        preassigned = ob.animation_data.drivers
+        for i, d in enumerate(preassigned):
+            ob.animation_data.drivers.remove(d)
+        return True
+    except Exception:
+        return False
 # endregion
 
 # region scene

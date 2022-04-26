@@ -14,7 +14,8 @@ def get_classes():
         ui_operators.UI_transfer_anim_button,
         ui_operators.WM_modal_detection_operator,
 
-        ui_panels.UI_PT_main_panel
+        ui_panels.UI_PT_main_panel,
+        ui_panels.UI_PT_RemappingPanel
     )
     return classes
 

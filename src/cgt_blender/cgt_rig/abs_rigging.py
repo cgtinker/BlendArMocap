@@ -55,12 +55,7 @@ class BpyRigging(ABC):
                     ob = objects.get_object_by_name(p[0])
                     # overwrite drivers
                     if prop.overwrite is True:
-                        try:
-                            preassigned = ob.animation_data.drivers
-                            for i, d in enumerate(preassigned):
-                                ob.animation_data.drivers.remove(d)
-                        except Exception:
-                            pass
+                        objects.remove_drivers(ob)
 
                 elif p[1] == driver_interface.ObjectType.BONE:
                     ob = self.pose_bones[p[0]]
@@ -69,7 +64,10 @@ class BpyRigging(ABC):
                 elif p[1] is "custom" and p[0] is not None:
                     objects.set_custom_property(objs[0],
                                                 prop.custom_target_props.name,
-                                                prop.custom_target_props.value)
+                                                prop.custom_target_props.value,
+                                                -5,
+                                                5,
+                                                overwrite=True)
 
                 objs.append(ob)
 

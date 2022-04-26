@@ -24,10 +24,18 @@ class CustomAngleMultiplier(DriverProperties):
         prop_name = "fac"
         self.target_object = driver_target
         self.target_type = ObjectType.OBJECT
-        self.custom_target_props = CustomProps(prop_name, x_slope.slope)
+
+        if z_slope.min_in == 0 and z_slope.max_in == 1:
+            self.custom_target_props = CustomProps(prop_name, (x_slope.min_out, x_slope.max_out))
+        else:
+            self.custom_target_props = CustomProps(prop_name, (
+                x_slope.min_out, x_slope.max_out,
+                z_slope.min_out, z_slope.max_out
+            ))
+
         self.provider_obj = provider_obj
         self.provider_type = ObjectType.BONE
-        self.target_rig = "something"
+        self.target_rig = True
         self.driver_type = DriverType.CUSTOM   # ? or single prop ?
 
         self.overwrite = True
@@ -61,12 +69,17 @@ class FingerAngleDriver(DriverProperties):
         self.property_name = "rotation"
         self.overwrite = True
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
-        self.functions = [
-            # f"{x_slope.min_out}+{x_slope.slope}*({-x_slope.min_in}+(rotation))",
-            f"{x_slope.min_out}+fac*({-x_slope.min_in}+(rotation))",
-            "",
-            f"{z_slope.min_out}+{z_slope.slope}*({-z_slope.min_in}+(rotation))"]
+        # self.functions = [
+        #     # f"{x_slope.min_out}+{x_slope.slope}*({-x_slope.min_in}+(rotation))",
+        #     f"{x_slope.min_out}+{x_slope.slope}*({-x_slope.min_in}+(rotation))",
+        #     "",
+        #     f"{z_slope.min_out}+{z_slope.slope}*({-z_slope.min_in}+(rotation))"]
 
+        self.functions = [
+            f"fac[0]+((fac[1] - fac[0])/({x_slope.max_in}-{x_slope.min_in}))*({-x_slope.min_in}+(rotation))",
+            "",
+            f"fac[2]+((fac[3] - fac[2])/({x_slope.max_in}-{x_slope.min_in}))*({-z_slope.min_in}+(rotation))"
+        ]
 
 @dataclass(repr=True)
 class FingerDriverContainer(DriverContainer):
