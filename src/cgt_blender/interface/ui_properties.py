@@ -138,13 +138,11 @@ class CgtProperties(PropertyGroup):
     # endregion
 
     # region REMAPPING
-    test_list = ["123", "my_vector", "my_int", "12345"]
-    for e in test_list:
-        e: IntProperty(
-            name="random name",
-            default=1
-        )
-
+    toggle_drivers_bool: BoolProperty(
+        name="Toggle Drivers",
+        description="helper bool to en- and disable drivers",
+        default=True
+    )
     # endregion
 def get_user():
     return bpy.context.scene.m_cgtinker_mediapipe

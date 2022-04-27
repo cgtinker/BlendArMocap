@@ -5,7 +5,8 @@ from .utils import objects
 
 
 def transfer_animation():
-    from .cgt_rig import rigify_pose, rigify_face, rigify_fingers
+    from .cgt_rig import rigify_pose, rigify_face
+    from .cgt_rig import rigify_fingers
 
     col_mapping = {
         COLLECTIONS.hands: rigify_fingers.RigifyHands,
@@ -27,15 +28,13 @@ def transfer_animation():
         col_mapping[col](armature, driver_objects)
 
 
-def get_keyframe_step():
-    try:
-        user = bpy.context.scene.m_cgtinker_mediapipe
-        key_step = user.key_frame_step
-    except AttributeError:
-        return 4
-    return key_step
+def toggle_drivers():
+    user = bpy.context.scene.m_cgtinker_mediapipe  # noqa
+    user.toggle_drivers_bool = not user.toggle_drivers_bool
+    print("toggled",  user.toggle_drivers_bool)
 
+    driver_collections = objects.get_child_collections('CGT_DRIVERS')
+    objs = objects.get_objects_from_collection('CGT_DRIVERS')
+    print(objs)
+    # objects.mute_driver(ob, user.toggle_drivers_bool)
 
-def get_frame_start():
-    frame = objects.get_frame_start()
-    return frame

@@ -54,8 +54,9 @@ class BpyRigging(ABC):
                 if p[1] == driver_interface.ObjectType.OBJECT:
                     ob = objects.get_object_by_name(p[0])
                     # overwrite drivers
-                    if prop.overwrite is True:
-                        objects.remove_drivers(ob)
+                    objects.remove_drivers(ob)
+                    # if prop.overwrite is True:
+                    #     objects.remove_drivers(ob)
 
                 elif p[1] == driver_interface.ObjectType.BONE:
                     ob = self.pose_bones[p[0]]

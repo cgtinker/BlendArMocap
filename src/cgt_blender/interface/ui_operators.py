@@ -16,6 +16,20 @@ class UI_transfer_anim_button(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class UI_toggle_drivers_button(bpy.types.Operator):
+    bl_label = "Toggle Drivers"
+    bl_idname = "button.cgt_toggle_drivers_button"
+    bl_description = "Toggle drivers to improve performance while motion capturing"
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode == 'OBJECT'
+
+    def execute(self, context):
+        input_manager.toggle_drivers()
+        return {'FINISHED'}
+
+
 class WM_modal_detection_operator(bpy.types.Operator):
     bl_label = "Feature Detection Operator"
     bl_idname = "wm.cgt_feature_detection_operator"

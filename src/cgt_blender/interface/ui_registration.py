@@ -12,6 +12,7 @@ def get_classes():
         ui_properties.CgtProperties,
 
         ui_operators.UI_transfer_anim_button,
+        ui_operators.UI_toggle_drivers_button,
         ui_operators.WM_modal_detection_operator,
 
         ui_panels.UI_PT_main_panel,

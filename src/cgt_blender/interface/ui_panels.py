@@ -91,8 +91,11 @@ class UI_PT_RemappingPanel(DefaultPanel, Panel):
         # detection
         box = self.layout.box()
         box.label(text='Remapping')
-
-
+        if user.toggle_drivers_bool:
+            box.row(align=True).operator("button.cgt_toggle_drivers_button", depress=True)
+        else:
+            box.row(align=True).operator("button.cgt_toggle_drivers_button", depress=False)
+        # box.row().prop(user, "toggle_drivers_bool", icon="CON_ARMATURE")
 
 
 class UI_PT_warning_panel(DefaultPanel, Panel):

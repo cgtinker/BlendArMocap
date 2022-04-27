@@ -1,9 +1,6 @@
 from . import abs_rigging
-from .utils.drivers import driver_types
-from .utils.drivers.hand_drivers import FingerDriverContainer
-from .utils import mapping
 from ...cgt_naming import HAND
-from ..utils import objects
+from .utils.drivers.hand_drivers import FingerDriverContainer
 
 
 class RigifyHands(abs_rigging.BpyRigging):
