@@ -20,10 +20,10 @@ class BLENDARMOCAP_preferences(bpy.types.AddonPreferences):
         s_box.row().prop(user, "enum_stream_dim")
         s_box.row().prop(user, "enum_stream_type")
 
-        if user.pvb:
+        # if user.pvb:
 
-            t_box = self.layout.box()
-            t_box.label(text="Custom Transfer Type")
-            t_box.row().prop(user, "transfer_type_path")
+        #     t_box = self.layout.box()
+        #     t_box.label(text="Custom Transfer Type")
+        #     t_box.row().prop(user, "transfer_type_path")
 
 
