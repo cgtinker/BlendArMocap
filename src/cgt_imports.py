@@ -16,7 +16,7 @@ INIT_MODULES = [
     '.src.cgt_blender.interface.ui_registration',
     '.src.cgt_blender.input_manager',
     '.src.cgt_blender.interface',
-    '.src.cgt_blender.utils.install_dependencies',
+    '.src.cgt_blender.utils.dependencies',
 ]
 
 FILE = Path(__file__)
@@ -56,15 +56,15 @@ def get_parents(file: Path, parents: list):
     return parents
 
 
-def manage_imports(reload: bool = False):
+def manage_imports(reload: bool = False, force: bool = False):
     print(f"{PACKAGE_NAME} - Initializing...")
     for module in INIT_MODULES:
         import_module(module)
 
-    from .cgt_blender.utils import install_dependencies
-    print(f"{PACKAGE_NAME} - Dependencies installed: {install_dependencies.dependencies_installed}")
+    from .cgt_blender.utils import dependencies
+    print(f"{PACKAGE_NAME} - Dependencies installed: {dependencies.dependencies_installed}")
 
-    if install_dependencies.dependencies_installed is True:
+    if dependencies.dependencies_installed is True or force is True:
         print(f"{PACKAGE_NAME} - Attempt to reload...")
         sub_dirs = [PACKAGE_PATH / sub_dir for sub_dir in SUB_DIRS]
         reload_list = get_reload_list(sub_dirs)

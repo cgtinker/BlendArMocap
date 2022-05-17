@@ -3,7 +3,7 @@ from bpy.props import PointerProperty
 from bpy.utils import register_class, unregister_class
 
 from . import ui_properties, ui_panels, pref_operators, pref_panels, ui_operators
-from ..utils import install_dependencies
+from ..utils import dependencies
 
 
 def get_classes():
@@ -23,6 +23,7 @@ def get_classes():
 
 def get_preferences():
     preference_classes = (pref_operators.PREFERENCES_OT_install_dependencies_button,
+                          pref_operators.PREFERENCES_OT_uninstall_dependencies_button,
                           pref_panels.BLENDARMOCAP_preferences,
                           ui_panels.UI_PT_warning_panel)
     return preference_classes
@@ -37,10 +38,9 @@ def register():
 
     try:
         print('Try to access dependencies')
-        for dependency in install_dependencies.dependencies:
-            print(str(dependency))
-            install_dependencies.import_module(module_name=dependency.module, global_name=dependency.name)
-        install_dependencies.dependencies_installed = True
+        for dependency in dependencies.required_dependencies:
+            dependencies.import_module(dependency)
+        dependencies.dependencies_installed = True
         # register interface
         register_user_interface()
 
@@ -65,7 +65,7 @@ def unregister():
     for cls in get_preferences():
         unregister_class(cls)
 
-    if install_dependencies.dependencies_installed:
+    if dependencies.dependencies_installed:
         # print("UNREGISTER BLENDARMOCAP WITH ACTIVE DEPENDENCIES")
         classes = get_classes()
         for cls in reversed(classes):

@@ -2,7 +2,7 @@ import bpy
 from bpy.types import Panel
 
 from . import pref_operators
-from ..utils import install_dependencies
+from ..utils import dependencies
 from ... import cgt_naming
 
 
@@ -104,7 +104,7 @@ class UI_PT_warning_panel(DefaultPanel, Panel):
 
     @classmethod
     def poll(self, context):
-        return not install_dependencies.dependencies_installed
+        return not dependencies.dependencies_installed
 
     def draw(self, context):
         layout = self.layout
