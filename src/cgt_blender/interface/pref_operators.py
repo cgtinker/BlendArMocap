@@ -21,8 +21,8 @@ class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
         return not dependencies.dependencies_installed
 
     def execute(self, context):
+        # try to install dependencies
         try:
-            # try to install dependencies
             dependencies.install_pip()
             # dependencies.update_pip()
             for dependency in dependencies.required_dependencies:
@@ -46,23 +46,22 @@ class PREFERENCES_OT_uninstall_dependencies_button(bpy.types.Operator):
 
     @classmethod
     def poll(self, context):
-        # Deactivate install button when dependencies have been installed
+        # Deactivate install button when dependencies are not installed
         return dependencies.dependencies_installed
 
     def execute(self, context):
+        # unregister function checks for dependencies
+        ui_registration.unregister_ui_panels()
+
+        # uninstall dependencies
         try:
-            # try to uninstall dependencies
             for dependency in dependencies.required_dependencies:
                 dependencies.uninstall_dependency(dependency)
         except (subprocess.CalledProcessError, ImportError) as err:
             self.report({"ERROR"}, str(err))
 
-        # register user interface after installing dependencies
+        # reload scripts
         dependencies.dependencies_installed = False
-
-        # force pref panel to redraw
-        from . import pref_panels
-        pref_panels.redraw_preferences()
-        dependencies.dependencies_installed = False
+        cgt_imports.manage_imports(reload=True)
 
         return {"FINISHED"}

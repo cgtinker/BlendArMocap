@@ -51,27 +51,37 @@ def register():
 
 
 def register_user_interface():
-    # from ... import cgt_imports
-    # cgt_imports.manage_imports(reload=False)
-
-    # print("REGISTER BLENDARMOCAP INTERFACE")
     for cls in get_classes():
-        register_class(cls)
+        try:
+            register_class(cls)
+        except ValueError:
+            print("Class has already been registered:", cls)
+
     bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=ui_properties.CgtProperties)
 
 
 def unregister():
     print("Unregister BlendArMocap")
     for cls in get_preferences():
-        unregister_class(cls)
+        try:
+            unregister_class(cls)
+        except RuntimeError:
+            print("Class may not be registered:", cls)
 
     if dependencies.dependencies_installed:
         # print("UNREGISTER BLENDARMOCAP WITH ACTIVE DEPENDENCIES")
-        classes = get_classes()
-        for cls in reversed(classes):
-            unregister_class(cls)
+        unregister_ui_panels()
 
-        del bpy.types.Scene.m_cgtinker_mediapipe # noqa
+
+def unregister_ui_panels():
+    classes = get_classes()
+    for cls in reversed(classes):
+        try:
+            unregister_class(cls)
+        except RuntimeError:
+            print("Class may not be registered:", cls)
+
+    del bpy.types.Scene.m_cgtinker_mediapipe  # noqa
 
 
 def manual_unregistration():

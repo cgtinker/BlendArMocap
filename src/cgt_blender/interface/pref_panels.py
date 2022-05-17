@@ -12,13 +12,13 @@ class BLENDARMOCAP_preferences(bpy.types.AddonPreferences):
     def draw(self, context):
         layout = self.layout
         self.draw_dependencies(layout)
-        self.draw_camera_settings(layout)
+        # self.draw_camera_settings(layout)
 
     def draw_dependencies(self, layout):
         """ Dependency layout for user preferences. """
         # dependency box
         dependency_box = layout.box()
-        dependency_box.label(text="Dependencies")
+        dependency_box.label(text="Essential")
 
         # pip headers
         pip_head = dependency_box.split()
@@ -29,6 +29,9 @@ class BLENDARMOCAP_preferences(bpy.types.AddonPreferences):
         # draw dependencies individually
         self.draw_dependency(dependencies.Dependency("pip", "pip", "pip", "pip"), dependency_box)
         dependency_box.row().separator()
+
+        dependency_header = dependency_box.row()
+        dependency_header.label(text="Dependencies")
 
         # dependency headers
         headers = dependency_box.split()
@@ -42,11 +45,11 @@ class BLENDARMOCAP_preferences(bpy.types.AddonPreferences):
 
         # install dependencies button
         dependency_box.row().operator(
-            pref_operators.PREFERENCES_OT_install_dependencies_button.bl_idname, icon="CONSOLE"
+            pref_operators.PREFERENCES_OT_install_dependencies_button.bl_idname  #, icon="CONSOLE"
         )
 
         dependency_box.row().operator(
-            pref_operators.PREFERENCES_OT_uninstall_dependencies_button.bl_idname, icon="CONSOLE"
+            pref_operators.PREFERENCES_OT_uninstall_dependencies_button.bl_idname  #, icon="ERROR"
         )
 
     def draw_dependency(self, m_dependency, dependency_box):

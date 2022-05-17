@@ -28,7 +28,8 @@ class UI_PT_main_panel(DefaultPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.mode in {'OBJECT', 'POSE'}  # list all the modes you want here
+        if context.mode in {'OBJECT', 'POSE'}:
+            return dependencies.dependencies_installed
 
     def draw(self, context):
         user = context.scene.m_cgtinker_mediapipe  # noqa
@@ -82,7 +83,8 @@ class UI_PT_RemappingPanel(DefaultPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.mode in {'POSE', 'OBJECT'}  # list all the modes you want here
+        if context.mode in {'OBJECT', 'POSE'}:
+            return dependencies.dependencies_installed
 
     def draw(self, context):
         user = context.scene.m_cgtinker_mediapipe  # noqa
