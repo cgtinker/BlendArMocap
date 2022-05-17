@@ -8,28 +8,6 @@ from ...cgt_utils import m_V
 
 
 class RigifyPose(abs_rigging.BpyRigging):
-    pose_constraints = {
-        # plain copy rotation
-        POSE.hip_center:       ["torso", "COPY_ROTATION"],
-        POSE.shoulder_center:  ["chest", "COPY_ROTATION"],
-
-        # copy pose driver location
-        POSE.left_hand_ik:     ["hand_ik.R", "COPY_LOCATION_WORLD"],
-        POSE.right_hand_ik:    ["hand_ik.L", "COPY_LOCATION_WORLD"],
-        POSE.left_forearm_ik:  ["forearm_tweak.R", "COPY_LOCATION_WORLD"],
-        POSE.right_forearm_ik: ["forearm_tweak.L", "COPY_LOCATION_WORLD"],
-
-        # damped track to pose driver
-        POSE.left_index_ik:    ["hand_ik.R", "LOCKED_TRACK"],
-        POSE.right_index_ik:   ["hand_ik.L", "LOCKED_TRACK"],
-
-        # leg poses
-        POSE.left_shin_ik:     ["shin_tweak.R", "COPY_LOCATION_WORLD"],
-        POSE.right_shin_ik:    ["shin_tweak.L", "COPY_LOCATION_WORLD"],
-        POSE.left_foot_ik:     ["foot_ik.R", "COPY_LOCATION_WORLD"],
-        POSE.right_foot_ik:    ["foot_ik.L", "COPY_LOCATION_WORLD"]
-    }
-
     # region bone center drivers
     center_driver_targets = [
         POSE.shoulder_center_ik,
@@ -87,11 +65,31 @@ class RigifyPose(abs_rigging.BpyRigging):
         [POSE.hip_center, POSE.right_hip], [POSE.right_hip, POSE.right_knee], [POSE.right_knee, POSE.right_ankle],
     ]
 
+    pose_constraints = {
+        # plain copy rotation
+        POSE.hip_center:       ["torso", "COPY_ROTATION"],
+        POSE.shoulder_center:  ["chest", "COPY_ROTATION"],
+
+        # copy pose driver location
+        POSE.left_hand_ik:     ["hand_ik.R", "COPY_LOCATION_WORLD"],
+        POSE.right_hand_ik:    ["hand_ik.L", "COPY_LOCATION_WORLD"],
+        POSE.left_forearm_ik:  ["forearm_tweak.R", "COPY_LOCATION_WORLD"],
+        POSE.right_forearm_ik: ["forearm_tweak.L", "COPY_LOCATION_WORLD"],
+
+        # damped track to pose driver
+        POSE.left_index_ik:    ["hand_ik.R", "LOCKED_TRACK"],
+        POSE.right_index_ik:   ["hand_ik.L", "LOCKED_TRACK"],
+
+        # leg poses
+        POSE.left_shin_ik:     ["shin_tweak.R", "COPY_LOCATION_WORLD"],
+        POSE.right_shin_ik:    ["shin_tweak.L", "COPY_LOCATION_WORLD"],
+        POSE.left_foot_ik:     ["foot_ik.R", "COPY_LOCATION_WORLD"],
+        POSE.right_foot_ik:    ["foot_ik.L", "COPY_LOCATION_WORLD"]
+    }
     # endregion
 
     def __init__(self, armature, driver_objects: list):
         super().__init__(armature)
-
         # region bone center driver setup
         self.center_points = [m_V.center_point(self.bone_head(v[0]), self.bone_head(v[1]))
                               for v in self.rigify_bone_center]
@@ -101,16 +99,19 @@ class RigifyPose(abs_rigging.BpyRigging):
         self.bone_center_drivers = [limb_drivers.BoneCenter(
             driver_target=target,
             bones=self.rigify_bone_center[idx],
-            target_rig=armature
+            target_rig=armature,
+            offsets=None
         ) for idx, target in enumerate(self.center_driver_targets)]
         # endregion
 
         # region limb driver setup
+        offsets = self.get_rigify_bone_offset_locations()
         self.limb_drivers = [limb_drivers.LimbDriver(
             driver_target=target,
             driver_origin=self.ik_driver_origins[idx],
             detected_joint=self.detected_joints[idx],
             rigify_joint_length=joint_lengths[idx],
+            offsets=None
         ) for idx, target in enumerate(self.limb_driver_targets)]
         # endregion
 
@@ -125,6 +126,23 @@ class RigifyPose(abs_rigging.BpyRigging):
                 pose_constraints_copy.pop(c, None)
 
         self.n_apply_constraints(pose_constraints_copy)
+
+    def get_rigify_bone_offset_locations(self):
+        offset_locations = []
+        for joint in self.rigify_joints:
+            if "shoulder_center" or "hip_center" in joint:
+                offset = 0
+                if "hip_center" in joint:
+                    offset += 1
+
+                loc = (
+                              self.bone_head(self.rigify_bone_center[0 + offset][0]) +
+                              self.bone_head(self.rigify_bone_center[0 + offset][1])
+                      ) / 2
+            else:
+                loc = self.bone_head(joint[0])
+            offset_locations.append(loc)
+        return offset_locations
 
     def get_rigify_joint_lengths(self):
         """ return the lengths of given joints while it uses

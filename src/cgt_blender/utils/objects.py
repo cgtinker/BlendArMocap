@@ -178,6 +178,27 @@ def purge_orphan_data():
 
 
 # region ARMATURE
+def get_pose_bone_world_position(pose_bone, rig):
+    # https://blender.stackexchange.com/questions/109815/how-can-i-move-a-posebone-to-a-specific-world-space-position
+    # https://docs.blender.org/api/blender_python_api_current/bpy.types.Object.html?highlight=convert_space#bpy.types.Object.convert_space
+    world_space = rig.convert_space(
+        pose_bone=pose_bone,
+        matrix=pose_bone.matrix,
+        from_space='POSE',
+        to_space='WORLD'
+    )
+    return world_space
+
+
+def set_pose_bone_world_position(pose_bone, rig, position):
+    world_space = get_pose_bone_world_position(pose_bone, rig)
+    world_space.translation = position
+    pose_bone.matrix = rig.convert_space(pose_bone=pose_bone,
+                                         matrix=world_space,
+                                         from_space='WORLD',
+                                         to_space='POSE')
+
+
 def add_armature(name):
     arm = bpy.data.armatures.new(name)
     return arm
@@ -224,13 +245,16 @@ def add_copy_rotation_constraint(obj, target_obj, invert_y):
     if invert_y:
         constraint.invert_y = True
 
+
 def mute_constraint(ob, mute=False):
     constraint = ob.constraints
+
+
 # endregion
 
 
 # region CUSTOM PROPERTIES
-#def set_custom_property(target_obj, prop_name, prop):
+# def set_custom_property(target_obj, prop_name, prop):
 #    print("set custom prop", target_obj, prop_name, prop)
 #    if get_custom_property(target_obj, prop_name) == None:
 #        target_obj[prop_name] = prop
@@ -248,8 +272,9 @@ def get_custom_property(target_obj, prop_name):
 
 
 def set_custom_property(obj, prop_name, value, v_min=None, v_max=None, use_soft=False, overwrite=False):
-    print(obj, prop_name, value)
     if get_custom_property(obj, prop_name) is None or overwrite is True:
+        if obj is None:
+            return False
         obj[prop_name] = value
 
         if "_RNA_UI" not in obj.keys():
@@ -261,6 +286,7 @@ def set_custom_property(obj, prop_name, value, v_min=None, v_max=None, use_soft=
             obj["_RNA_UI"].update({prop_name: {"min": v_min, "max": v_max}})
         return False
     return True
+
 
 # endregion
 
@@ -284,7 +310,10 @@ def remove_drivers(ob):
         return True
     except Exception:
         return False
+
+
 # endregion
+
 
 # region scene
 def get_frame_start():

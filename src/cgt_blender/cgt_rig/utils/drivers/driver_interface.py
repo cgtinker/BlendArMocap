@@ -71,40 +71,28 @@ class Driver(DriverProperties):
         # requirements to check custom props
         self.target_object = expression.target_object
         self.property_name = expression.property_name
-        self.overwrite = expression.overwrite
 
         # prevent to apply driver twice
         self.is_custom_property_assigned()
-        if self.assigned is True and self.overwrite is False:
+        user_prefs = objects.user_pref()
+        overwrite = user_prefs.overwrite_drivers_bool  # noqa
+        if self.assigned is True and overwrite is False:
             return
 
-        self.functions = expression.functions
-
-        # overwrite driver expression
-        # if self.overwrite is True:
-        #     print(self.target_object, self.property_name, "overwrite:", True)
-        #     try:
-        #         preassigned = self.target_object.animation_data.drivers
-        #         for i, d in enumerate(preassigned):
-        #             self.target_object.animation_data.drivers.remove(d)
-
-        #     except Exception:
-        #         print("Exception occured.")
-        #         pass
-
         # setup vars for new driver
+        self.functions = expression.functions
         self.property_type = expression.property_type
         self.provider_obj = expression.provider_obj
         self.data_paths = expression.data_paths
         self.target_rig = expression.target_rig
-
         if self.functions is None:
             self.functions = ["", "", ""]
 
-        # generate drivers
+        # add driver placeholders to target object
         self.drivers = [self.target_object.driver_add(self.property_type, index) for index in range(3)]
         self.variables = [d.driver.variables.new() for d in self.drivers]
         print("prepare and apply")
+
         # prepare and apply driver to obj
         self.prepare()
         self.apply()

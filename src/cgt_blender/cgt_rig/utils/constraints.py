@@ -1,3 +1,6 @@
+from ...utils import objects
+
+
 def copy_rotation(constraint, target, values):
     constraint.target = target
     constraint.euler_order = 'XYZ'
@@ -53,6 +56,13 @@ def copy_location_world(bone, target, values):
     constraint.owner_space = 'WORLD'
 
 
+def child_of(constraint, target, values):
+    objects.set_pose_bone_world_position(values[1], values[0], target.location)
+    constraint.target = target
+    constraint.influence = 1
+    constraint.set_inverse_pending = True
+
+
 def damped_track(constraint, target, values):
     constraint.target = target
     constraint.influence = 1
@@ -102,7 +112,7 @@ constraint_mapping = {
     "TRACK_TO":             track_to,
     "ACTION":               21,
     "ARMATURE":             22,
-    "CHILD_OF":             23,
+    "CHILD_OF":             child_of,
     "FLOOR":                24,
     "FOLLOW_PATH":          25,
     "PIVOT":                26,
@@ -128,16 +138,18 @@ def add_constraint(bone, target, constraint, values):
         constraint_name = constraint_name.replace(" ", "_")
         constraint_name = constraint_name.upper()
         constraint_name = constraint_name.rsplit('.', 1)[0]
-        # print("preassigned constraint:", constraint_name, "attempt to assign", target_constraint)
+
         # remove if names match
         if constraint_name == target_constraint:
-            # print("removing preassigned constraint", c)
             bone.constraints.remove(c)
     try:
         # adding a new constraint
         m_constraint = bone.constraints.new(
             type=constraint
         )
+
+        if 'CHILD_OF' in constraint:
+            values.append(bone)
         constraint_mapping[constraint](m_constraint, target, values)
     except TypeError or KeyError:
         # call custom method with bone

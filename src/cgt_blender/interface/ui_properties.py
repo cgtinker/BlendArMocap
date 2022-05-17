@@ -69,6 +69,12 @@ class CgtProperties(PropertyGroup):
         default=False
     )
 
+    overwrite_drivers_bool: BoolProperty(
+        name="Overwrite Drivers",
+        description="Overwrites drivers when reimporting",
+        default=False
+    )
+
     def armature_poll(self, object):
         return object.type == 'ARMATURE'
 

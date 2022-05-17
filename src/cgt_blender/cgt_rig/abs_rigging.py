@@ -24,6 +24,7 @@ class BpyRigging(ABC):
 
     # region apply
     def n_apply_constraints(self, constraint_dict):
+        """ Applies constraints to bones targeting objects. """
         for key, pair in constraint_dict.items():
             provider = objects.get_object_by_name(key)
             bone = self.pose_bones[pair[0]]
@@ -32,60 +33,72 @@ class BpyRigging(ABC):
             constraints.add_constraint(bone, provider, constraint_name, args)
 
     def n_apply_driver(self, containers):
+        """ Applies containers of driver properties as drivers to objects.
+            The properties are given as strings, the objects are searched by types. """
+
+        # driver types targets
         driver_type_dict = {
             driver_interface.DriverType.SINGLE:     driver_types.SinglePropDriver,
             driver_interface.DriverType.BONE:       driver_types.BonePropDriver,
             driver_interface.DriverType.CUSTOM:     driver_types.CustomBonePropDriver
         }
 
+        # wrapper for convenience
+        def get_pose_bone(bone_name):
+            return self.pose_bones[bone_name]
+
+        ref_provider_dict = {
+            driver_interface.ObjectType.OBJECT: objects.get_object_by_name,
+            driver_interface.ObjectType.BONE: get_pose_bone,
+        }
+
+        # prepare for iteration
         driver_props = [driver for container in containers for driver in container.pose_drivers]
 
-        drivers = []
+        drivers_types = []
         props = []
+
+        # search references for proper driver setup
         for prop in driver_props:
-            # find objs for drivers
-            objs = []
-            for p in [[prop.provider_obj, prop.provider_type],
-                      [prop.target_object, prop.target_type],
-                      [prop.target_rig, "rig"],
-                      [prop.custom_target_props, "custom"]]:
+            # find bone ref or object ref for driver
+            prop.provider_obj = ref_provider_dict[prop.provider_type](prop.provider_obj)
+            prop.target_object = ref_provider_dict[prop.target_type](prop.target_object)
 
-                ob = None
-                if p[1] == driver_interface.ObjectType.OBJECT:
-                    ob = objects.get_object_by_name(p[0])
-                    # overwrite drivers
-                    objects.remove_drivers(ob)
-                    # if prop.overwrite is True:
-                    #     objects.remove_drivers(ob)
+            # assign custom vars
+            if prop.target_rig is not None:
+                prop.target_rig = self.armature
+            if prop.custom_target_props is not None:
+                objects.set_custom_property(prop.provider_obj, prop.custom_target_props.name,
+                                            prop.custom_target_props.value, -5, 5, overwrite=True)
 
-                elif p[1] == driver_interface.ObjectType.BONE:
-                    ob = self.pose_bones[p[0]]
-                elif p[1] is "rig" and p[0] is not None:
-                    ob = self.armature
-                elif p[1] is "custom" and p[0] is not None:
-                    objects.set_custom_property(objs[0],
-                                                prop.custom_target_props.name,
-                                                prop.custom_target_props.value,
-                                                -5,
-                                                5,
-                                                overwrite=True)
-
-                objs.append(ob)
-
-            # assign objects
-            prop.provider_obj = objs[0]
-            prop.target_object = objs[1]
-            prop.target_rig = objs[2]
-
+            # set driver type for execution
             driver = driver_type_dict[prop.driver_type]
-            drivers.append(driver)
+
+            # append gathered data to lists
+            drivers_types.append(driver)
             props.append(prop)
 
-        for i in range(0, len(drivers)):
-            drivers[i](props[i])
+        # check if overwrite is enabled
+        user_prefs = objects.user_pref()
+        overwrite = user_prefs.overwrite_drivers_bool # noqa
+
+        # remove all existing drivers before applying new ones when overwriting
+        if overwrite is True:
+            for prop in driver_props:
+                try:
+                    for d in prop.target_object.animation_data.drivers:
+                        prop.target_object.animation_data.drivers.remove(d)
+                except AttributeError:
+                    # drivers may not be applied previously
+                    pass
+
+        # execute the drivers
+        for i in range(0, len(drivers_types)):
+            drivers_types[i](props[i])
 
     # endregion
     def bone_head(self, bone_name):
+        # returns the bone head position of a pose bone
         return self.pose_bones[bone_name].head
 
     # region joint length
@@ -98,6 +111,8 @@ class BpyRigging(ABC):
 
     @staticmethod
     def get_average_length(joint_array):
+        """ takes an array of positions [[pos_a, pos_b], ...]
+            returns the average length of the input array"""
         distances = []
         for joint in joint_array:
             dist = m_V.get_vector_distance(np.array(joint[0]), np.array(joint[1]))

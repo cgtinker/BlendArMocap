@@ -66,7 +66,8 @@ def unregister():
         try:
             unregister_class(cls)
         except RuntimeError:
-            print("Class may not be registered:", cls)
+            # Class may not be registered
+            pass
 
     if dependencies.dependencies_installed:
         # print("UNREGISTER BLENDARMOCAP WITH ACTIVE DEPENDENCIES")
