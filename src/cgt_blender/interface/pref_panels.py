@@ -12,16 +12,10 @@ class BLENDARMOCAP_preferences(bpy.types.AddonPreferences):
     def draw(self, context):
         layout = self.layout
         self.draw_dependencies(layout)
-
-        # only if dependencies installed
-        if dependencies.dependencies_installed:
-            s_box = layout.box()
-            user = context.scene.m_cgtinker_mediapipe  # noqa
-            s_box.label(text="Camera Settings")
-            s_box.row().prop(user, "enum_stream_dim")
-            s_box.row().prop(user, "enum_stream_type")
+        self.draw_camera_settings(layout)
 
     def draw_dependencies(self, layout):
+        """ Dependency layout for user preferences. """
         # dependency box
         dependency_box = layout.box()
         dependency_box.label(text="Dependencies")
@@ -56,26 +50,36 @@ class BLENDARMOCAP_preferences(bpy.types.AddonPreferences):
         )
 
     def draw_dependency(self, m_dependency, dependency_box):
+        """ Draws package name, version, path and if a dependency has been installed. """
         _d_box = dependency_box.box()
         box_split = _d_box.split()
         cols = [box_split.column(align=False) for _ in range(4)]
-        updated_dependency = dependencies.dependency_naming(m_dependency)
 
-        if not dependencies.is_package_installed(m_dependency):
+        updated_dependency = dependencies.dependency_naming(m_dependency)
+        if not dependencies.is_package_installed(updated_dependency):
             cols[0].label(text=f"{updated_dependency.package}")
             cols[1].label(text=f"NaN")
             cols[2].label(text=f"NaN")
             cols[3].label(text=f"{False}")
 
         else:
-            _version, _path = dependencies.get_package_info(m_dependency.pkg)
+            _version, _path = dependencies.get_package_info(updated_dependency)
             cols[0].label(text=f"{updated_dependency.package}")
             cols[1].label(text=f"{_version}")
             cols[2].label(text=f"{_path}")
             cols[3].label(text=f"{True}")
 
+    def draw_camera_settings(self, layout):
+        if dependencies.dependencies_installed:
+            s_box = layout.box()
+            user = context.scene.m_cgtinker_mediapipe  # noqa
+            s_box.label(text="Camera Settings")
+            s_box.row().prop(user, "enum_stream_dim")
+            s_box.row().prop(user, "enum_stream_type")
+
 
 def redraw_preferences():
+    """ Forces to redraw the add-on preferences panel. """
     try:
         unregister_class(BLENDARMOCAP_preferences)
     except RuntimeError:

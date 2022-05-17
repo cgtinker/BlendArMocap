@@ -34,6 +34,7 @@ def python_exe():
 
 
 def clear_user_site():
+    """ Clear python site packages to avoid user site packages. """
     # Disallow pip from checking the user site-package
     environ_copy = dict(os.environ)
     environ_copy["PYTHONNOUSERSITE"] = "1"
@@ -48,13 +49,9 @@ python_exe = python_exe()
 
 # region package import and info
 def import_module(_dependency):
-    tmp_dependency = Dependency(
-        _dependency.module, _dependency.package, _dependency.name, _dependency.pkg
-    )
-
-    """ Attempt to import module and assign it to the globals dictionary. """
-    if dependency.name is None:
-        _name = dependency.module
+    """ Attempt to import module and assign it to the globals dictionary.
+        May only be used with properly installed dependencies. """
+    tmp_dependency = dependency_naming(_dependency)
 
     if tmp_dependency.name in globals():
         importlib.reload(globals()[tmp_dependency.name])
@@ -69,8 +66,9 @@ def get_package_info(_dependency):
     import pkg_resources
 
     try:
+        # get version and path of the package
         dist_info = pkg_resources.get_distribution(
-            _dependency.pkg_name
+            _dependency.pkg
         )
         _version = dist_info.version
 
@@ -86,8 +84,20 @@ def get_package_info(_dependency):
 
 def is_package_installed(_dependency):
     try:
+        # Try to import the module to check if it is available.
+        # Blender may has to be restarted to take effect on newly installed or removed dependencies.
         importlib.import_module(_dependency.name)
-        return True
+        tmp_dependency = dependency_naming(_dependency)
+
+        # Installed dependencies are added to globals.
+        if tmp_dependency.name in globals():
+            importlib.reload(globals()[tmp_dependency.name])
+            return True
+        else:
+            if tmp_dependency.name is 'pip':
+                # pip shouldn't be in globals
+                return True
+            return False
     except ModuleNotFoundError:
         return False
 
@@ -100,55 +110,56 @@ def install_pip():
     if is_package_installed(Dependency("pip", "pip", "pip", "pip")):
         return
 
-    # https://github.com/robertguetzkow/blender-python-examples/blob/master/add-ons/install-dependencies/install-dependencies.py
-    import ensurepip
     print(f"Attempting to install pip.")
-
     try:
-        clear_user_site()
+        # https://github.com/robertguetzkow/blender-python-examples/blob/master/add-ons/install-dependencies/install-dependencies.py
+        import ensurepip
         ensurepip.bootstrap()
         os.environ.pop("PIP_REQ_TRACKER", None)
     except Exception as e:
         print(e)
-        subprocess.check_call([python_exe, "-m", "ensurepip", "--user"])
+        clear_user_site()
+        subprocess.check_call([python_exe, "-m", "ensurepip"])
 
 
 def update_pip():
+    # https://github.com/pypa/pip/issues/5599
+    # updating pip is depreciated, use on own risk
     updated = subprocess.call([python_exe, "-m", "pip", "install", "--upgrade", "pip"]) == 0
 
     if updated:
         print(f"Updated pip successfully.")
     else:
         print(f"Pip update failed. Please check the console for details.")
-
-
 # endregion
 
 
 # region dependencies
 def dependency_naming(_dependency):
-    """ Updates the dependency names depending on the input. """
-    _module, _package = _dependency.module, _dependency.package
+    """ Updates the dependency names depending on the input.
+    Returns module name of the dependency as package and global name if the vars are not available. """
+    _name, _package = _dependency.name, _dependency.package
+
     if _dependency.package is None:
-        _package = _dependency.name
+        _package = _dependency.module
 
-    if _dependency.module is None:
-        _module = _dependency.name
+    if _dependency.name is None:
+        _name = _dependency.module
 
-    tmp_dependency = Dependency(_module, _package, _dependency.name, _dependency.pkg)
+    tmp_dependency = Dependency(_dependency.module, _package, _name, _dependency.pkg)
     return tmp_dependency
 
 
 def install_and_import_module(_dependency):
     """ Installs a dependency and imports the module to blender. """
-    print(f"Attempting to install: {_dependency.module_name}")
     tmp_dependency = dependency_naming(_dependency)
 
-    if is_package_installed(tmp_dependency.name):
+    if is_package_installed(tmp_dependency):
         print(f"{tmp_dependency.package} is already installed.")
         return
 
     try:
+        print(f"Attempting to install: {_dependency.module}")
         environ_copy = clear_user_site()
         cmd = [python_exe, "-m", "pip", "install", "--no-cache-dir", tmp_dependency.package]
         installed = subprocess.call(cmd, env=environ_copy) == 0
@@ -173,7 +184,7 @@ def install_and_import_module(_dependency):
 
 
 def uninstall_dependency(_dependency):
-    print("try to uninstall ", _dependency.module)
+    # Uninstall dependency without question prompt.
     cmd = [python_exe, "-m", "pip", "uninstall", "-y", _dependency.pkg]
     uninstalled = subprocess.call(cmd) == 0
 
@@ -181,8 +192,6 @@ def uninstall_dependency(_dependency):
         print(f"Uninstalled {_dependency.module} successfully.")
     else:
         print(f"Failed to uninstall {_dependency.module}.")
-
-
 # endregion
 
 

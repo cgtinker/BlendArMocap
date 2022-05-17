@@ -24,7 +24,7 @@ class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
         try:
             # try to install dependencies
             dependencies.install_pip()
-            dependencies.update_pip()
+            # dependencies.update_pip()
             for dependency in dependencies.required_dependencies:
                 dependencies.install_and_import_module(dependency)
         except (subprocess.CalledProcessError, ImportError) as err:
