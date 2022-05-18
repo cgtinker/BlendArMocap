@@ -2,6 +2,7 @@ from .driver_interface import Driver
 
 
 class SinglePropDriver(Driver):
+    """ Prepares a single property driver targeting an object. """
     def prepare(self):
         for idx, var in enumerate(self.variables):
             var.name = self.property_name
@@ -15,6 +16,7 @@ class SinglePropDriver(Driver):
 
 
 class BonePropDriver(Driver):
+    """ Prepares a single property driver targeting a bone. """
     def prepare(self):
         for idx, variable in enumerate(self.variables):
             variable.name = self.property_name
@@ -37,6 +39,7 @@ class BonePropDriver(Driver):
 
 
 class CustomBonePropDriver(Driver):
+    """ Creates a custom property driver targeting a custom property of a bone. """
     def prepare(self):
         for idx, var in enumerate(self.variables):
             var.name = self.property_name

@@ -43,7 +43,6 @@ class CustomAngleMultiplier(DriverProperties):
         self.property_type = "rotation_euler"
         self.property_name = "fac"
         self.data_paths = [f'pose.bones["{provider_obj}"]["{prop_name}"]']*3
-        # self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
         self.functions = ["", "", ""]
 
 
@@ -70,12 +69,6 @@ class FingerAngleDriver(DriverProperties):
         self.property_name = "rotation"
         self.overwrite = True
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
-        # self.functions = [
-        #     # f"{x_slope.min_out}+{x_slope.slope}*({-x_slope.min_in}+(rotation))",
-        #     f"{x_slope.min_out}+{x_slope.slope}*({-x_slope.min_in}+(rotation))",
-        #     "",
-        #     f"{z_slope.min_out}+{z_slope.slope}*({-z_slope.min_in}+(rotation))"]
-
         self.functions = [
             f"{x_slope.name}[0]+(({x_slope.name}[1] - "
             f"{x_slope.name}[0])/({x_slope.max_in}-{x_slope.min_in}))*({-x_slope.min_in}+(rotation))",
@@ -84,10 +77,12 @@ class FingerAngleDriver(DriverProperties):
             f"{z_slope.name}[0])/({x_slope.max_in}-{x_slope.min_in}))*({-z_slope.min_in}+(rotation))"
         ]
 
+
 @dataclass(repr=True)
 class FingerDriverContainer(DriverContainer):
-    # shifting avgs for L / R hand z-angles
-    # thumb / index / middle / ring / pinky
+    # matrix order: thumb / index / middle / ring / pinky
+
+    # slope values for z-angles in degrees
     z_inputs = [
         [20, 60],
         [-25, 60],
@@ -104,6 +99,7 @@ class FingerDriverContainer(DriverContainer):
         [20., -30],
     ]
 
+    # slope values for x-angles in radians
     x_inputs = [
         [0.011, 0.630], [0.010, 0.536], [0.008, 1.035],
         [0.105, 1.331], [0.014, 1.858], [0.340, 1.523],
@@ -121,27 +117,32 @@ class FingerDriverContainer(DriverContainer):
     ]
 
     def __init__(self, driver_targets: list, provider_objs: list, orientation: str, bone_names: list):
+        """ Generates driver properties for fingers using custom properties. """
+        # generate slopes for x angles
         x_slopes = [
             Slope(self.x_inputs[idx][0], self.x_inputs[idx][1], self.x_outputs[idx][0], self.x_outputs[idx][1], "x_map")
             for idx in range(0, 15)
         ]
 
+        # preparing slope input values for z-angles
         self.z_inputs_r = [[radians(v[0]), radians(v[1])] for v in self.z_inputs]
         self.z_inputs_l = [[radians(v[0]), radians(v[1])] for v in self.z_inputs]
         self.z_outputs = [[radians(v[0]), radians(v[1])] for v in self.z_outputs]
 
+        # generate z slopes for the right hand
         z_slopes_r = [
             Slope(self.z_inputs_r[idx][0], self.z_inputs_r[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1], "z_map")
             for idx in range(0, 5)
         ]
 
-        # values have to be mirrored to fit angles
+        # values have to be mirrored to fit angles (for left and right hand)
         self.z_outputs = [[i[0] * -1, i[1] * -1] for idx, i in enumerate(self.z_outputs)]
         z_slopes_l = [
             Slope(self.z_inputs_l[idx][0], self.z_inputs_l[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1], "z_map")
             for idx in range(0, 5)
         ]
 
+        # helper method to access the slopes
         def get_z_slope(idx):
             if idx not in range(0, 15, 3):
                 return Slope(0, 1, 0, 1)
@@ -151,6 +152,7 @@ class FingerDriverContainer(DriverContainer):
             else:
                 return z_slopes_l[int(idx / 3)]
 
+        # generate custom properties
         self.pose_drivers = [
             CustomBoneProp(
                 driver_targets[idx],
@@ -169,6 +171,7 @@ class FingerDriverContainer(DriverContainer):
                 (get_z_slope(idx).min_out, get_z_slope(idx).max_out)
             ) for idx, _ in enumerate(driver_targets)]
 
+        # adding actual driver using custom props
         self.pose_drivers += [
             FingerAngleDriver(
                 driver_targets[idx],

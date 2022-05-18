@@ -1,14 +1,16 @@
 import bpy
 
 from .abs_rigging import BpyRigging
-from .utils.drivers import face_drivers
+from .drivers import face_drivers
 from ...cgt_naming import FACE
 
 
 class RigifyFace(BpyRigging):
+    """ Used for mapping values to drivers, holds rigify bone names and custom data names.
+        Objects are getting searched by name, then drivers and constraints get applied. """
+
     def __init__(self, armature: bpy.types.Object, driver_objects: list):
         super().__init__(armature)
-
         # region eye drivers
         eye_driver_names = [[FACE.right_eye_t, FACE.right_eye_b], [FACE.left_eye_t, FACE.left_eye_b]]
         eye_dist_provider_objs = [FACE.right_eye, FACE.left_eye]
@@ -73,8 +75,8 @@ class RigifyFace(BpyRigging):
         }
         # endregion
 
-        self.n_apply_driver([self.eye_drivers, self.mouth_drivers, self.eyebrow_drivers])
-        self.n_apply_constraints(self.constraint_dict)
+        self.apply_driver([self.eye_drivers, self.mouth_drivers, self.eyebrow_drivers])
+        self.apply_constraints(self.constraint_dict)
 
     def get_bone_distances(self, bone_pairs):
         distances = []

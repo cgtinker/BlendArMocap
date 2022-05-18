@@ -3,21 +3,20 @@ from dataclasses import dataclass
 from ..mapping import CustomProps
 import bpy
 
-from ....utils import objects
+from src.cgt_blender.utils import objects
 
 
 @dataclass(frozen=True)
 class DriverType:
-    LIMB: int = 0
-    CONSTRAINT: int = 1
-    face_driver: int = 2
-    SINGLE: int = 3
-    BONE: int = 4
-    CUSTOM: int = 5
+    """ Enum for driver types. """
+    SINGLE: int = 0
+    BONE: int = 1
+    CUSTOM: int = 2
 
 
 @dataclass(frozen=True)
 class ObjectType:
+    """ Enum for object types"""
     OBJECT: int = 0
     BONE: int = 1
     RIG: int = 2

@@ -1,4 +1,4 @@
-from ...utils import objects
+from ..utils import objects
 
 
 def copy_rotation(constraint, target, values):

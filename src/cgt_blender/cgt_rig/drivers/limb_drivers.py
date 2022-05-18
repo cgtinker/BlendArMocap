@@ -114,8 +114,10 @@ class MainExpression(DriverProperties):
 @dataclass(repr=True)
 class LimbDriver(DriverContainer):
     def __init__(self, driver_target, driver_origin, detected_joint, rigify_joint_length, offsets=None):
+        """ Generates drivers for limbs which. As limps for a chain, the drivers may depend on each other. """
         if offsets is None:
             offsets = [0, 0, 0]
+
         # previous driver as origin
         driver_origin = DriverOrigin(driver_origin)
 
@@ -124,8 +126,10 @@ class LimbDriver(DriverContainer):
         joint_length = JointLength(detected_joint[1])
         joint_tail = MainExpression(detected_joint[1], rigify_joint_length, offsets)
 
+        # setup drivers
         self.pose_drivers = [driver_origin, joint_head, joint_length, joint_tail]
 
+        # set reoccuring props
         for driver in self.pose_drivers:
             driver.target_object = driver_target
             driver.target_rig = None

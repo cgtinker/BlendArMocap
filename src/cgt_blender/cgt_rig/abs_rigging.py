@@ -2,8 +2,8 @@ from abc import ABC
 
 import numpy as np
 
-from .utils import constraints
-from .utils.drivers import driver_types, driver_interface
+from . import constraints
+from .drivers import driver_types, driver_interface
 from ..utils import objects
 from ...cgt_utils import m_V
 
@@ -11,11 +11,6 @@ from ...cgt_utils import m_V
 class BpyRigging(ABC):
     pose_bones: list = None
     mapping_relation_list: list = None
-    method_mapping = {
-        driver_interface.DriverType.CONSTRAINT: constraints.add_constraint,
-        driver_interface.DriverType.SINGLE:     driver_types.SinglePropDriver,
-        driver_interface.DriverType.BONE:       driver_types.BonePropDriver
-    }
 
     def __init__(self, armature):
         self.mapping_relation_list = []
@@ -23,7 +18,7 @@ class BpyRigging(ABC):
         self.pose_bones = armature.pose.bones
 
     # region apply
-    def n_apply_constraints(self, constraint_dict):
+    def apply_constraints(self, constraint_dict):
         """ Applies constraints to bones targeting objects. """
         for key, pair in constraint_dict.items():
             provider = objects.get_object_by_name(key)
@@ -32,15 +27,15 @@ class BpyRigging(ABC):
             args = pair[2:]
             constraints.add_constraint(bone, provider, constraint_name, args)
 
-    def n_apply_driver(self, containers):
+    def apply_driver(self, containers):
         """ Applies containers of driver properties as drivers to objects.
             The properties are given as strings, the objects are searched by types. """
 
         # driver types targets
         driver_type_dict = {
-            driver_interface.DriverType.SINGLE:     driver_types.SinglePropDriver,
-            driver_interface.DriverType.BONE:       driver_types.BonePropDriver,
-            driver_interface.DriverType.CUSTOM:     driver_types.CustomBonePropDriver
+            driver_interface.DriverType.SINGLE: driver_types.SinglePropDriver,
+            driver_interface.DriverType.BONE:   driver_types.BonePropDriver,
+            driver_interface.DriverType.CUSTOM: driver_types.CustomBonePropDriver
         }
 
         # wrapper for convenience
@@ -49,7 +44,7 @@ class BpyRigging(ABC):
 
         ref_provider_dict = {
             driver_interface.ObjectType.OBJECT: objects.get_object_by_name,
-            driver_interface.ObjectType.BONE: get_pose_bone,
+            driver_interface.ObjectType.BONE:   get_pose_bone,
         }
 
         # prepare for iteration

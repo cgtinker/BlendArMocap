@@ -10,25 +10,19 @@ class EyeDriver(DriverProperties):
     target_object: str
     functions: list
 
-    def __init__(self, driver_target, provider_obj, bone_distance, factor, direction, slope):
-        """ Provides eye driver properties to animate the lids.
-            :param provider_obj: object providing scale values.
-            :param target_axis: target axis to set datapath [X, Y, Z].
-            :param bone_distance: eye bone distance from rigify rig
-            :param factor: factor to multiply the dist
-        """
+    def __init__(self, driver_target, provider_obj, bone_distance, direction, slope):
+        """ Provides eye driver properties to animate the lids. """
         self.target_object = driver_target
         self.driver_type = DriverType.SINGLE
         self.provider_obj = provider_obj
         self.property_type = "location"
         self.property_name = "scale"
         self.data_paths = ["scale.z"] * 3
-        self.get_functions(direction, bone_distance, factor, slope)
+        self.get_functions(direction, bone_distance, slope)
         self.overwrite = True
 
-    def get_functions(self, direction, bone_distance, factor, slope):
+    def get_functions(self, direction, bone_distance, slope):
         if direction == "down":
-            # self.functions = ["", "", f"-{bone_distance}*{factor}+{bone_distance}*(scale)"]
             bone_distance *= .65
             self.functions = ["", "",
                               f"{bone_distance}*"
@@ -36,7 +30,6 @@ class EyeDriver(DriverProperties):
                               f"(-{slope.min_in}+(scale)))"
                               ]
         elif direction == "up":
-            # self.functions = ["", "", f"-{bone_distance}*{factor}*(scale)"]
             bone_distance *= .35
             self.functions = ["", "",
                               f"-{bone_distance}*"
@@ -47,6 +40,7 @@ class EyeDriver(DriverProperties):
 
 @dataclass(repr=True)
 class EyeDriverContainer(DriverContainer):
+    """ Container holding drivers for eye movements. """
     def __init__(self, driver_targets, provider_objs, eye_distances, bone_names):
         inputs = [.0, .5]
         outputs = [-1, 0.0]
@@ -63,10 +57,10 @@ class EyeDriverContainer(DriverContainer):
                         slope.name,
                         (slope.min_out, slope.max_out))]
 
-        right_top_lid = EyeDriver(driver_targets[0][0], provider_objs[0], eye_distances[0], 0.7, "down", slope)
-        right_bot_lid = EyeDriver(driver_targets[0][1], provider_objs[0], eye_distances[0], 0.3, "up", slope)
-        left_top_lid = EyeDriver(driver_targets[1][0], provider_objs[1], eye_distances[1], 0.7, "down", slope)
-        left_bot_lid = EyeDriver(driver_targets[1][1], provider_objs[1], eye_distances[1], 0.3, "up", slope)
+        right_top_lid = EyeDriver(driver_targets[0][0], provider_objs[0], eye_distances[0], "down", slope)
+        right_bot_lid = EyeDriver(driver_targets[0][1], provider_objs[0], eye_distances[0], "up", slope)
+        left_top_lid = EyeDriver(driver_targets[1][0], provider_objs[1], eye_distances[1], "down", slope)
+        left_bot_lid = EyeDriver(driver_targets[1][1], provider_objs[1], eye_distances[1], "up", slope)
 
         self.pose_drivers += [left_top_lid, left_bot_lid, right_top_lid, right_bot_lid]
 
@@ -77,6 +71,7 @@ class MouthCornerDriver(DriverProperties):
     functions: list
 
     def __init__(self, driver_target, provider_obj, direction):
+        """ Provides mouth corner properties to set up a driver for lip animation. """
         self.target_object = driver_target
         self.provider_obj = provider_obj
         self.property_type = "location"
@@ -97,14 +92,8 @@ class MouthDriver(DriverProperties):
     target_object: str
     functions: list
 
-    def __init__(self, driver_target, provider_obj, bone_distance, factor, slope, direction):
-        """ Provides mouth driver properties to animate the lips.
-                    :param provider_obj: object providing scale values.
-                    :param target_axis: target axis to set datapath [X, Y, Z].
-                    :param bone_distance: mouth bone distance from rigify rig
-                    :param factor: factor to multiply the dist
-                """
-
+    def __init__(self, driver_target, provider_obj, bone_distance, slope, direction):
+        """ Generates lip drivers using custom props. """
         self.target_object = driver_target
         self.driver_type = DriverType.SINGLE
         self.provider_obj = provider_obj
@@ -165,6 +154,7 @@ class MouthDriverContainer(DriverContainer):
     ]
 
     def __init__(self, driver_targets, provider_obj, mouth_distances, bone_names):
+        """ Generates mouth driver props using custom properties. """
         slopes = [Slope(self.inputs[idx][0], self.inputs[idx][1],
                         self.outputs[idx][0], self.outputs[idx][1], name=self.outputs[idx][2])
                   for idx in range(0, 4)]
@@ -173,13 +163,13 @@ class MouthDriverContainer(DriverContainer):
         left_corner = MouthCornerDriver(driver_targets[1][0], provider_obj[1], "left")
         right_corner = MouthCornerDriver(driver_targets[1][1], provider_obj[1], "right")
         upper_lip = MouthDriver(
-            driver_targets[0][0], provider_obj[0], mouth_distances[0], 0.30, slopes[0], "up")
+            driver_targets[0][0], provider_obj[0], mouth_distances[0], slopes[0], "up")
         lower_lip = MouthDriver(
-            driver_targets[0][1], provider_obj[0], mouth_distances[0], -0.3, slopes[1], "down")
+            driver_targets[0][1], provider_obj[0], mouth_distances[0], slopes[1], "down")
         left_lip = MouthDriver(
-            driver_targets[1][0], provider_obj[0], mouth_distances[1], 0.10, (slopes[2], slopes[3]), "left")
+            driver_targets[1][0], provider_obj[0], mouth_distances[1], (slopes[2], slopes[3]), "left")
         right_lip = MouthDriver(
-            driver_targets[1][1], provider_obj[0], mouth_distances[1], -.10, (slopes[2], slopes[3]), "right")
+            driver_targets[1][1], provider_obj[0], mouth_distances[1], (slopes[2], slopes[3]), "right")
 
         # setting custom bone props for easier value tweaking
         self.pose_drivers = []
@@ -214,7 +204,7 @@ class EyebrowDriver(DriverProperties):
     target_object: str
     functions: list
 
-    def __init__(self, driver_target, provider_obj, bone_distance, target_path, slope, idx):
+    def __init__(self, driver_target, provider_obj, bone_distance, target_path, slope):
         self.target_object = driver_target
         self.driver_type = DriverType.SINGLE
         self.provider_obj = provider_obj
@@ -233,6 +223,7 @@ class EyebrowDriver(DriverProperties):
 
 @dataclass(repr=True)
 class EyebrowDriverContainer(DriverContainer):
+    # default slope values for opening and closing eyes
     inputs = [
                  [0.85, 2.0],  # in
                  [0.65, 1.65],  # out
@@ -244,6 +235,9 @@ class EyebrowDriverContainer(DriverContainer):
               ] * 2
 
     def __init__(self, driver_targets, provider_objs, brow_distances, bone_names):
+        """ Generates eyebrow driver props using custom properties. """
+
+        # setup slopes
         slopes = [
             Slope(self.inputs[idx][0], self.inputs[idx][1], self.outputs[idx][0], self.outputs[idx][1], "up_down")
             for idx in range(0, 4)
@@ -254,7 +248,8 @@ class EyebrowDriverContainer(DriverContainer):
             "scale.z"
         ]
         self.pose_drivers = []
-        # custom props for value tweaking
+
+        # creating expressions containing the props
         self.pose_drivers += [
             CustomBoneProp(
                 driver_targets[idx],
@@ -264,6 +259,7 @@ class EyebrowDriverContainer(DriverContainer):
                 (slopes[idx].min_out, slopes[idx].max_out))
             for idx, _ in enumerate(driver_targets)]
 
+        # creating eyebrow drivers using the props
         self.pose_drivers += [
-            EyebrowDriver(driver_targets[i], provider_objs[0], brow_distances[i], tar_path, slopes[i], i)
+            EyebrowDriver(driver_targets[i], provider_objs[0], brow_distances[i], tar_path, slopes[i])
             for i in range(0, 4)]

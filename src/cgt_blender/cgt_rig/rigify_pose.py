@@ -1,13 +1,16 @@
 import numpy as np
 
 from . import abs_rigging
-from .utils.drivers import limb_drivers
+from .drivers import limb_drivers
 from ..utils import objects
 from ...cgt_naming import POSE
 from ...cgt_utils import m_V
 
 
 class RigifyPose(abs_rigging.BpyRigging):
+    """ Used for mapping values to drivers, holds rigify bone names and custom data names.
+        Objects are getting searched by name, then drivers and constraints get applied. """
+
     # region bone center drivers
     center_driver_targets = [
         POSE.shoulder_center_ik,
@@ -115,8 +118,8 @@ class RigifyPose(abs_rigging.BpyRigging):
         ) for idx, target in enumerate(self.limb_driver_targets)]
         # endregion
 
-        self.n_apply_driver(self.bone_center_drivers)
-        self.n_apply_driver(self.limb_drivers)
+        self.apply_driver(self.bone_center_drivers)
+        self.apply_driver(self.limb_drivers)
 
         pose_constraints_copy = self.pose_constraints.copy()
         user = objects.user_pref()
@@ -125,7 +128,7 @@ class RigifyPose(abs_rigging.BpyRigging):
             for c in remove_list:
                 pose_constraints_copy.pop(c, None)
 
-        self.n_apply_constraints(pose_constraints_copy)
+        self.apply_constraints(pose_constraints_copy)
 
     def get_rigify_bone_offset_locations(self):
         offset_locations = []

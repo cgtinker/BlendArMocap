@@ -1,9 +1,12 @@
 from . import abs_rigging
 from ...cgt_naming import HAND
-from .utils.drivers.hand_drivers import FingerDriverContainer
+from .drivers.hand_drivers import FingerDriverContainer
 
 
 class RigifyHands(abs_rigging.BpyRigging):
+    """ Used for mapping values to drivers, holds rigify bone names and custom data names.
+        Objects are getting searched by name, then drivers and constraints get applied. """
+
     def __init__(self, armature, driver_objects):
         super().__init__(armature)
         # driver to rigify cgt_rig transfer name references
@@ -93,9 +96,9 @@ class RigifyHands(abs_rigging.BpyRigging):
         self.custom_bone_props = {}
         self.set_relation_dict(driver_objects)
 
-        self.n_apply_driver([self.left_finger_angle_drivers, self.right_finger_angle_drivers])
-        self.n_apply_constraints(self.rot_constraint_dict)
-        self.n_apply_constraints(self.limit_constraint_dict)
+        self.apply_driver([self.left_finger_angle_drivers, self.right_finger_angle_drivers])
+        self.apply_constraints(self.rot_constraint_dict)
+        self.apply_constraints(self.limit_constraint_dict)
 
     def get_reference_bone(self, key, extension):
         """ get reference bone and index by driver empty name. """
