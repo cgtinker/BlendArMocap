@@ -20,6 +20,18 @@ class BpyInstanceProvider(ABC):
     def get_instances(self):
         pass
 
+    @abstractmethod
+    def set_position(self, data, frame):
+        pass
+
+    @abstractmethod
+    def set_rotation(self, data, frame):
+        pass
+
+    @abstractmethod
+    def set_scale(self, data, frame):
+        pass
+
     def init_bpy_driver_obj(
             self,
             driver: CustomData, ref_in_array: [],

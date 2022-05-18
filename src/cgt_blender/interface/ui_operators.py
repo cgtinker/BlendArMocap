@@ -53,12 +53,13 @@ class WM_modal_detection_operator(bpy.types.Operator):
         return handlers[detection_type]
 
     def execute(self, context):
+        """ Runs movie or stream detection depending on user input. """
+
         print("RUNNING MP AS TIMER DETECTION MODAL")
         self.user = context.scene.m_cgtinker_mediapipe  # noqa
         detection_type = self.user.enum_detection_type
 
         # hacky way to check if operator is running
-        print("IS RUNNING:", self.user.detection_operator_running)
         if self.user.detection_operator_running is True:
             self.user.detection_operator_running = False
             return {'FINISHED'}
@@ -78,6 +79,8 @@ class WM_modal_detection_operator(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
     def init_movie_detector(self, detection_type='HAND'):
+        """ Setup movie detection. """
+        print(f"INITIALIZING {detection_type} MOVIE DETECTION")
         frame_start = bpy.context.scene.frame_start
         self.tracking_handler = self.set_detection_type(detection_type)(
             frame_start, 1, "movie")
@@ -87,7 +90,8 @@ class WM_modal_detection_operator(bpy.types.Operator):
         self.init_tracking_handler(camera_index)
 
     def init_stream_detector(self, detection_type='HAND'):
-        print(f"INITIALIZING {detection_type} DETECTION")
+        """ Setup stream detection. """
+        print(f"INITIALIZING {detection_type} STREAM DETECTION")
         # frame start and key step
         frame_start = bpy.context.scene.frame_start
         key_step = self.user.key_frame_step
@@ -101,6 +105,7 @@ class WM_modal_detection_operator(bpy.types.Operator):
         self.init_tracking_handler(camera_index)
 
     def init_tracking_handler(self, cap_input):
+        """ Init stream and using configured detection type. """
         from ...cgt_utils import stream
         # cap dimensions
         dimensions_dict = {
@@ -130,6 +135,7 @@ class WM_modal_detection_operator(bpy.types.Operator):
         return context.mode in {'OBJECT', 'POSE'}
 
     def modal(self, context, event):
+        """ Run detection as modal operation, finish with 'Q', 'ESC' or 'RIGHT MOUSE'. """
         if event.type == "TIMER":
             running = self.tracking_handler.image_detection()
             if running:
@@ -143,6 +149,7 @@ class WM_modal_detection_operator(bpy.types.Operator):
         return {'PASS_THROUGH'}
 
     def cancel(self, context):
+        """ Upon finishing detection clear the handlers. """
         bpy.context.scene.m_cgtinker_mediapipe.detection_operator_running = False # noqa
         del self.tracking_handler
         wm = context.window_manager

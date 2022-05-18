@@ -17,6 +17,8 @@ class BridgeFace(abs_assignment.DataProcessor):
     eyebrow_L = None
     eyebrow_R = None
 
+    frame = 0
+
     # processed results
     rotation_data, driver_scale_data = None, None
 
@@ -30,8 +32,8 @@ class BridgeFace(abs_assignment.DataProcessor):
         _face, custom_data_arr = self.bridge.get_instances()
 
         # split only for readability
-        self._mouth_driver, self._mouth_corner_driver, self.pivot, self.chin_driver, = custom_data_arr[:-4]
-        self.eye_driver_L, self.eye_driver_R, self.eyebrow_L, self.eyebrow_R = custom_data_arr[4:]
+        self.pivot, self._mouth_driver, self._mouth_corner_driver, self.eye_driver_L, = custom_data_arr[:-4]
+        self.eye_driver_R, self.chin_driver, self.eyebrow_L, self.eyebrow_R = custom_data_arr[4:]
 
     def init_data(self):
         """ Process the landmark detection results. """

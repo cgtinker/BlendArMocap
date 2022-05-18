@@ -20,7 +20,6 @@ def add_empty(size, name, display='ARROWS'):
 
 
 def get_object_by_name(name):
-    print(name)
     try:
         ob = bpy.data.objects[name]
         return ob
@@ -128,12 +127,12 @@ def add_obj_to_collection(col_name, m_object, parent_col=None, link=True):
 
 
 def link_obj_to_collection(m_object, name):
-    # todo: add proper fix
     try:
         bpy.context.scene.collection.objects.unlink(m_object)
         collection = bpy.data.collections.get(name)
         collection.objects.link(m_object)
     except RuntimeError:
+        # objects may already exist and cause a runtime error
         pass
 
 

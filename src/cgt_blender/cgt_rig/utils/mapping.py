@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 @dataclass(repr=True)
 class Slope:
+    """ Slope / Gradient gets used to change mapping ranges. """
     slope: float
     max_in: float
     max_out: float
@@ -21,6 +22,7 @@ class Slope:
 
 @dataclass(repr=True)
 class CustomProps:
+    """ Custom property data for Blender Objects. """
     name: str
     value: float
     v_min: float

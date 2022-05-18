@@ -150,7 +150,6 @@ class RigifyPose(abs_rigging.BpyRigging):
 
         joint_lengths = []
         for joint in self.rigify_joints:
-            print("JOINT;", joint)
             if "shoulder_center" in joint:
                 joint_locs = [self.center_points[0], self.bone_head(joint[1])]
             elif "hip_center" in joint:

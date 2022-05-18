@@ -121,7 +121,7 @@ constraint_mapping = {
 
 
 def add_constraint(bone, target, constraint, values):
-    # print("ADD CONST", values)
+    """ Bit hacky way to apply constraints even of the same type. """
     m_constraints = [c for c in bone.constraints]
     # overwriting constraint by
     # removing previously added constraints if types match
