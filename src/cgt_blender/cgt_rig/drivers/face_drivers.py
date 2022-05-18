@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from .driver_interface import DriverProperties, DriverContainer, DriverType
-from ..bone_prop import CustomBoneProp
-from ..mapping import Slope
+from ...utils.driver_interface import DriverProperties, DriverContainer, DriverType
+from ...utils.bone_prop import CustomBoneProp
+from ...utils.mapping import Slope
 
 
 @dataclass(repr=True)

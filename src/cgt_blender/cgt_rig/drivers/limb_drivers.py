@@ -1,4 +1,4 @@
-from .driver_interface import DriverProperties, DriverContainer, DriverType, ObjectType
+from ...utils.driver_interface import DriverProperties, DriverContainer, DriverType, ObjectType
 from dataclasses import dataclass
 
 

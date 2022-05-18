@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from math import radians
 
-from .driver_interface import DriverProperties, DriverContainer, DriverType, ObjectType
-from ..mapping import Slope, CustomProps
-from ..bone_prop import CustomBoneProp
+from ...utils.driver_interface import DriverProperties, DriverContainer, DriverType, ObjectType
+from ...utils.mapping import Slope, CustomProps
+from ...utils.bone_prop import CustomBoneProp
 
 
 @dataclass(repr=True)

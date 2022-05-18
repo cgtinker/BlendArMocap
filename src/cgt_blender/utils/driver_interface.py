@@ -1,9 +1,10 @@
 from abc import abstractmethod
 from dataclasses import dataclass
-from ..mapping import CustomProps
+
 import bpy
 
-from src.cgt_blender.utils import objects
+from . import objects
+from .mapping import CustomProps
 
 
 @dataclass(frozen=True)

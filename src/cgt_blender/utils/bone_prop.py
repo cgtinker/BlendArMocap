@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from .drivers.driver_interface import DriverProperties, DriverType, ObjectType
+from .driver_interface import DriverProperties, DriverType, ObjectType
 from .mapping import CustomProps
 
 

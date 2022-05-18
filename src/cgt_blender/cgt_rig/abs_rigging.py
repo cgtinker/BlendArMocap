@@ -2,9 +2,7 @@ from abc import ABC
 
 import numpy as np
 
-from . import constraints
-from .drivers import driver_types, driver_interface
-from ..utils import objects
+from ..utils import objects, driver_interface, driver_types, constraints
 from ...cgt_utils import m_V
 
 
