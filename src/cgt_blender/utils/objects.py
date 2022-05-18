@@ -24,7 +24,6 @@ def get_object_by_name(name):
         ob = bpy.data.objects[name]
         return ob
     except KeyError:
-        print("didnt find ob")
         return None
 
 

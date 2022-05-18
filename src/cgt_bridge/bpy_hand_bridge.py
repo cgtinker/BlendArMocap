@@ -96,3 +96,6 @@ class BpyHandReferences(bpy_instance_provider.BpyInstanceProvider):
                 self.euler_rotate(hand[0], hand[1], frame, hand[2])
             except IndexError:
                 pass
+
+    def set_scale(self, data, frame):
+        pass
