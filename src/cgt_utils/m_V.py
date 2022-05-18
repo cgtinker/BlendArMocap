@@ -146,6 +146,7 @@ def rotate_towards(origin, destination, track='Z', up='Y'):
 
 # region joint
 def joint_angles(vertices, joints):
+    """ get multiple angles. """
     angles = [joint_angle(vertices, joint) for joint in joints]
     return angles
 
@@ -170,6 +171,7 @@ def center_point(p1: np.array, p2: np.array):
 
 
 def get_closest_idx(target, points):
+    """ returns the closet point to the target of an input array. """
     distances = np.sum((points - target) ** 2, axis=1)
     # closest = points[np.argmin(distances)]
     return np.argmin(distances)
@@ -246,6 +248,7 @@ def circle_along_UV(center=np.array([0, 0, 0]),
                     V=np.array([0, 0, 1]),
                     r=0.025,
                     points=21):
+    """ create an circle around u/v as axis. """
     # C(t) = c + r*U*cos(t)+e*V*sin(t)
     thetha = np.linspace(0, np.pi * 2, points)
 
@@ -264,6 +267,7 @@ def circle_along_UV(center=np.array([0, 0, 0]),
 
 
 def create_circle_around_vector(vector, center, radius, points, normal=None):
+    """ creates a circle around a vector """
     Q = vector
     # thanks@ https://stackoverflow.com/questions/36760771/how-to-calculate-a-circle-perpendicular-to-a-vector
     # vectors U & V mutally perpendicular and perpendicular to Q
@@ -344,11 +348,14 @@ def rotate_point(point, axis, angle):
 
 # region planes
 def distance_from_plane(point, normal, plane_point):
+    """ returns the distance of a point to a plane using the normal
+        of the plane and a random point from the plane """
     d = np.sum(np.dot(point-plane_point, normal))
     return d
 
 
 def normal_from_plane(plane):
+    """ get the normal from a plane """
     normal = np.cross(plane[1]-plane[0], plane[2]-plane[0])
     return normal
 
@@ -387,18 +394,6 @@ def generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
     ))
 
 
-def main():
-    # testing for further updates
-    tangent = np.array([0, 1, 0])
-    normal = np.array([0, 4, 1])
-    binormal = np.array([1, 0, 0])
-
-    matrix = np_genenerate_matrix(tangent, normal, binormal)
-    loc, rot_matrix, scale = np_decompose_matrix(matrix)
-    print(matrix)
-    print("\nloc\n", loc, "\nrot\n", rot_matrix, "\nsca\n", scale)
-
-
 def np_genenerate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
     """ generate a numpy matrix at loc [0, 0, 0]. """
     matrix = np.array([
@@ -410,6 +405,7 @@ def np_genenerate_matrix(tangent: np.array, normal: np.array, binormal: np.array
 
 
 def np_decompose_matrix(matrix):
+    """ manual decompose a matrix (still in development) """
     # location -> last column of matrix
     loc = matrix[:3, 3:4]
 
@@ -441,12 +437,10 @@ def decompose_matrix(matrix: Matrix):
 
 
 def to_euler(quart, combat=Euler(), space='XYZ', ):
+    """ quaternion to euler using mathutils """
     euler = quart.to_euler(space, combat)
     return euler
 
 
 # endregion
 
-
-if __name__ == "__main__":
-    main()

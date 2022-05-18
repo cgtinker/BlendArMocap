@@ -7,6 +7,7 @@ from ..cgt_utils import stream
 
 
 class HolisticDetector(abs_detector.RealtimeDetector):
+    # https://google.github.io/mediapipe/solutions/holistic#python-solution-api
     def image_detection(self):
         with self.solution.Holistic(
                 min_detection_confidence=0.7,

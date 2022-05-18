@@ -10,6 +10,7 @@ class Webcam:
                  width: int = 640,
                  height: int = 480,
                  backend: int = 0):
+        """ Generates a video stream for webcam or opens a movie file using cv2 """
         # improved backend for windows
         if backend == 0:
             self.capture = cv2.VideoCapture(camera_index)

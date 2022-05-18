@@ -11,6 +11,7 @@ from mediapipe.python.solutions.drawing_utils import DrawingSpec
 
 
 class FaceDetector(abs_detector.RealtimeDetector):
+    # https://google.github.io/mediapipe/solutions/face_mesh#python-solution-api
     def image_detection(self):
         with self.solution.FaceMesh(
                 max_num_faces=1,

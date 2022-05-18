@@ -7,6 +7,7 @@ from ..cgt_utils import stream
 
 
 class HandDetector(abs_detector.RealtimeDetector):
+    # https://google.github.io/mediapipe/solutions/hands#python-solution-api
     def image_detection(self):
         with self.solution.Hands(
                 static_image_mode=True,

@@ -11,6 +11,7 @@ from ..cgt_utils import stream
 
 
 class PoseDetector(abs_detector.RealtimeDetector):
+    # https://google.github.io/mediapipe/solutions/pose#python-solution-api
     def image_detection(self):
         # BlazePose GHUM 3D
         with self.solution.Pose(

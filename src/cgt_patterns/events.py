@@ -5,9 +5,6 @@ from typing import List
 from ..cgt_patterns import observer_pattern as op
 
 
-# from cgt_utils import log
-
-
 class UpdateListener(op.Listener):
     """ Listens to updates of mp-ml tracking data and notifies receivers. """
     _observers: List[op.Observer] = []
@@ -62,7 +59,7 @@ class BpyUpdateReceiver(op.Observer):
 
 class MemoryUpdateReceiver(op.Observer):
     """ Preserve changes in memory for async update. """
-
+    # TODO: not implemented yet
     def __init__(self, _hand):
         self.hand = _hand
         self.idx = 0
