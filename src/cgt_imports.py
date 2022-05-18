@@ -8,7 +8,9 @@ or when Blender's 'Reload Scripts' operator is run manually.
 """
 
 
-SUB_DIRS = ['src/cgt_blender', 'src/cgt_bridge', 'src/cgt_detection', 'src/cgt_utils']
+SUB_DIRS = ['src/cgt_blender', 'src/cgt_processing', 'src/cgt_detection',
+            'src/cgt_utils', 'src/cgt_bridge', 'src/cgt_patterns']
+
 INIT_MODULES = [
     '.src.cgt_imports',
     '.src.cgt_naming',

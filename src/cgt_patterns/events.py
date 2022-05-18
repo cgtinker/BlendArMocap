@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List
 
-from . import observer_pattern as op
+from ..cgt_patterns import observer_pattern as op
 
 
 # from cgt_utils import log

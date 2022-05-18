@@ -2,97 +2,66 @@ import numpy as np
 from mathutils import Euler
 
 from . import abs_assignment
-from ..cgt_blender.utils import objects
-from ..cgt_naming import FACE, COLLECTIONS
 from ..cgt_utils import m_V
+from ..cgt_bridge import bpy_face_bridge
 
 
-class BridgeFace(abs_assignment.DataAssignment):
-    def __init__(self):
-        self.face = []
+class BridgeFace(abs_assignment.DataProcessor):
+    # used to assign custom data
+    _mouth_driver = None
+    _mouth_corner_driver = None
+    pivot = None
+    chin_driver = None
+    eye_driver_L = None
+    eye_driver_R = None
+    eyebrow_L = None
+    eyebrow_R = None
 
-        self._mouth_driver = abs_assignment.CustomData()
-        self._mouth_corner_driver = abs_assignment.CustomData()
-        self.pivot, self.chin_driver = abs_assignment.CustomData(), abs_assignment.CustomData()
-        self.eye_driver_L, self.eye_driver_R = abs_assignment.CustomData(), abs_assignment.CustomData()
-        self.eyebrow_L, self.eyebrow_R = abs_assignment.CustomData(), abs_assignment.CustomData()
+    # processed results
+    rotation_data, driver_scale_data = None, None
 
-        self.rotation_data, self.driver_scale_data = None, None
-
-        self.col_name = COLLECTIONS.face
+    def __init__(self, bridge=bpy_face_bridge.BpyFaceReferences):
+        # bridge to blender engine
+        self.bridge = bridge
 
     def init_references(self):
-        references = {}
-        for i in range(468):
-            references[f'{i}'] = f"{FACE.face}{i}"
-        self.face = objects.add_empties(references, 0.005)
-        objects.add_list_to_collection(self.col_name, self.face, self.driver_col)
+        """ Generates objects for mapping. """
+        self.bridge = self.bridge()
+        _face, custom_data_arr = self.bridge.get_instances()
 
-        mapping_driver = [FACE.right_eye_t, FACE.right_eye_b,
-                          FACE.left_eye_t, FACE.left_eye_b,
-                          FACE.mouth_t, FACE.mouth_b,
-                          FACE.mouth_r, FACE.mouth_l,
-
-                          FACE.eyebrow_in_l, FACE.eyebrow_mid_l,
-                          FACE.eyebrow_out_l,
-                          FACE.eyebrow_in_r, FACE.eyebrow_mid_r,
-                          FACE.eyebrow_out_r
-                          ]
-
-        [self.init_bpy_driver_obj(
-            abs_assignment.CustomData(), self.face, 0.01, name, self.col_name, "SPHERE", [0, 0, 0])
-            for name in mapping_driver]
-
-        drivers_array = [
-            [self.pivot, 0.025, FACE.head, "SPHERE", [0, 0, 0]],
-            [self._mouth_driver, 0.025, FACE.mouth, "CIRCLE", [0, -.1, -.1]],
-            [self._mouth_corner_driver, 0.025, FACE.mouth_corners, "CIRCLE", [0, -.1, -.1]],
-            [self.eye_driver_L, .01, FACE.left_eye, "CIRCLE", [-.05, -.05, .075]],
-            [self.eye_driver_R, .01, FACE.right_eye, "CIRCLE", [.05, .05, .075]],
-            [self.chin_driver, .01, FACE.chin, "SPHERE", [.0, -.05, -.25]],
-            [self.eyebrow_L, .01, FACE.left_eyebrow, "CUBE", [.05, 0, .1]],
-            [self.eyebrow_R, .01, FACE.right_eyebrow, "CUBE", [-.05, 0, .1]]
-        ]
-        # init driver objects
-        [self.init_bpy_driver_obj(e[0], self.face, e[1], e[2], self.col_name, e[3], e[4]) for e in drivers_array]
-
-        # set source position
-        data = [[e[0].idx, e[4]] for e in drivers_array]
-        self.translate(self.face, data, 0)
+        # split only for readability
+        self._mouth_driver, self._mouth_corner_driver, self.pivot, self.chin_driver, = custom_data_arr[:-4]
+        self.eye_driver_L, self.eye_driver_R, self.eyebrow_L, self.eyebrow_R = custom_data_arr[4:]
 
     def init_data(self):
-        self.data = self.data[0]  # unnecessary nesting in raw data
-        self.custom_landmark_origin()  # set face mesh to custom origin
+        """ Process the landmark detection results. """
+        # remove nesting and set landmarks to custom origin
+        self.data = self.data[0]
+        self.custom_landmark_origin()
 
+        # get distances and rotations to determine movements
         self.set_scale_driver_data()
         self.set_rotation_driver_data()
 
     def update(self):
+        """ Assign the data processed data to references. """
         if self.has_duplicated_results(self.data):
             return
 
-        self.euler_rotate(self.face, self.rotation_data, self.frame)
-        self.scale(self.face, self.driver_scale_data, self.frame)
-        self.set_position()
+        self.bridge.set_position(self.data, self.frame)
+        self.bridge.set_rotation(self.rotation_data, self.frame)
+        self.bridge.set_scale(self.driver_scale_data, self.frame)
 
-    def set_position(self):
-        """Keyframes the position of input data."""
-        try:
-            self.translate(self.face, self.data, self.frame)
-        except IndexError:
-            print("VALUE ERROR WHILE ASSIGNING FACE POSITION")
-
-    # region length between objects as scale to drivers
     def set_scale_driver_data(self):
-        """ prepares mouth and eye driver data. """
-        # setting up drivers
-        avg_scale = m_V.vector_length(m_V.to_vector(self.data[362][1], self.data[263][1]))  # eye dist as avg scale
-        # avg_scale = m_V.vector_length_2d(self.data[362][1], self.data[263][1], 'Z')  # eye dist as avg scale
+        """ Prepares mouth and eye driver data. """
+        # adds length between objects as scale to drivers using eye dist as avg scale
+        avg_scale = m_V.vector_length(m_V.to_vector(self.data[362][1], self.data[263][1]))
+        # get distances
         self.mouth_driver(avg_scale)
         self.eye_driver(avg_scale)
         self.eyebrow_drivers(avg_scale)
 
-        # prep data
+        # store prepared data
         self.driver_scale_data = [
             [self._mouth_corner_driver.idx, self._mouth_corner_driver.sca],
             [self._mouth_driver.idx, self._mouth_driver.sca],
@@ -103,14 +72,15 @@ class BridgeFace(abs_assignment.DataAssignment):
         ]
 
     def mouth_driver(self, avg_scale):
-        """ get mouth driver scale data. """
+        """ Get mouth driver scale data. """
         # mouth width and height
-        mouth_w = self.average_length_at_scale(62, 292, avg_scale)
-        mouth_h = self.average_length_at_scale(13, 14, avg_scale)
+        mouth_w = self.average_length_at_scale(62, 292, avg_scale)  # mouth span
+        mouth_h = self.average_length_at_scale(13, 14, avg_scale)  # mouth width
         self.mouth_corners(avg_scale)
         self._mouth_driver.sca = [mouth_w, 0.001, mouth_h]
 
     def mouth_corners(self, avg_scale):
+        """ Calculates the angle from the mouth center to the mouth corner """
         # center point of mouth corners gets projected on vector from upper to lower lip
         corner_center = m_V.center_point(self.data[61][1], self.data[291][1])
         projected_center = m_V.project_point_on_vector(corner_center, self.data[0][1], self.data[17][1])
@@ -135,7 +105,8 @@ class BridgeFace(abs_assignment.DataAssignment):
         self._mouth_corner_driver.rot = [left_corner_angle, 0.001, right_corner_angle]
 
     def eye_driver(self, avg_scale):
-        """ get eye driver scale data. """
+        """ Get eye lid data. """
+        # to determine if the eyes are opened or closed
         eye_l = self.average_length_at_scale(386, 374, avg_scale)  # left eye
         eye_r = self.average_length_at_scale(159, 145, avg_scale)  # right eye
 
@@ -143,6 +114,8 @@ class BridgeFace(abs_assignment.DataAssignment):
         self.eye_driver_R.sca = [1.5, 0.001, eye_r]
 
     def eyebrow_drivers(self, avg_scale):
+        """ Get the eyebrow data. """
+        # to determine if the eyebrows are raised up or down
         eyebrow_in_l = self.average_length_at_scale(336, 338, avg_scale)
         eyebrow_mid_l = self.average_length_at_scale(296, 297, avg_scale)
         eyebrow_out_l = self.average_length_at_scale(334, 332, avg_scale)
@@ -157,37 +130,42 @@ class BridgeFace(abs_assignment.DataAssignment):
     # endregion
 
     def set_rotation_driver_data(self):
+        """ Get face and chin rotation """
         self.face_mesh_rotation()
         self.chin_rotation()
 
+        # check previous rotation to avoid discontinuity
         head_rotation = self.quart_to_euler_combat(self.pivot.rot, self.pivot.idx, axis='XZY')
         chin_rotation = self.chin_driver.rot
 
+        # store rotation data
         self.rotation_data = [
             [self.pivot.idx, head_rotation],
             [self.chin_driver.idx, chin_rotation],
-            # todo: R
             [self._mouth_corner_driver.idx, self._mouth_corner_driver.rot]
-
         ]
 
     def chin_rotation(self):
+        """ Calculate the chin rotation. """
+        # draw vector from point between eyes to mouth and chin
         nose_dir = m_V.to_vector(self.data[168][1], self.data[2][1])
         chin_dir = m_V.to_vector(self.data[168][1], self.data[200][1])
-        nose_dir_z, chin_dir_z = m_V.null_axis([nose_dir, chin_dir], 'X')
-        nose_dir_x, chin_dir_x = m_V.null_axis([nose_dir, chin_dir], 'Z')
 
+        # calculate the X rotation
+        nose_dir_z, chin_dir_z = m_V.null_axis([nose_dir, chin_dir], 'X')
         z_angle = m_V.angle_between(nose_dir_z, chin_dir_z) * 1.8
 
-        chin_rotation = m_V.rotate_towards(self.data[152][1], self.data[6][1], 'Y', 'Z')
+        # there is no x-rotation available in the detection result
+        # nose_dir_x, chin_dir_x = m_V.null_axis([nose_dir, chin_dir], 'Z')
+        # chin_rotation = m_V.rotate_towards(self.data[152][1], self.data[6][1], 'Y', 'Z')
+
         # due to the base angle it's required to offset the rotation
         self.chin_driver.rot = Euler(((z_angle - 3.14159 * .07) * 1.175, 0, 0))
 
     def face_mesh_rotation(self):
-        """ calculate face quaternion using
-        points to approximate the transformation matrix. """
+        """ Calculate face quaternion using
+            points to approximate the transformation matrix. """
         origin = np.array([0, 0, 0])
-        # TODO: fix rotation (flip z & y)
 
         forward_point = m_V.center_point(np.array(self.data[1][1]), np.array(self.data[4][1]))  # nose
         right_point = m_V.center_point(np.array(self.data[447][1]), np.array(self.data[366][1]))  # temple.R
@@ -206,19 +184,18 @@ class BridgeFace(abs_assignment.DataAssignment):
 
     # region cgt_utils
     def average_length_at_scale(self, p1, p2, scale):
-        """ get length of 2d vector and normalize by 1d scale """
+        """ Get length of 2d vector and normalize by 1d scale """
         length = m_V.vector_length(m_V.to_vector(self.data[p1][1], self.data[p2][1]))
-        # length = m_V.vector_length_2d(self.data[p1][1], self.data[p2][1], 'Z')
         return m_V.vector_length(length / scale)
 
     def custom_landmark_origin(self):
-        """ setting face mesh position to approximate origin """
+        """ Sets face mesh position to approximate origin """
         self.data = [[idx, [-lmrk[0], lmrk[2], -lmrk[1]]] for idx, lmrk in self.data[:468]]
         self.approximate_pivot_location()
         self.data = [[idx, np.array(lmrk) - np.array(self.pivot.loc)] for idx, lmrk in self.data[:468]]
 
     def approximate_pivot_location(self):
-        """ approximate origin based on canonical face mesh geometry """
+        """ Sets to approximate origin based on canonical face mesh geometry """
         right = m_V.center_point(np.array(self.data[447][1]), np.array(self.data[366][1]))  # temple.R
         left = m_V.center_point(np.array(self.data[137][1]), np.array(self.data[227][1]))  # temple.L
         self.pivot.loc = m_V.center_point(right, left)  # approximate origin

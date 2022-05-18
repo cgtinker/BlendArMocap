@@ -1,7 +1,8 @@
 import mediapipe as mp
 
 from . import abs_detector
-from ..cgt_bridge import events, face_processing
+from ..cgt_processing import face_processing
+from ..cgt_patterns import events
 from ..cgt_utils import stream
 
 from typing import Mapping, Tuple
