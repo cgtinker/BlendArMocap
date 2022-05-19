@@ -1,12 +1,12 @@
 import numpy as np
 from mathutils import Euler
 
-from . import abs_assignment
+from . import processor_interface
 from ..cgt_utils import m_V
 from ..cgt_bridge import bpy_face_bridge
 
 
-class BridgeFace(abs_assignment.DataProcessor):
+class BridgeFace(processor_interface.DataProcessor):
     # used to assign custom data
     _mouth_driver = None
     _mouth_corner_driver = None

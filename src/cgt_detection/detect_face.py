@@ -1,6 +1,6 @@
 import mediapipe as mp
 
-from . import abs_detector
+from . import detector_interface
 from ..cgt_processing import face_processing
 from ..cgt_patterns import events
 from ..cgt_utils import stream
@@ -10,7 +10,7 @@ from mediapipe.python.solutions import face_mesh_connections
 from mediapipe.python.solutions.drawing_utils import DrawingSpec
 
 
-class FaceDetector(abs_detector.RealtimeDetector):
+class FaceDetector(detector_interface.RealtimeDetector):
     # https://google.github.io/mediapipe/solutions/face_mesh#python-solution-api
     def image_detection(self):
         with self.solution.FaceMesh(

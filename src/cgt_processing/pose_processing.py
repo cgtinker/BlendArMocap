@@ -1,12 +1,12 @@
 import numpy as np
 from mathutils import Euler
 
-from . import abs_assignment
+from . import processor_interface
 from ..cgt_bridge import bpy_pose_bridge
 from ..cgt_utils import m_V
 
 
-class BridgePose(abs_assignment.DataProcessor):
+class BridgePose(processor_interface.DataProcessor):
     arms = [
         [12, 17],  # right arm
         [11, 16]  # left arm

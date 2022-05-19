@@ -1,9 +1,9 @@
-from . import bpy_instance_provider
+from . import bpy_bridge_interface
 from ..cgt_blender.utils import objects
 from ..cgt_naming import FACE, COLLECTIONS
 
 
-class BpyFaceReferences(bpy_instance_provider.BpyInstanceProvider):
+class BpyFaceReferences(bpy_bridge_interface.BpyInstanceProvider):
     face = []
     custom_data_arr = []
     col_name = COLLECTIONS.face
@@ -34,7 +34,7 @@ class BpyFaceReferences(bpy_instance_provider.BpyInstanceProvider):
         # custom data for assignment during processing
         # position values currently doesn't get used
         custom_data_array = [
-            [bpy_instance_provider.CustomData(),
+            [bpy_bridge_interface.CustomData(),
              0.002, prop[0], "CUBE", prop[1]] for prop in [[FACE.head, [0, 0, 0]],
                                                            [FACE.mouth, [0, -.1, -1]],
                                                            [FACE.mouth_corners, [0, -.1, -.1]],

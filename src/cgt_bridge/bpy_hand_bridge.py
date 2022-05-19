@@ -1,9 +1,9 @@
 from ..cgt_blender.utils import objects
 from ..cgt_naming import HAND, COLLECTIONS
-from . import bpy_instance_provider
+from . import bpy_bridge_interface
 
 
-class BpyHandReferences(bpy_instance_provider.BpyInstanceProvider):
+class BpyHandReferences(bpy_bridge_interface.BpyInstanceProvider):
     references = {
         # receiver objects
         0:  HAND.wrist,

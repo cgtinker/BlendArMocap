@@ -1,12 +1,12 @@
 import mediapipe as mp
 
-from . import abs_detector
+from . import detector_interface
 from ..cgt_processing import hand_processing
 from ..cgt_patterns import events
 from ..cgt_utils import stream
 
 
-class HandDetector(abs_detector.RealtimeDetector):
+class HandDetector(detector_interface.RealtimeDetector):
     # https://google.github.io/mediapipe/solutions/hands#python-solution-api
     def image_detection(self):
         with self.solution.Hands(

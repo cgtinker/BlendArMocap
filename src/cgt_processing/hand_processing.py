@@ -3,12 +3,12 @@ from math import degrees
 import numpy as np
 from mathutils import Euler
 
-from . import abs_assignment
+from . import processor_interface
 from ..cgt_bridge import bpy_hand_bridge
 from ..cgt_utils import m_V
 
 
-class BridgeHand(abs_assignment.DataProcessor):
+class BridgeHand(processor_interface.DataProcessor):
     fingers = [
         [1, 5],  # thumb
         [5, 9],  # index finger
