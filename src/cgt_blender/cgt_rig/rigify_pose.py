@@ -102,11 +102,9 @@ class RigifyPose(abs_rigging.BpyRigging):
             POSE.right_foot_ik:    ["foot_ik.L",  "CHILD_OF", armature]
         }
         # region bone center driver setup
+        # bone center drivers for limb driver chain
         self.center_points = [m_V.center_point(self.bone_head(v[0]), self.bone_head(v[1]))
                               for v in self.rigify_bone_center]
-
-        joint_lengths = self.get_rigify_joint_lengths()
-
         self.bone_center_drivers = [limb_drivers.BoneCenter(
             driver_target=target,
             bones=self.rigify_bone_center[idx],
@@ -115,7 +113,8 @@ class RigifyPose(abs_rigging.BpyRigging):
         # endregion
 
         # region limb driver setup
-        # limb driver contain the target position in world space
+        # limb driver contain the rigify ik target position in world space
+        joint_lengths = self.get_rigify_joint_lengths()
         self.limb_drivers = [limb_drivers.LimbDriver(
             driver_target=target,
             driver_origin=self.ik_driver_origins[idx],
@@ -123,27 +122,31 @@ class RigifyPose(abs_rigging.BpyRigging):
             rigify_joint_length=joint_lengths[idx],
         ) for idx, target in enumerate(self.limb_driver_targets)]
 
+        # activate ik poles
         user = objects.user_pref()
-        self.toggle_rigify_poles(armature, user)
+        self.toggle_rigify_poles(user)
+
+        # apply drivers
         self.apply_driver(self.bone_center_drivers)
         self.apply_driver(self.limb_drivers)
-        # self.apply_driver([self.copy_limb_driver_add_offset])
 
+        # check if leg transfer
         pose_constraints_copy = self.pose_constraints.copy()
         if not user.experimental_feature_bool:
             remove_list = [POSE.left_shin_ik, POSE.right_shin_ik, POSE.left_foot_ik, POSE.right_foot_ik]
             for c in remove_list:
                 pose_constraints_copy.pop(c, None)
 
+        # apply constraints
         self.apply_constraints(pose_constraints_copy)
 
-    def toggle_rigify_poles(self, rig, user):
+    def toggle_rigify_poles(self, user):
         """ activate rigify ik poles """
-        rig.pose.bones["upper_arm_parent.L"]["pole_vector"] = 1
-        rig.pose.bones["upper_arm_parent.R"]["pole_vector"] = 1
+        self.armature.pose.bones["upper_arm_parent.L"]["pole_vector"] = 1
+        self.armature.pose.bones["upper_arm_parent.R"]["pole_vector"] = 1
         if user.experimental_feature_bool:
-            rig.pose.bones["thigh_parent.R"]["pole_vector"] = 1
-            rig.pose.bones["thigh_parent.L"]["pole_vector"] = 1
+            self.armature.pose.bones["thigh_parent.R"]["pole_vector"] = 1
+            self.armature.pose.bones["thigh_parent.L"]["pole_vector"] = 1
 
     def get_rigify_joint_lengths(self):
         """ return the lengths of given joints while it uses
