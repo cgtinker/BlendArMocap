@@ -86,10 +86,12 @@ def track_to(constraint, target, values):
     constraint.track_axis = 'TRACK_Y'
 
 
-def locked_track(constraint, target, values):
+def locked_track(constraint, target, values=None):
+    if values is None:
+        values = ['TRACK_Y']
     constraint.target = target
     constraint.influence = 1
-    constraint.track_axis = 'TRACK_Y'
+    constraint.track_axis = values[0]
     constraint.lock_axis = 'LOCK_Z'
 
 

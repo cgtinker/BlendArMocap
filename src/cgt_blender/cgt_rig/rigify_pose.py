@@ -31,8 +31,10 @@ class RigifyPose(abs_rigging.BpyRigging):
         POSE.right_shoulder_ik, POSE.right_forearm_ik,
         POSE.right_hand_ik, POSE.right_index_ik,
         # legs
-        POSE.left_hip_ik, POSE.left_shin_ik, POSE.left_foot_ik,
-        POSE.right_hip_ik, POSE.right_shin_ik, POSE.right_foot_ik
+        POSE.left_hip_ik, POSE.left_shin_ik,
+        POSE.left_foot_ik, POSE.left_foot_index_ik,
+        POSE.right_hip_ik, POSE.right_shin_ik,
+        POSE.right_foot_ik, POSE.right_foot_index_ik
     ]
 
     # joints of the rig
@@ -44,8 +46,10 @@ class RigifyPose(abs_rigging.BpyRigging):
         ["forearm_fk.L", "hand_fk.L"], ["hand_fk.L", "f_middle.01_master.L"],
 
         # legs
-        ["torso", "thigh_fk.R"], ["thigh_fk.R", "shin_fk.R"], ["shin_fk.R", "foot_fk.R"],
-        ["torso", "thigh_fk.L"], ["thigh_fk.L", "shin_fk.L"], ["shin_fk.L", "foot_fk.L"]
+        ["torso", "thigh_fk.R"], ["thigh_fk.R", "shin_fk.R"],
+        ["shin_fk.R", "foot_fk.R"], ["foot_fk.R", "toe.R"],
+        ["torso", "thigh_fk.L"], ["thigh_fk.L", "shin_fk.L"],
+        ["shin_fk.L", "foot_fk.L"], ["foot_fk.L", "toe.L"]
     ]
 
     # origins of the drivers (getting previous pos of driver)
@@ -57,8 +61,10 @@ class RigifyPose(abs_rigging.BpyRigging):
         POSE.right_forearm_ik, POSE.right_hand_ik,
 
         # legs
-        POSE.hip_center_ik, POSE.left_hip_ik, POSE.left_shin_ik,
-        POSE.hip_center_ik, POSE.right_hip_ik, POSE.right_shin_ik
+        POSE.hip_center_ik, POSE.left_hip_ik,
+        POSE.left_shin_ik, POSE.left_foot_ik,
+        POSE.hip_center_ik, POSE.right_hip_ik,
+        POSE.right_shin_ik, POSE.right_foot_ik
     ]
 
     detected_joints = [
@@ -68,8 +74,10 @@ class RigifyPose(abs_rigging.BpyRigging):
         [POSE.shoulder_center, POSE.right_shoulder], [POSE.right_shoulder, POSE.right_elbow],
         [POSE.right_elbow, POSE.right_wrist], [POSE.right_wrist, POSE.right_index],
         # legs
-        [POSE.hip_center, POSE.left_hip], [POSE.left_hip, POSE.left_knee], [POSE.left_knee, POSE.left_ankle],
-        [POSE.hip_center, POSE.right_hip], [POSE.right_hip, POSE.right_knee], [POSE.right_knee, POSE.right_ankle],
+        [POSE.hip_center, POSE.left_hip], [POSE.left_hip, POSE.left_knee],
+        [POSE.left_knee, POSE.left_ankle], [POSE.left_ankle, POSE.left_foot_index],
+        [POSE.hip_center, POSE.right_hip], [POSE.right_hip, POSE.right_knee],
+        [POSE.right_knee, POSE.right_ankle], [POSE.right_ankle, POSE.right_foot_index]
     ]
 
     # endregion
@@ -78,29 +86,28 @@ class RigifyPose(abs_rigging.BpyRigging):
         super().__init__(armature)
         self.pose_constraints = {
             # plain copy rotation
-            POSE.hip_center:       ["torso", "COPY_ROTATION"],
-            POSE.shoulder_center:  ["chest", "COPY_ROTATION"],
+            POSE.hip_center:            ["torso", "COPY_ROTATION"],
+            POSE.shoulder_center:       ["chest", "COPY_ROTATION"],
 
             # arm poses
-            POSE.left_hand_ik:     ["hand_ik.R", "CHILD_OF", armature],
-            POSE.right_hand_ik:    ["hand_ik.L", "CHILD_OF", armature],
-            POSE.left_forearm_ik:  ["upper_arm_ik_target.R", "LIMIT_DISTANCE"],
-            POSE.right_forearm_ik: ["upper_arm_ik_target.L", "LIMIT_DISTANCE"],
-            # POSE.left_forearm_ik:  ["forearm_tweak.R", "COPY_LOCATION_WORLD", armature],
-            # POSE.right_forearm_ik: ["forearm_tweak.L", "COPY_LOCATION_WORLD", armature],
+            POSE.left_hand_ik:          ["hand_ik.R", "CHILD_OF", armature],
+            POSE.right_hand_ik:         ["hand_ik.L", "CHILD_OF", armature],
+            POSE.left_forearm_ik:       ["upper_arm_ik_target.R", "LIMIT_DISTANCE"],
+            POSE.right_forearm_ik:      ["upper_arm_ik_target.L", "LIMIT_DISTANCE"],
 
             # damped track to pose driver
-            POSE.left_index_ik:    ["hand_ik.R", "LOCKED_TRACK"],
-            POSE.right_index_ik:   ["hand_ik.L", "LOCKED_TRACK"],
+            POSE.left_index_ik:         ["hand_ik.R", "LOCKED_TRACK", "TRACK_Y"],
+            POSE.right_index_ik:        ["hand_ik.L", "LOCKED_TRACK", "TRACK_Y"],
 
             # leg poses
-            POSE.left_shin_ik:     ["thigh_ik_target.R", "LIMIT_DISTANCE"],
-            POSE.right_shin_ik:     ["thigh_ik_target.L", "LIMIT_DISTANCE"],
-            # POSE.right_shin_ik:    ["shin_tweak.L", "COPY_LOCATION"],
-            # POSE.left_shin_ik:    ["shin_tweak.R", "COPY_LOCATION"],
-            POSE.left_foot_ik:     ["foot_ik.R",  "CHILD_OF", armature],
-            POSE.right_foot_ik:    ["foot_ik.L",  "CHILD_OF", armature]
+            POSE.left_shin_ik:          ["thigh_ik_target.R", "LIMIT_DISTANCE"],
+            POSE.right_shin_ik:         ["thigh_ik_target.L", "LIMIT_DISTANCE"],
+            POSE.left_foot_ik:          ["foot_ik.R",  "CHILD_OF", armature],
+            POSE.right_foot_ik:         ["foot_ik.L",  "CHILD_OF", armature],
+            POSE.left_foot_index_ik:    ["foot_ik.R", "LOCKED_TRACK", "TRACK_NEGATIVE_Y"],
+            POSE.right_foot_index_ik:   ["foot_ik.L", "LOCKED_TRACK", "TRACK_NEGATIVE_Y"]
         }
+
         # region bone center driver setup
         # bone center drivers for limb driver chain
         self.center_points = [m_V.center_point(self.bone_head(v[0]), self.bone_head(v[1]))

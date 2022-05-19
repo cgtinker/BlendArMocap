@@ -185,7 +185,7 @@ def get_pose_bone_world_position(pose_bone, rig):
         from_space='POSE',
         to_space='WORLD'
     )
-    print(world_space)
+    # print(world_space)
     return world_space
 
 
@@ -250,16 +250,6 @@ def mute_constraint(ob, mute=False):
 
 
 # endregion
-
-
-# region CUSTOM PROPERTIES
-# def set_custom_property(target_obj, prop_name, prop):
-#    print("set custom prop", target_obj, prop_name, prop)
-#    if get_custom_property(target_obj, prop_name) == None:
-#        target_obj[prop_name] = prop
-#        return False
-#    else:
-#        return True
 
 
 def get_custom_property(target_obj, prop_name):

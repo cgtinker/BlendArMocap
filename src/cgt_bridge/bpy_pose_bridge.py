@@ -42,7 +42,6 @@ class BpyPoseReferences(bpy_instance_provider.BpyInstanceProvider):
     }
 
     drivers = {
-        # main containers
         33: POSE.left_forearm_ik,
         34: POSE.right_forearm_ik,
         35: POSE.left_hand_ik,
@@ -61,6 +60,8 @@ class BpyPoseReferences(bpy_instance_provider.BpyInstanceProvider):
         46: POSE.right_hip_ik,
         47: POSE.shoulder_center_ik,
         48: POSE.hip_center_ik,
+        49: POSE.left_foot_index_ik,
+        50: POSE.right_foot_index_ik
     }
 
     shoulder_center = bpy_instance_provider.CustomData()

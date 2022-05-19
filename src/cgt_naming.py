@@ -69,28 +69,12 @@ class POSE:
     hip_center_ik = "cgt_hip_center_driver"
     left_hip_ik = "cgt_hip_driver.L"
     right_hip_ik = "cgt_hip_driver.R"
-    left_foot_ik = "cgt_foot_driver.L"
-    right_foot_ik = "cgt_foot_driver.R"
     left_shin_ik = "cgt_shin_driver.L"
     right_shin_ik = "cgt_shin_driver.R"
-
-    copy_shoulder_center_ik = "cgt_shoulder_center_driver.C"
-    copy_left_shoulder_ik = "cgt_shoulder_driver.C.L"
-    copy_right_shoulder_ik = "cgt_shoulder_driver.C.R"
-    copy_left_forearm_ik = "cgt_forearm_driver.C.L"
-    copy_right_forearm_ik = "cgt_forearm_driver.C.R"
-    copy_left_hand_ik = "cgt_hand_driver.C.L"
-    copy_right_hand_ik = "cgt_hand_driver.C.R"
-    copy_left_index_ik = "cgt_index_driver.C.L"
-    copy_right_index_ik = "cgt_index_driver.C.R"
-
-    copy_hip_center_ik = "cgt_hip_center_driver.C"
-    copy_left_hip_ik = "cgt_hip_driver.C.L"
-    copy_right_hip_ik = "cgt_hip_driver.C.R"
-    copy_left_foot_ik = "cgt_foot_driver.C.L"
-    copy_right_foot_ik = "cgt_foot_driver.C.R"
-    copy_left_shin_ik = "cgt_shin_driver.C.L"
-    copy_right_shin_ik = "cgt_shin_driver.C.R"
+    left_foot_ik = "cgt_foot_driver.L"
+    right_foot_ik = "cgt_foot_driver.R"
+    left_foot_index_ik = "cgt_foot_index_driver.L"
+    right_foot_index_ik = "cgt_foot_index_driver.R"
 
 
 @dataclass(frozen=True, init=False)
