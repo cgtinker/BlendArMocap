@@ -23,6 +23,7 @@ class ObjectType:
     RIG: int = 2
 
 
+@dataclass(repr=True)
 class DriverProperties:
     """ Driver expression include Driver Properties same as the Driver Interface.
         The properties are required to set up the Driver.
@@ -30,22 +31,21 @@ class DriverProperties:
         target_object - driver gets added to obj
         provider_obj - obj providing values for driver"""
     target_object = None
-    target_type: ObjectType = ObjectType.OBJECT
-
     provider_obj = None
-    provider_type: ObjectType = ObjectType.OBJECT
+    target_rig = None
 
-    property_type: str
-    property_name: str
+    target_type: int = ObjectType.OBJECT
+    provider_type: int = ObjectType.OBJECT
+    driver_type: int = DriverType.SINGLE
+    property_type: str = ""
 
-    data_paths: list
+    property_name: str = ""
+    data_paths: list = None
     functions: list = None
 
-    target_rig: bpy.types.Object = None
-
-    driver_type: DriverType = 3
     custom_target_props: CustomProps = None
 
+    # todo: remove overwrite
     overwrite: bool = False
 
 
@@ -59,8 +59,8 @@ class DriverContainer:
 class Driver(DriverProperties):
     """ Applies a driver to a targeted object using values gathered from a
         provider object. May stores multiple drivers and variables. """
-    drivers: list
-    variables: list
+    drivers: list = None
+    variables: list = None
     assigned: bool = False
 
     def is_custom_property_assigned(self):

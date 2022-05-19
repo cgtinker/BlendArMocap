@@ -7,8 +7,8 @@ from ...utils.mapping import Slope
 
 @dataclass(repr=True)
 class EyeDriver(DriverProperties):
-    target_object: str
-    functions: list
+    target_object: str = ""
+    functions: list = None
 
     def __init__(self, driver_target, provider_obj, bone_distance, direction, slope):
         """ Provides eye driver properties to animate the lids. """
@@ -67,8 +67,8 @@ class EyeDriverContainer(DriverContainer):
 
 @dataclass(repr=True)
 class MouthCornerDriver(DriverProperties):
-    target_object: str
-    functions: list
+    target_object: str = ""
+    functions: list = None
 
     def __init__(self, driver_target, provider_obj, direction):
         """ Provides mouth corner properties to set up a driver for lip animation. """
@@ -89,8 +89,8 @@ class MouthCornerDriver(DriverProperties):
 
 @dataclass(repr=True)
 class MouthDriver(DriverProperties):
-    target_object: str
-    functions: list
+    target_object: str = ""
+    functions: list = None
 
     def __init__(self, driver_target, provider_obj, bone_distance, slope, direction):
         """ Generates lip drivers using custom props. """
@@ -201,8 +201,8 @@ class MouthDriverContainer(DriverContainer):
 
 @dataclass(repr=True)
 class EyebrowDriver(DriverProperties):
-    target_object: str
-    functions: list
+    target_object: str = ""
+    functions: list = None
 
     def __init__(self, driver_target, provider_obj, bone_distance, target_path, slope):
         self.target_object = driver_target

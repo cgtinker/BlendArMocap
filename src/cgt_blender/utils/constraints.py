@@ -44,7 +44,7 @@ def copy_location_offset(bone, target, values):
     constraint.target = target
     constraint.influence = 1
     constraint.use_offset = True
-    constraint.owner_space = 'POSE'
+    constraint.owner_space = 'WORLD'
 
 
 def copy_location_world(bone, target, values):
@@ -53,6 +53,17 @@ def copy_location_world(bone, target, values):
     )
     constraint.target = target
     constraint.influence = 1
+    constraint.owner_space = 'WORLD'
+
+
+def copy_location_world_offset(bone, target, values):
+    constraint = bone.constraints.new(
+        type="COPY_LOCATION"
+    )
+    objects.set_pose_bone_world_position(bone, values[0], [0, 0, 0])
+    constraint.target = target
+    constraint.influence = 1
+    constraint.use_offset = True
     constraint.owner_space = 'WORLD'
 
 
@@ -85,6 +96,13 @@ def locked_track(constraint, target, values):
     constraint.lock_axis = 'LOCK_Z'
 
 
+def limit_distance(constraint, target, values):
+    constraint.target = target
+    constraint.distance = 0.05
+    constraint.owner_space = 'WORLD'
+    constraint.target_space = 'WORLD'
+
+
 constraint_mapping = {
     "CAMERA_SOLVER":        0,
     "FOLLOW_TRACK":         1,
@@ -92,11 +110,12 @@ constraint_mapping = {
     "COPY_LOCATION":        copy_location,
     "COPY_LOCATION_OFFSET": copy_location_offset,
     "COPY_LOCATION_WORLD":  copy_location_world,
+    "COPY_LOCATION_WORLD_OFFSET": copy_location_world_offset,
     "COPY_ROTATION":        copy_rotation,
     "COPY_ROTATION_WORLD":  copy_rotation_world_space,
     "COPY_SCALE":           5,
     "COPY_TRANSFORMS":      6,
-    "LIMIT_DISTANCE":       7,
+    "LIMIT_DISTANCE":       limit_distance,
     "LIMIT_LOCATION":       8,
     "LIMIT_ROTATION":       limit_rotation,
     "LIMIT_SCALE":          10,
@@ -129,10 +148,11 @@ def add_constraint(bone, target, constraint, values):
     for c in m_constraints:
         # prepare target constraint
         target_constraint = constraint
+        if "_OFFSET" in constraint:
+            target_constraint = target_constraint.replace("_OFFSET", "")
+
         if "_WORLD" in constraint:
             target_constraint = target_constraint.replace("_WORLD", "")
-        elif "_OFFSET" in constraint:
-            target_constraint = target_constraint.replace("_OFFSET", "")
 
         # match syntax of bpy constraint
         constraint_name = c.name

@@ -185,6 +185,7 @@ def get_pose_bone_world_position(pose_bone, rig):
         from_space='POSE',
         to_space='WORLD'
     )
+    print(world_space)
     return world_space
 
 
@@ -320,6 +321,14 @@ def get_frame_start():
     except AttributeError:
         return 0
     return frame_start
+
+
+def toggle_mode(mode: str = None):
+    """ MODES: 'EDIT', 'OBJECT', 'POSE' """
+    if mode is None:
+        raise KeyError
+
+    bpy.ops.object.mode_set(mode=mode)
 
 
 def user_pref():

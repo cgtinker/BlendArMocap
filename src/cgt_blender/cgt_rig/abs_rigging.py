@@ -71,7 +71,7 @@ class BpyRigging(ABC):
             drivers_types.append(driver)
             props.append(prop)
 
-        # check if overwrite is enabled
+        # check if overwrite by user is enabled
         user_prefs = objects.user_pref()
         overwrite = user_prefs.overwrite_drivers_bool # noqa
 
@@ -91,6 +91,7 @@ class BpyRigging(ABC):
 
     # endregion
     def bone_head(self, bone_name):
+
         # returns the bone head position of a pose bone
         return self.pose_bones[bone_name].head
 

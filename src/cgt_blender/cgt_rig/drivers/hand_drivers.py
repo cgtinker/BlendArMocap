@@ -8,9 +8,9 @@ from ...utils.bone_prop import CustomBoneProp
 
 @dataclass(repr=True)
 class CustomAngleMultiplier(DriverProperties):
-    target_object: str
-    provider_obj = str
-    functions: list
+    target_object: str = ""
+    provider_obj: str = ""
+    functions: list = None
 
     def __init__(self,
                  driver_target: str,
@@ -48,8 +48,8 @@ class CustomAngleMultiplier(DriverProperties):
 
 @dataclass(repr=True)
 class FingerAngleDriver(DriverProperties):
-    target_object: str
-    functions: list
+    target_object: str = ""
+    functions: list = None
 
     def __init__(self,
                  driver_target: str,
