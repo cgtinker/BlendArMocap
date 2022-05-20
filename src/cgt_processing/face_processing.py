@@ -165,6 +165,7 @@ class FaceProcessor(processor_interface.DataProcessor):
         # chin_rotation = m_V.rotate_towards(self.data[152][1], self.data[6][1], 'Y', 'Z')
 
         # due to the base angle it's required to offset the rotation
+        # TODO: angles to quat?
         self.chin_driver.rot = Euler(((z_angle - 3.14159 * .07) * 1.175, 0, 0))
 
     def face_mesh_rotation(self):
@@ -184,7 +185,7 @@ class FaceProcessor(processor_interface.DataProcessor):
         # generate matrix to decompose it and access quaternion rotation
         matrix = m_V.generate_matrix(tangent, normal, binormal)
         loc, quart, scale = m_V.decompose_matrix(matrix)
-
+        # TODO: keep quart
         self.pivot.rot = quart
 
     # region cgt_utils

@@ -41,6 +41,7 @@ class WM_modal_detection_operator(bpy.types.Operator):
 
     @staticmethod
     def set_detection_type(detection_type):
+        # TODO: make use of main.py
         from ...cgt_detection import detect_hands, detect_pose, detect_face
 
         handlers = {

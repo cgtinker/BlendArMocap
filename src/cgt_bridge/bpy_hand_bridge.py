@@ -92,7 +92,8 @@ class BpyHandBridge(bpy_bridge_interface.BpyInstanceProvider):
             try:
                 if hand[1] is None:
                     break
-
+                # todo: change to quaternion
+                # self.quaternion_rotate(hand[0], hand[1], frame)
                 self.euler_rotate(hand[0], hand[1], frame, hand[2])
             except IndexError:
                 pass

@@ -80,12 +80,3 @@ class BLENDARMOCAP_preferences(bpy.types.AddonPreferences):
             s_box.row().prop(user, "enum_stream_dim")
             s_box.row().prop(user, "enum_stream_type")
 
-
-def redraw_preferences():
-    """ Forces to redraw the add-on preferences panel. """
-    try:
-        unregister_class(BLENDARMOCAP_preferences)
-    except RuntimeError:
-        pass
-
-    register_class(BLENDARMOCAP_preferences)

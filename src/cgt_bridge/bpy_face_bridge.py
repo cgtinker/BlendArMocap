@@ -67,6 +67,8 @@ class BpyFaceBridge(bpy_bridge_interface.BpyInstanceProvider):
     def set_rotation(self, data, frame):
         """ Apply rotation data. """
         self.euler_rotate(self.face, data, frame)
+        # todo: change to quaternion
+        # self.quaternion_rotate(hand[0], hand[1], frame)
 
     def set_scale(self, data, frame):
         """ Apply scale data. """

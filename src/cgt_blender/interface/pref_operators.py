@@ -34,6 +34,7 @@ class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
         # register user interface after installing dependencies
         dependencies.dependencies_installed = True
         ui_registration.register_user_interface()
+        # TODO: update UI without reimporting
         cgt_imports.manage_imports(reload=True)
         return {"FINISHED"}
 
@@ -62,6 +63,7 @@ class PREFERENCES_OT_uninstall_dependencies_button(bpy.types.Operator):
 
         # reload scripts
         dependencies.dependencies_installed = False
+        # TODO: update UI without reimporting
         cgt_imports.manage_imports(reload=True)
 
         return {"FINISHED"}

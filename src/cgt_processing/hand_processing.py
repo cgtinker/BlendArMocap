@@ -81,6 +81,7 @@ class HandProcessor(processor_interface.DataProcessor):
         data = []
         for idx in range(0, 20):
             if x_angles[idx] != 0 or z_angles[idx] != 0:
+                # TODO: angles to quart
                 joint_angle = [idx, Euler((x_angles[idx], 0, z_angles[idx]))]
                 data.append(joint_angle)
 
@@ -239,7 +240,7 @@ class HandProcessor(processor_interface.DataProcessor):
         # rotation from matrix
         matrix = m_V.generate_matrix(normal, tangent, binormal)
         loc, quart, sca = m_V.decompose_matrix(matrix)
-
+        # TODO: keep quart
         euler = self.try_get_euler(quart, offset=[0, 0, 0], prev_rot_idx=combat_idx_offset)
         hand_rotation = ([0, euler])
         return hand_rotation

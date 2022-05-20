@@ -141,7 +141,7 @@ class PoseProcessor(processor_interface.DataProcessor):
         # generate matrix to decompose it and access quaternion rotation
         matrix = m_V.generate_matrix(tangent, binormal, normal)
         loc, quart, scale = m_V.decompose_matrix(matrix)
-
+        # TODO: keep quart, but how to handle offsets? (quart@quart = mathutils..)
         offset = [-.5, 0, 0]
         euler = self.try_get_euler(quart, offset, self.hip_center.idx)
         return euler
@@ -149,7 +149,7 @@ class PoseProcessor(processor_interface.DataProcessor):
     def shoulder_rotation(self):
         """ getting shoulder and hip rotation by rotating
             the center points to left / right shoulder and hip. """
-
+        # TODO: use own rotate towards (requires testing)
         # rotation from shoulder center to shoulder.R
         shoulder_center = m_V.center_point(self.data[11][1], self.data[12][1])
         shoulder_rotation = m_V.rotate_towards(shoulder_center, self.data[12][1], 'Z')

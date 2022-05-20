@@ -144,6 +144,21 @@ def rotate_towards(origin, destination, track='Z', up='Y'):
     return quart
 
 
+# TODO: replace rotate towards
+def np_rotate_towards(eye: np.array, target: np.array):
+    axis_z = normalize((eye - target))
+    if vector_length(axis_z) == 0:
+        axis_z = np.array((0, -1, 0))
+
+    axis_x = np.cross(np.array((0, 0, 1)), axis_z)
+    if vector_length(axis_x) == 0:
+        axis_x = np.array((1, 0, 0))
+
+    axis_y = np.cross(axis_z, axis_x)
+    rot_matrix = np.matrix([axis_x, axis_y, axis_z]).transpose()
+    return rot_matrix
+
+
 # region joint
 def joint_angles(vertices, joints):
     """ get multiple angles. """
@@ -361,6 +376,7 @@ def normal_from_plane(plane):
 
 
 # https://github.com/vladmandic/human/pull/91
+# TODO: use normal from plane (nn overhead)
 def create_normal_array(vertices: np.array, faces: np.array):
     """return array of normals per triangle. each vertex triplet
     requires a face triplet
@@ -447,5 +463,27 @@ def to_euler(quart, combat=Euler(), space='XYZ', ):
     return euler
 
 
+# todo: remove euler vars and use quaternion?
+def rot_matrix3x3_to_quat(m: np.matrix):
+    if m[2, 2] < 0:
+        if m[0, 0] > m[1, 1]:
+            t = 1 + m[0, 0] - m[1, 1] - m[2, 2]
+            q = [t, m[0, 1] + m[1, 0], m[2, 0] + m[0, 2], m[1, 2] - m[2, 1]]
+        else:
+            t = 1 - m[0, 0] + m[1, 1] - m[2, 2]
+            q = [m[0, 1] + m[1, 0], t, m[1, 2] + m[2, 1], m[2, 0] - m[0, 2]]
+    else:
+        if m[0, 0] < -m[1, 1]:
+            t = 1 - m[0, 0] - m[1, 1] + m[2, 2]
+            q = [m[2, 0] + m[0, 2], m[1, 2] + m[2, 1], t, m[0, 1] - m[1, 0]]
+        else:
+            t = 1 + m[0, 0] + m[1, 1] + m[2, 2]
+            q = [m[1, 2] - m[2, 1], m[2, 0] - m[0, 2], m[0, 1] - m[1, 0], t]
+
+    # x y z w
+    q = [e * (.5 / np.sqrt(t)) for e in q]
+    # bpy sys -w x y z
+    q = [-q[3], q[0], q[1], q[2]]
+    return q
 # endregion
 
