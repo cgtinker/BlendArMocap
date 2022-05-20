@@ -102,8 +102,8 @@ class RigifyPose(abs_rigging.BpyRigging):
             # leg poses
             POSE.left_shin_ik:          ["thigh_ik_target.R", "LIMIT_DISTANCE"],
             POSE.right_shin_ik:         ["thigh_ik_target.L", "LIMIT_DISTANCE"],
-            POSE.left_foot_ik:          ["foot_ik.R",  "CHILD_OF", armature],
-            POSE.right_foot_ik:         ["foot_ik.L",  "CHILD_OF", armature],
+            POSE.left_foot_ik:          ["foot_ik.R", "CHILD_OF", armature],
+            POSE.right_foot_ik:         ["foot_ik.L", "CHILD_OF", armature],
             POSE.left_foot_index_ik:    ["foot_ik.R", "LOCKED_TRACK", "TRACK_NEGATIVE_Y"],
             POSE.right_foot_index_ik:   ["foot_ik.L", "LOCKED_TRACK", "TRACK_NEGATIVE_Y"]
         }

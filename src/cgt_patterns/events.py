@@ -3,6 +3,8 @@ from __future__ import annotations
 from typing import List
 
 from ..cgt_patterns import observer_pattern as op
+from ..cgt_processing import processor_interface
+from ..cgt_detection import detector_interface
 
 
 class UpdateListener(op.Listener):
@@ -34,19 +36,10 @@ class PrintRawDataUpdate(op.Observer):
 class DriverDebug(op.Observer):
     """ Doesnt apply data but usefull for debugging purposes. """
 
-    def __init__(self, _model):
-        self.model = _model
+    def __init__(self, _model: processor_interface.DataProcessor = None):
+        if _model is None:
+            raise BrokenPipeError
 
-    def update(self, subject: op.Listener) -> None:
-        self.model.data = subject.data
-        self.model.frame = subject.frame
-        self.model.init_data()
-
-
-class BpyUpdateReceiver(op.Observer):
-    """ Updates empties in realtime via modal operator. """
-
-    def __init__(self, _model):
         self.model = _model
         self.model.init_references()
 
@@ -57,13 +50,19 @@ class BpyUpdateReceiver(op.Observer):
         self.model.update()
 
 
-class MemoryUpdateReceiver(op.Observer):
-    """ Preserve changes in memory for async update. """
-    # TODO: not implemented yet
-    def __init__(self, _hand):
-        self.hand = _hand
-        self.idx = 0
+class BpyUpdateReceiver(op.Observer):
+    """ Updates empties in realtime via modal operator. """
 
-    def update(self, subject: op.Listener) -> None:
-        self.idx += 1
-        self.hand.allocate_memory(self.idx, subject.data)
+    def __init__(self, _model: processor_interface.DataProcessor = None):
+        if _model is None:
+            raise BrokenPipeError
+
+        self.model = _model
+        self.model.init_references()
+
+    def update(self, subject: detector_interface.RealtimeDetector) -> None:
+        self.model.data = subject.data
+        self.model.frame = subject.frame
+        self.model.init_data()
+        self.model.update()
+

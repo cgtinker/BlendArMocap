@@ -12,7 +12,7 @@ class BLENDARMOCAP_preferences(bpy.types.AddonPreferences):
     def draw(self, context):
         layout = self.layout
         self.draw_dependencies(layout)
-        # self.draw_camera_settings(layout)
+        self.draw_camera_settings(context, layout)
 
     def draw_dependencies(self, layout):
         """ Dependency layout for user preferences. """
@@ -72,7 +72,7 @@ class BLENDARMOCAP_preferences(bpy.types.AddonPreferences):
             cols[2].label(text=f"{_path}")
             cols[3].label(text=f"{True}")
 
-    def draw_camera_settings(self, layout):
+    def draw_camera_settings(self, context, layout):
         if dependencies.dependencies_installed:
             s_box = layout.box()
             user = context.scene.m_cgtinker_mediapipe  # noqa

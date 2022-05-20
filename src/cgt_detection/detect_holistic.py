@@ -2,6 +2,7 @@ import mediapipe as mp
 
 from . import detector_interface
 from ..cgt_processing import pose_processing
+from ..cgt_bridge import bpy_bridge_interface
 from ..cgt_patterns import events
 from ..cgt_utils import stream
 
@@ -31,7 +32,7 @@ class HolisticDetector(detector_interface.RealtimeDetector):
 
     def init_bpy_bridge(self):
         # TODO: requires multiple listeners. also requires a special observer pattern.
-        target = pose_processing.BridgePose()
+        target = pose_processing.PoseProcessor(bridge=None)
         self.observer = events.BpyUpdateReceiver(target)
         self.listener = events.UpdateListener()
 
@@ -39,7 +40,7 @@ class HolisticDetector(detector_interface.RealtimeDetector):
         self.observer = events.PrintRawDataUpdate()
         self.listener = events.UpdateListener()
 
-    def process_detection_result(self, mp_res):
+    def get_detection_results(self, mp_res):
         face, pose, l_hand, r_hand = None, None, None, None
         if mp_res.pose_landmarks:
             pose = self.cvt2landmark_array(mp_res.pose_landmarks)

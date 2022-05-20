@@ -6,7 +6,7 @@ from ..cgt_bridge import bpy_pose_bridge
 from ..cgt_utils import m_V
 
 
-class BridgePose(processor_interface.DataProcessor):
+class PoseProcessor(processor_interface.DataProcessor):
     arms = [
         [12, 17],  # right arm
         [11, 16]  # left arm
@@ -23,7 +23,7 @@ class BridgePose(processor_interface.DataProcessor):
     rotation_data = []
     scale_data = []
 
-    def __init__(self, bridge=bpy_pose_bridge.BpyPoseReferences):
+    def __init__(self, bridge=bpy_pose_bridge.BpyPoseBridge):
         self.bridge = bridge
 
     def init_references(self):
@@ -48,6 +48,10 @@ class BridgePose(processor_interface.DataProcessor):
         self.bridge.set_position(self.data, self.frame)
         self.bridge.set_rotation(self.rotation_data, self.frame)
         self.bridge.set_scale(self.scale_data, self.frame)
+
+    def get_processed_data(self):
+        """ Returns the processed data """
+        return self.data, self.rotation_data, self.scale_data, self.frame, self.has_duplicated_results(self.data)
 
     def average_rig_scale(self):
         """ Get arm and leg chain lengths as those may vary each frame. """

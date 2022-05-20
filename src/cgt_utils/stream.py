@@ -5,7 +5,7 @@ import cv2
 
 class Webcam:
     def __init__(self,
-                 camera_index: int = 0,
+                 capture_input=0,
                  title: str = "Stream Detection",
                  width: int = 640,
                  height: int = 480,
@@ -13,18 +13,18 @@ class Webcam:
         """ Generates a video stream for webcam or opens a movie file using cv2 """
         # improved backend for windows
         if backend == 0:
-            self.capture = cv2.VideoCapture(camera_index)
+            self.capture = cv2.VideoCapture(capture_input)
         elif backend == 1:
             try:
-                self.capture = cv2.VideoCapture(camera_index, cv2.CAP_DSHOW)
+                self.capture = cv2.VideoCapture(capture_input, cv2.CAP_DSHOW)
             except EOFError:
-                self.capture = cv2.VideoCapture(camera_index)
+                self.capture = cv2.VideoCapture(capture_input)
 
         time.sleep(.25)
 
         if not self.capture.isOpened():
             # if backend cannot open capture use random backend
-            self.capture = cv2.VideoCapture(camera_index)
+            self.capture = cv2.VideoCapture(capture_input)
             time.sleep(.25)
 
             if not self.capture.isOpened():

@@ -3,7 +3,7 @@ from ..cgt_naming import HAND, COLLECTIONS
 from . import bpy_bridge_interface
 
 
-class BpyHandReferences(bpy_bridge_interface.BpyInstanceProvider):
+class BpyHandBridge(bpy_bridge_interface.BpyInstanceProvider):
     references = {
         # receiver objects
         0:  HAND.wrist,

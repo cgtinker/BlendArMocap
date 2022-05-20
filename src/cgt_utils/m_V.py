@@ -379,9 +379,9 @@ def create_normal_array(vertices: np.array, faces: np.array):
 
 
 # region matrix
-# todo: remove and replace with numpy
+# todo: reimplement if err remove and replace with numpy
 # http://renderdan.blogspot.com/2006/05/rotation-matrix-from-axis-vectors.html
-def generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
+def _generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
     """ returns matrix
     -> tangent = towards left and right [+X]
     -> normal = origin towards front [+Y]
@@ -394,7 +394,7 @@ def generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
     ))
 
 
-def np_genenerate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
+def generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
     """ generate a numpy matrix at loc [0, 0, 0]. """
     matrix = np.array([
         [tangent[0], tangent[1], tangent[2], 0],
@@ -404,7 +404,7 @@ def np_genenerate_matrix(tangent: np.array, normal: np.array, binormal: np.array
     return matrix
 
 
-def np_decompose_matrix(matrix):
+def decompose_matrix(matrix):
     """ manual decompose a matrix (still in development) """
     # location -> last column of matrix
     loc = matrix[:3, 3:4]
@@ -429,16 +429,21 @@ def np_decompose_matrix(matrix):
     return loc, rotation_matrix, sca
 
 
-def decompose_matrix(matrix: Matrix):
+# TODO: REUSE MATHUTILS MATRIX
+def _decompose_matrix(matrix: Matrix):
     """ returns loc, quaternion, scale """
     loc, quart, scale = matrix.decompose()
     quart.invert()
     return loc, quart, scale
 
 
+# TODO: implement euler conversion
 def to_euler(quart, combat=Euler(), space='XYZ', ):
     """ quaternion to euler using mathutils """
-    euler = quart.to_euler(space, combat)
+    try:
+        euler = quart.to_euler(space, combat)
+    except AttributeError:
+        return [0, 0, 0]
     return euler
 
 

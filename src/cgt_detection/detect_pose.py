@@ -1,6 +1,7 @@
 import mediapipe as mp
 
 from . import detector_interface
+from ..cgt_bridge import bpy_pose_bridge
 from ..cgt_processing import pose_processing
 from ..cgt_patterns import events
 from ..cgt_utils import stream
@@ -37,12 +38,12 @@ class PoseDetector(detector_interface.RealtimeDetector):
         self.solution = mp.solutions.pose
 
     def init_bpy_bridge(self):
-        target = pose_processing.BridgePose()
+        target = pose_processing.PoseProcessor(bpy_pose_bridge.BpyPoseBridge)
         self.observer = events.BpyUpdateReceiver(target)
         self.listener = events.UpdateListener()
 
     def init_driver_logs(self):
-        target = pose_processing.BridgePose()
+        target = pose_processing.PoseProcessor()
         self.observer = events.DriverDebug(target)
         self.listener = events.UpdateListener()
 
@@ -50,7 +51,7 @@ class PoseDetector(detector_interface.RealtimeDetector):
         self.observer = events.PrintRawDataUpdate()
         self.listener = events.UpdateListener()
 
-    def process_detection_result(self, mp_res):
+    def get_detection_results(self, mp_res):
         return self.cvt2landmark_array(mp_res.pose_world_landmarks)
 
     def contains_features(self, mp_res):

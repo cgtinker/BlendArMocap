@@ -6,6 +6,7 @@ from ..cgt_patterns import events
 from ..cgt_utils import stream
 
 from typing import Mapping, Tuple
+from ..cgt_bridge import bpy_face_bridge
 from mediapipe.python.solutions import face_mesh_connections
 from mediapipe.python.solutions.drawing_utils import DrawingSpec
 
@@ -37,20 +38,21 @@ class FaceDetector(detector_interface.RealtimeDetector):
         self.solution = mp.solutions.face_mesh
 
     def init_bpy_bridge(self):
-        target = face_processing.BridgeFace()
+        target = face_processing.FaceProcessor()
         self.observer = events.BpyUpdateReceiver(target)
         self.listener = events.UpdateListener()
 
     def init_driver_logs(self):
-        target = face_processing.BridgeFace()
+        target = face_processing.FaceProcessor(bpy_face_bridge.BpyFaceBridge)
         self.observer = events.DriverDebug(target)
         self.listener = events.UpdateListener()
 
     def init_raw_data_printer(self):
         self.observer = events.PrintRawDataUpdate()
         self.listener = events.UpdateListener()
+        print(self.observer, self.listener)
 
-    def process_detection_result(self, mp_res):
+    def get_detection_results(self, mp_res):
         return [self.cvt2landmark_array(landmark) for landmark in mp_res.multi_face_landmarks]
 
     def contains_features(self, mp_res):
@@ -106,7 +108,7 @@ class FaceDetector(detector_interface.RealtimeDetector):
 
 # region manual tests
 def image_detection(tracking_handler):
-    for i in range(50):
+    for i in range(3):
         tracking_handler.image_detection()
     print('FINISHED')
     del tracking_handler
@@ -118,7 +120,6 @@ def stream_detection(tracking_handler):
 
 def init_test():
     tracking_handler = FaceDetector()
-
     tracking_handler.stream = stream.Webcam()
     tracking_handler.initialize_model()
     # tracking_handler.init_driver_logs()

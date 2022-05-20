@@ -105,7 +105,7 @@ class WM_modal_detection_operator(bpy.types.Operator):
         self.init_tracking_handler(camera_index)
 
     def init_tracking_handler(self, cap_input):
-        """ Init stream and using configured detection type. """
+        """ Init stream and using selected detection type. """
         from ...cgt_utils import stream
         # cap dimensions
         dimensions_dict = {
@@ -117,7 +117,7 @@ class WM_modal_detection_operator(bpy.types.Operator):
 
         # init tracking handler targets
         self.tracking_handler.stream = stream.Webcam(
-            camera_index=cap_input,
+            capture_input=cap_input,
             width=dim[0],
             height=dim[1],
             backend=int(self.user.enum_stream_type)

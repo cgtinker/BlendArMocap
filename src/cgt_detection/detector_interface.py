@@ -3,6 +3,10 @@ from abc import ABC, abstractmethod
 from mediapipe import solutions
 from mediapipe.framework.formats import classification_pb2
 
+from ..cgt_bridge import bridge_interface
+from ..cgt_patterns import events, observer_pattern
+from ..cgt_processing import processor_interface
+
 
 class RealtimeDetector(ABC):
     stream = None
@@ -23,18 +27,51 @@ class RealtimeDetector(ABC):
 
     @abstractmethod
     def image_detection(self):
+        """ Run mediapipes detection on an image using the active model. """
         pass
 
     @abstractmethod
     def init_bpy_bridge(self):
+        """ Initialize bridge to blender - requires a data processor and bridge object. """
         pass
+
+    """
+        #res  
+        def init_driver_logs(self):
+            target = face_processing.FaceProcessor(bpy_face_bridge.BpyFaceBridge)
+            self.observer = events.DriverDebug(target)
+            self.listener = events.UpdateListener()
+
+        def init_raw_data_printer(self):
+            self.observer = events.PrintRawDataUpdate()
+            self.listener = events.UpdateListener()
+            print(self.observer, self.listener)
+    """
+
+    def init_bridge(self,
+                    processor: processor_interface = None,
+                    bridge: bridge_interface = None,
+                    observer: observer_pattern.Observer = None,
+                    listener: observer_pattern.Listener = None):
+
+        """ Setup the data bridge to blender or prints for debugging purposes. """
+        if processor is None:
+            self.observer = observer()
+            self.listener = listener()
+            self.listener.attach(self.observer)
+            return
+
+        _processor = processor(bridge)
+        self.observer = observer(_processor)
+        self.listener = listener()
+        self.listener.attach(self.observer)
 
     @abstractmethod
     def initialize_model(self):
         pass
 
     @abstractmethod
-    def process_detection_result(self, mp_res):
+    def get_detection_results(self, mp_res):
         pass
 
     @abstractmethod
@@ -70,7 +107,7 @@ class RealtimeDetector(ABC):
         self.stream.draw()
 
         # update listeners
-        self.listener.data = self.process_detection_result(mp_res)
+        self.listener.data = self.get_detection_results(mp_res)
         self.update_listeners()
 
         # exit stream

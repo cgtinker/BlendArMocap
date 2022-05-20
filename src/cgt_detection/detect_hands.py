@@ -1,6 +1,7 @@
 import mediapipe as mp
 
 from . import detector_interface
+from ..cgt_bridge import bpy_hand_bridge
 from ..cgt_processing import hand_processing
 from ..cgt_patterns import events
 from ..cgt_utils import stream
@@ -29,17 +30,17 @@ class HandDetector(detector_interface.RealtimeDetector):
         self.solution = mp.solutions.hands
 
     def init_bpy_bridge(self):
-        target = hand_processing.BridgeHand()
+        target = hand_processing.HandProcessor(bpy_hand_bridge.BpyHandBridge)
         self.observer = events.BpyUpdateReceiver(target)
         self.listener = events.UpdateListener()
 
     def init_debug_logs(self):
-        target = hand_processing.BridgeHand()
+        target = hand_processing.HandProcessor()
         # self.observer = events.DriverDebug(target)
         self.observer = events.PrintRawDataUpdate()
         self.listener = events.UpdateListener()
 
-    def process_detection_result(self, mp_res):
+    def get_detection_results(self, mp_res):
         # multi_hand_world_landmarks // multi_hand_landmarks
         return (
             [self.cvt2landmark_array(hand) for hand in mp_res.multi_hand_world_landmarks],

@@ -6,7 +6,7 @@ from ..cgt_utils import m_V
 from ..cgt_bridge import bpy_face_bridge
 
 
-class BridgeFace(processor_interface.DataProcessor):
+class FaceProcessor(processor_interface.DataProcessor):
     # used to assign custom data
     _mouth_driver = None
     _mouth_corner_driver = None
@@ -22,7 +22,7 @@ class BridgeFace(processor_interface.DataProcessor):
     # processed results
     rotation_data, driver_scale_data = None, None
 
-    def __init__(self, bridge=bpy_face_bridge.BpyFaceReferences):
+    def __init__(self, bridge=bpy_face_bridge.BpyFaceBridge):
         # bridge to blender engine
         self.bridge = bridge
 
@@ -30,7 +30,6 @@ class BridgeFace(processor_interface.DataProcessor):
         """ Generates objects for mapping. """
         self.bridge = self.bridge()
         _face, custom_data_arr = self.bridge.get_instances()
-
         # split only for readability
         self.pivot, self._mouth_driver, self._mouth_corner_driver, self.eye_driver_L, = custom_data_arr[:-4]
         self.eye_driver_R, self.chin_driver, self.eyebrow_L, self.eyebrow_R = custom_data_arr[4:]
@@ -53,6 +52,10 @@ class BridgeFace(processor_interface.DataProcessor):
         self.bridge.set_position(self.data, self.frame)
         self.bridge.set_rotation(self.rotation_data, self.frame)
         self.bridge.set_scale(self.driver_scale_data, self.frame)
+
+    def get_processed_data(self):
+        """ Returns the processed data """
+        return self.data, self.rotation_data, self.driver_scale_data, self.frame, self.has_duplicated_results(self.data)
 
     def set_scale_driver_data(self):
         """ Prepares mouth and eye driver data. """

@@ -1,18 +1,13 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+
+from .custom_data_container import CustomData
 from ..cgt_blender.utils import objects
 from ..cgt_naming import COLLECTIONS
 from mathutils import Vector
+from . import bridge_interface
 
 
-class CustomData:
-    idx = None
-    loc = None
-    rot = None
-    sca = None
-    obj = None
-
-
-class BpyInstanceProvider(ABC):
+class BpyInstanceProvider(bridge_interface.BridgeInterface):
     parent_col = COLLECTIONS.drivers
     prev_rotation = {}
 

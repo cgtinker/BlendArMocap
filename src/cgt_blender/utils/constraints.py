@@ -57,7 +57,7 @@ def copy_location_world_offset(bone, target, values):
     constraint = bone.constraints.new(
         type="COPY_LOCATION"
     )
-    objects.set_pose_bone_world_position(bone, values[0], [0, 0, 0])
+    objects.set_pose_bone_world_position(bone, values[0], target.location)
     constraint.target = target
     constraint.influence = 1
     constraint.use_offset = True

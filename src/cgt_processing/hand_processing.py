@@ -8,7 +8,7 @@ from ..cgt_bridge import bpy_hand_bridge
 from ..cgt_utils import m_V
 
 
-class BridgeHand(processor_interface.DataProcessor):
+class HandProcessor(processor_interface.DataProcessor):
     fingers = [
         [1, 5],  # thumb
         [5, 9],  # index finger
@@ -29,7 +29,7 @@ class BridgeHand(processor_interface.DataProcessor):
     bridge = None
     frame = 0
 
-    def __init__(self, bridge=bpy_hand_bridge.BpyHandReferences):
+    def __init__(self, bridge=bpy_hand_bridge.BpyHandBridge):
         self.bridge = bridge
 
     def init_references(self):
@@ -39,6 +39,7 @@ class BridgeHand(processor_interface.DataProcessor):
     def init_data(self):
         """ Process and map received data from mediapipe before key-framing. """
         # prepare landmarks
+        # TODO: check for holistic hand input (left / right) hand
         self.left_hand_data, self.right_hand_data = self.landmarks_to_hands(list(zip(self.data[0], self.data[1])))
 
         # get finger angles
@@ -61,6 +62,13 @@ class BridgeHand(processor_interface.DataProcessor):
 
         self.bridge.set_position([self.left_hand_data, self.right_hand_data], self.frame)
         self.bridge.set_rotation([self.left_angles, self.right_angles], self.frame)
+
+    def get_processed_data(self):
+        """ Returns the processed data """
+        position_data = [self.left_hand_data, self.right_hand_data]
+        rotation_data = [self.left_angles, self.right_angles]
+        scale_data = None
+        return position_data, rotation_data, scale_data, self.frame, self.has_duplicated_results(self.data)
 
     def finger_angles(self, hand):
         """ Get finger x-angles from landmarks. """

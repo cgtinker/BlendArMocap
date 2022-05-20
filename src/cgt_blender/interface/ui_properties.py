@@ -130,7 +130,7 @@ class CgtProperties(PropertyGroup):
 
     pvb: BoolProperty(
         name="pvb",
-        default=False,
+        default=True,
         set=set_bool
     )
 

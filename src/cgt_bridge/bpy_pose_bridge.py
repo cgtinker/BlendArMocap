@@ -1,9 +1,10 @@
+from . import custom_data_container
 from . import bpy_bridge_interface
 from ..cgt_blender.utils import objects
 from ..cgt_naming import POSE, COLLECTIONS
 
 
-class BpyPoseReferences(bpy_bridge_interface.BpyInstanceProvider):
+class BpyPoseBridge(bpy_bridge_interface.BpyInstanceProvider):
     references = {
         # MEDIAPIPE DEFAULTS
         0:  POSE.nose,
@@ -64,8 +65,8 @@ class BpyPoseReferences(bpy_bridge_interface.BpyInstanceProvider):
         50: POSE.right_foot_index_ik
     }
 
-    shoulder_center = bpy_bridge_interface.CustomData()
-    hip_center = bpy_bridge_interface.CustomData()
+    shoulder_center = custom_data_container.CustomData()
+    hip_center = custom_data_container.CustomData()
 
     pose = []
     col_name = COLLECTIONS.pose
