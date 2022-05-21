@@ -16,6 +16,7 @@ class DetectionHandler:
         "HAND":     bpy_hand_bridge.BpyHandBridge,
         "POSE":     bpy_pose_bridge.BpyPoseBridge,
         "FACE":     bpy_face_bridge.BpyFaceBridge,
+        "HOLISTIC": [bpy_hand_bridge.BpyHandBridge, bpy_pose_bridge.BpyPoseBridge, bpy_face_bridge.BpyFaceBridge]
     }
 
     # bridge for printing
@@ -23,13 +24,15 @@ class DetectionHandler:
         "HAND": print_bridge.PrintBridge,
         "POSE": print_bridge.PrintBridge,
         "FACE": print_bridge.PrintBridge,
+        "HOLISTIC": [print_bridge.PrintBridge]*3
     }
 
     # detection types and processors
     detection_types = {
         "HAND":     detect_hands.HandDetector,
         "POSE":     detect_pose.PoseDetector,
-        "FACE":     detect_face.FaceDetector
+        "FACE":     detect_face.FaceDetector,
+        "HOLISTIC": detect_holistic.HolisticDetector
     }
 
     # processes mediapipe landmarks
@@ -37,20 +40,20 @@ class DetectionHandler:
         "HAND": hand_processing.HandProcessor,
         "POSE": pose_processing.PoseProcessor,
         "FACE": face_processing.FaceProcessor,
+        "HOLISTIC": [hand_processing.HandProcessor, pose_processing.PoseProcessor, face_processing.FaceProcessor]
     }
 
     # observes data and maps it to the bridge
     observers = {
         "BPY":             events.BpyUpdateReceiver,
         "PRINT_RAW":       events.PrintRawDataUpdate,
-        "PRINT_PROCESSED": events.DriverDebug
+        "PRINT_PROCESSED": events.DriverDebug   # may doesn't while working with mathutils
     }
 
     def __init__(self, target: str = "HAND", bridge_type: str = "BPY"):
         """ Initialize a detection handler using a detection target type and a bridge type.
             A mediapipe model handles the detection in a cv2 stream. The data is getting processed
-            by default for blender. It's also possible to print the processed data using the printer
-            bridges. An observer pattern is in use to disconnect the detector from the processor. """
+            for blender. It's also possible to print data using the print bridges. """
         self.detector: detector_interface.RealtimeDetector = self.detection_types[target]
         self.processor: processor_interface.DataProcessor = self.processor_types[target]
 
@@ -59,14 +62,25 @@ class DetectionHandler:
             "PRINT_PROCESSED": self.print_bridges,
             "PRINT_RAW":       self.print_bridges
         }
+
+        # assign or print data (processed printing only available for location and scale data)
         self.bridge = bridge_types[bridge_type][target]
-        self.listener = events.UpdateListener
+
+        # observers input and feeds processor with detection results
+        self.listener = events.UpdateListener()
         self.observer = self.observers[bridge_type]
 
     def init_detector(self, capture_input=None, dimension: str = "sd", backend: int = 0,
                       frame_start: int = 0, key_step: int = 1, input_type: str = "movie"):
-        """ Init stream and using selected detection type. """
-        # intialize the detector
+        """ Init stream and detector using preselected detection type.
+            :param capture_input: cap input for cv2 (b.e. int or filepath)
+            :param dimension: dimensions of the cv2 stream ["sd", "hd", "fhd"]
+            :param backend: default or capdshow [0, 1]
+            :param frame_start: key frame start in blender timeline
+            :param key_step: keyframe step for capture results
+            :param input_type: "movie" or "stream" input
+            :return: returns nothing: """
+        # initialize the detector
         self.detector = self.detector(frame_start=frame_start, key_step=key_step, input_type=input_type)
 
         # stream capture dimensions
@@ -86,13 +100,17 @@ class DetectionHandler:
             capture_input=capture_input, width=dim[0], height=dim[1], backend=backend
         )
 
-        # if opening stream failed
+        # stop if opening stream failed
         if not self.detector.stream.capture.isOpened():
             raise IOError("Initializing Detector failed.")
 
-    def init_bridge(self):
         # initialize mediapipe model
         self.detector.initialize_model()
+
+    def init_bridge(self):
+        """ Initialize bridge to print raw data / to blender. """
+        if self.observer == events.PrintRawDataUpdate:
+            self.processor = None
 
         # initialize bridge to blender / printing
         self.detector.init_bridge(
@@ -107,11 +125,11 @@ class DetectionHandler:
 
 
 def main():
-    handler = DetectionHandler("FACE", "PRINT_PROCESSED")
+    handler = DetectionHandler("FACE", "PRINT_RAW")
     handler.init_detector(0, "sd", 0, 0, 0, "stream")
     handler.init_bridge()
 
-    for _ in range(10):
+    for _ in range(20):
         handler.detector.image_detection()
 
     del handler

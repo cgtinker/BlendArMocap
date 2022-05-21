@@ -35,19 +35,6 @@ class RealtimeDetector(ABC):
         """ Initialize bridge to blender - requires a data processor and bridge object. """
         pass
 
-    """
-        #res  
-        def init_driver_logs(self):
-            target = face_processing.FaceProcessor(bpy_face_bridge.BpyFaceBridge)
-            self.observer = events.DriverDebug(target)
-            self.listener = events.UpdateListener()
-
-        def init_raw_data_printer(self):
-            self.observer = events.PrintRawDataUpdate()
-            self.listener = events.UpdateListener()
-            print(self.observer, self.listener)
-    """
-
     def init_bridge(self,
                     processor: processor_interface = None,
                     bridge: bridge_interface = None,
@@ -57,13 +44,13 @@ class RealtimeDetector(ABC):
         """ Setup the data bridge to blender or prints for debugging purposes. """
         if processor is None:
             self.observer = observer()
-            self.listener = listener()
+            self.listener = listener
             self.listener.attach(self.observer)
             return
 
         _processor = processor(bridge)
         self.observer = observer(_processor)
-        self.listener = listener()
+        self.listener = listener
         self.listener.attach(self.observer)
 
     @abstractmethod

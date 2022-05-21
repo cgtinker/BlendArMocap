@@ -39,7 +39,7 @@ class HandProcessor(processor_interface.DataProcessor):
     def init_data(self):
         """ Process and map received data from mediapipe before key-framing. """
         # prepare landmarks
-        # TODO: check for holistic hand input (left / right) hand
+        # TODO: check for holistic hand input (left / right) hand - consider to preprocess
         self.left_hand_data, self.right_hand_data = self.landmarks_to_hands(list(zip(self.data[0], self.data[1])))
 
         # get finger angles
@@ -54,6 +54,11 @@ class HandProcessor(processor_interface.DataProcessor):
         right_hand_rot = self.global_hand_rotation(self.right_hand_data, 100, "R")  # offset for euler combat
         if right_hand_rot is not None:
             self.right_angles.append(right_hand_rot)
+
+    def init_print(self):
+        """ processed printing doesnt support mathutils rotation functions. """
+        self.data = self.data[0]
+        self.left_hand_data, self.right_hand_data = self.landmarks_to_hands(list(zip(self.data[0], self.data[1])))
 
     def update(self):
         """ Applies gathered data to references. """
@@ -81,7 +86,6 @@ class HandProcessor(processor_interface.DataProcessor):
         data = []
         for idx in range(0, 20):
             if x_angles[idx] != 0 or z_angles[idx] != 0:
-                # TODO: angles to quart
                 joint_angle = [idx, Euler((x_angles[idx], 0, z_angles[idx]))]
                 data.append(joint_angle)
 
@@ -217,7 +221,6 @@ class HandProcessor(processor_interface.DataProcessor):
             return None
 
         # default hand rotation for a rigify A-Pose rig,
-        # TODO: dynamically change prop based on pose
         if orientation == "R":
             rotation = [-60, 60, 0]
         else:
@@ -240,7 +243,6 @@ class HandProcessor(processor_interface.DataProcessor):
         # rotation from matrix
         matrix = m_V.generate_matrix(normal, tangent, binormal)
         loc, quart, sca = m_V.decompose_matrix(matrix)
-        # TODO: keep quart
         euler = self.try_get_euler(quart, offset=[0, 0, 0], prev_rot_idx=combat_idx_offset)
         hand_rotation = ([0, euler])
         return hand_rotation

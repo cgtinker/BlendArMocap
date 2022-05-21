@@ -46,7 +46,7 @@ class DriverDebug(op.Observer):
     def update(self, subject: op.Listener) -> None:
         self.model.data = subject.data
         self.model.frame = subject.frame
-        self.model.init_data()
+        self.model.init_print()
         self.model.update()
 
 

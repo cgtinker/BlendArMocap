@@ -4,7 +4,6 @@ from abc import ABC, abstractmethod
 
 class Listener(ABC):
     """The Subject interface declares a set of methods for managing subscribers."""
-
     @abstractmethod
     def attach(self, observer: Observer) -> None:
         """Attach an observer to the subject."""
@@ -23,7 +22,6 @@ class Listener(ABC):
 
 class Observer(ABC):
     """The Observer interface declares the update method, used by subjects."""
-
     @abstractmethod
     def update(self, subject: Listener) -> None:
         """Receive update from subject."""

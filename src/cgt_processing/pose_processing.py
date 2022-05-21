@@ -40,6 +40,13 @@ class PoseProcessor(processor_interface.DataProcessor):
         self.shoulder_hip_rotation()
         self.average_rig_scale()
 
+    def init_print(self):
+        """ processed printing doesnt support mathutils rotation functions. """
+        self.scale_data = []
+        self.prepare_landmarks()
+        self.shoulder_hip_location()
+        self.average_rig_scale()
+
     def update(self):
         """ Apply the processed data to references. """
         if self.has_duplicated_results(self.data):
@@ -141,7 +148,6 @@ class PoseProcessor(processor_interface.DataProcessor):
         # generate matrix to decompose it and access quaternion rotation
         matrix = m_V.generate_matrix(tangent, binormal, normal)
         loc, quart, scale = m_V.decompose_matrix(matrix)
-        # TODO: keep quart, but how to handle offsets? (quart@quart = mathutils..)
         offset = [-.5, 0, 0]
         euler = self.try_get_euler(quart, offset, self.hip_center.idx)
         return euler

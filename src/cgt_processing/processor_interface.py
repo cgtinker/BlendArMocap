@@ -26,6 +26,11 @@ class DataProcessor(ABC):
         pass
 
     @abstractmethod
+    def init_print(self):
+        """ mainly for printing processed data. (ignoring bpy mathutils). """
+        pass
+
+    @abstractmethod
     def update(self):
         """ updates every mp solution received. """
         pass

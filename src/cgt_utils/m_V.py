@@ -135,7 +135,6 @@ def angle_between(v1: np.array, v2: np.array):
     return np.arccos(limited_dot)
 
 
-# TODO: remove and replace with numpy
 def rotate_towards(origin, destination, track='Z', up='Y'):
     """ returns rotation from an origin to a destination. """
     vec = Vector((destination - origin))
@@ -144,8 +143,8 @@ def rotate_towards(origin, destination, track='Z', up='Y'):
     return quart
 
 
-# TODO: replace rotate towards
-def np_rotate_towards(eye: np.array, target: np.array):
+def _rotate_towards(eye: np.array, target: np.array):
+    """ manual implementation of rotate towards (Z = up, X= forward)"""
     axis_z = normalize((eye - target))
     if vector_length(axis_z) == 0:
         axis_z = np.array((0, -1, 0))
@@ -395,9 +394,8 @@ def create_normal_array(vertices: np.array, faces: np.array):
 
 
 # region matrix
-# todo: reimplement if err remove and replace with numpy
 # http://renderdan.blogspot.com/2006/05/rotation-matrix-from-axis-vectors.html
-def _generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
+def generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
     """ returns matrix
     -> tangent = towards left and right [+X]
     -> normal = origin towards front [+Y]
@@ -410,7 +408,21 @@ def _generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
     ))
 
 
-def generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
+def decompose_matrix(matrix: Matrix):
+    """ returns loc, quaternion, scale """
+    loc, quart, scale = matrix.decompose()
+    quart.invert()
+    return loc, quart, scale
+
+
+def to_euler(quart, combat=Euler(), space='XYZ', ):
+    """ quaternion to euler using mathutils """
+    euler = quart.to_euler(space, combat)
+    return euler
+
+
+# region manual numpy implementation (slower than mathutils)
+def _generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
     """ generate a numpy matrix at loc [0, 0, 0]. """
     matrix = np.array([
         [tangent[0], tangent[1], tangent[2], 0],
@@ -420,7 +432,7 @@ def generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
     return matrix
 
 
-def decompose_matrix(matrix):
+def _decompose_matrix(matrix):
     """ manual decompose a matrix (still in development) """
     # location -> last column of matrix
     loc = matrix[:3, 3:4]
@@ -438,33 +450,58 @@ def decompose_matrix(matrix):
     c3 = matrix[:3, 2:3] / sz
 
     # recreate matrix (loc = [0, 0, 0]
-    rotation_matrix = np.array([np.append(col, [v]) for col, v in
+    rotation_matrix = np.matrix([np.append(col, [v]) for col, v in
                                 [[c1, 0], [c2, 0], [c3, 0], [loc, 1]]])
-
-    # todo: quaternion from rotation matrix
-    return loc, rotation_matrix, sca
-
-
-# TODO: REUSE MATHUTILS MATRIX
-def _decompose_matrix(matrix: Matrix):
-    """ returns loc, quaternion, scale """
-    loc, quart, scale = matrix.decompose()
-    quart.invert()
-    return loc, quart, scale
+    quat = matrix3x3_2quat(rotation_matrix)
+    return loc, quat, sca
 
 
-# TODO: implement euler conversion
-def to_euler(quart, combat=Euler(), space='XYZ', ):
-    """ quaternion to euler using mathutils """
-    try:
-        euler = quart.to_euler(space, combat)
-    except AttributeError:
-        return [0, 0, 0]
-    return euler
+def _to_quaternion(yaw, pitch, roll):
+    """ manual to euler conversion using np """
+    # slower than mathutils
+    cy = np.cos(yaw * .5)
+    sy = np.sin(yaw * .5)
+    cp = np.cos(pitch * .5)
+    sp = np.sin(pitch * .5)
+    cr = np.cos(roll * .5)
+    sr = np.sin(roll * .5)
+
+    w = cr * cp * cy + sr * sp * sy
+    x = sr * cp * cy - cr * sp * sy
+    y = cr * sp * cy + sr * cp * sy
+    z = cr * cp * sy - sr * sp * cy
+
+    quart = np.array([w, z, y, x])
+    return quart
 
 
-# todo: remove euler vars and use quaternion?
-def rot_matrix3x3_to_quat(m: np.matrix):
+def _to_euler(q: np.array) -> np.array:
+    """ Manual quaternion q (w, x, y, z) to euler conversion
+    https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+    """
+    # x axis roll
+    sinr_cosp = 2 * (q[0] * q[1] + q[2] * q[3])
+    cosr_cosp = 1 - 2 * (q[1] * q[1] + q[2] * q[2])
+    roll = np.atan2(sinr_cosp, cosr_cosp)
+
+    # y axis pitch
+    sinp = 2 * (q[0] * q[1] - q[3] * q[1])
+    if abs(sinp) >= 1:
+        pitch = np.copysign(np.pi / 2, sinp) # use 90 degrees if out of range
+    else:
+        pitch = np.asin(sinp)
+
+    # z axis yaw
+    siny_cosp = 2 * (q[0] * q[3] + q[1] * q[2])
+    cosy_cosp = 1 - 2 * (q[2] * q[2] + q[3] * q[3])
+    yaw = np.atan2(siny_cosp, cosy_cosp)
+
+    angles = np.array(pitch, yaw, roll)
+    return angles
+
+
+def matrix3x3_2quat(m: np.matrix):
+    """ manual implementation - rot matrix 3x3 to quaternion"""
     if m[2, 2] < 0:
         if m[0, 0] > m[1, 1]:
             t = 1 + m[0, 0] - m[1, 1] - m[2, 2]
@@ -485,5 +522,6 @@ def rot_matrix3x3_to_quat(m: np.matrix):
     # bpy sys -w x y z
     q = [-q[3], q[0], q[1], q[2]]
     return q
+# endregion
 # endregion
 
