@@ -71,7 +71,7 @@ class BpyPoseBridge(bpy_bridge_interface.BpyInstanceProvider):
     pose = []
     col_name = COLLECTIONS.pose
 
-    def __init__(self):
+    def __init__(self, *args):
         self.pose = objects.add_empties(self.references, 0.025)
         self.pose += objects.add_empties(self.drivers, 0.025)
 

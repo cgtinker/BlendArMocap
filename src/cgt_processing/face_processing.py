@@ -28,7 +28,7 @@ class FaceProcessor(processor_interface.DataProcessor):
 
     def init_references(self):
         """ Generates objects for mapping. """
-        self.bridge = self.bridge()
+        self.bridge = self.bridge("FACE")
         _face, custom_data_arr = self.bridge.get_instances()
         # split only for readability
         self.pivot, self._mouth_driver, self._mouth_corner_driver, self.eye_driver_L, = custom_data_arr[:-4]

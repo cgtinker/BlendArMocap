@@ -41,16 +41,17 @@ class HolisticDetector(detector_interface.RealtimeDetector):
         self.listener = events.UpdateListener()
 
     def get_detection_results(self, mp_res):
-        face, pose, l_hand, r_hand = None, None, None, None
+        # TODO - eval init
+        face, pose, l_hand, r_hand = [], [], [], []
         if mp_res.pose_landmarks:
             pose = self.cvt2landmark_array(mp_res.pose_landmarks)
         if mp_res.face_landmarks:
             face = self.cvt2landmark_array(mp_res.face_landmarks)
         if mp_res.left_hand_landmarks:
-            l_hand = self.cvt2landmark_array(mp_res.left_hand_landmarks)
+            l_hand = [self.cvt2landmark_array(mp_res.left_hand_landmarks)]
         if mp_res.right_hand_landmarks:
-            r_hand = self.cvt2landmark_array(mp_res.right_hand_landmarks)
-        return [face, pose, l_hand, r_hand]
+            r_hand = [self.cvt2landmark_array(mp_res.right_hand_landmarks)]
+        return [[l_hand, r_hand], [face], pose]
 
     def contains_features(self, mp_res):
         if not mp_res.pose_landmarks:
@@ -78,31 +79,37 @@ class HolisticDetector(detector_interface.RealtimeDetector):
 
 
 # region manual tests
-def image_detection(tracking_handler):
-    for i in range(50):
-        tracking_handler.image_detection()
+def init_detector_manually(processor_type: str = "RAW"):
+    m_detector = HolisticDetector()
+    m_detector.stream = stream.Webcam()
+    m_detector.initialize_model()
 
-    del tracking_handler
+    if processor_type == "RAW":
+        m_detector.observer = events.PrintRawDataUpdate()
+    else:
+        from ..cgt_bridge import print_bridge
+        from ..cgt_processing import hand_processing, face_processing, pose_processing
+        bridge = print_bridge.PrintBridge
+        hand_processor = hand_processing.HandProcessor(bridge)
+        face_processor = face_processing.FaceProcessor(bridge)
+        pose_processor = pose_processing.PoseProcessor(bridge)
+        m_detector.observer = events.HolisticDriverDebug([hand_processor, face_processor, pose_processor])
 
-
-def stream_detection(tracking_handler):
-    tracking_handler.stream_detection()
-
-
-def init_test():
-    tracking_handler = HolisticDetector()
-
-    tracking_handler.stream = stream.Webcam()
-    tracking_handler.initialize_model()
-    tracking_handler.init_debug_logs()
-    tracking_handler.listener.attach(tracking_handler.observer)
-    return tracking_handler
+    m_detector.listener = events.UpdateListener()
+    m_detector.listener.attach(m_detector.observer)
+    return m_detector
 
 
 if __name__ == '__main__':
-    handler = init_test()
-    # image_detection(handler)
-    stream_detection(handler)
+    detection_type = "image"
 
-    del handler
+    detector = init_detector_manually("PROCESSED")
+
+    if detection_type == "image":
+        for _ in range(15):
+            detector.image_detection()
+    else:
+        detector.stream_detection()
+
+    del detector
 # endregion

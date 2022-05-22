@@ -4,7 +4,6 @@ from .driver_interface import DriverProperties, DriverType, ObjectType
 from .mapping import CustomProps
 
 
-@dataclass(repr=True)
 class CustomBoneProp(DriverProperties):
     target_object: str
     provider_obj = str
@@ -35,7 +34,6 @@ class CustomBoneProp(DriverProperties):
         self.target_rig = True
         self.driver_type = DriverType.CUSTOM
 
-        self.overwrite = True
         self.property_type = property_type
         self.property_name = prop_name
         self.data_paths = [f'pose.bones["{provider_obj}"]["{prop_name}"]']*3

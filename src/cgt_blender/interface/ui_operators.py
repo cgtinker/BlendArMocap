@@ -36,29 +36,12 @@ class WM_modal_detection_operator(bpy.types.Operator):
     bl_description = "Detect solution in Stream."
 
     _timer = None
-    tracking_handler = None
+    detection_handler = None
     user = None
-
-    @staticmethod
-    def set_detection_type(detection_type):
-        # TODO: make use of main.py
-        from ...cgt_detection import detect_hands, detect_pose, detect_face
-
-        handlers = {
-            "POSE":     detect_pose.PoseDetector,
-            "HAND":     detect_hands.HandDetector,
-            "FACE":     detect_face.FaceDetector,
-            "HOLISTIC": ""
-        }
-
-        return handlers[detection_type]
 
     def execute(self, context):
         """ Runs movie or stream detection depending on user input. """
-
-        print("RUNNING MP AS TIMER DETECTION MODAL")
         self.user = context.scene.m_cgtinker_mediapipe  # noqa
-        detection_type = self.user.enum_detection_type
 
         # hacky way to check if operator is running
         if self.user.detection_operator_running is True:
@@ -67,69 +50,33 @@ class WM_modal_detection_operator(bpy.types.Operator):
         else:
             self.user.detection_operator_running = True
 
-        # initialize the detection model
+        # create a detection handler
+        from ...main import DetectionHandler
+        detection_type = self.user.enum_detection_type
+        self.detection_handler = DetectionHandler(detection_type, "BPY")
+
+        # initialize detector using user inputs
+        frame_start = bpy.context.scene.frame_start
         if self.user.detection_input_type == 'movie':
-            self.init_movie_detector(detection_type)
+            mov_path = self.user.mov_data_path
+            self.detection_handler.init_detector(mov_path, "sd", 0, frame_start, 1, "movie")
         else:
-            self.init_stream_detector(detection_type)
+            camera_index = self.user.webcam_input_device
+            dimensions = self.user.enum_stream_dim
+            backend = int(self.user.enum_stream_type)
+            key_step = self.user.key_frame_step
+            self.detection_handler.init_detector(camera_index, dimensions, backend, frame_start, key_step, "stream")
+
+        # initialize the bridge from the detector to blender
+        self.detection_handler.init_bridge()
 
         # add a timer property and start running
         wm = context.window_manager
         self._timer = wm.event_timer_add(0.1, window=context.window)
         context.window_manager.modal_handler_add(self)
+
+        print(f"RUNNING {detection_type} DETECTION AS MODAL")
         return {'RUNNING_MODAL'}
-
-    def init_movie_detector(self, detection_type='HAND'):
-        """ Setup movie detection. """
-        print(f"INITIALIZING {detection_type} MOVIE DETECTION")
-        frame_start = bpy.context.scene.frame_start
-        self.tracking_handler = self.set_detection_type(detection_type)(
-            frame_start, 1, "movie")
-        self.tracking_handler.input_type = 1
-
-        camera_index = self.user.mov_data_path
-        self.init_tracking_handler(camera_index)
-
-    def init_stream_detector(self, detection_type='HAND'):
-        """ Setup stream detection. """
-        print(f"INITIALIZING {detection_type} STREAM DETECTION")
-        # frame start and key step
-        frame_start = bpy.context.scene.frame_start
-        key_step = self.user.key_frame_step
-
-        # init detector
-        self.tracking_handler = self.set_detection_type(detection_type)(
-            frame_start, key_step, "stream")
-        self.tracking_handler.input_type = 0
-
-        camera_index = self.user.webcam_input_device
-        self.init_tracking_handler(camera_index)
-
-    def init_tracking_handler(self, cap_input):
-        """ Init stream and using selected detection type. """
-        from ...cgt_utils import stream
-        # cap dimensions
-        dimensions_dict = {
-            "sd": [720, 480],
-            "hd": [1240, 720],
-            "fhd": [1920, 1080]
-        }
-        dim = dimensions_dict[self.user.enum_stream_dim]
-
-        # init tracking handler targets
-        self.tracking_handler.stream = stream.Webcam(
-            capture_input=cap_input,
-            width=dim[0],
-            height=dim[1],
-            backend=int(self.user.enum_stream_type)
-        )
-        if not self.tracking_handler.stream.capture.isOpened():
-            raise IOError("Initializing Detector failed.")
-
-        # setup tracking handler and bridge
-        self.tracking_handler.initialize_model()
-        self.tracking_handler.init_bpy_bridge()
-        self.tracking_handler.listener.attach(self.tracking_handler.observer)
 
     @classmethod
     def poll(cls, context):
@@ -138,7 +85,7 @@ class WM_modal_detection_operator(bpy.types.Operator):
     def modal(self, context, event):
         """ Run detection as modal operation, finish with 'Q', 'ESC' or 'RIGHT MOUSE'. """
         if event.type == "TIMER":
-            running = self.tracking_handler.image_detection()
+            running = self.detection_handler.detector.image_detection()
             if running:
                 return {'PASS_THROUGH'}
             else:
@@ -152,7 +99,7 @@ class WM_modal_detection_operator(bpy.types.Operator):
     def cancel(self, context):
         """ Upon finishing detection clear the handlers. """
         bpy.context.scene.m_cgtinker_mediapipe.detection_operator_running = False # noqa
-        del self.tracking_handler
+        del self.detection_handler
         wm = context.window_manager
         wm.event_timer_remove(self._timer)
         print("FINISHED DETECTION")

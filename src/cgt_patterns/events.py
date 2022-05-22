@@ -4,7 +4,6 @@ from typing import List
 
 from ..cgt_patterns import observer_pattern as op
 from ..cgt_processing import processor_interface
-from ..cgt_detection import detector_interface
 
 
 class UpdateListener(op.Listener):
@@ -29,40 +28,72 @@ class UpdateListener(op.Listener):
 class PrintRawDataUpdate(op.Observer):
     """ Prints updated data for debugging. """
 
-    def update(self, subject: op.Listener) -> None:
-        print(subject.data)
+    def update(self, _listener: UpdateListener) -> None:
+        print(_listener.data)
 
 
 class DriverDebug(op.Observer):
-    """ Doesnt apply data but usefull for debugging purposes. """
+    """ Doesn't apply data but useful for debugging purposes. """
 
-    def __init__(self, _model: processor_interface.DataProcessor = None):
-        if _model is None:
+    def __init__(self, _processor: processor_interface.DataProcessor = None):
+        if _processor is None:
             raise BrokenPipeError
 
-        self.model = _model
-        self.model.init_references()
+        self.processor = _processor
+        self.processor.init_references()
 
-    def update(self, subject: op.Listener) -> None:
-        self.model.data = subject.data
-        self.model.frame = subject.frame
-        self.model.init_print()
-        self.model.update()
+    def update(self, _listener: UpdateListener) -> None:
+        self.processor.data = _listener.data
+        self.processor.frame = _listener.frame
+        self.processor.init_print()
+        self.processor.update()
+
+
+class HolisticDriverDebug(op.Observer):
+    def __init__(self, processors: list):
+        if None in processors:
+            raise BrokenPipeError
+
+        self.processors = processors
+        for processor in self.processors:
+            processor.init_references()
+
+    def update(self, _listener: UpdateListener) -> None:
+        for idx, processor in enumerate(self.processors):
+            processor.data = _listener.data[idx]
+            processor.frame = _listener.frame
+            processor.init_print()
+            processor.update()
 
 
 class BpyUpdateReceiver(op.Observer):
     """ Updates empties in realtime via modal operator. """
-
-    def __init__(self, _model: processor_interface.DataProcessor = None):
-        if _model is None:
+    def __init__(self, _processor: processor_interface.DataProcessor = None):
+        if _processor is None:
             raise BrokenPipeError
 
-        self.model = _model
-        self.model.init_references()
+        self.processor = _processor
+        self.processor.init_references()
 
-    def update(self, subject: detector_interface.RealtimeDetector) -> None:
-        self.model.data = subject.data
-        self.model.frame = subject.frame
-        self.model.init_data()
-        self.model.update()
+    def update(self, _listener: UpdateListener) -> None:
+        self.processor.data = _listener.data
+        self.processor.frame = _listener.frame
+        self.processor.init_data()
+        self.processor.update()
 
+
+class HolisticBpyUpdateReceiver(op.Observer):
+    def __init__(self, processors: list):
+        if None in processors:
+            raise BrokenPipeError
+
+        self.processors = processors
+        for processor in self.processors:
+            processor.init_references()
+
+    def update(self, _listener: UpdateListener) -> None:
+        for idx, processor in enumerate(self.processors):
+            processor.data = _listener.data[idx]
+            processor.frame = _listener.frame
+            processor.init_data()
+            processor.update()

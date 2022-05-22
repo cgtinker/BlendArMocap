@@ -100,6 +100,7 @@ class CgtProperties(PropertyGroup):
             ("HAND", "Hands", ""),
             ("FACE", "Face", ""),
             ("POSE", "Pose", ""),
+            ("HOLISTIC", "Holistic", ""),
         )
     )
     # endregion

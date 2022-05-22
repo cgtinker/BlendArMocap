@@ -28,7 +28,7 @@ class PoseProcessor(processor_interface.DataProcessor):
 
     def init_references(self):
         """ Create references for mapping. """
-        self.bridge = self.bridge()
+        self.bridge = self.bridge("POSE")
         _pose, self.shoulder_center, self.hip_center = self.bridge.get_instances()
 
     def init_data(self):

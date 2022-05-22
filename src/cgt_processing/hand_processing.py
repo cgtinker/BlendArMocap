@@ -34,14 +34,16 @@ class HandProcessor(processor_interface.DataProcessor):
 
     def init_references(self):
         """ Generates objects for mapping. """
-        self.bridge = self.bridge()
+        self.bridge = self.bridge("HAND")
 
     def init_data(self):
         """ Process and map received data from mediapipe before key-framing. """
         # prepare landmarks
         # TODO: check for holistic hand input (left / right) hand - consider to preprocess
-        self.left_hand_data, self.right_hand_data = self.landmarks_to_hands(list(zip(self.data[0], self.data[1])))
-
+        self.left_hand_data = self.set_global_origin(self.data[0])
+        self.right_hand_data = self.set_global_origin(self.data[1])
+        print("RAW", self.data)
+        print("LEFT", self.left_hand_data, "\nRIGHT", self.right_hand_data)
         # get finger angles
         self.left_angles = self.finger_angles(self.left_hand_data)
         self.right_angles = self.finger_angles(self.right_hand_data)
@@ -57,11 +59,15 @@ class HandProcessor(processor_interface.DataProcessor):
 
     def init_print(self):
         """ processed printing doesnt support mathutils rotation functions. """
-        self.data = self.data[0]
-        self.left_hand_data, self.right_hand_data = self.landmarks_to_hands(list(zip(self.data[0], self.data[1])))
+        self.left_hand_data = self.set_global_origin(self.data[0])
+        self.right_hand_data = self.set_global_origin(self.data[1])
 
     def update(self):
         """ Applies gathered data to references. """
+        if self.right_hand_data is None:
+            # todo: get rid of that shit
+            return
+
         if self.has_duplicated_results(self.right_hand_data):
             return
 
@@ -247,11 +253,8 @@ class HandProcessor(processor_interface.DataProcessor):
         hand_rotation = ([0, euler])
         return hand_rotation
 
-    def landmarks_to_hands(self, hand_data):
+    def landmarks_to_hands(self, left_hand, right_hand): # hand_data):
         """ Determines to which hand the landmark data belongs """
-        left_hand = [data[0] for data in hand_data if data[1][1] is False]
-        right_hand = [data[0] for data in hand_data if data[1][1] is True]
-
         left_hand = self.set_global_origin(left_hand)
         right_hand = self.set_global_origin(right_hand)
 
@@ -261,6 +264,10 @@ class HandProcessor(processor_interface.DataProcessor):
     def set_global_origin(data):
         """ Sets the wrist to (0, 0, 0) while the wrist is the origin of the fingers.
             Changes the x-y-z order to match blenders coordinate system. """
+        if data is None:
+            # todo: skip this
+            return data
+
         if len(data) > 0:
             data = [[idx, np.array([-landmark[0], landmark[2], -landmark[1]])] for idx, landmark in data[0]]
             data = [[idx, landmark - data[0][1]] for idx, landmark in data]

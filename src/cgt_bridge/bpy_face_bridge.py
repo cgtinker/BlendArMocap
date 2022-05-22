@@ -9,7 +9,7 @@ class BpyFaceBridge(bpy_bridge_interface.BpyInstanceProvider):
     custom_data_arr = []
     col_name = COLLECTIONS.face
 
-    def __init__(self):
+    def __init__(self, *args):
         references = {}
         for i in range(468):
             references[f'{i}'] = f"{FACE.face}{i}"

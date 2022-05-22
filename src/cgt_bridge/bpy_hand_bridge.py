@@ -64,7 +64,7 @@ class BpyHandBridge(bpy_bridge_interface.BpyInstanceProvider):
     col_name = COLLECTIONS.hands
     parent_col = COLLECTIONS.drivers
 
-    def __init__(self):
+    def __init__(self, *args):
         self.left_hand = objects.add_empties(self.references, 0.005, ".L")
         self.right_hand = objects.add_empties(self.references, 0.005, ".R")
         objects.add_list_to_collection(self.col_name, self.left_hand, self.parent_col)

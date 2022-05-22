@@ -40,12 +40,17 @@ class HandDetector(detector_interface.RealtimeDetector):
         self.observer = events.PrintRawDataUpdate()
         self.listener = events.UpdateListener()
 
+    def seperate_hands(self, hand_data):
+        left_hand = [data[0] for data in hand_data if data[1][1] is False]
+        right_hand = [data[0] for data in hand_data if data[1][1] is True]
+        return left_hand, right_hand
+
     def get_detection_results(self, mp_res):
+        data = [self.cvt2landmark_array(hand) for hand in mp_res.multi_hand_world_landmarks]
         # multi_hand_world_landmarks // multi_hand_landmarks
-        return (
-            [self.cvt2landmark_array(hand) for hand in mp_res.multi_hand_world_landmarks],
-            self.cvt_hand_orientation(mp_res.multi_handedness)
-        )
+        left_hand_data, right_hand_data = self.seperate_hands(
+            list(zip(data, self.cvt_hand_orientation(mp_res.multi_handedness))))
+        return left_hand_data, right_hand_data
 
     def contains_features(self, mp_res):
         if not mp_res.multi_hand_landmarks and not mp_res.multi_handedness:
@@ -58,29 +63,34 @@ class HandDetector(detector_interface.RealtimeDetector):
 
 
 # region manual tests
-def image_detection(tracking_handler):
-    for _ in range(50):
-        tracking_handler.image_detection()
+def init_detector_manually(processor_type: str = "RAW"):
+    m_detector = HandDetector()
+    m_detector.stream = stream.Webcam()
+    m_detector.initialize_model()
 
+    if processor_type == "RAW":
+        m_detector.observer = events.PrintRawDataUpdate()
+    else:
+        from ..cgt_bridge import print_bridge
+        bridge = print_bridge.PrintBridge
+        target = hand_processing.HandProcessor(bridge)
+        m_detector.observer = events.DriverDebug(target)
 
-def stream_detection(tracking_handler):
-    tracking_handler.stream_detection()
-
-
-def init_test():
-    tracking_handler = HandDetector()
-
-    tracking_handler.stream = stream.Webcam()
-    tracking_handler.initialize_model()
-    tracking_handler.init_debug_logs()
-    tracking_handler.listener.attach(tracking_handler.observer)
-    return tracking_handler
+    m_detector.listener = events.UpdateListener()
+    m_detector.listener.attach(m_detector.observer)
+    return m_detector
 
 
 if __name__ == '__main__':
-    handler = init_test()
-    image_detection(handler)
-    # stream_detection(handler)
+    detection_type = "image"
 
-    del handler
+    detector = init_detector_manually("PROCESSED")
+
+    if detection_type == "image":
+        for _ in range(50):
+            detector.image_detection()
+    else:
+        detector.stream_detection()
+
+    del detector
 # endregion

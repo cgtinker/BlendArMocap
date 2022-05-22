@@ -11,20 +11,13 @@ class DetectionHandler:
     bridge: bpy_bridge_interface = None
     processor: processor_interface = None
 
+    # TODO: implement arrays
     # bridge to assign to blender
     bpy_bridges = {
         "HAND":     bpy_hand_bridge.BpyHandBridge,
         "POSE":     bpy_pose_bridge.BpyPoseBridge,
         "FACE":     bpy_face_bridge.BpyFaceBridge,
-        "HOLISTIC": [bpy_hand_bridge.BpyHandBridge, bpy_pose_bridge.BpyPoseBridge, bpy_face_bridge.BpyFaceBridge]
-    }
-
-    # bridge for printing
-    print_bridges = {
-        "HAND": print_bridge.PrintBridge,
-        "POSE": print_bridge.PrintBridge,
-        "FACE": print_bridge.PrintBridge,
-        "HOLISTIC": [print_bridge.PrintBridge]*3
+        "HOLISTIC": [bpy_hand_bridge.BpyHandBridge, bpy_face_bridge.BpyFaceBridge, bpy_pose_bridge.BpyPoseBridge]
     }
 
     # detection types and processors
@@ -40,42 +33,49 @@ class DetectionHandler:
         "HAND": hand_processing.HandProcessor,
         "POSE": pose_processing.PoseProcessor,
         "FACE": face_processing.FaceProcessor,
-        "HOLISTIC": [hand_processing.HandProcessor, pose_processing.PoseProcessor, face_processing.FaceProcessor]
+        "HOLISTIC": [hand_processing.HandProcessor, face_processing.FaceProcessor, pose_processing.PoseProcessor]
     }
 
     # observes data and maps it to the bridge
     observers = {
-        "BPY":             events.BpyUpdateReceiver,
-        "PRINT_RAW":       events.PrintRawDataUpdate,
-        "PRINT_PROCESSED": events.DriverDebug   # may doesn't while working with mathutils
+        "BPY":          events.BpyUpdateReceiver,
+        "RAW":          events.PrintRawDataUpdate,
+        "DEBUG":        events.DriverDebug,   # may doesn't while working with mathutils
+        "BPY_HOLISTIC": events.HolisticBpyUpdateReceiver,
+        "DEBUG_HOLISTIC": events.HolisticDriverDebug
     }
 
     def __init__(self, target: str = "HAND", bridge_type: str = "BPY"):
         """ Initialize a detection handler using a detection target type and a bridge type.
             A mediapipe model handles the detection in a cv2 stream. The data is getting processed
-            for blender. It's also possible to print data using the print bridges. """
+            for blender. It's also possible to print data using the print bridges.
+            :param target: type of ['HAND', 'POSE', 'FACE', 'HOLISTIC']
+            :param bridge_type: type of ['BPY', 'PROCESSED', 'RAW']
+            """
         self.detector: detector_interface.RealtimeDetector = self.detection_types[target]
         self.processor: processor_interface.DataProcessor = self.processor_types[target]
-
-        bridge_types = {
-            "BPY":             self.bpy_bridges,
-            "PRINT_PROCESSED": self.print_bridges,
-            "PRINT_RAW":       self.print_bridges
-        }
+        if bridge_type == "RAW":
+            self.processor = None
 
         # assign or print data (processed printing only available for location and scale data)
-        self.bridge = bridge_types[bridge_type][target]
+        if bridge_type == "BPY":
+            self.bridge = self.bpy_bridges[target]
+        else:
+            self.bridge = print_bridge.PrintBridge
 
         # observers input and feeds processor with detection results
         self.listener = events.UpdateListener()
+        if target == "HOLISTIC":
+            bridge_type += "_"
+            bridge_type += target
         self.observer = self.observers[bridge_type]
 
-    def init_detector(self, capture_input=None, dimension: str = "sd", backend: int = 0,
+    def init_detector(self, capture_input=None, dimension: str = "sd", stream_backend: int = 0,
                       frame_start: int = 0, key_step: int = 1, input_type: str = "movie"):
         """ Init stream and detector using preselected detection type.
             :param capture_input: cap input for cv2 (b.e. int or filepath)
             :param dimension: dimensions of the cv2 stream ["sd", "hd", "fhd"]
-            :param backend: default or capdshow [0, 1]
+            :param stream_backend: cv2default or cv2cap_dshow [0, 1]
             :param frame_start: key frame start in blender timeline
             :param key_step: keyframe step for capture results
             :param input_type: "movie" or "stream" input
@@ -97,7 +97,7 @@ class DetectionHandler:
 
         # init tracking handler targets
         self.detector.stream = stream.Webcam(
-            capture_input=capture_input, width=dim[0], height=dim[1], backend=backend
+            capture_input=capture_input, width=dim[0], height=dim[1], backend=stream_backend
         )
 
         # stop if opening stream failed
@@ -109,27 +109,34 @@ class DetectionHandler:
 
     def init_bridge(self):
         """ Initialize bridge to print raw data / to blender. """
-        if self.observer == events.PrintRawDataUpdate:
-            self.processor = None
+        if self.processor is None:
+            self.detector.init_bridge(self.observer(), self.listener)
+            return
 
-        # initialize bridge to blender / printing
-        self.detector.init_bridge(
-            processor=self.processor,
-            bridge=self.bridge,
-            observer=self.observer,
-            listener=self.listener
-        )
+        elif type(self.processor) is list:
+            _processor = self.processor
+            _processor[0] = self.processor[0](self.bridge[0])
+            _processor[1] = self.processor[1](self.bridge[1])
+            _processor[2] = self.processor[2](self.bridge[2])
+            _observer = self.observer(_processor)
+
+            self.detector.init_bridge(_observer, self.listener)
+
+        else:
+            _processor = self.processor(self.bridge)
+            _observer = self.observer(_processor)
+            self.detector.init_bridge(_observer, self.listener)
 
     def __del__(self):
         del self.detector
 
 
 def main():
-    handler = DetectionHandler("FACE", "PRINT_RAW")
+    handler = DetectionHandler("POSE", "DEBUG")
     handler.init_detector(0, "sd", 0, 0, 0, "stream")
     handler.init_bridge()
 
-    for _ in range(20):
+    for _ in range(15):
         handler.detector.image_detection()
 
     del handler

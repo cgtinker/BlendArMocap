@@ -35,21 +35,9 @@ class RealtimeDetector(ABC):
         """ Initialize bridge to blender - requires a data processor and bridge object. """
         pass
 
-    def init_bridge(self,
-                    processor: processor_interface = None,
-                    bridge: bridge_interface = None,
-                    observer: observer_pattern.Observer = None,
-                    listener: observer_pattern.Listener = None):
-
-        """ Setup the data bridge to blender or prints for debugging purposes. """
-        if processor is None:
-            self.observer = observer()
-            self.listener = listener
-            self.listener.attach(self.observer)
-            return
-
-        _processor = processor(bridge)
-        self.observer = observer(_processor)
+    def init_bridge(self, observer: observer_pattern.Observer, listener: observer_pattern.Listener,):
+        """ Set up the data bridge to blender or to prints for debugging purposes. """
+        self.observer = observer
         self.listener = listener
         self.listener.attach(self.observer)
 
@@ -75,6 +63,11 @@ class RealtimeDetector(ABC):
             return True
         elif not updated and self.input_type == 1:
             return False
+
+        # stream may not be updated at frame one
+        if self.stream.frame is None:
+            print("Receiving input stream failed")
+            return True
 
         # detect features in frame
         self.stream.frame.flags.writeable = False
