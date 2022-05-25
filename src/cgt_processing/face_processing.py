@@ -54,7 +54,7 @@ class FaceProcessor(processor_interface.DataProcessor):
 
     def update(self):
         """ Assign the data processed data to references. """
-        if self.has_duplicated_results(self.data):
+        if self.has_duplicated_results(self.data, "face"):
             return
 
         self.bridge.set_position(self.data, self.frame)

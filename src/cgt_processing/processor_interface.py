@@ -12,7 +12,7 @@ class DataProcessor(ABC):
     # array for comparison, as noise is present every frame values should change
     frame = 0
     prev_rotation = {}
-    prev_sum = 0.0
+    prev_sum = [0.0, 0.0]
 
     # region abstract methods
     @abstractmethod
@@ -37,15 +37,15 @@ class DataProcessor(ABC):
     # endregion
 
     # region duplicates
-    def has_duplicated_results(self, data=None):
+    def has_duplicated_results(self, data=None, detector_type=None, idx=0):
         """ Sums data array values and compares them each frame to avoid duplicated values
             in the timeline. This fixes duplicated frame issue mainly occurring on Windows. """
         summed = np.sum([v[1] for v in data[:21]])
-        if summed == self.prev_sum:
-            print("skipping duplicate keyframe", self.frame)
+        if summed == self.prev_sum[idx]:
+            print("skipping duplicate keyframe", self.frame, detector_type)
             return True
 
-        self.prev_sum = summed
+        self.prev_sum[idx] = summed
         return False
     # endregion
 

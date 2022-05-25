@@ -71,14 +71,14 @@ class DetectionHandler:
         self.observer = self.observers[bridge_type]
 
     def init_detector(self, capture_input=None, dimension: str = "sd", stream_backend: int = 0,
-                      frame_start: int = 0, key_step: int = 1, input_type: str = "movie"):
+                      frame_start: int = 0, key_step: int = 1, input_type: int = 1):
         """ Init stream and detector using preselected detection type.
             :param capture_input: cap input for cv2 (b.e. int or filepath)
             :param dimension: dimensions of the cv2 stream ["sd", "hd", "fhd"]
             :param stream_backend: cv2default or cv2cap_dshow [0, 1]
             :param frame_start: key frame start in blender timeline
             :param key_step: keyframe step for capture results
-            :param input_type: "movie" or "stream" input
+            :param input_type: 1: "movie" or 0: "stream" input
             :return: returns nothing: """
         # initialize the detector
         self.detector = self.detector(frame_start=frame_start, key_step=key_step, input_type=input_type)

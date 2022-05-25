@@ -1,4 +1,5 @@
 import mediapipe as mp
+from mediapipe.framework.formats import classification_pb2
 
 from . import detector_interface
 from ..cgt_bridge import bpy_hand_bridge
@@ -44,6 +45,12 @@ class HandDetector(detector_interface.RealtimeDetector):
         left_hand = [data[0] for data in hand_data if data[1][1] is False]
         right_hand = [data[0] for data in hand_data if data[1][1] is True]
         return left_hand, right_hand
+
+    def cvt_hand_orientation(self, orientation: classification_pb2):
+        if not orientation:
+            return None
+
+        return [[idx, "Right" in str(o)] for idx, o in enumerate(orientation)]
 
     def get_detection_results(self, mp_res):
         data = [self.cvt2landmark_array(hand) for hand in mp_res.multi_hand_world_landmarks]

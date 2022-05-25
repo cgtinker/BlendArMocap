@@ -42,8 +42,7 @@ class HandProcessor(processor_interface.DataProcessor):
         # TODO: check for holistic hand input (left / right) hand - consider to preprocess
         self.left_hand_data = self.set_global_origin(self.data[0])
         self.right_hand_data = self.set_global_origin(self.data[1])
-        print("RAW", self.data)
-        print("LEFT", self.left_hand_data, "\nRIGHT", self.right_hand_data)
+
         # get finger angles
         self.left_angles = self.finger_angles(self.left_hand_data)
         self.right_angles = self.finger_angles(self.right_hand_data)
@@ -64,15 +63,20 @@ class HandProcessor(processor_interface.DataProcessor):
 
     def update(self):
         """ Applies gathered data to references. """
-        if self.right_hand_data is None:
-            # todo: get rid of that shit
-            return
+        locations = [[], []]
+        angles = [[], []]
+        if self.right_hand_data is not None:
+            if not self.has_duplicated_results(self.right_hand_data, "hand", 0):
+                locations[1] = self.right_hand_data
+                angles[1] = self.right_angles
 
-        if self.has_duplicated_results(self.right_hand_data):
-            return
+        if self.left_hand_data is not None:
+            if not self.has_duplicated_results(self.left_hand_data, "hand", 1):
+                locations[0] = self.left_hand_data
+                angles[0] = self.left_angles
 
-        self.bridge.set_position([self.left_hand_data, self.right_hand_data], self.frame)
-        self.bridge.set_rotation([self.left_angles, self.right_angles], self.frame)
+        self.bridge.set_position(locations, self.frame)
+        self.bridge.set_rotation(angles, self.frame)
 
     def get_processed_data(self):
         """ Returns the processed data """

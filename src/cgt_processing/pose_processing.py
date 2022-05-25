@@ -49,7 +49,7 @@ class PoseProcessor(processor_interface.DataProcessor):
 
     def update(self):
         """ Apply the processed data to references. """
-        if self.has_duplicated_results(self.data):
+        if self.has_duplicated_results(self.data, "pose"):
             return
 
         self.bridge.set_position(self.data, self.frame)

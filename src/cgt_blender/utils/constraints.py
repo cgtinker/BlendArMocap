@@ -1,4 +1,5 @@
 from . import objects
+from mathutils import Matrix
 
 
 def copy_rotation(constraint, target, values):
@@ -65,10 +66,15 @@ def copy_location_world_offset(bone, target, values):
 
 
 def child_of(constraint, target, values):
-    objects.set_pose_bone_world_position(values[1], values[0], target.location)
     constraint.target = target
     constraint.influence = 1
-    constraint.set_inverse_pending = True
+    # clear bone matrix first
+    constraint.inverse_matrix = Matrix.Identity(4)
+    # set position to empties
+    objects.set_pose_bone_world_position(values[1], values[0], target.location)
+    # invert matrix
+    mw = constraint.target.matrix_world
+    constraint.inverse_matrix = mw.inverted()
 
 
 def damped_track(constraint, target, values):

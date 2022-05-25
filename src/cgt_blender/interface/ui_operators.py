@@ -59,13 +59,13 @@ class WM_modal_detection_operator(bpy.types.Operator):
         frame_start = bpy.context.scene.frame_start
         if self.user.detection_input_type == 'movie':
             mov_path = self.user.mov_data_path
-            self.detection_handler.init_detector(mov_path, "sd", 0, frame_start, 1, "movie")
+            self.detection_handler.init_detector(mov_path, "sd", 0, frame_start, 1, 1)
         else:
             camera_index = self.user.webcam_input_device
             dimensions = self.user.enum_stream_dim
             backend = int(self.user.enum_stream_type)
             key_step = self.user.key_frame_step
-            self.detection_handler.init_detector(camera_index, dimensions, backend, frame_start, key_step, "stream")
+            self.detection_handler.init_detector(camera_index, dimensions, backend, frame_start, key_step, 0)
 
         # initialize the bridge from the detector to blender
         self.detection_handler.init_bridge()

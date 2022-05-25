@@ -1,11 +1,10 @@
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 from mediapipe import solutions
 from mediapipe.framework.formats import classification_pb2
 
-from ..cgt_bridge import bridge_interface
-from ..cgt_patterns import events, observer_pattern
-from ..cgt_processing import processor_interface
+from ..cgt_patterns import observer_pattern
 
 
 class RealtimeDetector(ABC):
@@ -18,8 +17,8 @@ class RealtimeDetector(ABC):
     key_step = 4
     frame = None
 
-    def __init__(self, frame_start=0, key_step=4, input_type=None):
-        self.input_type = input_type
+    def __init__(self, frame_start: int = 0, key_step: int = 4, input_type: int = None):
+        self.input_type = input_type  # stream or movie (0/1)
         self.drawing_utils = solutions.drawing_utils
         self.drawing_style = solutions.drawing_styles
         self.frame = frame_start
@@ -35,7 +34,7 @@ class RealtimeDetector(ABC):
         """ Initialize bridge to blender - requires a data processor and bridge object. """
         pass
 
-    def init_bridge(self, observer: observer_pattern.Observer, listener: observer_pattern.Listener,):
+    def init_bridge(self, observer: observer_pattern.Observer, listener: observer_pattern.Listener, ):
         """ Set up the data bridge to blender or to prints for debugging purposes. """
         self.observer = observer
         self.listener = listener
@@ -58,15 +57,19 @@ class RealtimeDetector(ABC):
         pass
 
     def exec_detection(self, mp_lib):
-        updated = self.stream_updated()
+        self.stream.update()
+        updated = self.stream.updated
+
         if not updated and self.input_type == 0:
+            # ignore if an update fails while stream detection
             return True
+
         elif not updated and self.input_type == 1:
+            # stop detection if update fails while movie detection
             return False
 
-        # stream may not be updated at frame one
         if self.stream.frame is None:
-            print("Receiving input stream failed")
+            # ignore frame if not available
             return True
 
         # detect features in frame
@@ -95,13 +98,6 @@ class RealtimeDetector(ABC):
             return False
         return True
 
-    def stream_updated(self):
-        self.stream.update()
-        if not self.stream.updated:
-            print("Stream not updated")
-            return False
-        return True
-
     def update_listeners(self):
         self.frame += self.key_step
         self.listener.frame = self.frame
@@ -110,12 +106,6 @@ class RealtimeDetector(ABC):
     def cvt2landmark_array(self, landmark_list):
         """landmark_list: A normalized landmark list proto message to be annotated on the image."""
         return [[idx, [landmark.x, landmark.y, landmark.z]] for idx, landmark in enumerate(landmark_list.landmark)]
-
-    def cvt_hand_orientation(self, orientation: classification_pb2):
-        if not orientation:
-            return None
-
-        return [[idx, "Right" in str(o)] for idx, o in enumerate(orientation)]
 
     def __del__(self):
         self.listener.detach(self.observer)
