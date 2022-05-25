@@ -70,9 +70,9 @@ class UI_PT_main_panel(DefaultPanel, Panel):
                                         text="Armature",
                                         icon="ARMATURE_DATA")
 
+        box.row().prop(user, "overwrite_drivers_bool")
         if user.enum_detection_type in {"POSE", "HOLISTIC"}:
             box.row().prop(user, "experimental_feature_bool")  # , icon="ERROR")
-
         box.row(align=True).operator("button.cgt_transfer_animation_button", text=user.button_transfer_animation)
 
 

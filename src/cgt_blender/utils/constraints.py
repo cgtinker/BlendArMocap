@@ -144,10 +144,11 @@ constraint_mapping = {
 }
 
 
-def add_constraint(bone, target, constraint, values):
+def add_constraint(bone, target, constraint, values, overwrite):
     """ Bit hacky way to apply constraints even of the same type. """
     # TODO: apply proper refactoring
     m_constraints = [c for c in bone.constraints]
+    removed_constraint = False
     # overwriting constraint by
     # removing previously added constraints if types match
     for c in m_constraints:
@@ -167,7 +168,13 @@ def add_constraint(bone, target, constraint, values):
 
         # remove if names match
         if constraint_name == target_constraint:
-            bone.constraints.remove(c)
+            if overwrite:
+                bone.constraints.remove(c)
+                removed_constraint = True
+
+    if not removed_constraint:
+        return
+
     try:
         # adding a new constraint
         m_constraint = bone.constraints.new(

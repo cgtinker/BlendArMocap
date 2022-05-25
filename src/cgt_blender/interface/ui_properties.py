@@ -64,8 +64,8 @@ class CgtProperties(PropertyGroup):
     )
 
     experimental_feature_bool: BoolProperty(
-        name="Experimental Leg Transfer",
-        description="Experimental feature to transfer legs when transferring pose data",
+        name="Transfer Legs (Experimental)",
+        description="Transfer pose legs motion to rigify rig",
         default=False
     )
 
@@ -100,7 +100,7 @@ class CgtProperties(PropertyGroup):
             ("HAND", "Hands", ""),
             ("FACE", "Face", ""),
             ("POSE", "Pose", ""),
-            ("HOLISTIC", "Holistic", ""),
+            ("HOLISTIC", "Holistic (Experimental)", ""),
         )
     )
     # endregion

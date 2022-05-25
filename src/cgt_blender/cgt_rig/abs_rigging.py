@@ -17,13 +17,16 @@ class BpyRigging(ABC):
 
     # region apply
     def apply_constraints(self, constraint_dict):
+        user_prefs = objects.user_pref()
+        overwrite = user_prefs.overwrite_drivers_bool  # noqa
+
         """ Applies constraints to bones targeting objects. """
         for key, pair in constraint_dict.items():
             provider = objects.get_object_by_name(key)
             bone = self.pose_bones[pair[0]]
             constraint_name = pair[1]
             args = pair[2:]
-            constraints.add_constraint(bone, provider, constraint_name, args)
+            constraints.add_constraint(bone, provider, constraint_name, args, overwrite)
 
     def apply_driver(self, containers):
         """ Applies containers of driver properties as drivers to objects.
