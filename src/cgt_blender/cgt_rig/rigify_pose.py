@@ -1,7 +1,6 @@
 import numpy as np
 
-from . import abs_rigging
-from .drivers import limb_drivers
+from . import abs_rigging, limb_drivers
 from ..utils import objects
 from ...cgt_naming import POSE
 from ...cgt_utils import m_V
@@ -131,7 +130,7 @@ class RigifyPose(abs_rigging.BpyRigging):
 
         # activate ik poles
         user = objects.user_pref()
-        self.toggle_rigify_poles(user)
+        self.activate_rigify_poles(user)
 
         # apply drivers
         self.apply_driver(self.bone_center_drivers)
@@ -147,7 +146,7 @@ class RigifyPose(abs_rigging.BpyRigging):
         # apply constraints
         self.apply_constraints(pose_constraints_copy)
 
-    def toggle_rigify_poles(self, user):
+    def activate_rigify_poles(self, user):
         """ activate rigify ik poles """
         self.armature.pose.bones["upper_arm_parent.L"]["pole_vector"] = 1
         self.armature.pose.bones["upper_arm_parent.R"]["pole_vector"] = 1

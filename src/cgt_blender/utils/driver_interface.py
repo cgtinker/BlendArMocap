@@ -45,9 +45,6 @@ class DriverProperties:
 
     custom_target_props: CustomProps = None
 
-    # todo: remove overwrite
-    overwrite: bool = False
-
 
 @dataclass(repr=True)
 class DriverContainer:

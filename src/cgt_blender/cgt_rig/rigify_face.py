@@ -1,7 +1,7 @@
 import bpy
 
 from .abs_rigging import BpyRigging
-from .drivers import face_drivers
+from . import face_drivers
 from ...cgt_naming import FACE
 
 

@@ -1,6 +1,6 @@
 from . import abs_rigging
 from ...cgt_naming import HAND
-from .drivers.hand_drivers import FingerDriverContainer
+from .hand_drivers import FingerDriverContainer
 
 
 class RigifyHands(abs_rigging.BpyRigging):

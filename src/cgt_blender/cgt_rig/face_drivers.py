@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from ...utils.driver_interface import DriverProperties, DriverContainer, DriverType
-from ...utils.bone_prop import CustomBoneProp
-from ...utils.mapping import Slope
+from ..utils.driver_interface import DriverProperties, DriverContainer, DriverType
+from ..utils.bone_prop import CustomBoneProp
+from ..utils.mapping import Slope
 
 
 @dataclass(repr=True)
@@ -19,7 +19,6 @@ class EyeDriver(DriverProperties):
         self.property_name = "scale"
         self.data_paths = ["scale.z"] * 3
         self.get_functions(direction, bone_distance, slope)
-        self.overwrite = True
 
     def get_functions(self, direction, bone_distance, slope):
         if direction == "down":
@@ -77,7 +76,6 @@ class MouthCornerDriver(DriverProperties):
         self.property_type = "location"
         self.property_name = "corner"
         self.driver_type = DriverType.SINGLE
-        self.overwrite = True
 
         if direction == "left":
             self.data_paths = ["scale.x"] * 3
@@ -100,7 +98,6 @@ class MouthDriver(DriverProperties):
         self.property_type = "location"
         self.property_name = "scale"
         self.get_data_paths(direction)
-        self.overwrite = True
         self.get_functions(direction, bone_distance, slope)
 
     def get_data_paths(self, direction):
@@ -210,7 +207,6 @@ class EyebrowDriver(DriverProperties):
         self.provider_obj = provider_obj
         self.property_type = "location"
         self.property_name = "scale"
-        self.overwrite = True
         self.data_paths = target_path
 
         self.functions = [

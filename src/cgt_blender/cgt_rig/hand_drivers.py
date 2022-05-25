@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from math import radians
 
-from ...utils.bone_prop import CustomBoneProp
-from ...utils.driver_interface import DriverProperties, DriverContainer, DriverType, ObjectType
-from ...utils.mapping import Slope, CustomProps
+from ..utils.bone_prop import CustomBoneProp
+from ..utils.driver_interface import DriverProperties, DriverContainer, DriverType, ObjectType
+from ..utils.mapping import Slope, CustomProps
 
 
 @dataclass(repr=True)
@@ -39,7 +39,6 @@ class CustomAngleMultiplier(DriverProperties):
         self.target_rig = True
         self.driver_type = DriverType.CUSTOM  # ? or single prop ?
 
-        self.overwrite = True
         self.property_type = "rotation_euler"
         self.property_name = "fac"
         self.data_paths = [f'pose.bones["{provider_obj}"]["{prop_name}"]'] * 3
@@ -67,7 +66,6 @@ class FingerAngleDriver(DriverProperties):
         self.provider_obj = provider_obj
         self.property_type = "rotation_euler"
         self.property_name = "rotation"
-        self.overwrite = True
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
         self.functions = [
             f"{x_slope.name}[0]+(({x_slope.name}[1] - "
@@ -98,7 +96,6 @@ class DefaultFingerAngleDriver(DriverProperties):
         self.provider_obj = provider_obj
         self.property_type = "rotation_euler"
         self.property_name = "rotation"
-        self.overwrite = True
         self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
         self.functions = [
             f"{x_slope.name}[0]+(({x_slope.name}[1] - "

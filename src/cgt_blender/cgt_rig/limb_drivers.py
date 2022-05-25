@@ -1,4 +1,4 @@
-from ...utils.driver_interface import DriverProperties, DriverContainer, DriverType, ObjectType
+from ..utils.driver_interface import DriverProperties, DriverContainer, DriverType, ObjectType
 from dataclasses import dataclass
 
 
@@ -124,7 +124,7 @@ class LimbDriver(DriverContainer):
         # setup drivers
         self.pose_drivers = [driver_origin, joint_head, joint_length, joint_tail]
 
-        # set reoccuring props
+        # set reoccurring props
         for driver in self.pose_drivers:
             driver.target_object = driver_target
             driver.target_rig = None
