@@ -107,7 +107,7 @@ _May not change the bone names of the rigify rig._<br>
 When selected, drivers and constraints will be overwritten with default values.
 
 **Leg Transfer (Experimental)**<br>
-By default, only the upper body motion of the detection results are getting transferred.
+By default, only the upper body motion of the detection results are getting transferred.<br>
 _The feature is only visible, as long either 'Holistic' or 'Pose' is selected as detection type._
 
 **Start Transfer**<br>
@@ -116,39 +116,39 @@ Once the transfer has taken place, new recordings will be applied instantly to t
 _There is no need to transfer twice._<br>
 
 
-##How to manipulate transfer results</br>
+##How to manipulate transfer results<br>
 **Manual**</br>
-Translate or rotation the bone you want to offset. Make sure to create keyframes while doing so as the correction may change the entire animation. </br>
+Translate or rotation the bone you want to offset. Make sure to create keyframes while doing so as the correction may change the entire animation. <br>
 _Pose Mode > Select control bone > Object Properties_
 
 **Constraints**</br>
-The data is copied from the drivers by constraints. In some cases, it might be useful to change or remove constraints.</br>
+The data is copied from the drivers by constraints. In some cases, it might be useful to change or remove constraints.<br>
 _Pose Mode > Select control bone > Bone Constraints_
 
 **Custom Properties**</br>
 On some bones, custom properties will be added upon the transfer. 
-The custom properties help to manipulate the minimum and maximum mapping values of the driver.</br>
+The custom properties help to manipulate the minimum and maximum mapping values of the driver.<br>
 _Pose Mode > Select control bone > Object Properties > Custom Properties_
 
 **Offset time**</br>
 If you want to change the speed of an animation.
 1. Select the drivers in the collection you want to smooth, or select all.</br>
 _Right click collection > Select Objects_
-2. Navigate to or open the graph editor, select make sure the graphs of the objects are selected.</br>
+2. Navigate to or open the graph editor, select make sure the graphs of the objects are selected.<br>
 _Timeline > 'A'_
 3. Make sure your the currently selected frame is at the start of your animation (usually 0).
-4. Scale the timeline to increase or decrease the offset between keyframes.</br>
+4. Scale the timeline to increase or decrease the offset between keyframes.<br>
 _Timeline > 'S'_
 
 
 **Smooth results**</br>
-1. Select the drivers in the collection you want to smooth, or select all.</br>
+1. Select the drivers in the collection you want to smooth, or select all.<br>
 _Right click collection > Select Objects_
-2. Navigate to or open the graph editor, select make sure the graphs of the objects are selected.</br>
+2. Navigate to or open the graph editor, select make sure the graphs of the objects are selected.<br>
 _Graph editor > 'A'_
-3. If you used a key-step while recording, resample the curves.
+3. If you used a key-step while recording, resample the curves.<br>
 _Graph editor > Key > Sample Keyframes_
-4. Finally, smooth the animation. You may repeat this step till you reach your desired result.
+4. Finally, smooth the animation. You may repeat this step till you reach your desired result.<br>
 _Graph editor > Key > Smooth Key_
 
 | Manipulation Options | meaning          | location             |
