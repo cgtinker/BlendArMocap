@@ -101,3 +101,7 @@ class HolisticBpyUpdateReceiver(op.Observer):
             processor.frame = _listener.frame
             processor.init_data()
             processor.update()
+
+    def __del__(self):
+        del self.processors
+

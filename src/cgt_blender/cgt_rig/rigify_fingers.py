@@ -82,7 +82,7 @@ class RigifyHands(abs_rigging.BpyRigging):
             "left",
             [self.get_reference_bone(b, ".L")[1] for b in self.bone_ref_list[1:]]
         )
-        print(self.left_finger_angle_drivers)
+
         self.right_finger_angle_drivers = FingerDriverContainer(
             right_finger_targets,
             right_finger_provider,

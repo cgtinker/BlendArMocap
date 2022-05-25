@@ -46,5 +46,5 @@ class CustomBonePropDriver(Driver):
             var.type = 'SINGLE_PROP'
             var.targets[0].id = self.target_rig
             var.targets[0].bone_target = f'pose.bones["{self.provider_obj.name}"]["{self.property_name}"]'
-
             var.targets[0].data_path = self.data_paths[idx]
+

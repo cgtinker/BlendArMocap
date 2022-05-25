@@ -89,17 +89,16 @@ class Driver(DriverProperties):
             self.functions = ["", "", ""]
 
         # add driver placeholders to target object
+        self.drivers = []
         self.drivers = [self.target_object.driver_add(self.property_type, index) for index in range(3)]
         self.variables = [d.driver.variables.new() for d in self.drivers]
 
         # prepare and apply driver to obj
         self.prepare()
-        self.apply()
+        # add expressions
+        for idx, d in enumerate(self.drivers):
+            d.driver.expression = self.functions[idx] if self.functions[idx] else ""
 
     @abstractmethod
     def prepare(self):
         pass
-
-    def apply(self):
-        for idx, d in enumerate(self.drivers):
-            d.driver.expression = self.functions[idx] if self.functions[idx] else "0"

@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from math import radians
 
+from ...utils.bone_prop import CustomBoneProp
 from ...utils.driver_interface import DriverProperties, DriverContainer, DriverType, ObjectType
 from ...utils.mapping import Slope, CustomProps
-from ...utils.bone_prop import CustomBoneProp
 
 
 @dataclass(repr=True)
@@ -37,12 +37,12 @@ class CustomAngleMultiplier(DriverProperties):
         self.provider_obj = provider_obj
         self.provider_type = ObjectType.BONE
         self.target_rig = True
-        self.driver_type = DriverType.CUSTOM   # ? or single prop ?
+        self.driver_type = DriverType.CUSTOM  # ? or single prop ?
 
         self.overwrite = True
         self.property_type = "rotation_euler"
         self.property_name = "fac"
-        self.data_paths = [f'pose.bones["{provider_obj}"]["{prop_name}"]']*3
+        self.data_paths = [f'pose.bones["{provider_obj}"]["{prop_name}"]'] * 3
         self.functions = ["", "", ""]
 
 
@@ -75,6 +75,36 @@ class FingerAngleDriver(DriverProperties):
             "",
             f"{z_slope.name}[0]+(({z_slope.name}[1] - "
             f"{z_slope.name}[0])/({x_slope.max_in}-{x_slope.min_in}))*({-z_slope.min_in}+(rotation))"
+        ]
+
+
+@dataclass(repr=True)
+class DefaultFingerAngleDriver(DriverProperties):
+    target_object: str = ""
+    functions: list = None
+
+    def __init__(self,
+                 driver_target: str,
+                 provider_obj: object,
+                 x_slope: Slope):
+        """ Provides finger driver properties to animate the x- & z-angles.
+            :param provider_obj: object providing rotation values.
+            :param slope: factor to multiply and offset the rotation
+            :param offset: offsets the base input value
+        """
+
+        self.target_object = driver_target
+        self.driver_type = DriverType.SINGLE
+        self.provider_obj = provider_obj
+        self.property_type = "rotation_euler"
+        self.property_name = "rotation"
+        self.overwrite = True
+        self.data_paths = ["rotation_euler[0]", "rotation_euler[1]", "rotation_euler[2]"]
+        self.functions = [
+            f"{x_slope.name}[0]+(({x_slope.name}[1] - "
+            f"{x_slope.name}[0])/({x_slope.max_in}-{x_slope.min_in}))*({-x_slope.min_in}+(rotation))",
+            "",
+            ""
         ]
 
 
@@ -131,14 +161,16 @@ class FingerDriverContainer(DriverContainer):
 
         # generate z slopes for the right hand
         z_slopes_r = [
-            Slope(self.z_inputs_r[idx][0], self.z_inputs_r[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1], "z_map")
+            Slope(self.z_inputs_r[idx][0], self.z_inputs_r[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1],
+                  "z_map")
             for idx in range(0, 5)
         ]
 
         # values have to be mirrored to fit angles (for left and right hand)
         self.z_outputs = [[i[0] * -1, i[1] * -1] for idx, i in enumerate(self.z_outputs)]
         z_slopes_l = [
-            Slope(self.z_inputs_l[idx][0], self.z_inputs_l[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1], "z_map")
+            Slope(self.z_inputs_l[idx][0], self.z_inputs_l[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1],
+                  "z_map")
             for idx in range(0, 5)
         ]
 
@@ -152,30 +184,32 @@ class FingerDriverContainer(DriverContainer):
             else:
                 return z_slopes_l[int(idx / 3)]
 
-        # generate custom properties
-        self.pose_drivers = [
-            CustomBoneProp(
-                driver_targets[idx],
-                bone_names[idx],
-                "rotation_euler",
-                x_slopes[idx].name,
-                (x_slopes[idx].min_out, x_slopes[idx].max_out)
-            ) for idx, _ in enumerate(driver_targets)]
+        self.pose_drivers = []
 
-        self.pose_drivers += [
-            CustomBoneProp(
-                driver_targets[idx],
-                bone_names[idx],
-                "rotation_euler",
-                get_z_slope(idx).name,
-                (get_z_slope(idx).min_out, get_z_slope(idx).max_out)
-            ) for idx, _ in enumerate(driver_targets)]
+        # adding driver using x props
+        for idx, _ in enumerate(driver_targets):
+            # x-angle custom prop
+            self.pose_drivers.append(CustomBoneProp(driver_targets[idx],
+                                                    bone_names[idx],
+                                                    "rotation_euler",
+                                                    x_slopes[idx].name,
+                                                    (x_slopes[idx].min_out, x_slopes[idx].max_out)))
+            # default finger angle drivers use only x-prop
+            if idx % 3 != 0:
+                self.pose_drivers.append(DefaultFingerAngleDriver(driver_targets[idx],
+                                                                  provider_objs[idx],
+                                                                  x_slopes[idx]))
+            else:
+                # mcps contain also z-angles
+                self.pose_drivers.append(CustomBoneProp(
+                    driver_targets[idx],
+                    bone_names[idx],
+                    "rotation_euler",
+                    get_z_slope(idx).name,
+                    (get_z_slope(idx).min_out, get_z_slope(idx).max_out)
+                ))
 
-        # adding actual driver using custom props
-        self.pose_drivers += [
-            FingerAngleDriver(
-                driver_targets[idx],
-                provider_objs[idx],
-                x_slopes[idx],
-                get_z_slope(idx)
-            ) for idx, _ in enumerate(driver_targets)]
+                self.pose_drivers.append(FingerAngleDriver(driver_targets[idx],
+                                                           provider_objs[idx],
+                                                           x_slopes[idx],
+                                                           get_z_slope(idx)))

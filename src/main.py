@@ -114,10 +114,10 @@ class DetectionHandler:
             return
 
         elif type(self.processor) is list:
-            _processor = self.processor
-            _processor[0] = self.processor[0](self.bridge[0])
-            _processor[1] = self.processor[1](self.bridge[1])
-            _processor[2] = self.processor[2](self.bridge[2])
+            _processor = self.processor.copy()
+            _processor[0] = _processor[0](self.bridge[0])
+            _processor[1] = _processor[1](self.bridge[1])
+            _processor[2] = _processor[2](self.bridge[2])
             _observer = self.observer(_processor)
 
             self.detector.init_bridge(_observer, self.listener)
@@ -133,7 +133,7 @@ class DetectionHandler:
 
 def main():
     handler = DetectionHandler("POSE", "DEBUG")
-    handler.init_detector(0, "sd", 0, 0, 0, "stream")
+    handler.init_detector(0, "sd", 0, 0, 0, 0)
     handler.init_bridge()
 
     for _ in range(15):

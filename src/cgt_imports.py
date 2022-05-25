@@ -11,6 +11,10 @@ or when Blender's 'Reload Scripts' operator is run manually.
 SUB_DIRS = ['src/cgt_blender', 'src/cgt_processing', 'src/cgt_detection',
             'src/cgt_utils', 'src/cgt_bridge', 'src/cgt_patterns']
 
+POST_MODULES = [
+    '.src.main'
+]
+
 INIT_MODULES = [
     '.src.cgt_imports',
     '.src.cgt_naming',
@@ -71,7 +75,7 @@ def manage_imports(reload: bool = False, force: bool = False):
         sub_dirs = [PACKAGE_PATH / sub_dir for sub_dir in SUB_DIRS]
         reload_list = get_reload_list(sub_dirs)
 
-        for module in reload_list:
+        for module in reload_list+POST_MODULES:
             if reload is True:
                 import_module(module)
                 reload_module(module)
