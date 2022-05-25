@@ -1,10 +1,6 @@
 import mediapipe as mp
 
 from . import detector_interface
-from ..cgt_processing import pose_processing
-from ..cgt_bridge import bpy_bridge_interface
-from ..cgt_patterns import events
-from ..cgt_utils import stream
 
 
 class HolisticDetector(detector_interface.RealtimeDetector):
@@ -29,16 +25,6 @@ class HolisticDetector(detector_interface.RealtimeDetector):
 
     def initialize_model(self):
         self.solution = mp.solutions.holistic
-
-    def init_bpy_bridge(self):
-        # TODO: requires multiple listeners. also requires a special observer pattern.
-        target = pose_processing.PoseProcessor(bridge=None)
-        self.observer = events.BpyUpdateReceiver(target)
-        self.listener = events.UpdateListener()
-
-    def init_debug_logs(self):
-        self.observer = events.PrintRawDataUpdate()
-        self.listener = events.UpdateListener()
 
     def get_detection_results(self, mp_res):
         # TODO - eval init
@@ -81,9 +67,11 @@ class HolisticDetector(detector_interface.RealtimeDetector):
 # region manual tests
 def init_detector_manually(processor_type: str = "RAW"):
     m_detector = HolisticDetector()
+    from ..cgt_utils import stream
     m_detector.stream = stream.Webcam()
     m_detector.initialize_model()
 
+    from ..cgt_patterns import events
     if processor_type == "RAW":
         m_detector.observer = events.PrintRawDataUpdate()
     else:

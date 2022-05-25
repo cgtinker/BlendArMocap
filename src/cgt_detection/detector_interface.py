@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
 
 from mediapipe import solutions
-from mediapipe.framework.formats import classification_pb2
 
 from ..cgt_patterns import observer_pattern
 
@@ -27,11 +25,6 @@ class RealtimeDetector(ABC):
     @abstractmethod
     def image_detection(self):
         """ Run mediapipes detection on an image using the active model. """
-        pass
-
-    @abstractmethod
-    def init_bpy_bridge(self):
-        """ Initialize bridge to blender - requires a data processor and bridge object. """
         pass
 
     def init_bridge(self, observer: observer_pattern.Observer, listener: observer_pattern.Listener, ):

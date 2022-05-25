@@ -2,10 +2,6 @@ import mediapipe as mp
 from mediapipe.framework.formats import classification_pb2
 
 from . import detector_interface
-from ..cgt_bridge import bpy_hand_bridge
-from ..cgt_processing import hand_processing
-from ..cgt_patterns import events
-from ..cgt_utils import stream
 
 
 class HandDetector(detector_interface.RealtimeDetector):
@@ -29,17 +25,6 @@ class HandDetector(detector_interface.RealtimeDetector):
 
     def initialize_model(self):
         self.solution = mp.solutions.hands
-
-    def init_bpy_bridge(self):
-        target = hand_processing.HandProcessor(bpy_hand_bridge.BpyHandBridge)
-        self.observer = events.BpyUpdateReceiver(target)
-        self.listener = events.UpdateListener()
-
-    def init_debug_logs(self):
-        target = hand_processing.HandProcessor()
-        # self.observer = events.DriverDebug(target)
-        self.observer = events.PrintRawDataUpdate()
-        self.listener = events.UpdateListener()
 
     def seperate_hands(self, hand_data):
         left_hand = [data[0] for data in hand_data if data[1][1] is False]
@@ -72,13 +57,16 @@ class HandDetector(detector_interface.RealtimeDetector):
 # region manual tests
 def init_detector_manually(processor_type: str = "RAW"):
     m_detector = HandDetector()
+    from ..cgt_utils import stream
     m_detector.stream = stream.Webcam()
     m_detector.initialize_model()
 
+    from ..cgt_patterns import events
     if processor_type == "RAW":
         m_detector.observer = events.PrintRawDataUpdate()
     else:
         from ..cgt_bridge import print_bridge
+        from ..cgt_processing import hand_processing
         bridge = print_bridge.PrintBridge
         target = hand_processing.HandProcessor(bridge)
         m_detector.observer = events.DriverDebug(target)
@@ -90,7 +78,6 @@ def init_detector_manually(processor_type: str = "RAW"):
 
 if __name__ == '__main__':
     detection_type = "image"
-
     detector = init_detector_manually("PROCESSED")
 
     if detection_type == "image":

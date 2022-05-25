@@ -1,12 +1,8 @@
 import mediapipe as mp
 
 from . import detector_interface
-from ..cgt_processing import face_processing
-from ..cgt_patterns import events
-from ..cgt_utils import stream
 
 from typing import Mapping, Tuple
-from ..cgt_bridge import bpy_face_bridge
 from mediapipe.python.solutions import face_mesh_connections
 from mediapipe.python.solutions.drawing_utils import DrawingSpec
 
@@ -36,21 +32,6 @@ class FaceDetector(detector_interface.RealtimeDetector):
 
     def initialize_model(self):
         self.solution = mp.solutions.face_mesh
-
-    def init_bpy_bridge(self):
-        target = face_processing.FaceProcessor()
-        self.observer = events.BpyUpdateReceiver(target)
-        self.listener = events.UpdateListener()
-
-    def init_driver_logs(self):
-        target = face_processing.FaceProcessor(bpy_face_bridge.BpyFaceBridge)
-        self.observer = events.DriverDebug(target)
-        self.listener = events.UpdateListener()
-
-    def init_raw_data_printer(self):
-        self.observer = events.PrintRawDataUpdate()
-        self.listener = events.UpdateListener()
-        print(self.observer, self.listener)
 
     def get_detection_results(self, mp_res):
         return [self.cvt2landmark_array(landmark) for landmark in mp_res.multi_face_landmarks]
@@ -107,31 +88,36 @@ class FaceDetector(detector_interface.RealtimeDetector):
 
 
 # region manual tests
-def image_detection(tracking_handler):
-    for i in range(3):
-        tracking_handler.image_detection()
-    print('FINISHED')
-    del tracking_handler
+def init_detector_manually(processor_type: str = "RAW"):
+    m_detector = FaceDetector()
+    from ..cgt_utils import stream
+    m_detector.stream = stream.Webcam()
+    m_detector.initialize_model()
 
+    from ..cgt_patterns import events
+    if processor_type == "RAW":
+        m_detector.observer = events.PrintRawDataUpdate()
+    else:
+        from ..cgt_bridge import print_bridge
+        from ..cgt_processing import face_processing
+        bridge = print_bridge.PrintBridge
+        target = face_processing.FaceProcessor(bridge)
+        m_detector.observer = events.DriverDebug(target)
 
-def stream_detection(tracking_handler):
-    tracking_handler.stream_detection()
-
-
-def init_test():
-    tracking_handler = FaceDetector()
-    tracking_handler.stream = stream.Webcam()
-    tracking_handler.initialize_model()
-    # tracking_handler.init_driver_logs()
-    tracking_handler.init_raw_data_printer()
-    tracking_handler.listener.attach(tracking_handler.observer)
-    return tracking_handler
+    m_detector.listener = events.UpdateListener()
+    m_detector.listener.attach(m_detector.observer)
+    return m_detector
 
 
 if __name__ == '__main__':
-    handler = init_test()
-    image_detection(handler)
-    # stream_detection(handler)
+    detection_type = 'image'
+    detector = init_detector_manually("PROCESSED")
 
-    del handler
+    if detection_type == "image":
+        for _ in range(50):
+            detector.image_detection()
+    else:
+        detector.stream_detection()
+
+    del detector
 # endregion
