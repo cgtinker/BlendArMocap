@@ -1,3 +1,20 @@
+'''
+Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+'''
+
 import bpy
 
 from . import pref_operators
@@ -5,7 +22,7 @@ from ..utils import dependencies
 from ... import cgt_naming
 
 
-class BLENDARMOCAP_preferences(bpy.types.AddonPreferences):
+class BLENDARMOCAP_CGT_preferences(bpy.types.AddonPreferences):
     bl_idname = cgt_naming.PACKAGE
 
     def draw(self, context):
@@ -44,11 +61,11 @@ class BLENDARMOCAP_preferences(bpy.types.AddonPreferences):
 
         # install dependencies button
         dependency_box.row().operator(
-            pref_operators.PREFERENCES_OT_install_dependencies_button.bl_idname  #, icon="CONSOLE"
+            pref_operators.PREFERENCES_OT_CGT_install_dependencies_button.bl_idname  #, icon="CONSOLE"
         )
 
         dependency_box.row().operator(
-            pref_operators.PREFERENCES_OT_uninstall_dependencies_button.bl_idname  #, icon="ERROR"
+            pref_operators.PREFERENCES_OT_CGT_uninstall_dependencies_button.bl_idname  #, icon="ERROR"
         )
 
     def draw_dependency(self, m_dependency, dependency_box):

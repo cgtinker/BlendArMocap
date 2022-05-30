@@ -1,3 +1,20 @@
+'''
+Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+'''
+
 import bpy
 from bpy.props import PointerProperty
 from bpy.utils import register_class, unregister_class
@@ -9,23 +26,23 @@ from ..utils import dependencies
 def get_classes():
     # getting classes to avoid loading possibly unavailable packages
     classes = (
-        ui_properties.CgtProperties,
+        ui_properties.CGTProperties,
 
-        ui_operators.UI_transfer_anim_button,
-        ui_operators.UI_toggle_drivers_button,
-        ui_operators.WM_modal_detection_operator,
+        ui_operators.UI_CGT_transfer_anim_button,
+        ui_operators.UI_CGT_toggle_drivers_button,
+        ui_operators.WM_CGT_modal_detection_operator,
 
-        ui_panels.UI_PT_main_panel,
+        ui_panels.UI_PT_CGT_main_panel,
         # ui_panels.UI_PT_RemappingPanel
     )
     return classes
 
 
 def get_preferences():
-    preference_classes = (pref_operators.PREFERENCES_OT_install_dependencies_button,
-                          pref_operators.PREFERENCES_OT_uninstall_dependencies_button,
-                          pref_panels.BLENDARMOCAP_preferences,
-                          ui_panels.UI_PT_warning_panel)
+    preference_classes = (pref_operators.PREFERENCES_OT_CGT_install_dependencies_button,
+                          pref_operators.PREFERENCES_OT_CGT_uninstall_dependencies_button,
+                          pref_panels.BLENDARMOCAP_CGT_preferences,
+                          ui_panels.UI_PT_CGT_warning_panel)
     return preference_classes
 
 
@@ -58,7 +75,7 @@ def register_user_interface():
         except ValueError:
             print("Class has already been registered:", cls)
 
-    bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=ui_properties.CgtProperties)
+    bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=ui_properties.CGTProperties)
 
 
 def unregister():
@@ -99,4 +116,4 @@ def manual_test_registration():
     for cls in get_classes():
         register_class(cls)
 
-    bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=ui_properties.CgtProperties)
+    bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=ui_properties.CGTProperties)

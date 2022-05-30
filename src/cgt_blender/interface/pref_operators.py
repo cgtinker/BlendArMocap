@@ -1,3 +1,20 @@
+'''
+Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+'''
+
 import subprocess
 
 import bpy
@@ -7,7 +24,7 @@ from ..utils import dependencies
 from ... import cgt_imports
 
 
-class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
+class PREFERENCES_OT_CGT_install_dependencies_button(bpy.types.Operator):
     bl_idname = "button.cgt_install_dependencies"
     bl_label = "Install dependencies"
     bl_description = ("Downloads and installs the required python packages for this add-on. "
@@ -39,7 +56,7 @@ class PREFERENCES_OT_install_dependencies_button(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class PREFERENCES_OT_uninstall_dependencies_button(bpy.types.Operator):
+class PREFERENCES_OT_CGT_uninstall_dependencies_button(bpy.types.Operator):
     bl_idname = "button.cgt_uninstall_dependencies"
     bl_label = "Uninstall Dependencies"
     bl_description = ("Uninstalls Mediapipe and OpenCV")

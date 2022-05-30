@@ -1,8 +1,25 @@
+'''
+Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+'''
+
 import bpy
 from .. import input_manager
 
 
-class UI_transfer_anim_button(bpy.types.Operator):
+class UI_CGT_transfer_anim_button(bpy.types.Operator):
     bl_label = "Transfer Animation"
     bl_idname = "button.cgt_transfer_animation_button"
     bl_description = "Transfer driver animation to cgt_rig"
@@ -16,7 +33,7 @@ class UI_transfer_anim_button(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class UI_toggle_drivers_button(bpy.types.Operator):
+class UI_CGT_toggle_drivers_button(bpy.types.Operator):
     bl_label = "Toggle Drivers"
     bl_idname = "button.cgt_toggle_drivers_button"
     bl_description = "Toggle drivers to improve performance while motion capturing"
@@ -30,7 +47,7 @@ class UI_toggle_drivers_button(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class WM_modal_detection_operator(bpy.types.Operator):
+class WM_CGT_modal_detection_operator(bpy.types.Operator):
     bl_label = "Feature Detection Operator"
     bl_idname = "wm.cgt_feature_detection_operator"
     bl_description = "Detect solution in Stream."

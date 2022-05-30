@@ -1,3 +1,20 @@
+'''
+Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+'''
+
 import bpy
 from bpy.types import Panel
 
@@ -22,7 +39,7 @@ class ExpandedPanel:
     bl_options = {"HEADER_LAYOUT_EXPAND"}
 
 
-class UI_PT_main_panel(DefaultPanel, Panel):
+class UI_PT_CGT_main_panel(DefaultPanel, Panel):
     bl_label = cgt_naming.ADDON_NAME
     bl_idname = "OBJECT_PT_cgt_main_panel"
 
@@ -76,7 +93,7 @@ class UI_PT_main_panel(DefaultPanel, Panel):
         box.row(align=True).operator("button.cgt_transfer_animation_button", text=user.button_transfer_animation)
 
 
-class UI_PT_RemappingPanel(DefaultPanel, Panel):
+class UI_PT_CGT_RemappingPanel(DefaultPanel, Panel):
     bl_label = "Utils"
     bl_idname = "OBJECT_PT_cgt_remapping_panel"
     bl_parent_id = "OBJECT_PT_cgt_main_panel"
@@ -100,7 +117,7 @@ class UI_PT_RemappingPanel(DefaultPanel, Panel):
         # box.row().prop(user, "toggle_drivers_bool", icon="CON_ARMATURE")
 
 
-class UI_PT_warning_panel(DefaultPanel, Panel):
+class UI_PT_CGT_warning_panel(DefaultPanel, Panel):
     bl_label = cgt_naming.ADDON_NAME
     bl_idname = "OBJECT_PT_warning_panel"
 
@@ -115,7 +132,7 @@ class UI_PT_warning_panel(DefaultPanel, Panel):
                  f"1. Open the preferences (Edit > Preferences > Add-ons).",
                  f"2. Search for the \"{cgt_naming.ADDON_NAME}\" add-on.",
                  f"3. Open the details section of the add-on.",
-                 f"4. Click on the \"{pref_operators.PREFERENCES_OT_install_dependencies_button.bl_label}\" button.",
+                 f"4. Click on the \"{pref_operators.PREFERENCES_OT_CGT_install_dependencies_button.bl_label}\" button.",
                  f"   This will download and install the missing Python packages, if Blender has the required",
                  f"   permissions."]
 
