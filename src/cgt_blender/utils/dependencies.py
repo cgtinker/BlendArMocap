@@ -5,31 +5,31 @@ import subprocess
 import sys
 from collections import namedtuple
 from pathlib import Path
-
+from ... import cgt_naming
+import warnings
 import bpy.app
 
 
 # region python executable and site-packages
-def python_exe():
+def get_python_exe():
     version = bpy.app.version
-    print("binary:", bpy.app.binary_path)
-
-    # blender vers =< 2.91 contains a path to their py executable
-    if version[0] == 2 and version[1] <= 91:
-        executable = bpy.app.binary_path_python
-
-    # in newer versions sys.executable should point to the py executable
-    else:
+    if version[0] == 2 and version[1] >= 92:
+        # in newer versions sys.executable should point to the py executable
         executable = sys.executable
-    print(f"blender version: {version}, exe: {executable}")
+
+    else:
+        # blender vers =< 2.91 contains a path to their py executable
+        executable = bpy.app.binary_path_python
 
     # some version the path points to the binary path instead of the py executable
     if executable == bpy.app.binary_path:
         py_path = Path(sys.prefix) / "bin"
         py_exec = next(py_path.glob("python*"))  # first file that starts with "python" in "bin" dir
         executable = str(py_exec)
-        print(f"cmd failed, redirecting to: {executable}")
+        print(f"{cgt_naming.PACKAGE} - cmd failed, redirecting to: {executable}")
 
+    print(f"{cgt_naming.PACKAGE} - blender bin: {bpy.app.binary_path}, blender version: {version}")
+    print(f"{cgt_naming.PACKAGE} - python exe: {executable}")
     return executable
 
 
@@ -39,11 +39,6 @@ def clear_user_site():
     environ_copy = dict(os.environ)
     environ_copy["PYTHONNOUSERSITE"] = "1"
     return environ_copy
-
-
-python_exe = python_exe()
-
-
 # endregion
 
 
@@ -83,6 +78,8 @@ def get_package_info(_dependency):
 
 
 def is_package_installed(_dependency):
+    _dependency = dependency_naming(dependency)
+
     try:
         # Try to import the module to check if it is available.
         # Blender may has to be restarted to take effect on newly installed or removed dependencies.
@@ -173,11 +170,9 @@ def install_and_import_module(_dependency):
 
     # subprocess.run(cmd, check=True, env=environ_copy)
     if installed:
-        print(f"{tmp_dependency.package} installed successfully. "
-              f"Please restart Blender to see effect.")
+        print(f"{tmp_dependency.package} installed successfully.")
     else:
-        print(f"Cannot install {tmp_dependency.package}."
-              f"Please check the console for details.")
+        print(f"Cannot install {tmp_dependency.package}.")
 
     # Attempt to import the module
     import_module(tmp_dependency)
@@ -201,8 +196,16 @@ required_dependencies = (Dependency(module="mediapipe", package=None, name=None,
 
 global dependencies_installed
 dependencies_installed = True
+with warnings.catch_warnings():
+    # catching depreciated warning
+    warnings.simplefilter("ignore")
+    python_exe = get_python_exe()
 
 for dependency in required_dependencies:
-    m_dependency = dependency_naming(dependency)
-    if not is_package_installed(m_dependency):
+    try:
+        import_module(dependency)
+    except ModuleNotFoundError:
+        pass
+
+    if not is_package_installed(dependency):
         dependencies_installed = False

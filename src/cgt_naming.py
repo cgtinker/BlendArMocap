@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 # has to be at root
 PACKAGE = os.path.basename(os.path.dirname(os.path.dirname(__file__)))
-print("PACKAGE:", PACKAGE)
+print(PACKAGE, "- add-on path:", os.path.dirname(os.path.dirname(__file__)))
 ADDON_NAME = "BlendArMocap"
 
 

@@ -116,7 +116,7 @@ Once the transfer has taken place, new recordings will be applied instantly to t
 _There is no need to transfer twice._<br>
 
 
-##How to manipulate transfer results<br>
+## How to manipulate transfer results<br>
 **Manual**</br>
 Translate or rotation the bone you want to offset. Make sure to create keyframes while doing so as the correction may change the entire animation. <br>
 _Pose Mode > Select control bone > Object Properties_
@@ -149,7 +149,8 @@ _Graph editor > 'A'_
 3. If you used a key-step while recording, resample the curves.<br>
 _Graph editor > Key > Sample Keyframes_
 4. Finally, smooth the animation. You may repeat this step till you reach your desired result.<br>
-_Graph editor > Key > Smooth Key_
+_Graph editor > Key > Smooth Key_<br>
+
 
 | Manipulation Options | meaning          | location             |
 |----------------------|------------------|----------------------|

@@ -39,10 +39,11 @@ def register():
     try:
         print('Try to access dependencies')
         for dependency in dependencies.required_dependencies:
-            dependencies.import_module(dependency)
-        dependencies.dependencies_installed = True
-        # register interface
-        register_user_interface()
+            pkg_info = dependencies.get_package_info(dependency)
+            print(dependency.module, pkg_info)
+
+        if dependencies.dependencies_installed:
+            register_user_interface()
 
     except ModuleNotFoundError:
         # Don't register other panels, ui_operators etc.
@@ -70,7 +71,6 @@ def unregister():
             pass
 
     if dependencies.dependencies_installed:
-        # print("UNREGISTER BLENDARMOCAP WITH ACTIVE DEPENDENCIES")
         unregister_ui_panels()
 
 

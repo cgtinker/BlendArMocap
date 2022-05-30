@@ -3,7 +3,6 @@ import bpy
 from . import pref_operators
 from ..utils import dependencies
 from ... import cgt_naming
-from bpy.utils import register_class, unregister_class
 
 
 class BLENDARMOCAP_preferences(bpy.types.AddonPreferences):

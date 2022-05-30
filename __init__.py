@@ -33,7 +33,7 @@ bl_info = {
 
 def reload_modules():
     from .src import cgt_imports
-    cgt_imports.manage_imports(True)
+    cgt_imports.manage_imports()
 
 
 if "bl_info" in locals():
