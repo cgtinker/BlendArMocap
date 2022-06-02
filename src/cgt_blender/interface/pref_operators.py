@@ -41,6 +41,7 @@ class PREFERENCES_OT_CGT_install_dependencies_button(bpy.types.Operator):
         # try to install dependencies
         try:
             dependencies.install_pip()
+
             # dependencies.update_pip()
             for dependency in dependencies.required_dependencies:
                 dependencies.install_and_import_module(dependency)
@@ -58,7 +59,7 @@ class PREFERENCES_OT_CGT_install_dependencies_button(bpy.types.Operator):
 
 class PREFERENCES_OT_CGT_uninstall_dependencies_button(bpy.types.Operator):
     bl_idname = "button.cgt_uninstall_dependencies"
-    bl_label = "Uninstall Dependencies"
+    bl_label = "Uninstall Dependencies and Shutdown Blender"
     bl_description = ("Uninstalls Mediapipe and OpenCV")
     bl_options = {"REGISTER", "INTERNAL"}
 
@@ -68,19 +69,25 @@ class PREFERENCES_OT_CGT_uninstall_dependencies_button(bpy.types.Operator):
         return dependencies.dependencies_installed
 
     def execute(self, context):
-        # unregister function checks for dependencies
-        ui_registration.unregister_ui_panels()
-
-        # uninstall dependencies
-        try:
-            for dependency in dependencies.required_dependencies:
-                dependencies.uninstall_dependency(dependency)
-        except (subprocess.CalledProcessError, ImportError) as err:
-            self.report({"ERROR"}, str(err))
-
-        # reload scripts
         dependencies.dependencies_installed = False
-        # TODO: update UI without reimporting
-        cgt_imports.manage_imports(reload=True)
+        # uninstall dependencies
+        for dependency in dependencies.required_dependencies:
+            try:
+                uninstalled = dependencies.uninstall_dependency(dependency)
+                # TODO find a way to delete site packages on windows
+                if not uninstalled:
+                    dependencies.dependencies_installed = True
+            except (subprocess.CalledProcessError, ImportError) as err:
+                dependencies.dependencies_installed = True
+                self.report({"ERROR"}, str(err))
+
+        if dependencies.dependencies_installed is False:
+            # unregister function checks for dependencies
+            ui_registration.unregister_ui_panels()
+
+        # TODO: hope pip gets fixed
+        bpy.ops.wm.quit_blender()
+        # TODO: update UI without reimporting as soon pip gets fixed
+        # cgt_imports.manage_imports(reload=True)
 
         return {"FINISHED"}

@@ -43,6 +43,8 @@ from .src.cgt_blender.interface import ui_registration
 
 
 def register():
+    from .src.cgt_blender.utils import dependencies
+    dependencies.force_remove_remains()
     ui_registration.register()
 
 

@@ -24,11 +24,14 @@ from ... import cgt_naming
 
 class BLENDARMOCAP_CGT_preferences(bpy.types.AddonPreferences):
     bl_idname = cgt_naming.PACKAGE
+    update = True
 
     def draw(self, context):
         layout = self.layout
-        self.draw_dependencies(layout)
-        self.draw_camera_settings(context, layout)
+        if self.update:
+            self.draw_dependencies(layout)
+            self.draw_camera_settings(context, layout)
+            self.update = False
 
     def draw_dependencies(self, layout):
         """ Dependency layout for user preferences. """
@@ -58,7 +61,7 @@ class BLENDARMOCAP_CGT_preferences(bpy.types.AddonPreferences):
             self.draw_dependency(m_dependency, dependency_box)
 
         dependency_box.row().separator()
-
+        dependency_box.row().label(text="Make sure to have elevated privileges.")
         # install dependencies button
         dependency_box.row().operator(
             pref_operators.PREFERENCES_OT_CGT_install_dependencies_button.bl_idname  #, icon="CONSOLE"
@@ -76,14 +79,14 @@ class BLENDARMOCAP_CGT_preferences(bpy.types.AddonPreferences):
 
         updated_dependency = dependencies.dependency_naming(m_dependency)
         if not dependencies.is_package_installed(updated_dependency):
-            cols[0].label(text=f"{updated_dependency.package}")
+            cols[0].label(text=f"{updated_dependency.name}")
             cols[1].label(text=f"NaN")
             cols[2].label(text=f"NaN")
             cols[3].label(text=f"{False}")
 
         else:
             _version, _path = dependencies.get_package_info(updated_dependency)
-            cols[0].label(text=f"{updated_dependency.package}")
+            cols[0].label(text=f"{updated_dependency.name}")
             cols[1].label(text=f"{_version}")
             cols[2].label(text=f"{_path}")
             cols[3].label(text=f"{True}")

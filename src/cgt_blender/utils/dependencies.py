@@ -30,16 +30,20 @@ import bpy.app
 # region python executable and site-packages
 def get_python_exe():
     version = bpy.app.version
-    if version[0] == 2 and version[1] >= 92:
+    if version[0] > 2 or version[0] == 2 and version[1] >= 92:
         # in newer versions sys.executable should point to the py executable
         executable = sys.executable
 
     else:
-        # blender vers =< 2.91 contains a path to their py executable
-        executable = bpy.app.binary_path_python
+        try:
+            # blender vers =< 2.91 contains a path to their py executable
+            executable = bpy.app.binary_path_python
+        except AttributeError:
+            executable = None
+            pass
 
     # some version the path points to the binary path instead of the py executable
-    if executable == bpy.app.binary_path:
+    if executable == bpy.app.binary_path or executable == None:
         py_path = Path(sys.prefix) / "bin"
         py_exec = next(py_path.glob("python*"))  # first file that starts with "python" in "bin" dir
         executable = str(py_exec)
@@ -65,11 +69,26 @@ def import_module(_dependency):
         May only be used with properly installed dependencies. """
     tmp_dependency = dependency_naming(_dependency)
 
-    if tmp_dependency.name in globals():
-        importlib.reload(globals()[tmp_dependency.name])
+    # TODO: temporarily fetching mediapipe protobuf error  till update
+    try:
+        if tmp_dependency.name in globals():
+            importlib.reload(globals()[tmp_dependency.name])
 
-    else:
-        globals()[tmp_dependency.name] = importlib.import_module(tmp_dependency.name)
+        else:
+            globals()[tmp_dependency.name] = importlib.import_module(tmp_dependency.name)
+    except TypeError as e:
+        # TODO: Remove dirty versioning fix which is required to fix installation issues of beta users
+        print(f"Importing {tmp_dependency.name} dependency failed")
+        if "PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python" in str(e):
+            print("TRY TO FIX PROTOCOL BUFFER ERR\n\n")
+            try:
+                uninstall_dependency(Dependency(module="protobuf==3.19.1", package=None, name="google.protobuf", pkg="protobuf"))
+                install_and_import_module(Dependency(module="protobuf==3.19.1", package=None, name="google.protobuf", pkg="protobuf"))
+            except Exception as e:
+                print("{\nUNKNOWN EXCEPTION OCCURRED\n")
+                print(e)
+        else:
+            print(e)
 
 
 def get_package_info(_dependency):
@@ -95,20 +114,19 @@ def get_package_info(_dependency):
 
 
 def is_package_installed(_dependency):
-    _dependency = dependency_naming(dependency)
-
+    _dependency = dependency_naming(_dependency)
     try:
         # Try to import the module to check if it is available.
         # Blender may has to be restarted to take effect on newly installed or removed dependencies.
-        importlib.import_module(_dependency.name)
         tmp_dependency = dependency_naming(_dependency)
+        importlib.import_module(_dependency.name)
 
         # Installed dependencies are added to globals.
         if tmp_dependency.name in globals():
             importlib.reload(globals()[tmp_dependency.name])
             return True
         else:
-            if tmp_dependency.name is 'pip':
+            if tmp_dependency.name == 'pip':
                 # pip shouldn't be in globals
                 return True
             return False
@@ -175,14 +193,18 @@ def install_and_import_module(_dependency):
     try:
         print(f"Attempting to install: {_dependency.module}")
         environ_copy = clear_user_site()
-        cmd = [python_exe, "-m", "pip", "install", "--no-cache-dir", tmp_dependency.package]
+        # cmd = [python_exe, "-m", "pip", "install", "--no-cache-dir", tmp_dependency.package]
+        cmd = [python_exe, "-m", "pip", "install", tmp_dependency.package]
+        print(cmd)
         installed = subprocess.call(cmd, env=environ_copy) == 0
 
     except Exception as e:
         print(e)
+        print("ATTEMPT TO USE USER TAG")
         # The "--user" option does not work with Blender's Python version as it's in another directory.
         # However, the added user site packages tries to bypass the behaviour
         cmd = [python_exe, "-m", "pip", "install", "--no-cache-dir", tmp_dependency.package, "--user"]
+        print(cmd)
         installed = subprocess.call(cmd) == 0
 
     # subprocess.run(cmd, check=True, env=environ_copy)
@@ -196,20 +218,44 @@ def install_and_import_module(_dependency):
 
 
 def uninstall_dependency(_dependency):
+    cmd = [python_exe, "-m", "pip", "freeze", ">", _dependency.pkg]
+    frozen = subprocess.call(cmd) == 0
+    print(f"{_dependency.pkg} disabled {frozen}")
+
     # Uninstall dependency without question prompt.
     cmd = [python_exe, "-m", "pip", "uninstall", "-y", _dependency.pkg]
     uninstalled = subprocess.call(cmd) == 0
 
     if uninstalled:
         print(f"Uninstalled {_dependency.module} successfully.")
+        return True
     else:
         print(f"Failed to uninstall {_dependency.module}.")
+        print(uninstalled)
+        return False
+
+
+def force_remove_remains():
+    if sys.platform == 'win32':
+        import pkg_resources
+        dist_info = pkg_resources.get_distribution("pip")
+        for file in Path(str(dist_info.location)).iterdir():
+            if str(file.name).startswith("~"):
+                import shutil
+                try:
+                    shutil.rmtree(file)
+                except PermissionError as e:
+                    print(e)
+                    print("\nRestart Blender to remove the conflicted files")
 # endregion
 
 
 Dependency = namedtuple("Dependency", ["module", "package", "name", "pkg"])
-required_dependencies = (Dependency(module="mediapipe", package=None, name=None, pkg="mediapipe"),
-                         Dependency(module="opencv-python", package=None, name="cv2", pkg="opencv_contrib_python"))
+required_dependencies = (
+    Dependency(module="protobuf==3.19.1", package=None, name="google.protobuf", pkg="protobuf"),
+    Dependency(module="mediapipe==0.8.10", package=None, name="mediapipe", pkg="mediapipe"),
+    Dependency(module="opencv-python==4.5.5.64", package=None, name="cv2", pkg="opencv_contrib_python"))
+
 
 global dependencies_installed
 dependencies_installed = True
