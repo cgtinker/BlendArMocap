@@ -134,6 +134,10 @@ class RigifyPose(abs_rigging.BpyRigging):
             POSE.right_foot_index_ik:   [self.bone_name_provider.foot_ik_L, "LOCKED_TRACK", "TRACK_NEGATIVE_Y"]
         }
 
+        # reset if overwrite
+        bone_names = [pair[0] for key, pair in self.pose_constraints.items()]
+        self.remove_bone_constraints(bone_names)
+
         # region bone center driver setup
         # bone center drivers for limb driver chain
         self.center_points = [m_V.center_point(self.bone_head(v[0]), self.bone_head(v[1]))

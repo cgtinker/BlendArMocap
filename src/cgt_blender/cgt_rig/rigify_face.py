@@ -21,7 +21,6 @@ from .abs_rigging import BpyRigging
 from . import face_drivers
 from ...cgt_naming import FACE
 from .rigify_naming import rigify_face_bone_names
-from ..utils import objects
 
 
 class RigifyFace(BpyRigging):
@@ -56,15 +55,10 @@ class RigifyFace(BpyRigging):
             FACE.chin:        [bone_name_provider.jaw, "COPY_ROTATION"],
         }
         # endregion
+
         # reset if overwrite
-        # remove constraints if overwrite
-        user_prefs = objects.user_pref()
-        if user_prefs.overwrite_drivers_bool:
-            from ..utils import constraints
-            for key, pair in self.constraint_dict.items():
-                constraints.remove_constraints(self.pose_bones[pair[0]])    # pair 0 = bone name in dict
-            bpy.context.view_layer.update()
-        # endregion
+        bone_names = [pair[0] for key, pair in self.constraint_dict.items()]
+        self.remove_bone_constraints(bone_names)
 
         # region eye drivers
 

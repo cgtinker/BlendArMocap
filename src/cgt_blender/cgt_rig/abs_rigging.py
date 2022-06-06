@@ -115,6 +115,18 @@ class BpyRigging(ABC):
         # returns the bone head position of a pose bone
         return self.pose_bones[bone_name].head
 
+    def remove_bone_constraints(self, bones):
+        # reset if overwrite
+        # remove constraints if overwrite
+        user_prefs = objects.user_pref()
+        if user_prefs.overwrite_drivers_bool:
+            from ..utils import constraints
+            import bpy
+            for bone_name in bones:
+                constraints.remove_constraints(self.pose_bones[bone_name])  # pair 0 = bone name in dict
+            bpy.context.view_layer.update()
+        # endregion
+
     # region joint length
     def get_average_joint_bone_length(self, joint_bone_names, pose_bones):
         """ requires an array of joints names [[bone_a, bone_b], []... ] and pose bones.
