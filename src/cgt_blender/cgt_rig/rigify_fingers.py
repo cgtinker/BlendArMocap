@@ -18,6 +18,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 from . import abs_rigging
 from ...cgt_naming import HAND
 from .hand_drivers import FingerDriverContainer
+from .rigify_naming import rigify_finger_bone_names
 
 
 class RigifyHands(abs_rigging.BpyRigging):
@@ -27,6 +28,8 @@ class RigifyHands(abs_rigging.BpyRigging):
     def __init__(self, armature, driver_objects):
         super().__init__(armature)
         # driver to rigify cgt_rig transfer name references
+        bone_name_provider = rigify_finger_bone_names.RigifyBoneNameProvider()
+        bone_name_provider.update()
 
         self.constraint_limits = [
             [-0.261, 3.14159], [-0.261, 3.1415926], [-0.349, 3.1415926],  # thumb
@@ -39,27 +42,27 @@ class RigifyHands(abs_rigging.BpyRigging):
         self.no_limits = [[-3.142, 3.142]]*15
 
         self.rigify_bone_refs = {
-            HAND.wrist:                    "hand_ik",
-            HAND.driver_thumb_cmc:         "thumb.01",
-            HAND.driver_thumb_mcp:         "thumb.02",
-            HAND.driver_thumb_ip:          "thumb.03",
-            # HAND.driver_thumb_tip:         "thumb.01",
-            HAND.driver_index_finger_mcp:  "f_index.01",
-            HAND.driver_index_finger_pip:  "f_index.02",
-            HAND.driver_index_finger_dip:  "f_index.03",
-            # HAND.driver_index_finger_tip:  "f_index.01",
-            HAND.driver_middle_finger_mcp: "f_middle.01",
-            HAND.driver_middle_finger_pip: "f_middle.02",
-            HAND.driver_middle_finger_dip: "f_middle.03",
-            # HAND.driver_middle_finger_tip: "f_middle.01",
-            HAND.driver_ring_finger_mcp:   "f_ring.01",
-            HAND.driver_ring_finger_pip:   "f_ring.02",
-            HAND.driver_ring_finger_dip:   "f_ring.03",
-            # HAND.driver_ring_finger_tip:   "f_ring.01",
-            HAND.driver_pinky_mcp:         "f_pinky.01",
-            HAND.driver_pinky_pip:         "f_pinky.02",
-            HAND.driver_pinky_dip:         "f_pinky.03",
-            # HAND.driver_pinky_tip:         "f_pinky.01",
+            HAND.wrist:                    bone_name_provider.wrist,
+            HAND.driver_thumb_cmc:         bone_name_provider.thumb_cmc,
+            HAND.driver_thumb_mcp:         bone_name_provider.thumb_mcp,
+            HAND.driver_thumb_ip:          bone_name_provider.thumb_ip,
+            # HAND.driver_thumb_tip:          bone_name_provider.thumb_tip,
+            HAND.driver_index_finger_mcp:  bone_name_provider.index_mcp,
+            HAND.driver_index_finger_pip:  bone_name_provider.index_pip,
+            HAND.driver_index_finger_dip:  bone_name_provider.index_dip,
+            # HAND.driver_index_finger_tip:  bone_name_provider.index_tip,
+            HAND.driver_middle_finger_mcp: bone_name_provider.middle_mcp,
+            HAND.driver_middle_finger_pip: bone_name_provider.middle_pip,
+            HAND.driver_middle_finger_dip: bone_name_provider.middle_dip,
+            # HAND.driver_middle_finger_tip: bone_name_provider.middle_tip,
+            HAND.driver_ring_finger_mcp:   bone_name_provider.ring_mcp,
+            HAND.driver_ring_finger_pip:   bone_name_provider.ring_pip,
+            HAND.driver_ring_finger_dip:   bone_name_provider.ring_dip,
+            # HAND.driver_ring_finger_tip:   bone_name_provider.ring_tip,
+            HAND.driver_pinky_mcp:         bone_name_provider.pinky_mcp,
+            HAND.driver_pinky_pip:         bone_name_provider.pinky_pip,
+            HAND.driver_pinky_dip:         bone_name_provider.pinky_dip,
+            # HAND.driver_pinky_tip:         bone_name_provider.pinky_tip,
         }
         self.bone_ref_list = list(self.rigify_bone_refs.keys())
 
@@ -93,6 +96,7 @@ class RigifyHands(abs_rigging.BpyRigging):
         left_finger_targets = [value + ".L" for value in finger_driver_references.values()]
         right_finger_targets = [value + ".R" for value in finger_driver_references.values()]
 
+        # setting up drivers for fingers
         self.left_finger_angle_drivers = FingerDriverContainer(
             left_finger_targets,
             left_finger_provider,
@@ -141,6 +145,7 @@ class RigifyHands(abs_rigging.BpyRigging):
                 extension = ".L"
             else:
                 extension = ".R"
+
             # remove extension from driver name
             name = empty.name.replace(extension, "")
             try:

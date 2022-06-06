@@ -21,22 +21,42 @@ from . import abs_rigging, limb_drivers
 from ..utils import objects
 from ...cgt_naming import POSE
 from ...cgt_utils import m_V
+from .rigify_naming import rigify_pose_bone_names
 
 
 class RigifyPose(abs_rigging.BpyRigging):
     """ Used for mapping values to drivers, holds rigify bone names and custom data names.
         Objects are getting searched by name, then drivers and constraints get applied. """
 
-    # center of ik drivers
-    center_driver_targets = [
-        POSE.shoulder_center_ik,
-        POSE.hip_center_ik
+    # center of rigify bones
+    bone_name_provider = rigify_pose_bone_names.RigifyBoneNameProvider()
+    bone_name_provider.update()
+    rigify_joints = [
+        # arms
+        [bone_name_provider.shoulder_c, bone_name_provider.upper_arm_R],
+        [bone_name_provider.upper_arm_R, bone_name_provider.forearm_R],
+        [bone_name_provider.forearm_R, bone_name_provider.hand_R],
+        [bone_name_provider.hand_R, bone_name_provider.finger_R],
+        [bone_name_provider.shoulder_c, bone_name_provider.upper_arm_L],
+        [bone_name_provider.upper_arm_L, bone_name_provider.forearm_L],
+        [bone_name_provider.forearm_L, bone_name_provider.hand_L],
+        [bone_name_provider.hand_L, bone_name_provider.finger_L],
+
+        # legs
+        [bone_name_provider.hip_c, bone_name_provider.upper_leg_R],
+        [bone_name_provider.upper_leg_R, bone_name_provider.knee_R],
+        [bone_name_provider.knee_R, bone_name_provider.foot_R],
+        [bone_name_provider.foot_R, bone_name_provider.toe_R],
+        [bone_name_provider.hip_c, bone_name_provider.upper_leg_L],
+        [bone_name_provider.upper_leg_L, bone_name_provider.knee_L],
+        [bone_name_provider.knee_L, bone_name_provider.foot_L],
+        [bone_name_provider.foot_L, bone_name_provider.toe_L],
     ]
 
-    # center of rigify bones
     rigify_bone_center = [
-        ["upper_arm_fk.R", "upper_arm_fk.L"],
-        ["thigh_fk.R", "thigh_fk.L"]]
+        [bone_name_provider.upper_arm_R, bone_name_provider.upper_arm_L],
+        [bone_name_provider.upper_leg_R, bone_name_provider.upper_leg_L]
+    ]
 
     # region limb drivers
     # driver targets
@@ -51,21 +71,6 @@ class RigifyPose(abs_rigging.BpyRigging):
         POSE.left_foot_ik, POSE.left_foot_index_ik,
         POSE.right_hip_ik, POSE.right_shin_ik,
         POSE.right_foot_ik, POSE.right_foot_index_ik
-    ]
-
-    # joints of the rig
-    rigify_joints = [
-        # arms
-        ["shoulder_center", "upper_arm_fk.R"], ["upper_arm_fk.R", "forearm_fk.R"],
-        ["forearm_fk.R", "hand_fk.R"], ["hand_fk.R", "f_middle.01_master.R"],
-        ["shoulder_center", "upper_arm_fk.L"], ["upper_arm_fk.L", "forearm_fk.L"],
-        ["forearm_fk.L", "hand_fk.L"], ["hand_fk.L", "f_middle.01_master.L"],
-
-        # legs
-        ["torso", "thigh_fk.R"], ["thigh_fk.R", "shin_fk.R"],
-        ["shin_fk.R", "foot_fk.R"], ["foot_fk.R", "toe.R"],
-        ["torso", "thigh_fk.L"], ["thigh_fk.L", "shin_fk.L"],
-        ["shin_fk.L", "foot_fk.L"], ["foot_fk.L", "toe.L"]
     ]
 
     # origins of the drivers (getting previous pos of driver)
@@ -96,32 +101,37 @@ class RigifyPose(abs_rigging.BpyRigging):
         [POSE.right_knee, POSE.right_ankle], [POSE.right_ankle, POSE.right_foot_index]
     ]
 
+    # center of ik drivers
+    center_driver_targets = [
+        POSE.shoulder_center_ik,
+        POSE.hip_center_ik
+    ]
     # endregion
 
     def __init__(self, armature, driver_objects: list):
         super().__init__(armature)
         self.pose_constraints = {
             # plain copy rotation
-            POSE.hip_center:            ["torso", "COPY_ROTATION"],
-            POSE.shoulder_center:       ["chest", "COPY_ROTATION"],
+            POSE.hip_center:            [self.bone_name_provider.hip_center, "COPY_ROTATION"],
+            POSE.shoulder_center:       [self.bone_name_provider.shoulder_center, "COPY_ROTATION"],
 
             # arm poses
-            POSE.left_hand_ik:          ["hand_ik.R", "CHILD_OF", armature],
-            POSE.right_hand_ik:         ["hand_ik.L", "CHILD_OF", armature],
-            POSE.left_forearm_ik:       ["upper_arm_ik_target.R", "LIMIT_DISTANCE"],
-            POSE.right_forearm_ik:      ["upper_arm_ik_target.L", "LIMIT_DISTANCE"],
+            POSE.left_hand_ik:          [self.bone_name_provider.hand_ik_R, "CHILD_OF", armature],
+            POSE.right_hand_ik:         [self.bone_name_provider.hand_ik_L, "CHILD_OF", armature],
+            POSE.left_forearm_ik:       [self.bone_name_provider.forearm_ik_R, "LIMIT_DISTANCE"],
+            POSE.right_forearm_ik:      [self.bone_name_provider.forearm_ik_L, "LIMIT_DISTANCE"],
 
             # damped track to pose driver
-            POSE.left_index_ik:         ["hand_ik.R", "LOCKED_TRACK", "TRACK_Y"],
-            POSE.right_index_ik:        ["hand_ik.L", "LOCKED_TRACK", "TRACK_Y"],
+            POSE.left_index_ik:         [self.bone_name_provider.hand_ik_R, "LOCKED_TRACK", "TRACK_Y"],
+            POSE.right_index_ik:        [self.bone_name_provider.hand_ik_L, "LOCKED_TRACK", "TRACK_Y"],
 
             # leg poses
-            POSE.left_shin_ik:          ["thigh_ik_target.R", "LIMIT_DISTANCE"],
-            POSE.right_shin_ik:         ["thigh_ik_target.L", "LIMIT_DISTANCE"],
-            POSE.left_foot_ik:          ["foot_ik.R", "CHILD_OF", armature],
-            POSE.right_foot_ik:         ["foot_ik.L", "CHILD_OF", armature],
-            POSE.left_foot_index_ik:    ["foot_ik.R", "LOCKED_TRACK", "TRACK_NEGATIVE_Y"],
-            POSE.right_foot_index_ik:   ["foot_ik.L", "LOCKED_TRACK", "TRACK_NEGATIVE_Y"]
+            POSE.left_shin_ik:          [self.bone_name_provider.shin_ik_R, "LIMIT_DISTANCE"],
+            POSE.right_shin_ik:         [self.bone_name_provider.shin_ik_R, "LIMIT_DISTANCE"],
+            POSE.left_foot_ik:          [self.bone_name_provider.foot_ik_R, "CHILD_OF", armature],
+            POSE.right_foot_ik:         [self.bone_name_provider.foot_ik_L, "CHILD_OF", armature],
+            POSE.left_foot_index_ik:    [self.bone_name_provider.foot_ik_R, "LOCKED_TRACK", "TRACK_NEGATIVE_Y"],
+            POSE.right_foot_index_ik:   [self.bone_name_provider.foot_ik_L, "LOCKED_TRACK", "TRACK_NEGATIVE_Y"]
         }
 
         # region bone center driver setup
@@ -165,11 +175,11 @@ class RigifyPose(abs_rigging.BpyRigging):
 
     def activate_rigify_poles(self, user):
         """ activate rigify ik poles """
-        self.armature.pose.bones["upper_arm_parent.L"]["pole_vector"] = 1
-        self.armature.pose.bones["upper_arm_parent.R"]["pole_vector"] = 1
+        self.armature.pose.bones[self.bone_name_provider.elbow_pole_L][self.bone_name_provider.pole_key] = 1
+        self.armature.pose.bones[self.bone_name_provider.elbow_pole_R][self.bone_name_provider.pole_key] = 1
         if user.experimental_feature_bool:
-            self.armature.pose.bones["thigh_parent.R"]["pole_vector"] = 1
-            self.armature.pose.bones["thigh_parent.L"]["pole_vector"] = 1
+            self.armature.pose.bones[self.bone_name_provider.knee_pole_R][self.bone_name_provider.pole_key] = 1
+            self.armature.pose.bones[self.bone_name_provider.knee_pole_L][self.bone_name_provider.pole_key] = 1
 
     def get_rigify_joint_lengths(self):
         """ return the lengths of given joints while it uses
@@ -177,9 +187,9 @@ class RigifyPose(abs_rigging.BpyRigging):
 
         joint_lengths = []
         for joint in self.rigify_joints:
-            if "shoulder_center" in joint:
+            if self.bone_name_provider.shoulder_c in joint:
                 joint_locs = [self.center_points[0], self.bone_head(joint[1])]
-            elif "hip_center" in joint:
+            elif self.bone_name_provider.hip_c in joint:
                 joint_locs = [self.center_points[1], self.bone_head(joint[1])]
             else:
                 joint_locs = [self.bone_head(name) for name in joint]

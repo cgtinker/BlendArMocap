@@ -20,6 +20,8 @@ import bpy
 from .abs_rigging import BpyRigging
 from . import face_drivers
 from ...cgt_naming import FACE
+from .rigify_naming import rigify_face_bone_names
+from ..utils import objects
 
 
 class RigifyFace(BpyRigging):
@@ -28,12 +30,50 @@ class RigifyFace(BpyRigging):
 
     def __init__(self, armature: bpy.types.Object, driver_objects: list):
         super().__init__(armature)
+        bone_name_provider = rigify_face_bone_names.RigifyBoneNameProvider()
+        bone_name_provider.update()
+
+        # region constraints
+        self.constraint_dict = {
+            FACE.right_eye_t: [bone_name_provider.upper_lid_r, "COPY_LOCATION_OFFSET"],
+            FACE.right_eye_b: [bone_name_provider.lower_lid_r, "COPY_LOCATION_OFFSET"],
+            FACE.left_eye_t:  [bone_name_provider.upper_lid_l, "COPY_LOCATION_OFFSET"],
+            FACE.left_eye_b:  [bone_name_provider.lower_lid_l, "COPY_LOCATION_OFFSET"],
+
+            FACE.mouth_t:     [bone_name_provider.lip_t, "COPY_LOCATION_OFFSET"],
+            FACE.mouth_b:     [bone_name_provider.lip_b, "COPY_LOCATION_OFFSET"],
+            FACE.mouth_l:     [bone_name_provider.lip_r, "COPY_LOCATION_OFFSET"],
+            FACE.mouth_r:     [bone_name_provider.lip_l, "COPY_LOCATION_OFFSET"],
+
+            FACE.eyebrow_in_l:   [bone_name_provider.brow_in_r, "COPY_LOCATION_OFFSET"],
+            # FACE.eyebrow_mid_l:  [bone_name_provider.brow_mid_r, "COPY_LOCATION_OFFSET"], # constrained by rigify
+            FACE.eyebrow_out_l:  [bone_name_provider.brow_out_r, "COPY_LOCATION_OFFSET"],
+            FACE.eyebrow_in_r:   [bone_name_provider.brow_in_l, "COPY_LOCATION_OFFSET"],
+            # FACE.eyebrow_mid_r:  [bone_name_provider.brow_mid_l, "COPY_LOCATION_OFFSET"], # constrained by rigify
+            FACE.eyebrow_out_r:  [bone_name_provider.brow_out_l, "COPY_LOCATION_OFFSET"],
+
+            FACE.head:        [bone_name_provider.head, "COPY_ROTATION_WORLD"],
+            FACE.chin:        [bone_name_provider.jaw, "COPY_ROTATION"],
+        }
+        # endregion
+        # reset if overwrite
+        # remove constraints if overwrite
+        user_prefs = objects.user_pref()
+        if user_prefs.overwrite_drivers_bool:
+            from ..utils import constraints
+            for key, pair in self.constraint_dict.items():
+                constraints.remove_constraints(self.pose_bones[pair[0]])    # pair 0 = bone name in dict
+            bpy.context.view_layer.update()
+        # endregion
+
         # region eye drivers
+
+
         eye_driver_names = [[FACE.right_eye_t, FACE.right_eye_b], [FACE.left_eye_t, FACE.left_eye_b]]
         eye_dist_provider_objs = [FACE.right_eye, FACE.left_eye]
         eye_bone_names = [
-            ["lid.T.R.002", "lid.B.R.002"],
-            ["lid.T.L.002", "lid.B.L.002"]]
+            [bone_name_provider.upper_lid_r, bone_name_provider.lower_lid_r],
+            [bone_name_provider.upper_lid_l, bone_name_provider.lower_lid_l]]
         rig_eye_distances = self.get_bone_distances(eye_bone_names)
         self.eye_drivers = face_drivers.EyeDriverContainer(
             eye_driver_names, eye_dist_provider_objs, rig_eye_distances, eye_bone_names)
@@ -41,7 +81,8 @@ class RigifyFace(BpyRigging):
 
         # region mouth drivers
         mouth_driver_names = [[FACE.mouth_t, FACE.mouth_b], [FACE.mouth_r, FACE.mouth_l]]
-        mouth_bone_names = [["lip.T", "lip.B"], ["lips.R", "lips.L"]]
+        mouth_bone_names = [[bone_name_provider.lip_t, bone_name_provider.lip_b],
+                            [bone_name_provider.lip_r, bone_name_provider.lip_l]]
         mouth_provider_objs = [FACE.mouth, FACE.mouth_corners]
         mouth_distances = self.get_bone_distances(mouth_bone_names)
         self.mouth_drivers = face_drivers.MouthDriverContainer(
@@ -51,10 +92,12 @@ class RigifyFace(BpyRigging):
         # region eyebrow drivers
         eyebrow_provider_objs = [FACE.left_eyebrow, FACE.right_eyebrow]
         eyebrow_bone_names = [
-            ["brow.T.R.003", "DEF-forehead.R"],  # ["brow.T.R.002", "DEF-forehead.R.001"],
-            ["brow.T.R.001", "DEF-forehead.R.002"],
-            ["brow.T.L.003", "DEF-forehead.L"],  # ["brow.T.L.002", "DEF-forehead.L.001"],
-            ["brow.T.L.001", "DEF-forehead.L.002"]]
+            [bone_name_provider.brow_in_r, bone_name_provider.forehead_in_r],
+            # [bone_name_provider.brow_mid_r, bone_name_provider.forehead_mid_r],
+            [bone_name_provider.brow_out_r, bone_name_provider.forehead_out_r],
+            [bone_name_provider.brow_in_l, bone_name_provider.forehead_in_l],
+            # [bone_name_provider.brow_mid_l, bone_name_provider.forehead_mid_l],
+            [bone_name_provider.brow_out_l, bone_name_provider.forehead_out_l]]
         eyebrow_distances = self.get_bone_distances(eyebrow_bone_names)
         eyebrow_driver_names = [
             FACE.eyebrow_in_l,  # FACE.eyebrow_mid_l,
@@ -67,35 +110,11 @@ class RigifyFace(BpyRigging):
         )
         # endregion
 
-        # region constraints
-        self.constraint_dict = {
-            FACE.right_eye_t: [eye_bone_names[0][0], "COPY_LOCATION_OFFSET"],
-            FACE.right_eye_b: [eye_bone_names[0][1], "COPY_LOCATION_OFFSET"],
-            FACE.left_eye_t:  [eye_bone_names[1][0], "COPY_LOCATION_OFFSET"],
-            FACE.left_eye_b:  [eye_bone_names[1][1], "COPY_LOCATION_OFFSET"],
-
-            FACE.mouth_t:     [mouth_bone_names[0][0], "COPY_LOCATION_OFFSET"],
-            FACE.mouth_b:     [mouth_bone_names[0][1], "COPY_LOCATION_OFFSET"],
-            FACE.mouth_l:     [mouth_bone_names[1][0], "COPY_LOCATION_OFFSET"],
-            FACE.mouth_r:     [mouth_bone_names[1][1], "COPY_LOCATION_OFFSET"],
-
-            FACE.eyebrow_in_l:   [eyebrow_bone_names[0][0], "COPY_LOCATION_OFFSET"],
-            # FACE.eyebrow_mid_l:  [eyebrow_bone_names[1][0], "COPY_LOCATION_OFFSET"], # constrained by rigify
-            FACE.eyebrow_out_l:  [eyebrow_bone_names[1][0], "COPY_LOCATION_OFFSET"],
-            FACE.eyebrow_in_r:   [eyebrow_bone_names[2][0], "COPY_LOCATION_OFFSET"],
-            # FACE.eyebrow_mid_r:  [eyebrow_bone_names[4][0], "COPY_LOCATION_OFFSET"], # constrained by rigify
-            FACE.eyebrow_out_r:  [eyebrow_bone_names[3][0], "COPY_LOCATION_OFFSET"],
-
-            FACE.head:        ["head", "COPY_ROTATION_WORLD"],
-            FACE.chin:        ["jaw_master", "COPY_ROTATION"],
-            # endregion
-        }
-        # endregion
-
         self.apply_driver([self.eye_drivers, self.mouth_drivers, self.eyebrow_drivers])
         self.apply_constraints(self.constraint_dict)
 
     def get_bone_distances(self, bone_pairs):
+        # get distance between bones
         distances = []
         for pair in bone_pairs:
             avg_scale = self.get_average_joint_bone_length([pair], self.pose_bones)

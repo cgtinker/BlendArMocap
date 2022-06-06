@@ -24,45 +24,6 @@ from ..utils.mapping import Slope, CustomProps
 
 
 @dataclass(repr=True)
-class CustomAngleMultiplier(DriverProperties):
-    target_object: str = ""
-    provider_obj: str = ""
-    functions: list = None
-
-    def __init__(self,
-                 driver_target: str,
-                 provider_obj: str,
-                 x_slope: Slope,
-                 z_slope: Slope):
-        """ Provides eye driver properties to animate the lids.
-            :param provider_obj: object providing rotation values.
-            :param slope: factor to multiply and offset the rotation
-            :param offset: offsets the base input value
-        """
-        prop_name = "fac"
-        self.target_object = driver_target
-        self.target_type = ObjectType.OBJECT
-
-        if z_slope.min_in == 0 and z_slope.max_in == 1:
-            self.custom_target_props = CustomProps(prop_name, (x_slope.min_out, x_slope.max_out))
-        else:
-            self.custom_target_props = CustomProps(prop_name, (
-                x_slope.min_out, x_slope.max_out,
-                z_slope.min_out, z_slope.max_out
-            ))
-
-        self.provider_obj = provider_obj
-        self.provider_type = ObjectType.BONE
-        self.target_rig = True
-        self.driver_type = DriverType.CUSTOM  # ? or single prop ?
-
-        self.property_type = "rotation_euler"
-        self.property_name = "fac"
-        self.data_paths = [f'pose.bones["{provider_obj}"]["{prop_name}"]'] * 3
-        self.functions = ["", "", ""]
-
-
-@dataclass(repr=True)
 class FingerAngleDriver(DriverProperties):
     target_object: str = ""
     functions: list = None
@@ -102,7 +63,7 @@ class DefaultFingerAngleDriver(DriverProperties):
                  driver_target: str,
                  provider_obj: object,
                  x_slope: Slope):
-        """ Provides finger driver properties to animate the x- & z-angles.
+        """ Provides finger driver properties to animate the x-angles.
             :param provider_obj: object providing rotation values.
             :param slope: factor to multiply and offset the rotation
             :param offset: offsets the base input value
