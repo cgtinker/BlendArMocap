@@ -235,8 +235,11 @@ def move_package_b4removal(_dependency):
     package_path = Path(package_init).parent
 
     import pkg_resources
-    # create default dist info path
-    dist_info = pkg_resources.get_distribution(_dependency.pkg)
+    try:
+        dist_info = pkg_resources.get_distribution(_dependency.pkg)
+    except pkg_resources.DistributionNotFound:
+        return
+
     tmp_dist_path = Path(dist_info.location) / f"{dist_info.project_name}-{dist_info.version}.dist-info"
     canonize_dist = canonize_path(str(tmp_dist_path))
     dist_path = None
@@ -249,9 +252,10 @@ def move_package_b4removal(_dependency):
             dist_path = dist
             break
 
-    # path to custom trash
-    file = Path(__file__).parent
+    # todo: improve path name - path to custom trash
+    file = Path(__file__).parent.parent.parent
     trash = file / "trash"
+    trash.mkdir(parents=True, exist_ok=True)
 
     # move dists to custom trash folder to delete on restart
     import shutil
@@ -259,7 +263,7 @@ def move_package_b4removal(_dependency):
     for r_path in [dist_path, package_path]:
         if r_path is None:
             continue
-        # todo: implement try except block if necessary
+
         if r_path.is_dir():
             shutil.move(str(r_path), str(trash))
             print(f"Successfully moved package for further removal:\nFrom: {str(r_path)}\nTo: {str(trash)}")
@@ -300,8 +304,10 @@ def force_remove_remains():
     if sys.platform != 'win32':
         return
 
-    m_dir = Path(__file__).parent
+    # todo: improve path name
+    m_dir = Path(__file__).parent.parent.parent
     trash = m_dir / "trash"
+    trash.mkdir(parents=True, exist_ok=True)
     import shutil
     for file in trash.iterdir():
         try:
@@ -309,19 +315,6 @@ def force_remove_remains():
         except PermissionError as e:
             print(e)
             print("\n\nRestart Blender to remove files")
-    """
-    if sys.platform == 'win32':
-        import pkg_resources
-        dist_info = pkg_resources.get_distribution("pip")
-        for file in Path(str(dist_info.location)).iterdir():
-            if str(file.name).startswith("~"):
-                import shutil
-                try:
-                    shutil.rmtree(file)
-                except PermissionError as e:
-                    print(e)
-                    print("\nRestart Blender to remove the conflicted files")
-    """
 # endregion
 
 
