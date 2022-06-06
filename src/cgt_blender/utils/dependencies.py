@@ -217,12 +217,71 @@ def install_and_import_module(_dependency):
     import_module(tmp_dependency)
 
 
-def uninstall_dependency(_dependency):
-    cmd = [python_exe, "-m", "pip", "freeze", ">", _dependency.pkg]
-    frozen = subprocess.call(cmd) == 0
-    print(f"{_dependency.pkg} disabled {frozen}")
+def move_package_b4removal(_dependency):
+    """ Moving packages to delete in a separate folder.
+        Deleting the folder contents after restarting Blender.
+        -> force_remove_remains()
+        https://developer.blender.org/T77837 """
+    import re
 
-    # Uninstall dependency without question prompt.
+    def canonize_path(name):
+        # pip/src/pip/_vendor/packaging/utils.py
+        _canonicalize_regex = re.compile(r"[-_.]+")
+        value = _canonicalize_regex.sub("-", name).lower()
+        return value
+
+    # get path to package
+    package_init = importlib.import_module(_dependency.name).__file__
+    package_path = Path(package_init).parent
+
+    import pkg_resources
+    # create default dist info path
+    dist_info = pkg_resources.get_distribution(_dependency.pkg)
+    tmp_dist_path = Path(dist_info.location) / f"{dist_info.project_name}-{dist_info.version}.dist-info"
+    canonize_dist = canonize_path(str(tmp_dist_path))
+    dist_path = None
+
+    # compare to dists in site packages
+    site_packages = Path(dist_info.location)
+    for dist in site_packages.iterdir():
+        tmp_canonize_dist = canonize_path(str(dist))
+        if canonize_dist == tmp_canonize_dist:
+            dist_path = dist
+            break
+
+    # path to custom trash
+    file = Path(__file__).parent
+    trash = file / "trash"
+
+    # move dists to custom trash folder to delete on restart
+    import shutil
+    success = []
+    for r_path in [dist_path, package_path]:
+        if r_path is None:
+            continue
+        # todo: implement try except block if necessary
+        if r_path.is_dir():
+            shutil.move(str(r_path), str(trash))
+            print(f"Successfully moved package for further removal:\nFrom: {str(r_path)}\nTo: {str(trash)}")
+            success.append(True)
+        else:
+            print("Failed to move package to", str(trash))
+            success.append(False)
+
+    # return if moving dirs was successful
+    if False in success:
+        return False
+    return True
+
+
+def uninstall_dependency(_dependency):
+    if sys.platform != "win32":
+        pass
+    else:
+        # uninstalling using pip is currently not possible on win
+        return move_package_b4removal(_dependency)
+
+    # Uninstall dependency without question prompt on linux / macos
     cmd = [python_exe, "-m", "pip", "uninstall", "-y", _dependency.pkg]
     uninstalled = subprocess.call(cmd) == 0
 
@@ -236,6 +295,21 @@ def uninstall_dependency(_dependency):
 
 
 def force_remove_remains():
+    # uninstalling packages doesn't work on windows, they are getting
+    # force removed on restart
+    if sys.platform != 'win32':
+        return
+
+    m_dir = Path(__file__).parent
+    trash = m_dir / "trash"
+    import shutil
+    for file in trash.iterdir():
+        try:
+            shutil.rmtree(file)
+        except PermissionError as e:
+            print(e)
+            print("\n\nRestart Blender to remove files")
+    """
     if sys.platform == 'win32':
         import pkg_resources
         dist_info = pkg_resources.get_distribution("pip")
@@ -247,6 +321,7 @@ def force_remove_remains():
                 except PermissionError as e:
                     print(e)
                     print("\nRestart Blender to remove the conflicted files")
+    """
 # endregion
 
 

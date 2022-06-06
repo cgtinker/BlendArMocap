@@ -44,6 +44,7 @@ from .src.cgt_blender.interface import ui_registration
 
 def register():
     from .src.cgt_blender.utils import dependencies
+    # ugly fix to delete packages to remove on restart
     dependencies.force_remove_remains()
     ui_registration.register()
 

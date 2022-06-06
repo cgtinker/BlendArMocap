@@ -16,6 +16,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import subprocess
+import sys
 
 import bpy
 
@@ -41,7 +42,6 @@ class PREFERENCES_OT_CGT_install_dependencies_button(bpy.types.Operator):
         # try to install dependencies
         try:
             dependencies.install_pip()
-
             # dependencies.update_pip()
             for dependency in dependencies.required_dependencies:
                 dependencies.install_and_import_module(dependency)
@@ -59,8 +59,11 @@ class PREFERENCES_OT_CGT_install_dependencies_button(bpy.types.Operator):
 
 class PREFERENCES_OT_CGT_uninstall_dependencies_button(bpy.types.Operator):
     bl_idname = "button.cgt_uninstall_dependencies"
-    bl_label = "Uninstall Dependencies and Shutdown Blender"
-    bl_description = ("Uninstalls Mediapipe and OpenCV")
+    if sys.platform == "win32":
+        bl_label = "Uninstall Dependencies and Shutdown Blender"
+    else:
+        bl_label = "Uninstall Dependencies"
+    bl_description = ("Uninstalls Mediapipe, OpenCV, Google Protobuffers")
     bl_options = {"REGISTER", "INTERNAL"}
 
     @classmethod
@@ -70,11 +73,11 @@ class PREFERENCES_OT_CGT_uninstall_dependencies_button(bpy.types.Operator):
 
     def execute(self, context):
         dependencies.dependencies_installed = False
-        # uninstall dependencies
+        # uninstall dependencies or move them to custom trash folder
+        # on windows to remove files on app start
         for dependency in dependencies.required_dependencies:
             try:
                 uninstalled = dependencies.uninstall_dependency(dependency)
-                # TODO find a way to delete site packages on windows
                 if not uninstalled:
                     dependencies.dependencies_installed = True
             except (subprocess.CalledProcessError, ImportError) as err:
@@ -85,9 +88,10 @@ class PREFERENCES_OT_CGT_uninstall_dependencies_button(bpy.types.Operator):
             # unregister function checks for dependencies
             ui_registration.unregister_ui_panels()
 
-        # TODO: hope pip gets fixed
-        bpy.ops.wm.quit_blender()
-        # TODO: update UI without reimporting as soon pip gets fixed
-        # cgt_imports.manage_imports(reload=True)
+        if sys.platform == "win32":
+            bpy.ops.wm.quit_blender()
+        else:
+            # TODO: update UI without reimporting as soon pip gets fixed
+            cgt_imports.manage_imports(reload=True)
 
         return {"FINISHED"}
