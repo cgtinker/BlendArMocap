@@ -74,7 +74,6 @@ class PREFERENCES_OT_CGT_uninstall_dependencies_button(bpy.types.Operator):
         for dependency in dependencies.required_dependencies:
             try:
                 uninstalled = dependencies.uninstall_dependency(dependency)
-                # TODO find a way to delete site packages on windows
                 if not uninstalled:
                     dependencies.dependencies_installed = True
             except (subprocess.CalledProcessError, ImportError) as err:
@@ -86,7 +85,7 @@ class PREFERENCES_OT_CGT_uninstall_dependencies_button(bpy.types.Operator):
             ui_registration.unregister_ui_panels()
 
         # TODO: hope pip gets fixed
-        bpy.ops.wm.quit_blender()
+        # bpy.ops.wm.quit_blender()
         # TODO: update UI without reimporting as soon pip gets fixed
         # cgt_imports.manage_imports(reload=True)
 

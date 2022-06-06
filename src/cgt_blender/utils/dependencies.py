@@ -222,31 +222,38 @@ def uninstall_dependency(_dependency):
     frozen = subprocess.call(cmd) == 0
     print(f"{_dependency.pkg} disabled {frozen}")
 
-    # Uninstall dependency without question prompt.
     cmd = [python_exe, "-m", "pip", "uninstall", "-y", _dependency.pkg]
-    uninstalled = subprocess.call(cmd) == 0
+    uninstalled = subprocess.call(cmd, shell=True) == 0
 
     if uninstalled:
         print(f"Uninstalled {_dependency.module} successfully.")
         return True
     else:
         print(f"Failed to uninstall {_dependency.module}.")
-        print(uninstalled)
         return False
 
 
 def force_remove_remains():
-    if sys.platform == 'win32':
-        import pkg_resources
-        dist_info = pkg_resources.get_distribution("pip")
-        for file in Path(str(dist_info.location)).iterdir():
-            if str(file.name).startswith("~"):
-                import shutil
-                try:
-                    shutil.rmtree(file)
-                except PermissionError as e:
-                    print(e)
-                    print("\nRestart Blender to remove the conflicted files")
+    if not sys.platform == 'win32':
+        return
+
+    import pkg_resources
+    dist_info = pkg_resources.get_distribution("pip")
+
+    for file in Path(str(dist_info.location)).iterdir():
+        # check for substrings (prevent removal of other libs)
+        sub_strings = ["~" + _dependency.name[1:] for _dependency in required_dependencies]
+        sub_strings += ["~" + _dependency.pkg[1:] for _dependency in required_dependencies]
+        r_package = [True if sub_str in str(file.name) else False for sub_str in sub_strings]
+
+        # pip adds a ~ when before deleting a package
+        if str(file.name).startswith("~") and True in r_package:
+            import shutil
+            try:
+                shutil.rmtree(file)
+            except PermissionError as e:
+                print(e)
+                print("\nRestart Blender with elevated privileges to remove the conflicted files")
 # endregion
 
 
