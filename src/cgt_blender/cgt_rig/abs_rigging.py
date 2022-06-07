@@ -27,6 +27,7 @@ class BpyRigging(ABC):
         self.mapping_relation_list = []
         self.armature = armature
         self.pose_bones = armature.pose.bones
+        objects.select_object(self.armature)
 
     # region drivers and constraints
     def apply_constraints(self, constraint_dict):

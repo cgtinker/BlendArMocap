@@ -70,6 +70,8 @@ def get_selected_object():
         return bpy.context.selected_objects[0]
 
 
+def select_object(obj):
+    bpy.context.view_layer.objects.active = obj
 # endregion
 
 
