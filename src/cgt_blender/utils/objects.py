@@ -330,12 +330,16 @@ def get_frame_start():
     return frame_start
 
 
-def toggle_mode(mode: str = None):
+def set_mode(mode: str = None):
     """ MODES: 'EDIT', 'OBJECT', 'POSE' """
     if mode is None:
         raise KeyError
 
-    bpy.ops.object.mode_set(mode=mode)
+    bpy.ops.object.mode_set(mode=mode, toggle=False)
+
+
+def get_mode():
+    return bpy.context.active_object.mode
 
 
 def user_pref():

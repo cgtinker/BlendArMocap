@@ -140,8 +140,10 @@ class RigifyPose(abs_rigging.BpyRigging):
 
         # region bone center driver setup
         # bone center drivers for limb driver chain
-        self.center_points = [m_V.center_point(self.bone_head(v[0]), self.bone_head(v[1]))
+        objects.set_mode('EDIT')
+        self.center_points = [m_V.center_point(self.edit_bone_head(v[0]), self.edit_bone_head(v[1]))
                               for v in self.rigify_bone_center]
+        objects.set_mode('OBJECT')
         self.bone_center_drivers = [limb_drivers.BoneCenter(
             driver_target=target,
             bones=self.rigify_bone_center[idx],
@@ -188,15 +190,18 @@ class RigifyPose(abs_rigging.BpyRigging):
     def get_rigify_joint_lengths(self):
         """ return the lengths of given joints while it uses
             center as keyword for a custom joint origin based on the first index """
+        objects.set_mode('EDIT')
 
         joint_lengths = []
         for joint in self.rigify_joints:
             if self.bone_name_provider.shoulder_c in joint:
-                joint_locs = [self.center_points[0], self.bone_head(joint[1])]
+                joint_locs = [self.center_points[0], self.edit_bone_head(joint[1])]
             elif self.bone_name_provider.hip_c in joint:
-                joint_locs = [self.center_points[1], self.bone_head(joint[1])]
+                joint_locs = [self.center_points[1], self.edit_bone_head(joint[1])]
             else:
-                joint_locs = [self.bone_head(name) for name in joint]
+                joint_locs = [self.edit_bone_head(name) for name in joint]
             length = m_V.get_vector_distance(np.array(joint_locs[0]), np.array(joint_locs[1]))
             joint_lengths.append(length)
+
+        objects.set_mode('OBJECT')
         return joint_lengths

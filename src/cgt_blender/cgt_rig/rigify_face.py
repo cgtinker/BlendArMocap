@@ -21,6 +21,9 @@ from .abs_rigging import BpyRigging
 from . import face_drivers
 from ...cgt_naming import FACE
 from .rigify_naming import rigify_face_bone_names
+from ..utils import objects
+from ...cgt_utils import m_V
+import numpy as np
 
 
 class RigifyFace(BpyRigging):
@@ -61,8 +64,6 @@ class RigifyFace(BpyRigging):
         self.remove_bone_constraints(bone_names)
 
         # region eye drivers
-
-
         eye_driver_names = [[FACE.right_eye_t, FACE.right_eye_b], [FACE.left_eye_t, FACE.left_eye_b]]
         eye_dist_provider_objs = [FACE.right_eye, FACE.left_eye]
         eye_bone_names = [
@@ -109,9 +110,9 @@ class RigifyFace(BpyRigging):
 
     def get_bone_distances(self, bone_pairs):
         # get distance between bones
-        distances = []
-        for pair in bone_pairs:
-            avg_scale = self.get_average_joint_bone_length([pair], self.pose_bones)
-            distances.append(avg_scale)
-
+        objects.set_mode('EDIT')
+        joints = [[self.edit_bone_head(joint[0]), self.edit_bone_head(joint[1])] for joint in bone_pairs]
+        # must calc distances within edit mode (func requires nesting)
+        distances = [m_V.get_vector_distance(np.array(joint[0]), np.array(joint[1])) for joint in joints]
+        objects.set_mode('OBJECT')
         return distances

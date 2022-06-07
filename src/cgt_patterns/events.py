@@ -30,7 +30,7 @@ class UpdateListener(op.Listener):
     frame = 0
 
     def attach(self, observer: op.Observer) -> None:
-        print("OBSERVER ATTACHED FROM UPDATE LISTENER")
+        print("OBSERVER ATTACHED TO UPDATE LISTENER")
         self._observers.append(observer)
 
     def detach(self, observer: op.Observer) -> None:

@@ -16,11 +16,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 from abc import ABC
-
-import numpy as np
-
 from ..utils import objects, driver_interface, driver_types, constraints
-from ...cgt_utils import m_V
 
 
 class BpyRigging(ABC):
@@ -32,7 +28,7 @@ class BpyRigging(ABC):
         self.armature = armature
         self.pose_bones = armature.pose.bones
 
-    # region apply
+    # region drivers and constraints
     def apply_constraints(self, constraint_dict):
         user_prefs = objects.user_pref()
         overwrite = user_prefs.overwrite_drivers_bool  # noqa
@@ -56,7 +52,7 @@ class BpyRigging(ABC):
             driver_interface.DriverType.CUSTOM: driver_types.CustomBonePropDriver
         }
 
-        # wrapper for convenience
+        # just for convenience
         def get_pose_bone(bone_name):
             return self.pose_bones[bone_name]
 
@@ -110,14 +106,26 @@ class BpyRigging(ABC):
             drivers_types[i](props[i])
 
     # endregion
-    def bone_head(self, bone_name):
 
-        # returns the bone head position of a pose bone
-        return self.pose_bones[bone_name].head
+    # region bone relations
+    def edit_bone_head(self, bone_name):
+        """ gets edit bone of armature, may join edit mode before use """
+        active_mode = objects.get_mode()
+        if active_mode != 'EDIT':
+            import warnings
+            warnings.warn('Setting edit mode to receive edit mode bone position.')
+            objects.set_mode('EDIT')
+            position = self.armature.data.edit_bones[bone_name].head
+            objects.set_mode(active_mode)
+
+        else:
+            position = self.armature.data.edit_bones[bone_name].head
+
+        return position
 
     def remove_bone_constraints(self, bones):
-        # reset if overwrite
-        # remove constraints if overwrite
+        """ remove constraints from bones. """
+        # TODO: recheck if necessary in 3.0/3.1/3.2
         user_prefs = objects.user_pref()
         if user_prefs.overwrite_drivers_bool:
             from ..utils import constraints
@@ -125,39 +133,5 @@ class BpyRigging(ABC):
             for bone_name in bones:
                 constraints.remove_constraints(self.pose_bones[bone_name])  # pair 0 = bone name in dict
             bpy.context.view_layer.update()
-        # endregion
-
-    # region joint length
-    def get_average_joint_bone_length(self, joint_bone_names, pose_bones):
-        """ requires an array of joints names [[bone_a, bone_b], []... ] and pose bones.
-            returns the average length of the connected bones. """
-        joints = self.get_joints(joint_bone_names, pose_bones)
-        avg_dist = self.get_average_length(joints)
-        return avg_dist
-
-    @staticmethod
-    def get_average_length(joint_array):
-        """ takes an array of positions [[pos_a, pos_b], ...]
-            returns the average length of the input array"""
-        distances = []
-        for joint in joint_array:
-            dist = m_V.get_vector_distance(np.array(joint[0]), np.array(joint[1]))
-            distances.append(dist)
-        avg_dist = sum(distances) / len(distances)
-        return avg_dist
-
-    @staticmethod
-    def get_joints(joint_names, pose_bones):
-        """ requires an array of joints names [[bone_a, bone_b], []... ] and pose bones.
-        returns the bone head locations in the same formatting. """
-        arm_joints = []
-        for names in joint_names:
-
-            joint = []
-            for name in names:
-                bone_pos = pose_bones[name].head
-                joint.append(bone_pos)
-
-            arm_joints.append(joint)
-        return arm_joints
     # endregion
+
