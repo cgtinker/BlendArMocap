@@ -91,7 +91,7 @@ def import_module(_dependency):
         if "cv2.cv2." in str(e):
             print("TRY TO FIX BINDINGS ERR\n\n")
             reinstall_dependency(Dependency(
-                module="opencv-python==4.6.0.66", package=None, name="cv2", pkg="opencv_contrib_python"))
+                module="opencv-python==4.5.5.64", package=None, name="cv2", pkg="opencv_contrib_python"))
         else:
             print(e)
 
@@ -343,7 +343,7 @@ def force_remove_remains():
 
 Dependency = namedtuple("Dependency", ["module", "package", "name", "pkg"])
 required_dependencies = (
-    Dependency(module="opencv-python==4.6.0.66", package=None, name="cv2", pkg="opencv_python"),
+    Dependency(module="opencv-python==4.5.5.64", package=None, name="cv2", pkg="opencv_python"),
     Dependency(module="protobuf==3.19.1", package=None, name="google.protobuf", pkg="protobuf"),
     Dependency(module="mediapipe==0.8.10", package=None, name="mediapipe", pkg="mediapipe"),
     )
