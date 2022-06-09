@@ -76,19 +76,26 @@ def import_module(_dependency):
 
         else:
             globals()[tmp_dependency.name] = importlib.import_module(tmp_dependency.name)
+        return True
+
     except TypeError as e:
-        # TODO: Remove dirty versioning fix which is required to fix installation issues of beta users
         print(f"Importing {tmp_dependency.name} dependency failed")
         if "PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python" in str(e):
             print("TRY TO FIX PROTOCOL BUFFER ERR\n\n")
-            try:
-                uninstall_dependency(Dependency(module="protobuf==3.19.1", package=None, name="google.protobuf", pkg="protobuf"))
-                install_and_import_module(Dependency(module="protobuf==3.19.1", package=None, name="google.protobuf", pkg="protobuf"))
-            except Exception as e:
-                print("{\nUNKNOWN EXCEPTION OCCURRED\n")
-                print(e)
+            reinstall_dependency(
+                Dependency(module="protobuf==3.19.1", package=None, name="google.protobuf", pkg="protobuf"))
         else:
             print(e)
+
+    except ImportError as e:
+        if "cv2.cv2." in str(e):
+            print("TRY TO FIX BINDINGS ERR\n\n")
+            reinstall_dependency(Dependency(
+                module="opencv-python==4.6.0.66", package=None, name="cv2", pkg="opencv_contrib_python"))
+        else:
+            print(e)
+
+    return False
 
 
 def get_package_info(_dependency):
@@ -134,6 +141,19 @@ def is_package_installed(_dependency):
         return False
 
 
+def reinstall_dependency(_dependency):
+    try:
+        uninstall_dependency(_dependency)
+        install_and_import_module(_dependency)
+
+        if sys.platform == "win32":
+            import time
+            print("Attempt to shutdown blender.")
+            time.sleep(3)
+            bpy.ops.wm.quit_blender()
+    except Exception as e:
+        print("{\nUNKNOWN EXCEPTION OCCURRED\n")
+        print(e)
 # endregion
 
 
@@ -190,19 +210,14 @@ def install_and_import_module(_dependency):
         print(f"{tmp_dependency.package} is already installed.")
         return
 
-    try:
-        print(f"Attempting to install: {_dependency.module}")
-        environ_copy = clear_user_site()
-        # cmd = [python_exe, "-m", "pip", "install", "--no-cache-dir", tmp_dependency.package]
-        cmd = [python_exe, "-m", "pip", "install", tmp_dependency.package]
-        print(cmd)
-        installed = subprocess.call(cmd, env=environ_copy) == 0
+    print(f"Attempting to install: {_dependency.module}")
+    environ_copy = clear_user_site()
+    cmd = [python_exe, "-m", "pip", "install", "--no-cache-dir", tmp_dependency.package]
+    # cmd = [python_exe, "-m", "pip", "install", tmp_dependency.package]
+    print(cmd)
+    installed = subprocess.call(cmd, env=environ_copy) == 0
 
-    except Exception as e:
-        print(e)
-        print("ATTEMPT TO USE USER TAG")
-        # The "--user" option does not work with Blender's Python version as it's in another directory.
-        # However, the added user site packages tries to bypass the behaviour
+    if not installed:
         cmd = [python_exe, "-m", "pip", "install", "--no-cache-dir", tmp_dependency.package, "--user"]
         print(cmd)
         installed = subprocess.call(cmd) == 0
@@ -223,16 +238,13 @@ def move_package_b4removal(_dependency):
         -> force_remove_remains()
         https://developer.blender.org/T77837 """
     import re
+    print("Moving package to custom trash folder for removal upon restart.", _dependency)
 
     def canonize_path(name):
         # pip/src/pip/_vendor/packaging/utils.py
         _canonicalize_regex = re.compile(r"[-_.]+")
         value = _canonicalize_regex.sub("-", name).lower()
         return value
-
-    # get path to package
-    package_init = importlib.import_module(_dependency.name).__file__
-    package_path = Path(package_init).parent
 
     import pkg_resources
     try:
@@ -242,10 +254,19 @@ def move_package_b4removal(_dependency):
 
     tmp_dist_path = Path(dist_info.location) / f"{dist_info.project_name}-{dist_info.version}.dist-info"
     canonize_dist = canonize_path(str(tmp_dist_path))
-    dist_path = None
+
+    site_packages = Path(dist_info.location)
+    # get path to package
+    try:
+        package_init = importlib.import_module(_dependency.name).__file__
+        package_path = Path(package_init).parent
+    except Exception as e:
+        print("Cannot fetch path to package:", e)
+        # trying to create name based on module name (might fail)
+        package_path = Path(site_packages) / _dependency.name
 
     # compare to dists in site packages
-    site_packages = Path(dist_info.location)
+    dist_path = None
     for dist in site_packages.iterdir():
         tmp_canonize_dist = canonize_path(str(dist))
         if canonize_dist == tmp_canonize_dist:
@@ -257,6 +278,7 @@ def move_package_b4removal(_dependency):
     trash = file / "trash"
     trash.mkdir(parents=True, exist_ok=True)
 
+    print("try to delete")
     # move dists to custom trash folder to delete on restart
     import shutil
     success = []
@@ -279,6 +301,7 @@ def move_package_b4removal(_dependency):
 
 
 def uninstall_dependency(_dependency):
+    print("Trying to remove", _dependency)
     if sys.platform != "win32":
         pass
     else:
@@ -320,9 +343,10 @@ def force_remove_remains():
 
 Dependency = namedtuple("Dependency", ["module", "package", "name", "pkg"])
 required_dependencies = (
+    Dependency(module="opencv-python==4.6.0.66", package=None, name="cv2", pkg="opencv_python"),
     Dependency(module="protobuf==3.19.1", package=None, name="google.protobuf", pkg="protobuf"),
     Dependency(module="mediapipe==0.8.10", package=None, name="mediapipe", pkg="mediapipe"),
-    Dependency(module="opencv-python==4.5.5.64", package=None, name="cv2", pkg="opencv_contrib_python"))
+    )
 
 
 global dependencies_installed
@@ -334,7 +358,10 @@ with warnings.catch_warnings():
 
 for dependency in required_dependencies:
     try:
-        import_module(dependency)
+        print("LOADING", dependency)
+        importable = import_module(dependency)
+        if not importable:
+            break
     except ModuleNotFoundError:
         pass
 

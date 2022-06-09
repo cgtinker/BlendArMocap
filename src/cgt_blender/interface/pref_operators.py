@@ -89,6 +89,10 @@ class PREFERENCES_OT_CGT_uninstall_dependencies_button(bpy.types.Operator):
             ui_registration.unregister_ui_panels()
 
         if sys.platform == "win32":
+            # todo combine / remove?
+            print("Attempt to shutdown Blender.")
+            import time
+            time.sleep(3)
             bpy.ops.wm.quit_blender()
         else:
             # TODO: update UI without reimporting as soon pip gets fixed
