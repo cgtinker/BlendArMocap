@@ -372,6 +372,7 @@ for dependency in required_dependencies:
     try:
         importable = import_module(dependency)
         if not importable:
+            dependencies_installed = False
             break
     except ModuleNotFoundError:
         pass
