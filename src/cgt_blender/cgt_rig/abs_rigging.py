@@ -116,11 +116,11 @@ class BpyRigging(ABC):
             import warnings
             warnings.warn('Setting edit mode to receive edit mode bone position.')
             objects.set_mode('EDIT')
-            position = self.armature.data.edit_bones[bone_name].head
+            position = self.armature.data.edit_bones[bone_name].head_rot
             objects.set_mode(active_mode)
 
         else:
-            position = self.armature.data.edit_bones[bone_name].head
+            position = self.armature.data.edit_bones[bone_name].head_rot
 
         return position
 

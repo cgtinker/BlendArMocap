@@ -19,8 +19,8 @@ from . import bone_name_provider
 
 
 class RigifyBoneNameProvider(bone_name_provider.BoneNameProvider):
-    head = "head"
-    jaw = "jaw_master"
+    head_rot = "head"
+    jaw_rot = "jaw_master"
 
     upper_lid_r = "lid.T.R.002"
     lower_lid_r = "lid.B.R.002"

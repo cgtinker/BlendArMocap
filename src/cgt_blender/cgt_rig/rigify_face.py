@@ -54,8 +54,8 @@ class RigifyFace(BpyRigging):
             # FACE.eyebrow_mid_r:  [bone_name_provider.brow_mid_l, "COPY_LOCATION_OFFSET"], # constrained by rigify
             FACE.eyebrow_out_r:  [bone_name_provider.brow_out_l, "COPY_LOCATION_OFFSET"],
 
-            FACE.head:        [bone_name_provider.head, "COPY_ROTATION_WORLD"],
-            FACE.chin:        [bone_name_provider.jaw, "COPY_ROTATION"],
+            FACE.head:        [bone_name_provider.head_rot, "COPY_ROTATION_WORLD"],
+            FACE.chin:        [bone_name_provider.jaw_rot, "COPY_ROTATION"],
         }
         # endregion
 

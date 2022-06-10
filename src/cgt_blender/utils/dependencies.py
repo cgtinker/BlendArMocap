@@ -72,11 +72,9 @@ def import_module(_dependency):
     # TODO: temporarily fetching mediapipe protobuf error  till update
     try:
         if tmp_dependency.name in globals():
-            print("in globals", tmp_dependency)
             importlib.reload(globals()[tmp_dependency.name])
 
         else:
-            print("trying to load", tmp_dependency)
             globals()[tmp_dependency.name] = importlib.import_module(tmp_dependency.name)
         return True
 
@@ -96,6 +94,7 @@ def import_module(_dependency):
                 reinstall_dependency(Dependency(
                     module="opencv-python==4.5.5.64", package=None, name="cv2", pkg="opencv_contrib_python"))
             except Exception as e:
+                print("AUTO SETUP FAILED, PLEASE REPORT AT GITHUB")
                 print(e)
                 try:
                     reinstall_dependency(Dependency(
