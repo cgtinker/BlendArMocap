@@ -72,9 +72,11 @@ def import_module(_dependency):
     # TODO: temporarily fetching mediapipe protobuf error  till update
     try:
         if tmp_dependency.name in globals():
+            print("in globals", tmp_dependency)
             importlib.reload(globals()[tmp_dependency.name])
 
         else:
+            print("trying to load", tmp_dependency)
             globals()[tmp_dependency.name] = importlib.import_module(tmp_dependency.name)
         return True
 
@@ -90,8 +92,17 @@ def import_module(_dependency):
     except ImportError as e:
         if "cv2.cv2." in str(e):
             print("TRY TO FIX BINDINGS ERR\n\n")
-            reinstall_dependency(Dependency(
-                module="opencv-python==4.5.5.64", package=None, name="cv2", pkg="opencv_contrib_python"))
+            try:
+                reinstall_dependency(Dependency(
+                    module="opencv-python==4.5.5.64", package=None, name="cv2", pkg="opencv_contrib_python"))
+            except Exception as e:
+                print(e)
+                try:
+                    reinstall_dependency(Dependency(
+                        module="opencv-python==4.5.5.64", package=None, name="cv2", pkg="opencv_python"))
+                except Exception as e:
+                    print(e)
+
         else:
             print(e)
 
@@ -142,6 +153,7 @@ def is_package_installed(_dependency):
 
 
 def reinstall_dependency(_dependency):
+    print("Attempt to reinstall dependency", _dependency)
     try:
         uninstall_dependency(_dependency)
         install_and_import_module(_dependency)
