@@ -17,6 +17,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 import bpy
 from .. import input_manager
+from pathlib import Path
 
 
 class UI_CGT_transfer_anim_button(bpy.types.Operator):
@@ -75,8 +76,9 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
         # initialize detector using user inputs
         frame_start = bpy.context.scene.frame_start
         if self.user.detection_input_type == 'movie':
-            mov_path = self.user.mov_data_path
-            self.detection_handler.init_detector(mov_path, "sd", 0, frame_start, 1, 1)
+            mov_path = bpy.path.abspath(self.user.mov_data_path)
+            print("Path to mov:", mov_path)
+            self.detection_handler.init_detector(str(mov_path), "sd", 0, frame_start, 1, 1)
         else:
             camera_index = self.user.webcam_input_device
             dimensions = self.user.enum_stream_dim
