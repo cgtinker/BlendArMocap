@@ -149,7 +149,7 @@ class DetectionHandler:
 
 
 def main():
-    handler = DetectionHandler("POSE", "DEBUG")
+    handler = DetectionHandler("FACE", "DEBUG")
     handler.init_detector(0, "sd", 0, 0, 0, 0)
     handler.init_bridge()
 

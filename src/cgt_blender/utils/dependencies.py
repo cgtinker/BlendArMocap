@@ -96,11 +96,6 @@ def import_module(_dependency):
             except Exception as e:
                 print("AUTO SETUP FAILED, PLEASE REPORT AT GITHUB")
                 print(e)
-                try:
-                    reinstall_dependency(Dependency(
-                        module="opencv-python==4.5.5.64", package=None, name="cv2", pkg="opencv_python"))
-                except Exception as e:
-                    print(e)
 
         else:
             print(e)
