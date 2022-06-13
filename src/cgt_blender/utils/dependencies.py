@@ -361,6 +361,7 @@ for dependency in required_dependencies:
         print("LOADING", dependency)
         importable = import_module(dependency)
         if not importable:
+            dependencies_installed = False
             break
     except ModuleNotFoundError:
         pass
