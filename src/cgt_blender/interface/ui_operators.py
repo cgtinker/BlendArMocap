@@ -78,6 +78,10 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
         if self.user.detection_input_type == 'movie':
             mov_path = bpy.path.abspath(self.user.mov_data_path)
             print("Path to mov:", mov_path)
+            if not Path(mov_path).is_file():
+                print("GIVEN PATH IS NOT VALID")
+                self.user.detection_operator_running = False
+                return {'FINISHED'}
             self.detection_handler.init_detector(str(mov_path), "sd", 0, frame_start, 1, 1)
         else:
             camera_index = self.user.webcam_input_device

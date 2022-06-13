@@ -66,10 +66,12 @@ class CGTProperties(PropertyGroup):
     mov_data_path: StringProperty(
         name="File Path",
         description="File path to .mov file.",
-        default="",
+        default='*.mov;*mp4',
+        options={'HIDDEN'},
         maxlen=1024,
         subtype='FILE_PATH'
     )
+
     # endregion
     # endregion
 
