@@ -76,20 +76,19 @@ class BLENDARMOCAP_CGT_preferences(bpy.types.AddonPreferences):
         _d_box = dependency_box.box()
         box_split = _d_box.split()
         cols = [box_split.column(align=False) for _ in range(4)]
-
         updated_dependency = dependencies.dependency_naming(m_dependency)
+
+        cols[3].label(text=f"{dependencies.is_package_installed(updated_dependency)}")
         if not dependencies.is_package_installed(updated_dependency):
             cols[0].label(text=f"{updated_dependency.name}")
             cols[1].label(text=f"NaN")
             cols[2].label(text=f"NaN")
-            cols[3].label(text=f"{False}")
 
         else:
             _version, _path = dependencies.get_package_info(updated_dependency)
             cols[0].label(text=f"{updated_dependency.name}")
             cols[1].label(text=f"{_version}")
             cols[2].label(text=f"{_path}")
-            cols[3].label(text=f"{True}")
 
     def draw_camera_settings(self, context, layout):
         if dependencies.dependencies_installed:

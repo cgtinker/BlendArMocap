@@ -24,7 +24,6 @@ class BoneNameProvider(ABC):
         import rigify # noqa (internal addon)
         self.rigify_version = int(''.join(map(str, rigify.bl_info['version'])))
         self.bpy_version = int(''.join(map(str, bpy.app.version)))
-        print("Rigify version:", self.rigify_version)
 
     def update(self):
         if self.rigify_version >= 65:

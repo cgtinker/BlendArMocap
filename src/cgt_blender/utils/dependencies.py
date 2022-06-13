@@ -20,6 +20,7 @@ import importlib
 import os
 import subprocess
 import sys
+from importlib import machinery
 from collections import namedtuple
 from pathlib import Path
 from ... import cgt_naming
@@ -67,17 +68,24 @@ def clear_user_site():
 def import_module(_dependency):
     """ Attempt to import module and assign it to the globals dictionary.
         May only be used with properly installed dependencies. """
+    if not is_package_installed(_dependency):
+        return False
+
     tmp_dependency = dependency_naming(_dependency)
 
-    # TODO: temporarily fetching mediapipe protobuf error  till update
     try:
+        # add package to globals or reload it
         if tmp_dependency.name in globals():
             importlib.reload(globals()[tmp_dependency.name])
-
         else:
-            globals()[tmp_dependency.name] = importlib.import_module(tmp_dependency.name)
+            module = importlib.import_module(tmp_dependency.name)
+            globals()[tmp_dependency.name] = module
         return True
 
+    except ModuleNotFoundError as e:
+        print(e)
+
+    # TODO: remove following exceptions as soon mediapipe is stable
     except TypeError as e:
         print(f"Importing {tmp_dependency.name} dependency failed")
         if "PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python" in str(e):
@@ -127,23 +135,18 @@ def get_package_info(_dependency):
 
 def is_package_installed(_dependency):
     _dependency = dependency_naming(_dependency)
-    try:
-        # Try to import the module to check if it is available.
-        # Blender may has to be restarted to take effect on newly installed or removed dependencies.
-        tmp_dependency = dependency_naming(_dependency)
-        importlib.import_module(_dependency.name)
 
-        # Installed dependencies are added to globals.
-        if tmp_dependency.name in globals():
-            importlib.reload(globals()[tmp_dependency.name])
-            return True
-        else:
-            if tmp_dependency.name == 'pip':
-                # pip shouldn't be in globals
-                return True
-            return False
-    except ModuleNotFoundError:
+    # find spec using importlib
+    try:
+        package = importlib.util.find_spec(_dependency.name)
+    except ModuleNotFoundError or ValueError:
         return False
+    # only accept it as valid if there is a source file for the module - not bytecode only.
+    found = issubclass(type(package), importlib.machinery.ModuleSpec)
+
+    if found:
+        return True
+    return False
 
 
 def reinstall_dependency(_dependency):
@@ -213,7 +216,6 @@ def install_and_import_module(_dependency):
     tmp_dependency = dependency_naming(_dependency)
 
     if is_package_installed(tmp_dependency):
-        print(f"{tmp_dependency.package} is already installed.")
         return
 
     print(f"Attempting to install: {_dependency.module}")
@@ -363,13 +365,24 @@ with warnings.catch_warnings():
     python_exe = get_python_exe()
 
 for dependency in required_dependencies:
+    # check if dependency is installed
+    if not is_package_installed(dependency):
+        dependencies_installed = False
+        continue
+
+    # try importing the dependency and add it to globs
     try:
         importable = import_module(dependency)
         if not importable:
             dependencies_installed = False
-            break
+            continue
     except ModuleNotFoundError:
         pass
 
-    if not is_package_installed(dependency):
+    # check for path and version of the dependency
+    _version, _path = get_package_info(dependency)
+    if _version is None or _path is None:
         dependencies_installed = False
+        continue
+
+

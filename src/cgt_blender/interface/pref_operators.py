@@ -50,7 +50,6 @@ class PREFERENCES_OT_CGT_install_dependencies_button(bpy.types.Operator):
             return {"CANCELLED"}
 
         # register user interface after installing dependencies
-        dependencies.dependencies_installed = True
         ui_registration.register_user_interface()
         # TODO: update UI without reimporting
         cgt_imports.manage_imports(reload=True)
