@@ -50,8 +50,14 @@ def get_python_exe():
         executable = str(py_exec)
         print(f"{cgt_naming.PACKAGE} - cmd failed, redirecting to: {executable}")
 
-    print(f"{cgt_naming.PACKAGE} - blender bin: {bpy.app.binary_path}, blender version: {version}")
-    print(f"{cgt_naming.PACKAGE} - python exe: {executable}")
+    if executable not in sys.path:
+        print(f"{cgt_naming.PACKAGE} - blender bin: {bpy.app.binary_path}, blender version: {version}")
+        print(f"{cgt_naming.PACKAGE} - python exe: {executable}")
+        print("added executable to sys path")
+        sys.path.append(executable)
+
+    else:
+        print(f"{cgt_naming.PACKAGE} - python exe: {executable}")
     return executable
 
 
@@ -139,8 +145,11 @@ def is_package_installed(_dependency):
     # find spec using importlib
     try:
         package = importlib.util.find_spec(_dependency.name)
-    except ModuleNotFoundError or ValueError:
+    except ModuleNotFoundError:
         return False
+    except ValueError:
+        return False
+
     # only accept it as valid if there is a source file for the module - not bytecode only.
     found = issubclass(type(package), importlib.machinery.ModuleSpec)
 
@@ -223,7 +232,12 @@ def install_and_import_module(_dependency):
     cmd = [python_exe, "-m", "pip", "install", "--no-cache-dir", tmp_dependency.package]
     # cmd = [python_exe, "-m", "pip", "install", tmp_dependency.package]
     print(cmd)
-    installed = subprocess.call(cmd, env=environ_copy) == 0
+    import socket
+    try:
+        installed = subprocess.call(cmd, env=environ_copy) == 0
+    except socket.timeout:
+        installed = False
+        print("PLEASE CHECK YOUR INTERNET CONNECTION AND RETRY.")
 
     if not installed:
         cmd = [python_exe, "-m", "pip", "install", "--no-cache-dir", tmp_dependency.package, "--user"]
@@ -357,7 +371,6 @@ required_dependencies = (
     )
 
 
-global dependencies_installed
 dependencies_installed = True
 with warnings.catch_warnings():
     # catching depreciated warning
@@ -377,7 +390,8 @@ for dependency in required_dependencies:
             dependencies_installed = False
             continue
     except ModuleNotFoundError:
-        pass
+        dependencies_installed = False
+        continue
 
     # check for path and version of the dependency
     _version, _path = get_package_info(dependency)
