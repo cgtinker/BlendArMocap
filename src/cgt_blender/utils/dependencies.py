@@ -329,7 +329,22 @@ def force_remove_remains():
 
 def analyze_dependencies(_dependencies):
     """ yields if dependency is installed and the corrupted dependency """
+    def corrupted_package(package):
+        if package.name == "cv2":
+            _version, _path = get_package_info(
+                Dependency(module="opencv-python", package=None, name="cv2", pkg="opencv_python"))
+            if _version is not None or _path is not None:
+                return False, [
+                    Dependency(module="opencv-python", package=None, name="cv2", pkg="opencv_python"),
+                    Dependency(module="mediapipe", package=None, name="mediapipe", pkg="mediapipe"),
+                ]
+            else:
+                return False, package
+        else:
+            return False, package
+
     for _dependency in _dependencies:
+        print(_dependency)
         # check if package is installed
         if not is_package_installed(_dependency):
             yield False, []
@@ -340,29 +355,29 @@ def analyze_dependencies(_dependencies):
         try:
             _importable = import_module(_dependency)
             if not _importable:
-                yield False, [_dependency]
+                yield corrupted_package(_dependency)
                 continue
         except ModuleNotFoundError as e:
             print("MODULE CANNOT BE FOUND\n", e)
-            yield False, [_dependency]
+            yield corrupted_package(_dependency)
             continue
         except TypeError as e:
             print("PLEASE CHECK IF PROTOBUF VERSION > 3.20.0\n", e)
-            yield False, [_dependency]
+            yield corrupted_package(_dependency)
         except ImportError as e:
             print("PLEASE CHECK IF CV2 IS CORRUPTED\n", e)
-            yield False, [_dependency]
+            yield corrupted_package(_dependency)
 
         # check for path and version of the dependency, except cv2py preinstalled (conflict)
-        _version, _path = get_package_info(_dependency)
+        try:
+            _version, _path = get_package_info(_dependency)
+        except ModuleNotFoundError as e:
+            print("MODULE CANNOT BE FOUND\n", e)
+            yield corrupted_package(_dependency)
+            continue
+
         if _version is None or _path is None:
-            if _dependency.name == "cv2":
-                yield False, [
-                    Dependency(module="opencv-python", package=None, name="cv2", pkg="opencv_python"),
-                    Dependency(module="mediapipe", package=None, name="mediapipe", pkg="mediapipe"),
-                ]
-            else:
-                yield False, _dependency
+            corrupted_package(_dependency)
             continue
 
 
@@ -380,10 +395,13 @@ required_dependencies = (
 
 python_exe = get_python_exe()
 dependencies_installed = True
-corrupted_dependencies = []
+corrupted_dependencies = None
+if corrupted_dependencies is None:
+    corrupted_dependencies = []
 
 for is_installed, corrupted_dependency in analyze_dependencies(required_dependencies):
     dependencies_installed = is_installed
+    print(dependencies_installed, corrupted_dependency)
     if len(corrupted_dependency) != 0:
         corrupted_dependencies += corrupted_dependency
 

@@ -60,16 +60,11 @@ class PREFERENCES_OT_CGT_install_dependencies_button(bpy.types.Operator):
 
 class PREFERENCES_OT_CGT_uninstall_dependencies_button(bpy.types.Operator):
     bl_idname = "button.cgt_uninstall_dependencies"
-    if sys.platform == "win32":
-        if len(dependencies.corrupted_dependencies) != 0:
-            bl_label = "Uninstall conflicting packages and shutdown Blender"
-        else:
-            bl_label = "Uninstall Dependencies and shutdown Blender"
+    if len(dependencies.corrupted_dependencies) != 0:
+        bl_label = "Uninstall conflicting packages and shutdown Blender"
     else:
-        if len(dependencies.corrupted_dependencies) != 0:
-            bl_label = "Uninstall conflicting packages."
-        else:
-            bl_label = "Uninstall Dependencies"
+        bl_label = "Uninstall Dependencies and shutdown Blender"
+
     bl_description = ("Uninstalls packages from Blenders site-packges")
     bl_options = {"REGISTER", "INTERNAL"}
 
@@ -103,14 +98,9 @@ class PREFERENCES_OT_CGT_uninstall_dependencies_button(bpy.types.Operator):
         dependencies.dependencies_installed = False
         ui_registration.unregister_ui_panels()
 
-        if sys.platform == "win32":
-            # todo combine / remove?
-            print("Attempt to shutdown Blender.")
-            import time
-            time.sleep(3)
-            bpy.ops.wm.quit_blender()
-        else:
-            # TODO: update UI without reimporting as soon pip gets fixed
-            cgt_imports.manage_imports(reload=True)
+        print("Attempt to shutdown Blender.")
+        import time
+        time.sleep(3)
+        bpy.ops.wm.quit_blender()
 
         return {"FINISHED"}
