@@ -50,14 +50,17 @@ def get_python_exe():
         executable = str(py_exec)
         print(f"{cgt_naming.PACKAGE} - cmd failed, redirecting to: {executable}")
 
-    if executable not in sys.path:
-        print(f"{cgt_naming.PACKAGE} - blender bin: {bpy.app.binary_path}, blender version: {version}")
-        print(f"{cgt_naming.PACKAGE} - python exe: {executable}")
-        print("added executable to sys path")
-        sys.path.append(executable)
+    # if executable not in sys.path:
+    #     print(f"{cgt_naming.PACKAGE} - blender bin: {bpy.app.binary_path}, blender version: {version}")
+    #     print(f"{cgt_naming.PACKAGE} - python exe: {executable}")
+    #     print("added executable to sys path")
+    #     sys.path.append(executable)
 
-    else:
-        print(f"{cgt_naming.PACKAGE} - python exe: {executable}")
+    # else:
+    #     print(f"{cgt_naming.PACKAGE} - python exe: {executable}")
+
+    print(f"{cgt_naming.PACKAGE} - blender bin: {bpy.app.binary_path}, blender version: {version}")
+    print(f"{cgt_naming.PACKAGE} - python exe: {executable}")
     return executable
 
 
@@ -65,7 +68,7 @@ def clear_user_site():
     """ Clear python site packages to avoid user site packages. """
     # Disallow pip from checking the user site-package
     environ_copy = dict(os.environ)
-    environ_copy["PYTHONNOUSERSITE"] = "1"
+    environ_copy["PYTHONNOUSERSITE"] = "-1"
     return environ_copy
 # endregion
 
@@ -121,7 +124,6 @@ def get_package_info(_dependency):
     """ Restart of blender is required to import 'pkg_resources' properly.
         Does NOT work directly after running a python subprocess. """
     import pkg_resources
-
     try:
         # get version and path of the package
         dist_info = pkg_resources.get_distribution(
@@ -141,7 +143,6 @@ def get_package_info(_dependency):
 
 def is_package_installed(_dependency):
     _dependency = dependency_naming(_dependency)
-
     # find spec using importlib
     try:
         package = importlib.util.find_spec(_dependency.name)
@@ -238,11 +239,6 @@ def install_and_import_module(_dependency):
     except socket.timeout:
         installed = False
         print("PLEASE CHECK YOUR INTERNET CONNECTION AND RETRY.")
-
-    if not installed:
-        cmd = [python_exe, "-m", "pip", "install", "--no-cache-dir", tmp_dependency.package, "--user"]
-        print(cmd)
-        installed = subprocess.call(cmd) == 0
 
     # subprocess.run(cmd, check=True, env=environ_copy)
     if installed:
@@ -365,7 +361,9 @@ def force_remove_remains():
 
 Dependency = namedtuple("Dependency", ["module", "package", "name", "pkg"])
 required_dependencies = (
-    Dependency(module="opencv-python==4.5.5.64", package=None, name="cv2", pkg="opencv_python"),
+
+    Dependency(module="opencv-contrib-python==4.5.5.64", package=None, name="cv2", pkg="opencv_contrib_python"),
+    # Dependency(module="opencv-python==4.5.5.64", package=None, name="cv2", pkg="opencv_python"), <- THIS 
     Dependency(module="protobuf==3.19.1", package=None, name="google.protobuf", pkg="protobuf"),
     Dependency(module="mediapipe==0.8.10", package=None, name="mediapipe", pkg="mediapipe"),
     )
