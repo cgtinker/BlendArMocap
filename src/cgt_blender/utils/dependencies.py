@@ -36,12 +36,15 @@ def get_python_exe():
         executable = sys.executable
 
     else:
-        try:
-            # blender vers =< 2.91 contains a path to their py executable
-            executable = bpy.app.binary_path_python
-        except AttributeError:
-            executable = None
-            pass
+        with warnings.catch_warnings():
+            # catching depreciated warning
+            warnings.simplefilter("ignore")
+            try:
+                # blender vers =< 2.91 contains a path to their py executable
+                executable = bpy.app.binary_path_python
+            except AttributeError:
+                executable = None
+                pass
 
     # some version the path points to the binary path instead of the py executable
     if executable == bpy.app.binary_path or executable == None:
@@ -49,15 +52,6 @@ def get_python_exe():
         py_exec = next(py_path.glob("python*"))  # first file that starts with "python" in "bin" dir
         executable = str(py_exec)
         print(f"{cgt_naming.PACKAGE} - cmd failed, redirecting to: {executable}")
-
-    # if executable not in sys.path:
-    #     print(f"{cgt_naming.PACKAGE} - blender bin: {bpy.app.binary_path}, blender version: {version}")
-    #     print(f"{cgt_naming.PACKAGE} - python exe: {executable}")
-    #     print("added executable to sys path")
-    #     sys.path.append(executable)
-
-    # else:
-    #     print(f"{cgt_naming.PACKAGE} - python exe: {executable}")
 
     print(f"{cgt_naming.PACKAGE} - blender bin: {bpy.app.binary_path}, blender version: {version}")
     print(f"{cgt_naming.PACKAGE} - python exe: {executable}")
@@ -81,43 +75,17 @@ def import_module(_dependency):
         return False
 
     tmp_dependency = dependency_naming(_dependency)
-
     try:
-        # add package to globals or reload it
         if tmp_dependency.name in globals():
             importlib.reload(globals()[tmp_dependency.name])
+            return True
         else:
             module = importlib.import_module(tmp_dependency.name)
             globals()[tmp_dependency.name] = module
-        return True
-
+            return True
     except ModuleNotFoundError as e:
         print(e)
-
-    # TODO: remove following exceptions as soon mediapipe is stable
-    except TypeError as e:
-        print(f"Importing {tmp_dependency.name} dependency failed")
-        if "PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python" in str(e):
-            print("TRY TO FIX PROTOCOL BUFFER ERR\n\n")
-            reinstall_dependency(
-                Dependency(module="protobuf==3.19.1", package=None, name="google.protobuf", pkg="protobuf"))
-        else:
-            print(e)
-
-    except ImportError as e:
-        if "cv2.cv2." in str(e):
-            print("TRY TO FIX BINDINGS ERR\n\n")
-            try:
-                reinstall_dependency(Dependency(
-                    module="opencv-python==4.5.5.64", package=None, name="cv2", pkg="opencv_contrib_python"))
-            except Exception as e:
-                print("AUTO SETUP FAILED, PLEASE REPORT AT GITHUB")
-                print(e)
-
-        else:
-            print(e)
-
-    return False
+        return False
 
 
 def get_package_info(_dependency):
@@ -359,42 +327,63 @@ def force_remove_remains():
 # endregion
 
 
+def analyze_dependencies(_dependencies):
+    """ yields if dependency is installed and the corrupted dependency """
+    for _dependency in _dependencies:
+        # check if package is installed
+        if not is_package_installed(_dependency):
+            yield False, []
+            continue
+
+        # try to import the dependency and add it to globs
+        # except corrupted dependency
+        try:
+            _importable = import_module(_dependency)
+            if not _importable:
+                yield False, [_dependency]
+                continue
+        except ModuleNotFoundError as e:
+            print("MODULE CANNOT BE FOUND\n", e)
+            yield False, [_dependency]
+            continue
+        except TypeError as e:
+            print("PLEASE CHECK IF PROTOBUF VERSION > 3.20.0\n", e)
+            yield False, [_dependency]
+        except ImportError as e:
+            print("PLEASE CHECK IF CV2 IS CORRUPTED\n", e)
+            yield False, [_dependency]
+
+        # check for path and version of the dependency, except cv2py preinstalled (conflict)
+        _version, _path = get_package_info(_dependency)
+        if _version is None or _path is None:
+            if _dependency.name == "cv2":
+                yield False, [
+                    Dependency(module="opencv-python", package=None, name="cv2", pkg="opencv_python"),
+                    Dependency(module="mediapipe", package=None, name="mediapipe", pkg="mediapipe"),
+                ]
+            else:
+                yield False, _dependency
+            continue
+
+
 Dependency = namedtuple("Dependency", ["module", "package", "name", "pkg"])
 required_dependencies = (
-
-    Dependency(module="opencv-contrib-python==4.5.5.64", package=None, name="cv2", pkg="opencv_contrib_python"),
-    # Dependency(module="opencv-python==4.5.5.64", package=None, name="cv2", pkg="opencv_python"), <- THIS 
-    Dependency(module="protobuf==3.19.1", package=None, name="google.protobuf", pkg="protobuf"),
-    Dependency(module="mediapipe==0.8.10", package=None, name="mediapipe", pkg="mediapipe"),
+    Dependency(module="absl-py", package=None, name="absl", pkg="absl_py"),
+    Dependency(module="attrs>=19.1.0", package=None, name="attrs", pkg="attrs"),
+    Dependency(module="matplotlib", package=None, name="matplotlib", pkg="matplotlib"),
+    Dependency(module="opencv-contrib-python>=4.5.5.64", package=None, name="cv2", pkg="opencv_contrib_python"),
+    Dependency(module="protobuf>=3.11.4,<=3.20.0", package=None, name="google.protobuf", pkg="protobuf"),
+    Dependency(module="mediapipe>=0.8.10", package=None, name="mediapipe", pkg="mediapipe"),
     )
 
-
+python_exe = get_python_exe()
 dependencies_installed = True
-with warnings.catch_warnings():
-    # catching depreciated warning
-    warnings.simplefilter("ignore")
-    python_exe = get_python_exe()
+corrupted_dependencies = []
 
-for dependency in required_dependencies:
-    # check if dependency is installed
-    if not is_package_installed(dependency):
-        dependencies_installed = False
-        continue
+for is_installed, corrupted_dependency in analyze_dependencies(required_dependencies):
+    dependencies_installed = is_installed
+    if len(corrupted_dependency) != 0:
+        corrupted_dependencies += corrupted_dependency
 
-    # try importing the dependency and add it to globs
-    try:
-        importable = import_module(dependency)
-        if not importable:
-            dependencies_installed = False
-            continue
-    except ModuleNotFoundError:
-        dependencies_installed = False
-        continue
-
-    # check for path and version of the dependency
-    _version, _path = get_package_info(dependency)
-    if _version is None or _path is None:
-        dependencies_installed = False
-        continue
-
-
+if len(corrupted_dependencies) != 0:
+    print("CORRUPTED DEPENDENCIES OR DEPENDENCY CONFLICTS FOUND\n", corrupted_dependencies)
