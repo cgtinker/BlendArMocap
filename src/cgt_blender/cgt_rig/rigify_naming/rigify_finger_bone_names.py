@@ -41,6 +41,7 @@ class RigifyBoneNameProvider(bone_name_provider.BoneNameProvider):
     pinky_dip = "f_pinky.03"
     pinky_tip = "f_pinky.01"
 
+    # TODO use L/R
     r_wrist = "hand_ik.R"
     r_thumb_cmc = "thumb.01.R"
     r_thumb_mcp = "thumb.02.R"
