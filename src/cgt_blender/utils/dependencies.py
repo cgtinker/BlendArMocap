@@ -339,12 +339,16 @@ def analyze_dependencies(_dependencies):
                     Dependency(module="mediapipe", package=None, name="mediapipe", pkg="mediapipe"),
                 ]
             else:
-                return False, package
+                return False, [package]
+        elif package.name in ["mediapipe", "protobuf"]:
+            return False, [
+                Dependency(module="protobuf", package=None, name="google.protobuf", pkg="protobuf"),
+                Dependency(module="mediapipe", package=None, name="mediapipe", pkg="mediapipe"),
+            ]
         else:
-            return False, package
+            return False, [package]
 
     for _dependency in _dependencies:
-        print(_dependency)
         # check if package is installed
         if not is_package_installed(_dependency):
             yield False, []
@@ -401,9 +405,9 @@ if corrupted_dependencies is None:
 
 for is_installed, corrupted_dependency in analyze_dependencies(required_dependencies):
     dependencies_installed = is_installed
-    print(dependencies_installed, corrupted_dependency)
     if len(corrupted_dependency) != 0:
         corrupted_dependencies += corrupted_dependency
 
 if len(corrupted_dependencies) != 0:
     print("CORRUPTED DEPENDENCIES OR DEPENDENCY CONFLICTS FOUND\n", corrupted_dependencies)
+    print("PLEASE UNINSTALL DEPENDENCIES USING THE ADD-ON SETTINGS")

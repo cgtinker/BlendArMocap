@@ -37,7 +37,6 @@ INIT_MODULES = [
     '.src.cgt_naming',
     '.src.cgt_blender.interface.ui_properties',
     '.src.cgt_blender.interface.ui_registration',
-    '.src.cgt_blender.input_manager',
     '.src.cgt_blender.interface',
     '.src.cgt_blender.utils.dependencies',
 ]
