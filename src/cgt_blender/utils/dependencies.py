@@ -287,12 +287,13 @@ def move_package_b4removal(_dependency):
 
 
 def uninstall_dependency(_dependency):
+    """
     print("Trying to remove", _dependency)
     if sys.platform != "win32":
-        pass
+       pass
     else:
         # uninstalling using pip is currently not possible on win
-        return move_package_b4removal(_dependency)
+       return move_package_b4removal(_dependency)
 
     # Uninstall dependency without question prompt on linux / macos
     cmd = [python_exe, "-m", "pip", "uninstall", "-y", _dependency.pkg]
@@ -305,13 +306,15 @@ def uninstall_dependency(_dependency):
         print(f"Failed to uninstall {_dependency.module}.")
         print(uninstalled)
         return False
+    """
+    return move_package_b4removal(_dependency)
 
 
 def force_remove_remains():
     # uninstalling packages doesn't work on windows, they are getting
     # force removed on restart
-    if sys.platform != 'win32':
-        return
+    # if sys.platform != 'win32':
+    #     return
 
     # todo: improve path name
     m_dir = Path(__file__).parent.parent.parent
