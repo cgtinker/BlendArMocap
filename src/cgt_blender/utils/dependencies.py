@@ -356,7 +356,7 @@ def analyze_dependencies(_dependencies):
         if not is_package_installed(_dependency):
             yield False, []
             continue
-
+        print(_dependencies)
         # try to import the dependency and add it to globs
         # except corrupted dependency
         try:
@@ -384,6 +384,7 @@ def analyze_dependencies(_dependencies):
             continue
 
         if _version is None or _path is None:
+            print("corrupted dist")
             corrupted_package(_dependency)
             continue
 
