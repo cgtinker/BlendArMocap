@@ -20,6 +20,7 @@ import importlib
 import os
 import subprocess
 import sys
+from importlib import machinery
 from collections import namedtuple
 from pathlib import Path
 from ... import cgt_naming
@@ -35,12 +36,15 @@ def get_python_exe():
         executable = sys.executable
 
     else:
-        try:
-            # blender vers =< 2.91 contains a path to their py executable
-            executable = bpy.app.binary_path_python
-        except AttributeError:
-            executable = None
-            pass
+        with warnings.catch_warnings():
+            # catching depreciated warning
+            warnings.simplefilter("ignore")
+            try:
+                # blender vers =< 2.91 contains a path to their py executable
+                executable = bpy.app.binary_path_python
+            except AttributeError:
+                executable = None
+                pass
 
     # some version the path points to the binary path instead of the py executable
     if executable == bpy.app.binary_path or executable == None:
@@ -58,7 +62,7 @@ def clear_user_site():
     """ Clear python site packages to avoid user site packages. """
     # Disallow pip from checking the user site-package
     environ_copy = dict(os.environ)
-    environ_copy["PYTHONNOUSERSITE"] = "1"
+    environ_copy["PYTHONNOUSERSITE"] = "-1"
     return environ_copy
 # endregion
 
@@ -67,42 +71,27 @@ def clear_user_site():
 def import_module(_dependency):
     """ Attempt to import module and assign it to the globals dictionary.
         May only be used with properly installed dependencies. """
-    tmp_dependency = dependency_naming(_dependency)
+    if not is_package_installed(_dependency):
+        return False
 
-    # TODO: temporarily fetching mediapipe protobuf error  till update
+    tmp_dependency = dependency_naming(_dependency)
     try:
         if tmp_dependency.name in globals():
             importlib.reload(globals()[tmp_dependency.name])
-
+            return True
         else:
-            globals()[tmp_dependency.name] = importlib.import_module(tmp_dependency.name)
-        return True
-
-    except TypeError as e:
-        print(f"Importing {tmp_dependency.name} dependency failed")
-        if "PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python" in str(e):
-            print("TRY TO FIX PROTOCOL BUFFER ERR\n\n")
-            reinstall_dependency(
-                Dependency(module="protobuf==3.19.1", package=None, name="google.protobuf", pkg="protobuf"))
-        else:
-            print(e)
-
-    except ImportError as e:
-        if "cv2.cv2." in str(e):
-            print("TRY TO FIX BINDINGS ERR\n\n")
-            reinstall_dependency(Dependency(
-                module="opencv-python==4.5.5.64", package=None, name="cv2", pkg="opencv_contrib_python"))
-        else:
-            print(e)
-
-    return False
+            module = importlib.import_module(tmp_dependency.name)
+            globals()[tmp_dependency.name] = module
+            return True
+    except ModuleNotFoundError as e:
+        print(e)
+        return False
 
 
 def get_package_info(_dependency):
     """ Restart of blender is required to import 'pkg_resources' properly.
         Does NOT work directly after running a python subprocess. """
     import pkg_resources
-
     try:
         # get version and path of the package
         dist_info = pkg_resources.get_distribution(
@@ -122,26 +111,24 @@ def get_package_info(_dependency):
 
 def is_package_installed(_dependency):
     _dependency = dependency_naming(_dependency)
+    # find spec using importlib
     try:
-        # Try to import the module to check if it is available.
-        # Blender may has to be restarted to take effect on newly installed or removed dependencies.
-        tmp_dependency = dependency_naming(_dependency)
-        importlib.import_module(_dependency.name)
-
-        # Installed dependencies are added to globals.
-        if tmp_dependency.name in globals():
-            importlib.reload(globals()[tmp_dependency.name])
-            return True
-        else:
-            if tmp_dependency.name == 'pip':
-                # pip shouldn't be in globals
-                return True
-            return False
+        package = importlib.util.find_spec(_dependency.name)
     except ModuleNotFoundError:
         return False
+    except ValueError:
+        return False
+
+    # only accept it as valid if there is a source file for the module - not bytecode only.
+    found = issubclass(type(package), importlib.machinery.ModuleSpec)
+
+    if found:
+        return True
+    return False
 
 
 def reinstall_dependency(_dependency):
+    print("Attempt to reinstall dependency", _dependency)
     try:
         uninstall_dependency(_dependency)
         install_and_import_module(_dependency)
@@ -207,7 +194,6 @@ def install_and_import_module(_dependency):
     tmp_dependency = dependency_naming(_dependency)
 
     if is_package_installed(tmp_dependency):
-        print(f"{tmp_dependency.package} is already installed.")
         return
 
     print(f"Attempting to install: {_dependency.module}")
@@ -215,12 +201,12 @@ def install_and_import_module(_dependency):
     cmd = [python_exe, "-m", "pip", "install", "--no-cache-dir", tmp_dependency.package]
     # cmd = [python_exe, "-m", "pip", "install", tmp_dependency.package]
     print(cmd)
-    installed = subprocess.call(cmd, env=environ_copy) == 0
-
-    if not installed:
-        cmd = [python_exe, "-m", "pip", "install", "--no-cache-dir", tmp_dependency.package, "--user"]
-        print(cmd)
-        installed = subprocess.call(cmd) == 0
+    import socket
+    try:
+        installed = subprocess.call(cmd, env=environ_copy) == 0
+    except socket.timeout:
+        installed = False
+        print("PLEASE CHECK YOUR INTERNET CONNECTION AND RETRY.")
 
     # subprocess.run(cmd, check=True, env=environ_copy)
     if installed:
@@ -301,12 +287,13 @@ def move_package_b4removal(_dependency):
 
 
 def uninstall_dependency(_dependency):
+    """
     print("Trying to remove", _dependency)
     if sys.platform != "win32":
-        pass
+       pass
     else:
         # uninstalling using pip is currently not possible on win
-        return move_package_b4removal(_dependency)
+       return move_package_b4removal(_dependency)
 
     # Uninstall dependency without question prompt on linux / macos
     cmd = [python_exe, "-m", "pip", "uninstall", "-y", _dependency.pkg]
@@ -319,13 +306,15 @@ def uninstall_dependency(_dependency):
         print(f"Failed to uninstall {_dependency.module}.")
         print(uninstalled)
         return False
+    """
+    return move_package_b4removal(_dependency)
 
 
 def force_remove_remains():
     # uninstalling packages doesn't work on windows, they are getting
     # force removed on restart
-    if sys.platform != 'win32':
-        return
+    # if sys.platform != 'win32':
+    #     return
 
     # todo: improve path name
     m_dir = Path(__file__).parent.parent.parent
@@ -341,30 +330,88 @@ def force_remove_remains():
 # endregion
 
 
+def analyze_dependencies(_dependencies):
+    """ yields if dependency is installed and the corrupted dependency """
+    def corrupted_package(package):
+        if package.name == "cv2":
+            _version, _path = get_package_info(
+                Dependency(module="opencv-python", package=None, name="cv2", pkg="opencv_python"))
+            if _version is not None or _path is not None:
+                return False, [
+                    Dependency(module="opencv-python", package=None, name="cv2", pkg="opencv_python"),
+                    Dependency(module="mediapipe", package=None, name="mediapipe", pkg="mediapipe"),
+                ]
+            else:
+                return False, [package]
+        elif package.name in ["mediapipe", "protobuf"]:
+            return False, [
+                Dependency(module="protobuf", package=None, name="google.protobuf", pkg="protobuf"),
+                Dependency(module="mediapipe", package=None, name="mediapipe", pkg="mediapipe"),
+            ]
+        else:
+            return False, [package]
+
+    for _dependency in _dependencies:
+        # check if package is installed
+        if not is_package_installed(_dependency):
+            yield False, []
+            continue
+        print(_dependencies)
+        # try to import the dependency and add it to globs
+        # except corrupted dependency
+        try:
+            _importable = import_module(_dependency)
+            if not _importable:
+                yield corrupted_package(_dependency)
+                continue
+        except ModuleNotFoundError as e:
+            print("MODULE CANNOT BE FOUND\n", e)
+            yield corrupted_package(_dependency)
+            continue
+        except TypeError as e:
+            print("PLEASE CHECK IF PROTOBUF VERSION > 3.20.0\n", e)
+            yield corrupted_package(_dependency)
+        except ImportError as e:
+            print("PLEASE CHECK IF CV2 IS CORRUPTED\n", e)
+            yield corrupted_package(_dependency)
+
+        # check for path and version of the dependency, except cv2py preinstalled (conflict)
+        try:
+            _version, _path = get_package_info(_dependency)
+        except ModuleNotFoundError as e:
+            print("MODULE CANNOT BE FOUND\n", e)
+            yield corrupted_package(_dependency)
+            continue
+
+        if _version is None or _path is None:
+            print("corrupted dist")
+            corrupted_package(_dependency)
+            continue
+
+
 Dependency = namedtuple("Dependency", ["module", "package", "name", "pkg"])
 required_dependencies = (
-    Dependency(module="opencv-python==4.5.5.64", package=None, name="cv2", pkg="opencv_python"),
-    Dependency(module="protobuf==3.19.1", package=None, name="google.protobuf", pkg="protobuf"),
-    Dependency(module="mediapipe==0.8.10", package=None, name="mediapipe", pkg="mediapipe"),
+    # # gets properly installed by mediapipe package
+    # Dependency(module="numpy", package=None, name="numpy", pkg="numpy"),
+    # Dependency(module="absl-py", package=None, name="absl", pkg="absl_py"),
+    # Dependency(module="attrs>=19.1.0", package=None, name="attrs", pkg="attrs"),
+    # Dependency(module="matplotlib", package=None, name="matplotlib", pkg="matplotlib"),
+    Dependency(module="opencv-contrib-python>=4.5.5.64", package=None, name="cv2", pkg="opencv_contrib_python"),
+    Dependency(module="protobuf>=3.11.4,<=3.20.0", package=None, name="google.protobuf", pkg="protobuf"),
+    Dependency(module="mediapipe>=0.8.10", package=None, name="mediapipe", pkg="mediapipe"),
     )
 
-
-global dependencies_installed
+python_exe = get_python_exe()
 dependencies_installed = True
-with warnings.catch_warnings():
-    # catching depreciated warning
-    warnings.simplefilter("ignore")
-    python_exe = get_python_exe()
+corrupted_dependencies = None
+if corrupted_dependencies is None:
+    corrupted_dependencies = []
 
-for dependency in required_dependencies:
-    try:
-        print("LOADING", dependency)
-        importable = import_module(dependency)
-        if not importable:
-            dependencies_installed = False
-            break
-    except ModuleNotFoundError:
-        pass
+for is_installed, corrupted_dependency in analyze_dependencies(required_dependencies):
+    dependencies_installed = is_installed
+    if len(corrupted_dependency) != 0:
+        corrupted_dependencies += corrupted_dependency
 
-    if not is_package_installed(dependency):
-        dependencies_installed = False
+if len(corrupted_dependencies) != 0:
+    print("CORRUPTED DEPENDENCIES OR DEPENDENCY CONFLICTS FOUND\n", corrupted_dependencies)
+    print("PLEASE UNINSTALL DEPENDENCIES USING THE ADD-ON SETTINGS")

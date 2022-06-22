@@ -36,7 +36,9 @@ class PREFERENCES_OT_CGT_install_dependencies_button(bpy.types.Operator):
     @classmethod
     def poll(self, context):
         # Deactivate install button when dependencies have been installed
-        return not dependencies.dependencies_installed
+        if not dependencies.dependencies_installed and len(dependencies.corrupted_dependencies) == 0:
+            return True
+        return False
 
     def execute(self, context):
         # try to install dependencies
@@ -50,7 +52,6 @@ class PREFERENCES_OT_CGT_install_dependencies_button(bpy.types.Operator):
             return {"CANCELLED"}
 
         # register user interface after installing dependencies
-        dependencies.dependencies_installed = True
         ui_registration.register_user_interface()
         # TODO: update UI without reimporting
         cgt_imports.manage_imports(reload=True)
@@ -59,43 +60,47 @@ class PREFERENCES_OT_CGT_install_dependencies_button(bpy.types.Operator):
 
 class PREFERENCES_OT_CGT_uninstall_dependencies_button(bpy.types.Operator):
     bl_idname = "button.cgt_uninstall_dependencies"
-    if sys.platform == "win32":
-        bl_label = "Uninstall Dependencies and Shutdown Blender"
+    if len(dependencies.corrupted_dependencies) != 0:
+        bl_label = "Uninstall conflicting packages and shutdown Blender"
     else:
-        bl_label = "Uninstall Dependencies"
-    bl_description = ("Uninstalls Mediapipe, OpenCV, Google Protobuffers")
+        bl_label = "Uninstall Dependencies and shutdown Blender"
+
+    bl_description = ("Uninstalls packages from Blenders site-packges")
     bl_options = {"REGISTER", "INTERNAL"}
 
     @classmethod
     def poll(self, context):
-        # Deactivate install button when dependencies are not installed
-        return dependencies.dependencies_installed
+        if dependencies.dependencies_installed or len(dependencies.corrupted_dependencies) != 0:
+            return True
+        return False
 
     def execute(self, context):
-        dependencies.dependencies_installed = False
+
+        def remove_package(dependency):
+            if dependencies.is_package_installed(dependency):
+                try:
+                    uninstalled = dependencies.uninstall_dependency(dependency)
+                    if not uninstalled:
+                        dependencies.dependencies_installed = True
+                except (subprocess.CalledProcessError, ImportError) as err:
+                    dependencies.dependencies_installed = True
+                    self.report({"ERROR"}, str(err))
+
+        if dependencies.dependencies_installed:
+            for _dependency in dependencies.required_dependencies:
+                remove_package(_dependency)
+        else:
+            for _dependency in dependencies.corrupted_dependencies:
+                remove_package(_dependency)
+
         # uninstall dependencies or move them to custom trash folder
         # on windows to remove files on app start
-        for dependency in dependencies.required_dependencies:
-            try:
-                uninstalled = dependencies.uninstall_dependency(dependency)
-                if not uninstalled:
-                    dependencies.dependencies_installed = True
-            except (subprocess.CalledProcessError, ImportError) as err:
-                dependencies.dependencies_installed = True
-                self.report({"ERROR"}, str(err))
+        dependencies.dependencies_installed = False
+        ui_registration.unregister_ui_panels()
 
-        if dependencies.dependencies_installed is False:
-            # unregister function checks for dependencies
-            ui_registration.unregister_ui_panels()
-
-        if sys.platform == "win32":
-            # todo combine / remove?
-            print("Attempt to shutdown Blender.")
-            import time
-            time.sleep(3)
-            bpy.ops.wm.quit_blender()
-        else:
-            # TODO: update UI without reimporting as soon pip gets fixed
-            cgt_imports.manage_imports(reload=True)
+        print("Attempt to shutdown Blender.")
+        import time
+        time.sleep(3)
+        bpy.ops.wm.quit_blender()
 
         return {"FINISHED"}

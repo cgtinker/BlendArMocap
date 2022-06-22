@@ -98,8 +98,11 @@ def unregister_ui_panels():
             unregister_class(cls)
         except RuntimeError:
             print("Class may not be registered:", cls)
-
-    del bpy.types.Scene.m_cgtinker_mediapipe  # noqa
+    try:
+        del bpy.types.Scene.m_cgtinker_mediapipe  # noqa
+    except AttributeError:
+        # hasn't been registered due to missing dependencies
+        pass
 
 
 def manual_unregistration():

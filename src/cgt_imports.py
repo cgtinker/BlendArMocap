@@ -37,7 +37,6 @@ INIT_MODULES = [
     '.src.cgt_naming',
     '.src.cgt_blender.interface.ui_properties',
     '.src.cgt_blender.interface.ui_registration',
-    '.src.cgt_blender.input_manager',
     '.src.cgt_blender.interface',
     '.src.cgt_blender.utils.dependencies',
 ]
@@ -85,7 +84,9 @@ def manage_imports(reload: bool = False, force: bool = False):
         import_module(module)
 
     from .cgt_blender.utils import dependencies
-    print(f"{PACKAGE_NAME} - Dependencies installed: {dependencies.dependencies_installed}")
+    if reload:
+        reload_module('.src.cgt_blender.utils.dependencies')
+        print(f"{PACKAGE_NAME} - Dependencies installed: {dependencies.dependencies_installed}")
 
     if dependencies.dependencies_installed is True or force is True:
         print(f"{PACKAGE_NAME} - Attempt to reload...")

@@ -28,7 +28,6 @@ class DetectionHandler:
     bridge: bpy_bridge_interface = None
     processor: processor_interface = None
 
-    # TODO: implement arrays
     # bridge to assign to blender
     bpy_bridges = {
         "HAND":     bpy_hand_bridge.BpyHandBridge,
@@ -131,6 +130,7 @@ class DetectionHandler:
             return
 
         elif type(self.processor) is list:
+            # holistic
             _processor = self.processor.copy()
             _processor[0] = _processor[0](self.bridge[0])
             _processor[1] = _processor[1](self.bridge[1])
@@ -149,7 +149,7 @@ class DetectionHandler:
 
 
 def main():
-    handler = DetectionHandler("POSE", "DEBUG")
+    handler = DetectionHandler("FACE", "DEBUG")
     handler.init_detector(0, "sd", 0, 0, 0, 0)
     handler.init_bridge()
 

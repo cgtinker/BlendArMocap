@@ -38,7 +38,7 @@ class RigifyBoneNameProvider(bone_name_provider.BoneNameProvider):
 
     pole_key = "pole_vector"
 
-    # references
+    # references - try r
     shoulder_c = "shoulder_center"
     upper_arm_R = "upper_arm_fk.R"
     forearm_R = "forearm_fk.R"
