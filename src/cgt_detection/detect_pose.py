@@ -15,6 +15,8 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+from pathlib import Path
+import bpy 
 import mediapipe as mp
 
 from . import detector_interface
@@ -26,6 +28,12 @@ from . import detector_interface
 class PoseDetector(detector_interface.RealtimeDetector):
     # https://google.github.io/mediapipe/solutions/pose#python-solution-api
     def image_detection(self):
+
+        if self.input_type == 2: #this is freemocap data
+            freemocap_session_path = Path(bpy.context.scene.m_cgtinker_mediapipe.freemocap_session_path)
+            self.load_freemocap_mediapipe3d_data(freemocap_session_path)
+            return
+
         # BlazePose GHUM 3D
         with self.solution.Pose(
                 static_image_mode=True,

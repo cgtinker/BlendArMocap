@@ -59,9 +59,11 @@ class UI_PT_CGT_main_panel(DefaultPanel, Panel):
 
         if user.detection_input_type == "movie":
             box.row().prop(user, "mov_data_path")
-        else:
+        elif user.detection_input_type == "stream":
             box.row().prop(user, "webcam_input_device")
             box.row().prop(user, "key_frame_step")
+        elif user.detection_input_type == "freemocap":
+            box.row().prop(user, "freemocap_session_path")
 
         # settings
         box.row().prop(user, "enum_detection_type")

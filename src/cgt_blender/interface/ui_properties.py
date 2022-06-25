@@ -41,6 +41,7 @@ class CGTProperties(PropertyGroup):
         items=(
             ("stream", "Stream", ""),
             ("movie", "Movie", ""),
+            ("freemocap", "freemocap", "")
         )
     )
 
@@ -73,6 +74,18 @@ class CGTProperties(PropertyGroup):
     )
 
     # endregion
+    # region MOVIE
+    freemocap_session_path: StringProperty(
+        name="Freemocap Session Path",
+        description="path to `freemocap` session folder",
+        default='path_to_session_folder',
+        options={'HIDDEN'},
+        maxlen=1024,
+        subtype='DIR_PATH'
+    )
+
+    # endregion
+
     # endregion
 
     # region TRANSFER

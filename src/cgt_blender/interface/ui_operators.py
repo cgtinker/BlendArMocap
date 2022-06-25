@@ -112,12 +112,20 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
                 self.user.detection_operator_running = False
                 return {'FINISHED'}
             self.detection_handler.init_detector(str(mov_path), "sd", 0, frame_start, 1, 1)
-        else:
+        elif self.user.detection_input_type == 'stream':
             camera_index = self.user.webcam_input_device
             dimensions = self.user.enum_stream_dim
             backend = int(self.user.enum_stream_type)
             key_step = self.user.key_frame_step
             self.detection_handler.init_detector(camera_index, dimensions, backend, frame_start, key_step, 0)
+        elif self.user.detection_input_type == 'freemocap':
+            freemocap_session_path = Path(bpy.path.abspath(self.user.freemocap_session_path)).parent
+            print("Path to freemocap_session_path:", freemocap_session_path)
+            if not Path(freemocap_session_path).is_dir():
+                print("GIVEN PATH IS NOT VALID")
+                self.user.detection_operator_running = False
+                return {'FINISHED'}
+            self.detection_handler.init_detector(input_type=2) # input_type=2 <- freemocap_session
 
         # initialize the bridge from the detector to blender
         self.detection_handler.init_bridge()
