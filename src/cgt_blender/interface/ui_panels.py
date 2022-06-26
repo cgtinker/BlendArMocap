@@ -15,6 +15,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+from tracemalloc import start
 import bpy
 from bpy.types import Panel
 
@@ -59,18 +60,25 @@ class UI_PT_CGT_main_panel(DefaultPanel, Panel):
 
         if user.detection_input_type == "movie":
             box.row().prop(user, "mov_data_path")
+            start_button_text = user.button_start_detection
         elif user.detection_input_type == "stream":
             box.row().prop(user, "webcam_input_device")
             box.row().prop(user, "key_frame_step")
+            start_button_text = user.button_start_detection
         elif user.detection_input_type == "freemocap":
             box.row().prop(user, "freemocap_session_path")
+            start_button_text = 'Load `freemocap` data'
 
         # settings
         box.row().prop(user, "enum_detection_type")
         if user.detection_operator_running:
             box.row().operator("wm.cgt_feature_detection_operator", text="Stop Detection")
         else:
-            box.row().operator("wm.cgt_feature_detection_operator", text=user.button_start_detection)
+            box.row().operator("wm.cgt_feature_detection_operator", text=start_button_text)
+
+        if user.detection_input_type == "freemocap":
+            box.row().operator("wm.fmc_bind_freemocap_data_to_skeleton", text="bind animation to skreleton")
+            box.row().operator("wm.fmc_load_synchronized_videos", text="load synchronized videos")
 
         # transfer animation
         box = self.layout.box()

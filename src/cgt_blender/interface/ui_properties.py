@@ -39,9 +39,9 @@ class CGTProperties(PropertyGroup):
         name="Type",
         description="Select detection type for motion tracking.",
         items=(
+            ("freemocap", "freemocap", ""),
             ("stream", "Stream", ""),
             ("movie", "Movie", ""),
-            ("freemocap", "freemocap", "")
         )
     )
 
@@ -74,17 +74,16 @@ class CGTProperties(PropertyGroup):
     )
 
     # endregion
-    # region MOVIE
+    
     freemocap_session_path: StringProperty(
         name="Freemocap Session Path",
         description="path to `freemocap` session folder",
-        default='path_to_session_folder',
+        default=r"C:\Users\jonma\Dropbox\FreeMoCapProject\FreeMocap_Data\sesh_2022-04-19_11_29_31_testy_westy_2",
         options={'HIDDEN'},
         maxlen=1024,
         subtype='DIR_PATH'
     )
 
-    # endregion
 
     # endregion
 
@@ -129,10 +128,10 @@ class CGTProperties(PropertyGroup):
         name="Target",
         description="Select detection type for motion tracking.",
         items=(
+            ("HOLISTIC", "Holistic (Experimental)", ""),
             ("HAND", "Hands", ""),
             ("FACE", "Face", ""),
-            ("POSE", "Pose", ""),
-            ("HOLISTIC", "Holistic (Experimental)", ""),
+            ("POSE", "Pose", ""),            
         )
     )
     # endregion

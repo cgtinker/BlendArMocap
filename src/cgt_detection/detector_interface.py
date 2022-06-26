@@ -131,23 +131,48 @@ class RealtimeDetector(ABC):
         number_of_frames = mediapipe3d_frames_trackedPoints_xyz.shape[0]
         number_of_tracked_points = mediapipe3d_frames_trackedPoints_xyz.shape[1]
         number_of_body_pose_points = 33
+        number_of_hand_points = 21
+        # number_of_face_points = 468 
+        
 
 
         
         for this_frame_number in rich_track(range(number_of_frames), description="[magenta] loading freemocap session mediapip3d data"):
+
             #per frame
-            this_frame_listener_data = []
+            this_frame_body_data = []
+            this_frame_right_hand_data = []
+            this_frame_left_hand_data = []
+            this_frame_face_data = []
+
+            first_body_point = 0
+            first_left_hand_point = number_of_body_pose_points
+            first_right_hand_point = number_of_body_pose_points + number_of_hand_points
+            first_face_point = number_of_body_pose_points + (number_of_hand_points*2)
+            
+
             this_frame_trackedPoint_xyz = mediapipe3d_frames_trackedPoints_xyz[this_frame_number,:,:]
             for this_tracked_point_number, this_tracked_point_xyz in enumerate(this_frame_trackedPoint_xyz):
-                if this_tracked_point_number == number_of_body_pose_points:
-                    break
                 #per tracked_point
-                this_tracked_point_xyz_list = this_frame_trackedPoint_xyz[this_tracked_point_number,:]
-                this_frame_listener_data.append([this_tracked_point_number, this_tracked_point_xyz_list.tolist()])
-        
-            
+
+                this_tracked_point_xyz_list = this_frame_trackedPoint_xyz[this_tracked_point_number,:].tolist()
+
+                if this_tracked_point_number < first_left_hand_point: # body/pose points
+                    this_frame_body_data.append([this_tracked_point_number, this_tracked_point_xyz_list])
+
+                elif this_tracked_point_number < first_right_hand_point: # left_hand points
+                    this_frame_left_hand_data.append([this_tracked_point_number-first_left_hand_point, this_tracked_point_xyz_list])
+
+                elif this_tracked_point_number < first_face_point: # right_hand points
+                    this_frame_right_hand_data.append([this_tracked_point_number-first_right_hand_point, this_tracked_point_xyz_list])
+                
+                else: # face points
+                    this_frame_face_data.append([this_tracked_point_number-first_face_point, this_tracked_point_xyz_list])
+
+            this_frame_holistic_data = [[[this_frame_left_hand_data], [this_frame_right_hand_data]], [this_frame_face_data], this_frame_body_data]
+                
             #JSM NOTE - spoofing the method in `self.exec_detection`
-            self.listener.data = this_frame_listener_data
+            self.listener.data = this_frame_holistic_data
             self.update_listeners()
 
     def filter_dottos_by_reprojection_error(self,
@@ -173,7 +198,10 @@ class RealtimeDetector(ABC):
         return [[idx, [landmark.x, landmark.y, landmark.z]] for idx, landmark in enumerate(landmark_list.landmark)]
 
     def __del__(self):
-        self.listener.detach(self.observer)
-        del self.observer
-        del self.listener
-        del self.stream
+        try:
+            self.listener.detach(self.observer)
+            del self.observer
+            del self.listener
+            del self.stream
+        except:
+            print("it's probably fine lol")
