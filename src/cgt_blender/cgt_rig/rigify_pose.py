@@ -127,7 +127,7 @@ class RigifyPose(abs_rigging.BpyRigging):
 
             # leg poses
             POSE.left_shin_ik:          [self.bone_name_provider.shin_ik_R, "LIMIT_DISTANCE"],
-            POSE.right_shin_ik:         [self.bone_name_provider.shin_ik_R, "LIMIT_DISTANCE"],
+            POSE.right_shin_ik:         [self.bone_name_provider.shin_ik_L, "LIMIT_DISTANCE"],
             POSE.left_foot_ik:          [self.bone_name_provider.foot_ik_R, "CHILD_OF", armature],
             POSE.right_foot_ik:         [self.bone_name_provider.foot_ik_L, "CHILD_OF", armature],
             POSE.left_foot_index_ik:    [self.bone_name_provider.foot_ik_R, "LOCKED_TRACK", "TRACK_NEGATIVE_Y"],
