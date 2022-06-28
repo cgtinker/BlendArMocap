@@ -57,21 +57,24 @@ class HandProcessor(processor_interface.DataProcessor):
         """ Process and map received data from mediapipe before key-framing. """
         # prepare landmarks
         # TODO: check for holistic hand input (left / right) hand - consider to preprocess
-        self.left_hand_data = self.set_global_origin(self.data[0])
-        self.right_hand_data = self.set_global_origin(self.data[1])
+        z_left_hand_data = self.set_global_origin(self.data[0])
+        z_right_hand_data = self.set_global_origin(self.data[1])
 
         # get finger angles
-        self.left_angles = self.finger_angles(self.left_hand_data)
-        self.right_angles = self.finger_angles(self.right_hand_data)
+        self.left_angles = self.finger_angles(z_left_hand_data)
+        self.right_angles = self.finger_angles(z_right_hand_data)
 
         # get hand rotation
-        left_hand_rot = self.global_hand_rotation(self.left_hand_data, 0, "L")
+        left_hand_rot = self.global_hand_rotation(z_left_hand_data, 0, "L")
         if left_hand_rot is not None:
             self.left_angles.append(left_hand_rot)
 
-        right_hand_rot = self.global_hand_rotation(self.right_hand_data, 100, "R")  # offset for euler combat
+        right_hand_rot = self.global_hand_rotation(z_right_hand_data, 100, "R")  # offset for euler combat
         if right_hand_rot is not None:
             self.right_angles.append(right_hand_rot)
+
+        self.left_hand_data = self.set_global_origin(self.data[0])
+        self.right_hand_data = self.set_global_origin(self.data[1])
 
     def init_print(self):
         """ processed printing doesnt support mathutils rotation functions. """

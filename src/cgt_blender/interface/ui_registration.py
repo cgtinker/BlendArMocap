@@ -31,7 +31,8 @@ def get_classes():
         ui_operators.UI_CGT_transfer_anim_button,
         ui_operators.UI_CGT_toggle_drivers_button,
         ui_operators.WM_CGT_modal_detection_operator,
-
+        ui_operators.WM_FMC_bind_freemocap_data_to_skeleton,
+        ui_operators.WM_FMC_load_synchronized_videos,
         ui_panels.UI_PT_CGT_main_panel,
         # ui_panels.UI_PT_RemappingPanel
     )

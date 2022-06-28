@@ -16,8 +16,12 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 from abc import ABC, abstractmethod
-
+import enum
+from pathlib import Path
+import numpy as np
 from mediapipe import solutions
+from rich.progress import track as rich_track 
+from rich import print
 
 from ..cgt_patterns import observer_pattern
 
@@ -33,7 +37,7 @@ class RealtimeDetector(ABC):
     frame = None
 
     def __init__(self, frame_start: int = 0, key_step: int = 4, input_type: int = None):
-        self.input_type = input_type  # stream or movie (0/1)
+        self.input_type = input_type  # stream or movie or freemocap (0/1/2)
         self.drawing_utils = solutions.drawing_utils
         self.drawing_style = solutions.drawing_styles
         self.frame = frame_start
@@ -66,7 +70,7 @@ class RealtimeDetector(ABC):
     def draw_result(self, s, mp_res, mp_drawings):
         pass
 
-    def exec_detection(self, mp_lib):
+    def  exec_detection(self, mp_lib):
         self.stream.update()
         updated = self.stream.updated
 
@@ -86,7 +90,7 @@ class RealtimeDetector(ABC):
         self.stream.frame.flags.writeable = False
         self.stream.set_color_space('rgb')
         mp_res = mp_lib.process(self.stream.frame)
-        self.stream.set_color_space('bgr')
+        self.stream.set_color_space('bgr') 
 
         # proceed if contains features
         if not self.contains_features(mp_res):
@@ -100,6 +104,7 @@ class RealtimeDetector(ABC):
         self.stream.draw()
 
         # update listeners
+        # JSM NOTE - this is where the Mediapipe data goes into Blender!
         self.listener.data = self.get_detection_results(mp_res)
         self.update_listeners()
 
@@ -107,6 +112,81 @@ class RealtimeDetector(ABC):
         if self.stream.exit_stream():
             return False
         return True
+
+    def load_freemocap_mediapipe3d_data(self, freemocap_session_path:Path):
+        """Load the 3d mediapipe skeleton data from a freemocap session
+        (not implemented) `reprojection_error_threshold:float` = filter data by removing dottos with high reprojection error. I think for now I'll just do a mean+2*standard_deviation cut-off that leaves in 95% of the data (if stupidly assuming normal distribution) or something TODO - do this better and smarter lol
+        """
+        data_arrays_path = freemocap_session_path / 'DataArrays'
+        
+        mediapipe3d_xyz_npy_path = data_arrays_path / 'mediaPipeSkel_3d_smoothed.npy'
+        mediapipe3d_reprojectionError_npy_path = data_arrays_path / 'mediaPipeSkel_reprojErr.npy'
+        
+        mediapipe3d_frames_trackedPoints_xyz = np.load(str(mediapipe3d_xyz_npy_path))/1000 #convert to meters
+        mediapipe3d_frames_trackedPoints_reprojectionError = np.load(str(mediapipe3d_reprojectionError_npy_path))
+        
+        # figure out unfiltered first before getting stuck on filtering the data, dummy ;-*
+        # mediapipe3d_frames_trackedPoints_xyz = self.filter_dottos_by_reprojection_error(mediapipe3d_frames_trackedPoints_xyz,mediapipe3d_frames_trackedPoints_reprojectionError,)
+        
+        number_of_frames = mediapipe3d_frames_trackedPoints_xyz.shape[0]
+        number_of_tracked_points = mediapipe3d_frames_trackedPoints_xyz.shape[1]
+        number_of_body_pose_points = 33
+        number_of_hand_points = 21
+        # number_of_face_points = 468 
+        
+
+
+        
+        for this_frame_number in rich_track(range(number_of_frames), description="[magenta] loading freemocap session mediapip3d data"):
+
+            #per frame
+            this_frame_body_data = []
+            this_frame_right_hand_data = []
+            this_frame_left_hand_data = []
+            this_frame_face_data = []
+
+            first_body_point = 0
+            first_left_hand_point = number_of_body_pose_points
+            first_right_hand_point = number_of_body_pose_points + number_of_hand_points
+            first_face_point = number_of_body_pose_points + (number_of_hand_points*2)
+            
+
+            this_frame_trackedPoint_xyz = mediapipe3d_frames_trackedPoints_xyz[this_frame_number,:,:]
+            for this_tracked_point_number, this_tracked_point_xyz in enumerate(this_frame_trackedPoint_xyz):
+                #per tracked_point
+
+                this_tracked_point_xyz_list = this_frame_trackedPoint_xyz[this_tracked_point_number,:].tolist()
+
+                if this_tracked_point_number < first_left_hand_point: # body/pose points
+                    this_frame_body_data.append([this_tracked_point_number, this_tracked_point_xyz_list])
+
+                elif this_tracked_point_number < first_right_hand_point: # left_hand points
+                    this_frame_left_hand_data.append([this_tracked_point_number-first_left_hand_point, this_tracked_point_xyz_list])
+
+                elif this_tracked_point_number < first_face_point: # right_hand points
+                    this_frame_right_hand_data.append([this_tracked_point_number-first_right_hand_point, this_tracked_point_xyz_list])
+                
+                else: # face points
+                    this_frame_face_data.append([this_tracked_point_number-first_face_point, this_tracked_point_xyz_list])
+
+            this_frame_holistic_data = [[[this_frame_left_hand_data], [this_frame_right_hand_data]], [this_frame_face_data], this_frame_body_data]
+                
+            #JSM NOTE - spoofing the method in `self.exec_detection`
+            self.listener.data = this_frame_holistic_data
+            self.update_listeners()
+
+    def filter_dottos_by_reprojection_error(self,
+     mediapipe3d_frames_trackedPoints_xyz:np.ndarray,
+     mediapipe3d_frames_trackedPoints_reprojectionError:np.ndarray,
+     reprojection_error_cuttoff:float = 15.0,):
+    #  """default cut-off based on `freemocap\dev_scratchpad\examine_reprojection_error.ipynb` TODO - do this in a better and more smarter like way :thumb: """
+
+        # mean_reprojection_error = np.nanmean(mediapipe3d_frames_trackedPoints_reprojectionError)
+        # standard_deviation_reprojection_error = np.nanstd(mediapipe3d_frames_trackedPoints_reprojectionError)
+        # confidence_interval_99_cutoff = mean_reprojection_error + (3*standard_deviation_reprojection_error)
+
+        bad_dottos_mask = mediapipe3d_frames_trackedPoints_reprojectionError<reprojection_error_cuttoff
+        mediapipe3d_frames_trackedPoints_xyz[bad_dottos_mask] = np.nan
 
     def update_listeners(self):
         self.frame += self.key_step
@@ -118,7 +198,10 @@ class RealtimeDetector(ABC):
         return [[idx, [landmark.x, landmark.y, landmark.z]] for idx, landmark in enumerate(landmark_list.landmark)]
 
     def __del__(self):
-        self.listener.detach(self.observer)
-        del self.observer
-        del self.listener
-        del self.stream
+        try:
+            self.listener.detach(self.observer)
+            del self.observer
+            del self.listener
+            del self.stream
+        except:
+            print("it's probably fine lol")
