@@ -17,15 +17,15 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 
 bl_info = {
-    "name":        "BlendArMocap_Freemocap",
-    "description": "Mediapipe implementation for Blender 2.9+. (based on github-@jonmatthis's fork to add `freemocap` support",
+    "name":        "BlendArMocap",
+    "description": "Mediapipe implementation for Blender 2.9+",
     "author":      "cgtinker",
     "version":     (1, 5, 2),
     "blender":     (2, 90, 0),
     "location":    "3D View > Tool",
     "warning":     "Requires external packages and elevated privileges",
-    "wiki_url":    "https://github.com/jonmatthis/BlendArMocap",
-    "tracker_url": "https://github.com/jonmatthis/BlendArMocap/issues",
+    "wiki_url":    "https://github.com/cgtinker/BlendArMocap",
+    "tracker_url": "https://github.com/cgtinker/BlendArMocap/issues",
     "support":     "COMMUNITY",
     "category":    "Development"
 }

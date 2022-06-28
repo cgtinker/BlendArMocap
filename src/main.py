@@ -94,7 +94,7 @@ class DetectionHandler:
             :param stream_backend: cv2default or cv2cap_dshow [0, 1]
             :param frame_start: key frame start in blender timeline
             :param key_step: keyframe step for capture results
-            :param input_type: `0`: "stream" input, `1`: "movie" or `2`:"freemocap_session"
+            :param input_type: `0`: "stream" input, `1`: "movie"
             :return: returns nothing: """
         # initialize the detector
         self.detector = self.detector(frame_start=frame_start, key_step=key_step, input_type=input_type)
@@ -108,21 +108,20 @@ class DetectionHandler:
         dim = dimensions_dict[dimension]
 
         # default webcam slot (unless freemocap_session)
-        if capture_input is None and input_type is None:
+        if capture_input is None:
             capture_input = 0
 
-        if input_type != 2:
-            # init tracking handler targets
-            self.detector.stream = stream.Webcam(
-                capture_input=capture_input, width=dim[0], height=dim[1], backend=stream_backend
-            )
+        # init tracking handler targets
+        self.detector.stream = stream.Webcam(
+            capture_input=capture_input, width=dim[0], height=dim[1], backend=stream_backend
+        )
 
-            # stop if opening stream failed
-            if not self.detector.stream.capture.isOpened():
-                raise IOError("Initializing Detector failed.")
+        # stop if opening stream failed
+        if not self.detector.stream.capture.isOpened():
+            raise IOError("Initializing Detector failed.")
 
-            # initialize mediapipe model
-            self.detector.initialize_model()
+        # initialize mediapipe model
+        self.detector.initialize_model()
 
     def init_bridge(self):
         """ Initialize bridge to print raw data / to blender. """

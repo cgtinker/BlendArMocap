@@ -14,8 +14,6 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
-import bpy
-from pathlib import Path
 import mediapipe as mp
 
 from . import detector_interface
@@ -24,13 +22,6 @@ from . import detector_interface
 class HolisticDetector(detector_interface.RealtimeDetector):
     # https://google.github.io/mediapipe/solutions/holistic#python-solution-api
     def image_detection(self):
-
-
-        if self.input_type == 2: #this is freemocap data
-            freemocap_session_path = Path(bpy.context.scene.m_cgtinker_mediapipe.freemocap_session_path)
-            self.load_freemocap_mediapipe3d_data(freemocap_session_path)
-            return
-
         with self.solution.Holistic(
                 min_detection_confidence=0.7,
                 static_image_mode=True,

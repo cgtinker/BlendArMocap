@@ -59,7 +59,6 @@ class HandDetector(detector_interface.RealtimeDetector):
         # multi_hand_world_landmarks // multi_hand_landmarks
         left_hand_data, right_hand_data = self.seperate_hands(
             list(zip(data, self.cvt_hand_orientation(mp_res.multi_handedness))))
-    # JSM NOTE - Found the data!
         return left_hand_data, right_hand_data
 
     def contains_features(self, mp_res):
