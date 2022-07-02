@@ -19,7 +19,6 @@ import bpy
 import addon_utils
 import numpy as np
 
-from rich import print
 from pathlib import Path
 from ..utils import objects
 from ...cgt_naming import COLLECTIONS

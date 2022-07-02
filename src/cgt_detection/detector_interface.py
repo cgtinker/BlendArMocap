@@ -20,9 +20,6 @@ import enum
 from pathlib import Path
 import numpy as np
 from mediapipe import solutions
-from rich.progress import track as rich_track 
-from rich import print
-
 from ..cgt_patterns import observer_pattern
 
 
@@ -137,7 +134,7 @@ class RealtimeDetector(ABC):
 
 
         
-        for this_frame_number in rich_track(range(number_of_frames), description="[magenta] loading freemocap session mediapip3d data"):
+        for this_frame_number in range(number_of_frames):
 
             #per frame
             this_frame_body_data = []
