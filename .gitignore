@@ -132,4 +132,5 @@ dmypy.json
 .pyre/
 /src/visualize/
 
-# /.idea/
+/.idea/
+.idea/
