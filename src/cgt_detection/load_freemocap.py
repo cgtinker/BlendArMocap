@@ -40,6 +40,7 @@ class FreemocapLoader(detector_interface.RealtimeDetector):
             self.listener.data = holistic_data
             self.update_listeners()
             return True
+        return False
 
     def initialize_model(self):
         """Load the 3d mediapipe skeleton data from a freemocap session
