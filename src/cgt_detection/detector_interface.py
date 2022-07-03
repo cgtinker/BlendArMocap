@@ -16,12 +16,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 from abc import ABC, abstractmethod
-import enum
-from pathlib import Path
-import numpy as np
 from mediapipe import solutions
-from rich.progress import track as rich_track 
-from rich import print
 
 from ..cgt_patterns import observer_pattern
 
