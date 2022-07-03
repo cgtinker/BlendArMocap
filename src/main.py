@@ -16,7 +16,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 from .cgt_bridge import bpy_hand_bridge, bpy_pose_bridge, bpy_face_bridge, bpy_bridge_interface, print_bridge
-from .cgt_detection import detect_hands, detect_pose, detect_face, detect_holistic, detector_interface
+from .cgt_detection import detect_hands, detect_pose, detect_face, detect_holistic, detector_interface, load_freemocap
 from .cgt_patterns import events
 from .cgt_processing import hand_processing, pose_processing, face_processing, processor_interface
 from .cgt_utils import stream
@@ -33,7 +33,8 @@ class DetectionHandler:
         "HAND":     bpy_hand_bridge.BpyHandBridge,
         "POSE":     bpy_pose_bridge.BpyPoseBridge,
         "FACE":     bpy_face_bridge.BpyFaceBridge,
-        "HOLISTIC": [bpy_hand_bridge.BpyHandBridge, bpy_face_bridge.BpyFaceBridge, bpy_pose_bridge.BpyPoseBridge]
+        "HOLISTIC": [bpy_hand_bridge.BpyHandBridge, bpy_face_bridge.BpyFaceBridge, bpy_pose_bridge.BpyPoseBridge],
+        "FREEMOCAP": [bpy_hand_bridge.BpyHandBridge, bpy_face_bridge.BpyFaceBridge, bpy_pose_bridge.BpyPoseBridge],
     }
 
     # detection types and processors
@@ -41,7 +42,8 @@ class DetectionHandler:
         "HAND":     detect_hands.HandDetector,
         "POSE":     detect_pose.PoseDetector,
         "FACE":     detect_face.FaceDetector,
-        "HOLISTIC": detect_holistic.HolisticDetector
+        "HOLISTIC": detect_holistic.HolisticDetector,
+        "FREEMOCAP": load_freemocap.FreemocapLoader,
     }
 
     # processes mediapipe landmarks
@@ -49,16 +51,18 @@ class DetectionHandler:
         "HAND": hand_processing.HandProcessor,
         "POSE": pose_processing.PoseProcessor,
         "FACE": face_processing.FaceProcessor,
-        "HOLISTIC": [hand_processing.HandProcessor, face_processing.FaceProcessor, pose_processing.PoseProcessor]
+        "HOLISTIC": [hand_processing.HandProcessor, face_processing.FaceProcessor, pose_processing.PoseProcessor],
+        "FREEMOCAP": [hand_processing.HandProcessor, face_processing.FaceProcessor, pose_processing.PoseProcessor],
     }
 
     # observes data and maps it to the bridge
     observers = {
-        "BPY":          events.BpyUpdateReceiver,
-        "RAW":          events.PrintRawDataUpdate,
-        "DEBUG":        events.DriverDebug,   # may doesn't while working with mathutils
-        "BPY_HOLISTIC": events.HolisticBpyUpdateReceiver,
-        "DEBUG_HOLISTIC": events.HolisticDriverDebug
+        "BPY":              events.BpyUpdateReceiver,
+        "RAW":              events.PrintRawDataUpdate,
+        "DEBUG":            events.DriverDebug,   # may doesn't while working with mathutils
+        "BPY_HOLISTIC":     events.HolisticBpyUpdateReceiver,
+        "BPY_FREEMOCAP":     events.HolisticBpyUpdateReceiver,
+        "DEBUG_HOLISTIC":   events.HolisticDriverDebug
     }
 
     def __init__(self, target: str = "HAND", bridge_type: str = "BPY"):
@@ -74,7 +78,7 @@ class DetectionHandler:
             self.processor = None
 
         # assign or print data (processed printing only available for location and scale data)
-        if bridge_type == "BPY":
+        elif bridge_type == "BPY":
             self.bridge = self.bpy_bridges[target]
         else:
             self.bridge = print_bridge.PrintBridge
@@ -82,8 +86,12 @@ class DetectionHandler:
         # observers input and feeds processor with detection results
         self.listener = events.UpdateListener()
         if target == "HOLISTIC":
-            bridge_type += "_"
-            bridge_type += target
+            print("called holistic")
+            bridge_type += "_"+target
+        if target == "FREEMOCAP":
+            print("called freemocap")
+            bridge_type = "BPY_FREEMOCAP"
+
         self.observer = self.observers[bridge_type]
 
     def init_detector(self, capture_input=None, dimension: str = "sd", stream_backend: int = 0,
@@ -97,7 +105,7 @@ class DetectionHandler:
             :param input_type: `0`: "stream" input, `1`: "movie" or `2`:"freemocap_session"
             :return: returns nothing: """
         # initialize the detector
-        self.detector = self.detector(frame_start=frame_start, key_step=key_step, input_type=input_type)
+        self.detector = self.detector(frame_start=frame_start, key_step=key_step, input_type=input_type) # noqa
 
         # stream capture dimensions
         dimensions_dict = {
@@ -111,7 +119,7 @@ class DetectionHandler:
         if capture_input is None and input_type is None:
             capture_input = 0
 
-        if input_type != 2:
+        if input_type in [0, 1]:
             # init tracking handler targets
             self.detector.stream = stream.Webcam(
                 capture_input=capture_input, width=dim[0], height=dim[1], backend=stream_backend
@@ -122,6 +130,9 @@ class DetectionHandler:
                 raise IOError("Initializing Detector failed.")
 
             # initialize mediapipe model
+            self.detector.initialize_model()
+
+        elif input_type == 2:
             self.detector.initialize_model()
 
     def init_bridge(self):

@@ -67,7 +67,7 @@ class RealtimeDetector(ABC):
     def draw_result(self, s, mp_res, mp_drawings):
         pass
 
-    def  exec_detection(self, mp_lib):
+    def exec_detection(self, mp_lib):
         self.stream.update()
         updated = self.stream.updated
 
@@ -135,7 +135,6 @@ class RealtimeDetector(ABC):
 
         
         for this_frame_number in range(number_of_frames):
-
             #per frame
             this_frame_body_data = []
             this_frame_right_hand_data = []

@@ -115,13 +115,16 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
                 self.user.detection_operator_running = False
                 return {'FINISHED'}
             self.detection_handler.init_detector(str(mov_path), "sd", 0, frame_start, 1, 1)
+
         elif self.user.detection_input_type == 'stream':
             camera_index = self.user.webcam_input_device
             dimensions = self.user.enum_stream_dim
             backend = int(self.user.enum_stream_type)
             key_step = self.user.key_frame_step
             self.detection_handler.init_detector(camera_index, dimensions, backend, frame_start, key_step, 0)
+
         elif self.user.detection_input_type == 'freemocap':
+            self.detection_handler = DetectionHandler("FREEMOCAP", "BPY")
             freemocap_session_path = Path(bpy.path.abspath(self.user.freemocap_session_path)).parent
             print("Path to freemocap_session_path:", freemocap_session_path)
             if not Path(freemocap_session_path).is_dir():
@@ -167,7 +170,6 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
         wm.event_timer_remove(self._timer)
         print("FINISHED DETECTION")
         return {'FINISHED'}
-
 
 
 class WM_FMC_bind_freemocap_data_to_skeleton(bpy.types.Operator):

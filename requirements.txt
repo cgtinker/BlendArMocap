@@ -4,4 +4,3 @@ matplotlib
 opencv-contrib-python>=4.5.5.64
 protobuf~=3.19.0
 mediapipe>=0.8.10
-rich
