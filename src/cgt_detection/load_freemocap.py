@@ -72,48 +72,24 @@ class FreemocapLoader(detector_interface.RealtimeDetector):
     def get_detection_results(self, mp_res=None):
         if self.frame == self.number_of_frames - 1:
             return None
-        # per frame
+        tracked_points = self.mediapipe3d_frames_trackedPoints_xyz[self.frame, :, :]
 
-        this_frame_trackedPoint_xyz = self.mediapipe3d_frames_trackedPoints_xyz[self.frame, :, :]
-        this_frame_body_data = []
-        this_frame_right_hand_data = []
-        this_frame_left_hand_data = []
-        this_frame_face_data = []
+        this_frame_body_data = tracked_points[0:self.first_left_hand_point]
+        this_frame_left_hand_data = tracked_points[self.first_left_hand_point:self.first_right_hand_point]
+        this_frame_right_hand_data = tracked_points[self.first_right_hand_point:self.first_face_point]
+        this_frame_face_data = tracked_points[self.first_face_point:]
 
-        # TODO: test
-        # this_frame_body_data = this_frame_trackedPoint_xyz[0:self.first_left_hand_point]
-        # this_frame_right_hand_data = this_frame_trackedPoint_xyz[self.first_left_hand_point:self.first_right_hand_point]
-        # this_frame_left_hand_data = this_frame_trackedPoint_xyz[self.first_right_hand_point:self.first_face_point]
-        # this_frame_face_data = this_frame_trackedPoint_xyz[self.first_face_point:]
+        this_frame_body_data = [[i, p] for i, p in enumerate(this_frame_body_data)]
+        this_frame_left_hand_data = [[i, p] for i, p in enumerate(this_frame_left_hand_data)]
+        this_frame_right_hand_data = [[i, p] for i, p in enumerate(this_frame_right_hand_data)]
+        this_frame_face_data = [[i, p] for i, p in enumerate(this_frame_face_data)]
 
-        # this_frame_body_data = [[i, p] for i, p in enumerate(this_frame_body_data)]
-        # this_frame_right_hand_data = [[i+self.first_left_hand_point, p] for i, p in enumerate(this_frame_right_hand_data)]
-        # this_frame_left_hand_data = [[i+self.first_right_hand_point, p] for i, p in enumerate(this_frame_left_hand_data)]
-        # this_frame_face_data = [[i+self.first_face_point, p] for i, p in enumerate(this_frame_face_data)]
-        for this_tracked_point_number, this_tracked_point_xyz in enumerate(this_frame_trackedPoint_xyz):
-            # per tracked_point
-
-            this_tracked_point_xyz_list = this_frame_trackedPoint_xyz[this_tracked_point_number, :].tolist()
-
-            if this_tracked_point_number < self.first_left_hand_point:  # body/pose points
-                this_frame_body_data.append([this_tracked_point_number, this_tracked_point_xyz_list])
-
-            elif this_tracked_point_number < self.first_right_hand_point:  # left_hand points
-                this_frame_left_hand_data.append(
-                    [this_tracked_point_number - self.first_left_hand_point, this_tracked_point_xyz_list])
-
-            elif this_tracked_point_number < self.first_face_point:  # right_hand points
-                this_frame_right_hand_data.append(
-                    [this_tracked_point_number - self.first_right_hand_point, this_tracked_point_xyz_list])
-
-            else:  # face points
-                this_frame_face_data.append(
-                    [this_tracked_point_number - self.first_face_point, this_tracked_point_xyz_list])
-
-        this_frame_holistic_data = [[[this_frame_left_hand_data], [this_frame_right_hand_data]],
-                                    [this_frame_face_data], this_frame_body_data]
-
-        return this_frame_holistic_data
+        # left seems to be missing data at idx 0
+        print("LEFT", this_frame_left_hand_data, len(this_frame_left_hand_data))
+        print("RIGHT", this_frame_right_hand_data, len(this_frame_right_hand_data))
+        holistic_data = [[[this_frame_left_hand_data], [this_frame_right_hand_data]],
+                         [this_frame_face_data], this_frame_body_data]
+        return holistic_data
 
     def contains_features(self, mp_res):
         pass

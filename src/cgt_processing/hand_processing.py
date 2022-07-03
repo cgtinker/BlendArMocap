@@ -293,6 +293,11 @@ class HandProcessor(processor_interface.DataProcessor):
             return data
 
         if len(data) > 0:
+            print("FIDX", data[0][0][1])
+            if np.isnan(np.sum(data[0][0][1])):
+                print("IS NAN")
+                data = [[idx, np.array([-landmark[0], landmark[2], -landmark[1]])] for idx, landmark in data[0]]
+                return data
             data = [[idx, np.array([-landmark[0], landmark[2], -landmark[1]])] for idx, landmark in data[0]]
             data = [[idx, landmark - data[0][1]] for idx, landmark in data]
         return data
