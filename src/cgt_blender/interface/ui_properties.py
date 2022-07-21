@@ -22,6 +22,22 @@ from bpy.types import PropertyGroup
 
 class CGTProperties(PropertyGroup):
     # region USER INTERFACE
+    # region WRAPPER CONNECTION
+    local_port: IntProperty(
+        name="Port",
+        description="Select a port to receive data",
+        min=0,
+        max=9999,
+        default=6000
+    )
+
+    auth_key: StringProperty(
+        name="Key",
+        description="Enter a password for secure connection",
+        maxlen=1024,
+    )
+    # endregion
+
     # region DETECTION
     button_start_detection: StringProperty(
         name="",

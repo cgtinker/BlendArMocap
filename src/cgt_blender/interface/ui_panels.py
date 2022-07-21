@@ -51,6 +51,17 @@ class UI_PT_CGT_main_panel(DefaultPanel, Panel):
     def draw(self, context):
         user = context.scene.m_cgtinker_mediapipe  # noqa
 
+        # bridge
+        conn_box = self.layout.box()
+        conn_box.label(text='Connect')
+        conn_box.row().prop(user, "local_port")
+        conn_box.row().prop(user, "auth_key")
+        if user.detection_operator_running:
+            conn_box.row().operator("wm.cgt_local_connection_listener", text="Stop Connection")
+        else:
+            conn_box.row().operator("wm.cgt_local_connection_listener", text="Start Connection")
+
+
         # detection
         box = self.layout.box()
         box.label(text='Detect')
