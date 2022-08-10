@@ -160,8 +160,9 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
 
 
 from ...cgt_patterns import events, observer_pattern
-from ...cgt_processing import processor_interface, hand_processing, face_processing
-from ...cgt_bridge import bpy_hand_bridge, bpy_face_bridge
+from ...cgt_processing import processor_interface, hand_processing, face_processing, pose_processing
+
+
 class WM_CGT_modal_connection_listener_operator(bpy.types.Operator):
     bl_label = "Local Connection Listener"
     bl_idname = "wm.cgt_local_connection_listener"
@@ -184,12 +185,12 @@ class WM_CGT_modal_connection_listener_operator(bpy.types.Operator):
         """ Initialize connection to local host and start modal. """
         # access ui data
         self.user = context.scene.m_cgtinker_mediapipe  # noqa
-        self.port = self.user.local_port
+        self.port = 31597
         self.authkey = self.user.auth_key.encode('utf-8')
         # TODO: check if key / port properly set
 
         # establish connection
-        self.conn_listener = Listener(('localhost', self.port), authkey=self.authkey)
+        self.conn_listener = Listener(('localhost', self.port))
         self.conn = self.conn_listener.accept()
         print("CONNECTION ESTABLISHED")
 
@@ -206,10 +207,28 @@ class WM_CGT_modal_connection_listener_operator(bpy.types.Operator):
     def poll(cls, context):
         return context.mode in {'OBJECT', 'POSE'}
 
-    def init_bridge(self):
-        _processor = face_processing.FaceProcessor()
+    def init_bridge(self, data_type: str):
+        """ Initializes bridge to blender """
+        if data_type == 'HOLISTIC':
+            _processor = [hand_processing.HandProcessor(), face_processing.FaceProcessor(),
+                          pose_processing.PoseProcessor()]
+            _listener = events.UpdateListener()
+            _observer = events.HolisticBpyUpdateReceiver(_processor)
+            self.data_observer = _observer
+            self.data_listener = _listener
+            self.data_listener.attach(self.data_observer)
+            return
+
+        processors = {
+            'HANDS': hand_processing.HandProcessor,
+            'FACE': face_processing.FaceProcessor,
+            'POSE': pose_processing.PoseProcessor
+        }
+
+        _processor = processors[data_type]()
         _listener = events.UpdateListener()
         _observer = events.BpyUpdateReceiver(_processor)
+
         self.data_observer = _observer
         self.data_listener = _listener
         self.data_listener.attach(self.data_observer)
@@ -232,9 +251,9 @@ class WM_CGT_modal_connection_listener_operator(bpy.types.Operator):
 
                 # is instruction
                 if type(payload) == str:
-                    if payload in ['HAND', 'FACE', 'POSE', 'HOLISTIC']:
+                    if payload in ['HANDS', 'FACE', 'POSE', 'HOLISTIC']:
                         print("INITIALIZING")
-                        self.init_bridge()
+                        self.init_bridge(payload)
                         return {'PASS_THROUGH'}
                     elif payload == 'close':
                         self.cancel(context)

@@ -129,6 +129,7 @@ class DetectionHandler:
             self.detector.init_bridge(self.observer(), self.listener)
             return
 
+        # is holistic
         elif type(self.processor) is list:
             # holistic
             _processor = self.processor.copy()
@@ -139,6 +140,7 @@ class DetectionHandler:
 
             self.detector.init_bridge(_observer, self.listener)
 
+        # is face, pose or hand
         else:
             _processor = self.processor(self.bridge)
             _observer = self.observer(_processor)

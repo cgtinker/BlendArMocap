@@ -54,6 +54,7 @@ class PoseProcessor(processor_interface.DataProcessor):
         self.scale_data = []
         self.prepare_landmarks()
         self.shoulder_hip_location()
+        self.set_hip_as_origin()
         self.shoulder_hip_rotation()
         self.average_rig_scale()
 
@@ -216,4 +217,11 @@ class PoseProcessor(processor_interface.DataProcessor):
 
     def prepare_landmarks(self):
         """ setting face mesh position to approximate origin """
-        self.data = [[idx, np.array([-landmark[0], landmark[2], -landmark[1]])] for idx, landmark in self.data]
+        self.data = [[idx, np.array([-landmark[0], landmark[2], -landmark[1]])]
+                     for idx, landmark in self.data]
+
+    def set_hip_as_origin(self):
+        self.data = [[idx, np.array([landmark[0]-self.hip_center.loc[0],
+                                     landmark[1]-self.hip_center.loc[1],
+                                     landmark[2]-self.hip_center.loc[2]])]
+                     for idx, landmark in self.data]
