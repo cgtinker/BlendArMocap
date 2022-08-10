@@ -56,6 +56,7 @@ class HandProcessor(processor_interface.DataProcessor):
     def init_data(self):
         """ Process and map received data from mediapipe before key-framing. """
         # prepare landmarks
+        print(self.data)
         # TODO: check for holistic hand input (left / right) hand - consider to preprocess
         self.left_hand_data = self.set_global_origin(self.data[0])
         self.right_hand_data = self.set_global_origin(self.data[1])
@@ -285,10 +286,13 @@ class HandProcessor(processor_interface.DataProcessor):
     def set_global_origin(data):
         """ Sets the wrist to (0, 0, 0) while the wrist is the origin of the fingers.
             Changes the x-y-z order to match blenders coordinate system. """
-        if data is None:
-            # todo: skip this
+        if data is None or len(data) == 0:
             return data
-
+        print()
+        print(data)
+        print()
+        print("LEN", len(data))
+        print()
         if len(data) > 0:
             data = [[idx, np.array([-landmark[0], landmark[2], -landmark[1]])] for idx, landmark in data[0]]
             data = [[idx, landmark - data[0][1]] for idx, landmark in data]

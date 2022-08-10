@@ -28,7 +28,7 @@ class Server(object):
         self.sock.settimeout(None)  # remove blocking
         print("Connected with Client", _ip, _port)
 
-    def handle(self) -> bool:
+    def exec(self) -> bool:
         socket_selectable = select.select([self.conn], [], [], 3)
         if socket_selectable:
             payload = self.conn.recv(self.buffer)
@@ -37,7 +37,7 @@ class Server(object):
                 # usually sends payload for verification
                 self.conn.send(self.resp)
                 chunk = payload.decode("utf-8")
-                self.parser.parse_chunks(chunk)
+                self.parser.exec(chunk)
 
             if not payload:
                 # Client stopped writing
@@ -57,6 +57,6 @@ if __name__ == "__main__":
     server = Server()
     server.connect()
     while True:
-        success = server.handle()
+        success = server.exec()
         if not success:
             break

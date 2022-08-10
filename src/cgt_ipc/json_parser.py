@@ -29,9 +29,9 @@ class JsonParser(object):
     detection_types: list = ["FACE", "HANDS", "POSE", "HOLISTIC"]
     detection_contents: dict = {
         "FACE": 468,
-        "POSE": 20,
-        "HANDS": [20, 20],
-        "HOLISTIC": [33, 468, 20, 20],
+        "POSE": 33,
+        "HANDS": [21, 21],
+        "HOLISTIC": [33, 468, 21, 21],
     }
 
     def exec(self, data):
@@ -47,6 +47,14 @@ class JsonParser(object):
             res = self.array_from_int(data, descriptor)
         elif isinstance(descriptor, list):
             res = self.array_from_list(data, descriptor)
+
+        # some manual parsing to receive the weird mp shape
+        if self.detection_type == "FACE":
+            return [res]
+        elif self.detection_type == "HANDS":
+            return [[res[0]], [res[1]]]
+        elif self.detection_type == "HOLISTIC":
+            return [[[res[2]], [res[3]]], [res[0]], res[1]]
         return res
 
     def array_from_list(self, data, descriptor):

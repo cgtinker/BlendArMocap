@@ -1,12 +1,4 @@
-from .json_parser import JsonParser
-
-
-json_parser = JsonParser()
-
-
-def handle_result(result: str):
-    global json_parser
-    arr = json_parser.parse(result)
+from .bpy_socket_observer import ServerResultsObserver
 
 
 class ChunkParser(object):
@@ -19,9 +11,11 @@ class ChunkParser(object):
     result: str
     remaining: int
     found_descriptor: bool
+    bpy_observer: ServerResultsObserver
 
     def __init__(self):
         self.found_descriptor = False
+        self.bpy_observer = ServerResultsObserver()
         self.stored_chunk = ""
         self.result = ""
         self.remaining = 0
@@ -43,7 +37,7 @@ class ChunkParser(object):
 
         return int(res), i
 
-    def parse_chunks(self, chunk):
+    def exec(self, chunk):
         # stitches chunks together till the
         # message has been reconstructed
         if self.remaining == 0:
@@ -60,7 +54,11 @@ class ChunkParser(object):
 
         if self.remaining == 0:
             # the message has been successfully reconstructed
-            handle_result(self.result)
+            # ready for execution
+            self.bpy_observer.exec(self.result)
+            # cleanup
             self.result = ""
             self.stored_chunk += chunk[_slice:]
 
+    def __del__(self):
+        del self.bpy_observer

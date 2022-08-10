@@ -1,17 +1,11 @@
+from abc import ABC
+
 from .json_parser import JsonParser
 from ..cgt_patterns import observer_pattern, events
 from ..cgt_processing import processor_interface, hand_processing, face_processing, pose_processing
 
 
-json_parser = JsonParser()
-
-
-def handle_result(result: str):
-    global json_parser
-    arr = json_parser.exec(result)
-
-
-class BlenderPipelineProcessor:
+class ServerResultsObserver(object):
     data_listener: observer_pattern.Listener
     data_observer: observer_pattern.Observer
     data_processor: processor_interface.DataProcessor
