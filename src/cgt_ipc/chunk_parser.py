@@ -1,4 +1,4 @@
-from .bpy_socket_observer import ServerResultsObserver
+from multiprocessing import Queue
 
 
 class ChunkParser(object):
@@ -11,11 +11,11 @@ class ChunkParser(object):
     result: str
     remaining: int
     found_descriptor: bool
-    bpy_observer: ServerResultsObserver
+    queue: Queue
 
-    def __init__(self):
+    def __init__(self, queue):
         self.found_descriptor = False
-        self.bpy_observer = ServerResultsObserver()
+        self.queue = queue
         self.stored_chunk = ""
         self.result = ""
         self.remaining = 0
@@ -55,10 +55,7 @@ class ChunkParser(object):
         if self.remaining == 0:
             # the message has been successfully reconstructed
             # ready for execution
-            self.bpy_observer.exec(self.result)
+            self.queue.put(self.result)
             # cleanup
             self.result = ""
             self.stored_chunk += chunk[_slice:]
-
-    def __del__(self):
-        del self.bpy_observer

@@ -159,143 +159,27 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
         return {'FINISHED'}
 
 
-# from ...cgt_patterns import events, observer_pattern
-# from ...cgt_processing import processor_interface, hand_processing, face_processing, pose_processing
-#
-#
-#
-# class WM_CGT_modal_connection_listener_operator(bpy.types.Operator):
-#     bl_label = "Local Connection Listener"
-#     bl_idname = "wm.cgt_local_connection_listener"
-#     bl_description = "Receives BlendArMocap Wrapper Data from Local Host."
-#
-#     port: int
-#     authkey: bytes
-#     conn_listener: Listener
-#
-#     data_listener: observer_pattern.Listener
-#     data_observer: observer_pattern.Observer
-#     data_processor: processor_interface.DataProcessor
-#
-#     frame = 0
-#     timer: None
-#     conn = None
-#     user = None
-#
-#     def execute(self, context):
-#         """ Initialize connection to local host and start modal. """
-#         # access ui data
-#         self.user = context.scene.m_cgtinker_mediapipe  # noqa
-#         self.port = 31597
-#         self.authkey = self.user.auth_key.encode('utf-8')
-#         # TODO: check if key / port properly set
-#
-#         # establish connection
-#         self.conn_listener = Listener(('localhost', self.port))
-#         self.conn = self.conn_listener.accept()
-#         print("CONNECTION ESTABLISHED")
-#
-#         # add a timer property and start running
-#         wm = context.window_manager
-#         self.frame = 0
-#         self._timer = wm.event_timer_add(0.1, window=context.window)
-#         context.window_manager.modal_handler_add(self)
-#
-#         print(f"RUNNING CONNECTION AS MODAL OPERATION")
-#         return {'RUNNING_MODAL'}
-#
-#     @classmethod
-#     def poll(cls, context):
-#         return context.mode in {'OBJECT', 'POSE'}
-#
-#     def init_bridge(self, data_type: str):
-#         """ Initializes bridge to blender """
-#         if data_type == 'HOLISTIC':
-#             _processor = [hand_processing.HandProcessor(), face_processing.FaceProcessor(),
-#                           pose_processing.PoseProcessor()]
-#             _listener = events.UpdateListener()
-#             _observer = events.HolisticBpyUpdateReceiver(_processor)
-#             self.data_observer = _observer
-#             self.data_listener = _listener
-#             self.data_listener.attach(self.data_observer)
-#             return
-#
-#         processors = {
-#             'HANDS': hand_processing.HandProcessor,
-#             'FACE': face_processing.FaceProcessor,
-#             'POSE': pose_processing.PoseProcessor
-#         }
-#
-#         _processor = processors[data_type]()
-#         _listener = events.UpdateListener()
-#         _observer = events.BpyUpdateReceiver(_processor)
-#
-#         self.data_observer = _observer
-#         self.data_listener = _listener
-#         self.data_listener.attach(self.data_observer)
-#
-#     def update_data_listeners(self, payload):
-#         """ update listeners """
-#         self.frame += 1
-#         self.data_listener.data = payload
-#         self.data_listener.frame = self.frame
-#         self.data_listener.notify()
-#
-#     def modal(self, context, event):
-#         """ Run detection as modal operation, finish with 'Q', 'ESC' or 'RIGHT MOUSE'. """
-#         if event.type == "TIMER":
-#             # connection has to be established
-#             if not self.conn.closed:
-#
-#                 # receive packages
-#                 payload = self.conn.recv()
-#
-#                 # is instruction
-#                 if type(payload) == str:
-#                     if payload in ['HANDS', 'FACE', 'POSE', 'HOLISTIC']:
-#                         print("INITIALIZING")
-#                         self.init_bridge(payload)
-#                         return {'PASS_THROUGH'}
-#                     elif payload == 'close':
-#                         self.cancel(context)
-#
-#                 # is data
-#                 else:
-#                     self.update_data_listeners(payload)
-#                     # do something with the received packages
-#                     print(payload)
-#                     return {'PASS_THROUGH'}
-#
-#             return {'FINISHED'}
-#
-#         return {'PASS_THROUGH'}
-#
-#     def cancel(self, context):
-#         """ Upon finishing connection. """
-#         self.conn.close()
-#         self.conn_listener.close()
-#         self.data_listener.detach(self.data_observer)
-#         del self.data_observer
-#         del self.data_listener
-#
-#         wm = context.window_manager
-#         wm.event_timer_remove(self._timer)
-#         print("STOPPED CONNECTION")
-#         return {'FINISHED'}
-
-
-from ...cgt_ipc import tcp_server
+from ...cgt_ipc import tcp_server, server_result_processor
+from multiprocessing import Queue
 class WM_CGT_modal_connection_listener_operator(bpy.types.Operator):
     bl_label = "Local Connection Listener"
     bl_idname = "wm.cgt_local_connection_listener"
-    bl_description = "Receives BlendArMocap Wrapper Data from Local Host."
-    server: tcp_server
+    bl_description = "Receives BlendArMocaps Mediapipe Data from Local Host."
+
+    queue: Queue
+    processor: server_result_processor.ServerResultsProcessor
+
     timer: None
 
     def execute(self, context):
         """ Initialize connection to local host and start modal. """
-        self.server = tcp_server.Server()
-        self.server.connect()
+        self.queue = Queue()  # queue to stage received results
+        self.processor = server_result_processor.ServerResultsProcessor()
+
+        # run server on separate thread
+        server = tcp_server.Server(self.queue)
+        server.exec()
+
         # add a timer property and start running
         wm = context.window_manager
         self._timer = wm.event_timer_add(0.1, window=context.window)
@@ -311,13 +195,17 @@ class WM_CGT_modal_connection_listener_operator(bpy.types.Operator):
     def modal(self, context, event):
         """ Run detection as modal operation, finish with 'Q', 'ESC' or 'RIGHT MOUSE'. """
         if event.type == "TIMER":
-            if not self.server.exec():
-                return {'FINISHED'}
+            # putting message in cgt_icp/chunk_parser
+            payload = self.queue.get()
+            if payload:
+                if payload == "DONE":
+                    return {'FINISHED'}
+                self.processor.exec(payload)
+
         return {'PASS_THROUGH'}
 
     def cancel(self, context):
         """ Upon finishing connection. """
-        del self.server
         wm = context.window_manager
         wm.event_timer_remove(self._timer)
         print("STOPPED CONNECTION")

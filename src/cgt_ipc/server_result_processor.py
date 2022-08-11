@@ -1,11 +1,9 @@
-from abc import ABC
-
 from .json_parser import JsonParser
 from ..cgt_patterns import observer_pattern, events
 from ..cgt_processing import processor_interface, hand_processing, face_processing, pose_processing
 
 
-class ServerResultsObserver(object):
+class ServerResultsProcessor(object):
     data_listener: observer_pattern.Listener
     data_observer: observer_pattern.Observer
     data_processor: processor_interface.DataProcessor

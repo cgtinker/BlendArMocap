@@ -1,5 +1,6 @@
 import socket
 import select
+from multiprocessing import Queue, Process
 from .chunk_parser import ChunkParser
 
 
@@ -10,53 +11,63 @@ class Server(object):
     sock: socket.socket
     conn: socket.socket
     parser: ChunkParser
+    queue: Queue
+    process: Process
 
     buffer: int = 4096
     resp: bytes
 
-    def __init__(self):
+    def __init__(self, _queue: Queue):
         self.resp = "1".encode("utf-8")
-        self.parser = ChunkParser()
+        self.parser = ChunkParser(_queue)  # stage results in queue
+        self.queue = _queue
 
-    def connect(self):
-        print("Establishing connection...")
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)  # tcp connection
-        self.sock.bind((self.HOST, self.PORT))
-        self.sock.listen(0)  # number of listeners
-        self.sock.settimeout(60.0)  # 15 sec till timeout
-        self.conn, (_ip, _port) = self.sock.accept()
-        self.sock.settimeout(None)  # remove blocking
-        print("Connected with Client", _ip, _port)
+    def exec(self):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0) as sock:
+            sock.bind((self.HOST, self.PORT))  # connect with local host on locked port
+            sock.listen(0)  # accept only one client
+            sock.settimeout(60.0)  # 60s wait time
 
-    def exec(self) -> bool:
-        socket_selectable = select.select([self.conn], [], [], 3)
-        if socket_selectable:
-            payload = self.conn.recv(self.buffer)
-            if payload:
-                # currently no parsing to check on client side
-                # usually sends payload for verification
-                self.conn.send(self.resp)
-                chunk = payload.decode("utf-8")
-                self.parser.exec(chunk)
+            self.conn, addr = sock.accept()
+            sock.settimeout(None)  # remove blocking
 
-            if not payload:
-                # Client stopped writing
-                return False
+            # TODO: Move to ui operator (can only handle child processes
+            # start process
+            process = Process(target=self.handle, args=())
+            process.daemon = True
+            process.start()
+            process.join()  # await finish
+            print("Success")
 
-            return True
+    def handle(self):
+        while True:
+            # only send and recv if socket selectable (3s timeout)
+            if select.select([self.conn], [], [], 3):
+                payload = self.conn.recv(self.buffer)
+                if payload:
+                    # usually sends payload for verification
+                    # requires parsing on client side
+                    if select.select([], [self.conn], [], 3):
+                        self.conn.send(self.resp)
 
-        else:
-            # Timeout occurred
-            return False
+                    # parse the decoded chunk and res in queue
+                    chunk = payload.decode("utf-8")
+                    self.parser.exec(chunk)
 
-    def __del__(self):
-        self.sock.close()
+                if not payload:
+                    # Client stopped writing
+                    break
+
+            else:
+                # Timeout occurred
+                break
+
+        self.queue.put("DONE")
+        self.conn.close()
 
 
 if __name__ == "__main__":
-    server = Server()
-    server.connect()
-    while True:
-        success = server.exec()
-        if not success:
-            break
+    queue = Queue()
+    server = Server(queue)
+    server.exec()
+
