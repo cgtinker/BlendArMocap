@@ -160,7 +160,7 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
 
 
 from ...cgt_ipc import tcp_server, server_result_processor
-from multiprocessing import Queue
+from multiprocessing import Queue, Process
 class WM_CGT_modal_connection_listener_operator(bpy.types.Operator):
     bl_label = "Local Connection Listener"
     bl_idname = "wm.cgt_local_connection_listener"
@@ -168,23 +168,35 @@ class WM_CGT_modal_connection_listener_operator(bpy.types.Operator):
 
     queue: Queue
     processor: server_result_processor.ServerResultsProcessor
-
+    process: Process
     timer: None
+    server = None
 
     def execute(self, context):
         """ Initialize connection to local host and start modal. """
-        self.queue = Queue()  # queue to stage received results
+        if context.scene.m_cgtinker_mediapipe.connection_operator_running:
+            print("SERVER STILL ACTIVE")
+            return {'CANCELLED'}
+
+        # queue to stage received results
+        self.queue = Queue()
         self.processor = server_result_processor.ServerResultsProcessor()
 
-        # run server on separate thread
-        server = tcp_server.Server(self.queue)
-        server.exec()
+        # start server
+        self.server = tcp_server.Server(self.queue)
+        self.server.exec()
+
+        # start server handle as seperate process
+        self.process = Process(target=self.server.handle, args=())
+        self.process.daemon = True
+        self.process.start()
 
         # add a timer property and start running
         wm = context.window_manager
         self._timer = wm.event_timer_add(0.1, window=context.window)
         context.window_manager.modal_handler_add(self)
 
+        context.scene.m_cgtinker_mediapipe.connection_operator_running = True
         print(f"RUNNING CONNECTION AS MODAL OPERATION")
         return {'RUNNING_MODAL'}
 
@@ -193,20 +205,32 @@ class WM_CGT_modal_connection_listener_operator(bpy.types.Operator):
         return context.mode in {'OBJECT', 'POSE'}
 
     def modal(self, context, event):
-        """ Run detection as modal operation, finish with 'Q', 'ESC' or 'RIGHT MOUSE'. """
+        """ Server runs on separate thread and pushes results in queue,
+            The results are getting processed and linked to blender. """
         if event.type == "TIMER":
             # putting message in cgt_icp/chunk_parser
             payload = self.queue.get()
             if payload:
                 if payload == "DONE":
-                    return {'FINISHED'}
+                    return self.cancel(context)
                 self.processor.exec(payload)
 
         return {'PASS_THROUGH'}
 
     def cancel(self, context):
         """ Upon finishing connection. """
+        self.process.join()  # await finish
+
+        # additional layer of security, shouldn't be required
+        if self.process.is_alive():
+            print("PROCESS STILL ALIVE")
+            self.process.terminate()
+            self.server.shutdown()
+            print("PROCESS TERMINATED, SERVER SHUTDOWN")
+
         wm = context.window_manager
         wm.event_timer_remove(self._timer)
         print("STOPPED CONNECTION")
+
+        context.scene.m_cgtinker_mediapipe.connection_operator_running = False
         return {'FINISHED'}

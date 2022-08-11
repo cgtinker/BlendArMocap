@@ -110,8 +110,8 @@ class HolisticBpyUpdateReceiver(op.Observer):
 
     def update(self, _listener: UpdateListener) -> None:
         for idx, processor in enumerate(self.processors):
+            # TODO: check if thats necessary by any means
             if len(_listener.data[idx][0]) < 1:
-                print("data not updated")
                 continue
 
             processor.data = _listener.data[idx]

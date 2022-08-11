@@ -23,24 +23,15 @@ class Server(object):
         self.queue = _queue
 
     def exec(self):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0) as sock:
-            sock.bind((self.HOST, self.PORT))  # connect with local host on locked port
-            sock.listen(0)  # accept only one client
-            sock.settimeout(60.0)  # 60s wait time
-
-            self.conn, addr = sock.accept()
-            sock.settimeout(None)  # remove blocking
-
-            # TODO: Move to ui operator (can only handle child processes
-            # start process
-            process = Process(target=self.handle, args=())
-            process.daemon = True
-            process.start()
-            process.join()  # await finish
-            print("Success")
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
+        self.sock.bind((self.HOST, self.PORT))  # connect with local host on locked port
+        self.sock.listen(0)  # accept only one client
+        self.sock.settimeout(60.0)  # 60s wait time
+        self.conn, addr = self.sock.accept()
+        self.sock.settimeout(None)  # remove blocking
 
     def handle(self):
-        while True:
+        while self.conn:
             # only send and recv if socket selectable (3s timeout)
             if select.select([self.conn], [], [], 3):
                 payload = self.conn.recv(self.buffer)
@@ -62,8 +53,12 @@ class Server(object):
                 # Timeout occurred
                 break
 
+        self.shutdown()
+
+    def shutdown(self):
         self.queue.put("DONE")
         self.conn.close()
+        self.sock.close()
 
 
 if __name__ == "__main__":

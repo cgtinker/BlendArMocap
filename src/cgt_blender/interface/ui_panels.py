@@ -54,10 +54,8 @@ class UI_PT_CGT_main_panel(DefaultPanel, Panel):
         # bridge
         conn_box = self.layout.box()
         conn_box.label(text='Connect')
-        conn_box.row().prop(user, "local_port")
-        conn_box.row().prop(user, "auth_key")
-        if user.detection_operator_running:
-            conn_box.row().operator("wm.cgt_local_connection_listener", text="Stop Connection")
+        if user.connection_operator_running:
+            conn_box.row().operator("wm.cgt_local_connection_listener", text="Connected")
         else:
             conn_box.row().operator("wm.cgt_local_connection_listener", text="Start Connection")
 

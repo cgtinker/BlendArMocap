@@ -31,7 +31,7 @@ class JsonParser(object):
         "FACE": 468,
         "POSE": 33,
         "HANDS": [21, 21],
-        "HOLISTIC": [33, 468, 21, 21],
+        "HOLISTIC": [21, 21, 468, 33],
     }
 
     def exec(self, data):
@@ -52,10 +52,20 @@ class JsonParser(object):
         if self.detection_type == "FACE":
             return [res]
         elif self.detection_type == "HANDS":
-            return [[res[0]], [res[1]]]
+            return self.weird_hands(res[0], res[1])
         elif self.detection_type == "HOLISTIC":
-            return [[[res[2]], [res[3]]], [res[0]], res[1]]
+            # lhand, rhand, face, pose
+            return [self.weird_hands(res[0], res[1]), [res[2]], res[3]]
         return res
+
+    def weird_hands(self, left_hand, right_hand):
+        arr = []
+        for hand in [left_hand, right_hand]:
+            if len(hand) > 0:
+                arr.append([hand])
+            else:
+                arr.append([])
+        return arr
 
     def array_from_list(self, data, descriptor):
         arr = []
