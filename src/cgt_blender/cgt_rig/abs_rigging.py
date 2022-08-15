@@ -31,8 +31,7 @@ class BpyRigging(ABC):
 
     # region drivers and constraints
     def apply_constraints(self, constraint_dict):
-        user_prefs = objects.user_pref()
-        overwrite = user_prefs.overwrite_drivers_bool  # noqa
+        overwrite = True
 
         """ Applies constraints to bones targeting objects. """
         for key, pair in constraint_dict.items():

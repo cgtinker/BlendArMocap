@@ -46,7 +46,7 @@ class UI_PT_CGT_main_panel(DefaultPanel, Panel):
     @classmethod
     def poll(cls, context):
         if context.mode in {'OBJECT', 'POSE'}:
-            return dependencies.dependencies_installed
+            return True
 
     def draw(self, context):
         user = context.scene.m_cgtinker_mediapipe  # noqa
@@ -61,23 +61,23 @@ class UI_PT_CGT_main_panel(DefaultPanel, Panel):
 
 
         # detection
-        box = self.layout.box()
-        box.label(text='Detect')
-        if user.pvb:
+        if dependencies.dependencies_installed and user.legacy_features_bool:
+            box = self.layout.box()
+            box.label(text='Detect')
             box.row().prop(user, "detection_input_type")
 
-        if user.detection_input_type == "movie":
-            box.row().prop(user, "mov_data_path")
-        else:
-            box.row().prop(user, "webcam_input_device")
-            box.row().prop(user, "key_frame_step")
+            if user.detection_input_type == "movie":
+                box.row().prop(user, "mov_data_path")
+            else:
+                box.row().prop(user, "webcam_input_device")
+                box.row().prop(user, "key_frame_step")
 
-        # settings
-        box.row().prop(user, "enum_detection_type")
-        if user.detection_operator_running:
-            box.row().operator("wm.cgt_feature_detection_operator", text="Stop Detection")
-        else:
-            box.row().operator("wm.cgt_feature_detection_operator", text=user.button_start_detection)
+            # settings
+            box.row().prop(user, "enum_detection_type")
+            if user.detection_operator_running:
+                box.row().operator("wm.cgt_feature_detection_operator", text="Stop Detection")
+            else:
+                box.row().operator("wm.cgt_feature_detection_operator", text=user.button_start_detection)
 
         # transfer animation
         box = self.layout.box()
@@ -87,7 +87,7 @@ class UI_PT_CGT_main_panel(DefaultPanel, Panel):
                                         property="selected_driver_collection",
                                         search_data=bpy.data,
                                         search_property="collections",
-                                        text="Drivers")
+                                        text="Collection")
         # searching for custom ui prop
         box.row(align=True).prop_search(data=user,
                                         property="selected_rig",
@@ -96,10 +96,10 @@ class UI_PT_CGT_main_panel(DefaultPanel, Panel):
                                         text="Armature",
                                         icon="ARMATURE_DATA")
 
-        box.row().prop(user, "overwrite_drivers_bool")
-        if user.enum_detection_type in {"POSE", "HOLISTIC"}:
-            box.row().prop(user, "experimental_feature_bool")  # , icon="ERROR")
-        box.row(align=True).operator("button.cgt_transfer_animation_button", text=user.button_transfer_animation)
+        # box.row().prop(user, "overwrite_drivers_bool")
+        # box.row().prop(user, "experimental_feature_bool")  # , icon="ERROR")
+        box.row(align=True).operator("button.cgt_transfer_animation_button", text="Transfer Animation")
+        box.row(align=True).operator("button.smooth_empties_in_col", text="Smooth Animation")
 
 
 class UI_PT_CGT_RemappingPanel(DefaultPanel, Panel):

@@ -88,11 +88,16 @@ class CGTProperties(PropertyGroup):
         default="Transfer Animation"
     )
 
-    experimental_feature_bool: BoolProperty(
-        name="Transfer Legs (Experimental)",
-        description="Transfer pose legs motion to rigify rig",
-        default=False
+    legacy_features_bool: BoolProperty(
+        name="Legacy Features",
+        description="Enable legacy features which require external dependencies",
     )
+
+    # experimental_feature_bool: BoolProperty(
+    #     name="Transfer Legs",
+    #     description="Transfer pose legs motion to rigify rig",
+    #     default=False
+    # )
 
     overwrite_drivers_bool: BoolProperty(
         name="Overwrite Drivers",
@@ -101,7 +106,14 @@ class CGTProperties(PropertyGroup):
     )
 
     def armature_poll(self, object):
-        return object.type == 'ARMATURE'
+        if object.type == 'ARMATURE':
+            try:
+                if object.data['rig_id']:
+                    return True
+            except KeyError:
+                pass
+        return False
+
 
     selected_rig: bpy.props.PointerProperty(
         type=bpy.types.Object,
@@ -109,10 +121,14 @@ class CGTProperties(PropertyGroup):
         name="Armature",
         poll=armature_poll)
 
-    selected_driver_collection: StringProperty(
+    def cgt_collection_poll(self, object):
+        return object.name in ["cgt_FACE", "cgt_HANDS", "cgt_POSE"]
+
+    selected_driver_collection: bpy.props.PointerProperty(
         name="",
+        type=bpy.types.Collection,
         description="Select a collection of Divers.",
-        default="Drivers"
+        poll=cgt_collection_poll
     )
     # endregion
 
@@ -149,15 +165,6 @@ class CGTProperties(PropertyGroup):
             ("0", "automatic", ""),
             ("1", "capdshow", "")
         )
-    )
-
-    def set_bool(self, value):
-        return None
-
-    pvb: BoolProperty(
-        name="pvb",
-        default=True,
-        set=set_bool
     )
 
     transfer_type_path: StringProperty(

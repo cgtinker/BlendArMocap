@@ -171,12 +171,12 @@ class RigifyPose(abs_rigging.BpyRigging):
 
         # check if leg transfer
         pose_constraints_copy = self.pose_constraints.copy()
-        if not user.experimental_feature_bool:
-            remove_list = [POSE.left_shin_ik, POSE.right_shin_ik,
-                           POSE.left_foot_ik, POSE.right_foot_ik,
-                           POSE.left_foot_index_ik, POSE.right_foot_index_ik]
-            for c in remove_list:
-                pose_constraints_copy.pop(c, None)
+        # if not user.experimental_feature_bool:
+        #     remove_list = [POSE.left_shin_ik, POSE.right_shin_ik,
+        #                    POSE.left_foot_ik, POSE.right_foot_ik,
+        #                    POSE.left_foot_index_ik, POSE.right_foot_index_ik]
+        #     for c in remove_list:
+        #         pose_constraints_copy.pop(c, None)
 
         # apply constraints
         self.apply_constraints(pose_constraints_copy)
@@ -185,9 +185,9 @@ class RigifyPose(abs_rigging.BpyRigging):
         """ activate rigify ik poles """
         self.armature.pose.bones[self.bone_name_provider.elbow_pole_L][self.bone_name_provider.pole_key] = 1
         self.armature.pose.bones[self.bone_name_provider.elbow_pole_R][self.bone_name_provider.pole_key] = 1
-        if user.experimental_feature_bool:
-            self.armature.pose.bones[self.bone_name_provider.knee_pole_R][self.bone_name_provider.pole_key] = 1
-            self.armature.pose.bones[self.bone_name_provider.knee_pole_L][self.bone_name_provider.pole_key] = 1
+        # if user.experimental_feature_bool:
+        self.armature.pose.bones[self.bone_name_provider.knee_pole_R][self.bone_name_provider.pole_key] = 1
+        self.armature.pose.bones[self.bone_name_provider.knee_pole_L][self.bone_name_provider.pole_key] = 1
 
     def get_rigify_joint_lengths(self):
         """ return the lengths of given joints while it uses

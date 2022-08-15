@@ -23,7 +23,6 @@ bl_info = {
     "version":     (1, 5, 2),
     "blender":     (2, 90, 0),
     "location":    "3D View > Tool",
-    "warning":     "Requires external packages and elevated privileges",
     "wiki_url":    "https://github.com/cgtinker/BlendArMocap",
     "tracker_url": "https://github.com/cgtinker/BlendArMocap/issues",
     "support":     "COMMUNITY",
