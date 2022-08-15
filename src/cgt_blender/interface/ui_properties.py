@@ -93,11 +93,11 @@ class CGTProperties(PropertyGroup):
         description="Enable legacy features which require external dependencies",
     )
 
-    # experimental_feature_bool: BoolProperty(
-    #     name="Transfer Legs",
-    #     description="Transfer pose legs motion to rigify rig",
-    #     default=False
-    # )
+    experimental_feature_bool: BoolProperty(
+        name="Transfer Legs",
+        description="Transfer pose legs motion to rigify rig",
+        default=False
+    )
 
     overwrite_drivers_bool: BoolProperty(
         name="Overwrite Drivers",
@@ -107,11 +107,8 @@ class CGTProperties(PropertyGroup):
 
     def armature_poll(self, object):
         if object.type == 'ARMATURE':
-            try:
-                if object.data['rig_id']:
-                    return True
-            except KeyError:
-                pass
+            if 'rig_id' in object.data:
+                return True
         return False
 
 

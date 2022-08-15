@@ -61,23 +61,26 @@ class UI_PT_CGT_main_panel(DefaultPanel, Panel):
 
 
         # detection
-        if dependencies.dependencies_installed and user.legacy_features_bool:
+        if dependencies.dependencies_installed:
             box = self.layout.box()
-            box.label(text='Detect')
-            box.row().prop(user, "detection_input_type")
+            box.row().prop(user, "legacy_features_bool")
 
-            if user.detection_input_type == "movie":
-                box.row().prop(user, "mov_data_path")
-            else:
-                box.row().prop(user, "webcam_input_device")
-                box.row().prop(user, "key_frame_step")
+            if user.legacy_features_bool:
+                box.label(text='Detect')
+                box.row().prop(user, "detection_input_type")
 
-            # settings
-            box.row().prop(user, "enum_detection_type")
-            if user.detection_operator_running:
-                box.row().operator("wm.cgt_feature_detection_operator", text="Stop Detection")
-            else:
-                box.row().operator("wm.cgt_feature_detection_operator", text=user.button_start_detection)
+                if user.detection_input_type == "movie":
+                    box.row().prop(user, "mov_data_path")
+                else:
+                    box.row().prop(user, "webcam_input_device")
+                    box.row().prop(user, "key_frame_step")
+
+                # settings
+                box.row().prop(user, "enum_detection_type")
+                if user.detection_operator_running:
+                    box.row().operator("wm.cgt_feature_detection_operator", text="Stop Detection")
+                else:
+                    box.row().operator("wm.cgt_feature_detection_operator", text=user.button_start_detection)
 
         # transfer animation
         box = self.layout.box()
@@ -97,9 +100,12 @@ class UI_PT_CGT_main_panel(DefaultPanel, Panel):
                                         icon="ARMATURE_DATA")
 
         # box.row().prop(user, "overwrite_drivers_bool")
-        # box.row().prop(user, "experimental_feature_bool")  # , icon="ERROR")
-        box.row(align=True).operator("button.cgt_transfer_animation_button", text="Transfer Animation")
-        box.row(align=True).operator("button.smooth_empties_in_col", text="Smooth Animation")
+        if user.selected_driver_collection:
+            if user.selected_driver_collection.name == "cgt_POSE":
+                box.row().prop(user, "experimental_feature_bool")  # , icon="ERROR")
+            if user.selected_rig:
+                box.row(align=True).operator("button.cgt_transfer_animation_button", text="Transfer Animation")
+            box.row(align=True).operator("button.smooth_empties_in_col", text="Smooth Animation")
 
 
 class UI_PT_CGT_RemappingPanel(DefaultPanel, Panel):
