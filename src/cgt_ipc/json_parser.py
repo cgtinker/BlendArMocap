@@ -38,10 +38,12 @@ class JsonParser(object):
         json_data = json.loads(data)
         self.get_detection_type(json_data)
         res = self.construct_array(json_data[self.detection_type])
-        return res
+        frame = json_data["frame"]
+        return res, frame
 
     def construct_array(self, data):
         res = []
+        # parses json results based on the detection type
         descriptor = self.detection_contents[self.detection_type]
         if isinstance(descriptor, int):
             res = self.array_from_int(data, descriptor)
@@ -59,6 +61,7 @@ class JsonParser(object):
         return res
 
     def weird_hands(self, left_hand, right_hand):
+        # hand result packing based on mediapipes python implementation
         arr = []
         for hand in [left_hand, right_hand]:
             if len(hand) > 0:
@@ -68,6 +71,7 @@ class JsonParser(object):
         return arr
 
     def array_from_list(self, data, descriptor):
+        # returns an array of lists
         arr = []
         for idx, size in enumerate(descriptor):
             sub_arr = self.array_from_int(data[str(idx)], size)
@@ -76,6 +80,7 @@ class JsonParser(object):
 
     @staticmethod
     def array_from_int(data, length):
+        # returns a list of x,y,z coordinates by an expected length
         arr = []
         for i in range(0, length):
             sub_arr = []
@@ -89,6 +94,7 @@ class JsonParser(object):
         return arr
 
     def get_detection_type(self, data):
+        # returns the detection type typeof ["FACE", "HANDS", "POSE", "HOLISTIC"]
         if self.detection_type:
             return self.detection_type
 

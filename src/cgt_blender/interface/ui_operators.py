@@ -255,6 +255,7 @@ class WM_CGT_modal_connection_listener_operator(bpy.types.Operator):
             if payload:
                 if payload == "DONE":
                     return self.cancel(context)
+                # payload contains capture results and the corresponding frame
                 self.processor.exec(payload)
 
         return {'PASS_THROUGH'}
