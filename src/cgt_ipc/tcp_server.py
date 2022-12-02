@@ -26,7 +26,7 @@ class Server(object):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
         self.sock.bind((self.HOST, self.PORT))  # connect with local host on locked port
         self.sock.listen(0)  # accept only one client
-        self.sock.settimeout(60.0)  # 60s wait time
+        self.sock.settimeout(15.0)  # 15s wait time
         self.conn, addr = self.sock.accept()
         self.sock.settimeout(None)  # remove blocking
 

@@ -50,7 +50,6 @@ class UI_PT_CGT_main_panel(DefaultPanel, Panel):
 
     def draw(self, context):
         user = context.scene.m_cgtinker_mediapipe  # noqa
-
         # bridge
         conn_box = self.layout.box()
         conn_box.label(text='Connect')
@@ -60,50 +59,59 @@ class UI_PT_CGT_main_panel(DefaultPanel, Panel):
             conn_box.row().operator("wm.cgt_local_connection_listener", text="Start Connection")
 
 
+        anim_box = self.layout.box()
+        anim_box.label(text='Animation Transfer')
+        anim_box.row().prop_search(data=user,
+                                   property="selected_driver_collection",
+                                   search_data=bpy.data,
+                                   search_property="collections",
+                                   text="Collection",)
+        # searching for custom ui prop
+        anim_box.row().prop_search(data=user,
+                                   property="selected_rig",
+                                   search_data=bpy.data,
+                                   search_property="objects",
+                                   text="Armature",
+                                   icon="ARMATURE_DATA")
+
+        anim_box.row().prop(user, "overwrite_drivers_bool")
+        anim_box.row().prop(user, "experimental_feature_bool")  # , icon="ERROR")
+        anim_box.row().operator("button.cgt_transfer_animation_button", text=user.button_transfer_animation)
+
+
+
+class UI_PT_CGT_legacy_detection_panel(DefaultPanel, Panel):
+    bl_label = "Legacy Detection"
+    bl_idname = "OBJECT_PT_cgt_legacy_detection_panel"
+    bl_parent_id = "OBJECT_PT_cgt_main_panel"
+
+    @classmethod
+    def poll(cls, context):
+        if context.mode in {'OBJECT', 'POSE'}:
+            return dependencies.dependencies_installed
+
+    def draw(self, context):
+        user = context.scene.m_cgtinker_mediapipe  # noqa
+
         # detection
-        box = self.layout.box()
-        box.label(text='Detect')
-        if user.pvb:
-            box.row().prop(user, "detection_input_type")
+        self.layout.prop(user, "detection_input_type")
 
         if user.detection_input_type == "movie":
-            box.row().prop(user, "mov_data_path")
+            self.layout.prop(user, "mov_data_path")
         else:
-            box.row().prop(user, "webcam_input_device")
-            box.row().prop(user, "key_frame_step")
+            self.layout.prop(user, "webcam_input_device")
+            self.layout.prop(user, "key_frame_step")
 
         # settings
-        box.row().prop(user, "enum_detection_type")
+        self.layout.prop(user, "enum_detection_type")
         if user.detection_operator_running:
-            box.row().operator("wm.cgt_feature_detection_operator", text="Stop Detection")
+            self.layout.operator("wm.cgt_feature_detection_operator", text="Stop Detection")
         else:
-            box.row().operator("wm.cgt_feature_detection_operator", text=user.button_start_detection)
-
-        # transfer animation
-        box = self.layout.box()
-
-        box.label(text='Animation Transfer')
-        box.row(align=True).prop_search(data=user,
-                                        property="selected_driver_collection",
-                                        search_data=bpy.data,
-                                        search_property="collections",
-                                        text="Drivers")
-        # searching for custom ui prop
-        box.row(align=True).prop_search(data=user,
-                                        property="selected_rig",
-                                        search_data=bpy.data,
-                                        search_property="objects",
-                                        text="Armature",
-                                        icon="ARMATURE_DATA")
-
-        box.row().prop(user, "overwrite_drivers_bool")
-        if user.enum_detection_type in {"POSE", "HOLISTIC"}:
-            box.row().prop(user, "experimental_feature_bool")  # , icon="ERROR")
-        box.row(align=True).operator("button.cgt_transfer_animation_button", text=user.button_transfer_animation)
+            self.layout.operator("wm.cgt_feature_detection_operator", text="Start Detection")
 
 
 class UI_PT_CGT_RemappingPanel(DefaultPanel, Panel):
-    bl_label = "Utils"
+    bl_label = "Animation Transfer"
     bl_idname = "OBJECT_PT_cgt_remapping_panel"
     bl_parent_id = "OBJECT_PT_cgt_main_panel"
 
@@ -114,16 +122,26 @@ class UI_PT_CGT_RemappingPanel(DefaultPanel, Panel):
 
     def draw(self, context):
         user = context.scene.m_cgtinker_mediapipe  # noqa
-        self.layout.use_property_decorate = True  # No animation.
+        # transfer animation
 
-        # detection
-        box = self.layout.box()
-        box.label(text='Remapping')
-        if user.toggle_drivers_bool:
-            box.row(align=True).operator("button.cgt_toggle_drivers_button", depress=True)
-        else:
-            box.row(align=True).operator("button.cgt_toggle_drivers_button", depress=False)
-        # box.row().prop(user, "toggle_drivers_bool", icon="CON_ARMATURE")
+        # self.layout.label(text='Animation Transfer')
+        self.layout.prop_search(data=user,
+                                property="selected_driver_collection",
+                                search_data=bpy.data,
+                                search_property="collections",
+                                text="")
+        # searching for custom ui prop
+        self.layout.prop_search(data=user,
+                                property="selected_rig",
+                                search_data=bpy.data,
+                                search_property="objects",
+                                text="Armature",
+                                icon="ARMATURE_DATA")
+
+        self.layout.prop(user, "overwrite_drivers_bool")
+        if user.enum_detection_type in {"POSE", "HOLISTIC"}:
+            self.layout.prop(user, "experimental_feature_bool")  # , icon="ERROR")
+        self.layout.operator("button.cgt_transfer_animation_button", text=user.button_transfer_animation)
 
 
 class UI_PT_CGT_warning_panel(DefaultPanel, Panel):

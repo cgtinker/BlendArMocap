@@ -15,11 +15,10 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from .cgt_bridge import bpy_hand_bridge, bpy_pose_bridge, bpy_face_bridge, bpy_bridge_interface, print_bridge
-from .cgt_detection import detect_hands, detect_pose, detect_face, detect_holistic, detector_interface
-from .cgt_patterns import events
-from .cgt_processing import hand_processing, pose_processing, face_processing, processor_interface
-from .cgt_utils import stream
+from . import detect_hands, detect_pose, detect_face, detect_holistic, detector_interface, stream
+from ..cgt_bridge import bpy_hand_bridge, bpy_pose_bridge, bpy_face_bridge, bpy_bridge_interface, print_bridge
+from ..cgt_patterns import events
+from ..cgt_processing import hand_processing, pose_processing, face_processing, processor_interface
 
 
 class DetectionHandler:

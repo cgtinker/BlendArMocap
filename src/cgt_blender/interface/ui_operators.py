@@ -16,7 +16,6 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import bpy
-from multiprocessing.connection import Listener
 from pathlib import Path
 from ..utils import objects
 from ...cgt_naming import COLLECTIONS
@@ -99,7 +98,7 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
             self.user.detection_operator_running = True
 
         # create a detection handler
-        from ...main import DetectionHandler
+        from ...cgt_detection.main import DetectionHandler
         detection_type = self.user.enum_detection_type
         self.detection_handler = DetectionHandler(detection_type, "BPY")
 

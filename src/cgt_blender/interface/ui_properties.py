@@ -111,8 +111,8 @@ class CGTProperties(PropertyGroup):
 
     selected_driver_collection: StringProperty(
         name="",
-        description="Select a collection of Divers.",
-        default="Drivers"
+        description="Select a collection of Divers containing tracking data.",
+        default="cgt_Drivers"
     )
     # endregion
 

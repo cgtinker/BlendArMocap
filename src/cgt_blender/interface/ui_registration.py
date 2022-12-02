@@ -33,7 +33,8 @@ def get_classes():
         ui_operators.WM_CGT_modal_detection_operator,
         ui_operators.WM_CGT_modal_connection_listener_operator,
         ui_panels.UI_PT_CGT_main_panel,
-        # ui_panels.UI_PT_RemappingPanel
+        ui_panels.UI_PT_CGT_legacy_detection_panel,
+        # ui_panels.UI_PT_CGT_RemappingPanel
     )
     return classes
 
