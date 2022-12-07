@@ -24,11 +24,15 @@ from ... import cgt_naming
 
 class BLENDARMOCAP_CGT_preferences(bpy.types.AddonPreferences):
     bl_idname = cgt_naming.PACKAGE
-    update = True
+    update = True  # used to check dependency status just once
 
     def draw(self, context):
         layout = self.layout
-        if self.update:
+
+        user = context.scene.m_cgtinker_mediapipe  # noqa
+        layout.prop(user, "legacy_features_bool")
+
+        if self.update and user.legacy_features_bool:
             self.draw_dependencies(layout)
             self.draw_camera_settings(context, layout)
             self.update = False

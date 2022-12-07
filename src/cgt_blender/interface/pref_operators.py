@@ -52,7 +52,7 @@ class PREFERENCES_OT_CGT_install_dependencies_button(bpy.types.Operator):
             return {"CANCELLED"}
 
         # register user interface after installing dependencies
-        ui_registration.register_user_interface()
+        # ui_registration.register_user_interface()
         # TODO: update UI without reimporting
         cgt_imports.manage_imports(reload=True)
         return {"FINISHED"}
@@ -96,7 +96,7 @@ class PREFERENCES_OT_CGT_uninstall_dependencies_button(bpy.types.Operator):
         # uninstall dependencies or move them to custom trash folder
         # on windows to remove files on app start
         dependencies.dependencies_installed = False
-        ui_registration.unregister_ui_panels()
+        # ui_registration.unregister_ui_panels()
 
         print("Attempt to shutdown Blender.")
         import time

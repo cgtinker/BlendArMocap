@@ -9,8 +9,7 @@ class ServerResultsProcessor(object):
     data_processor: processor_interface.DataProcessor
     json_parser: JsonParser
 
-    frame: int = 0
-    frame_step: int = 1
+    start_frame: int = 0
     user = None
     bridge_initialized: bool
 
@@ -18,12 +17,12 @@ class ServerResultsProcessor(object):
         self.json_parser = JsonParser()
         self.bridge_initialized = False
 
-    def exec(self, results: str):
+    def exec(self, payload: str):
         """ Push server results in the processing bridge """
-        arr = self.json_parser.exec(results)
+        arr, frame = self.json_parser.exec(payload)
         if not self.bridge_initialized:
             self.bridge_initialized = self.init_bridge(self.json_parser.detection_type)
-        self.update_data_listeners(arr)
+        self.update_data_listeners(arr, frame)
 
     def init_bridge(self, data_type: str):
         """ Initializes bridge to blender """
@@ -52,11 +51,11 @@ class ServerResultsProcessor(object):
         self.data_listener.attach(self.data_observer)
         return True
 
-    def update_data_listeners(self, payload):
+    def update_data_listeners(self, payload, frame):
         """ Update listeners """
-        self.frame += 1
+        # todo: add start frame
         self.data_listener.data = payload
-        self.data_listener.frame = self.frame
+        self.data_listener.frame = self.start_frame + frame
         self.data_listener.notify()
 
     def __del__(self):

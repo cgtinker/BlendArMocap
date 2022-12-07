@@ -397,7 +397,7 @@ required_dependencies = (
     # Dependency(module="attrs>=19.1.0", package=None, name="attrs", pkg="attrs"),
     # Dependency(module="matplotlib", package=None, name="matplotlib", pkg="matplotlib"),
     Dependency(module="opencv-contrib-python>=4.5.5.64", package=None, name="cv2", pkg="opencv_contrib_python"),
-    Dependency(module="protobuf>=3.11.4,<=3.20.0", package=None, name="google.protobuf", pkg="protobuf"),
+    Dependency(module="protobuf>=3.11.4<=3.20.0", package=None, name="google.protobuf", pkg="protobuf"),
     Dependency(module="mediapipe>=0.8.10", package=None, name="mediapipe", pkg="mediapipe"),
     )
 

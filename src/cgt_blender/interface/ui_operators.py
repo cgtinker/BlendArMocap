@@ -19,6 +19,8 @@ import bpy
 from pathlib import Path
 from ..utils import objects
 from ...cgt_naming import COLLECTIONS
+from ...cgt_ipc import tcp_server, server_result_processor
+from multiprocessing import Queue, Process
 
 
 class UI_CGT_transfer_anim_button(bpy.types.Operator):
@@ -41,7 +43,7 @@ class UI_CGT_transfer_anim_button(bpy.types.Operator):
 
         user = bpy.context.scene.m_cgtinker_mediapipe
 
-        selected_driver_collection = user.selected_driver_collection
+        selected_driver_collection = user.selected_driver_collection.name
         selected_armature = user.selected_rig.name_full
 
         print(f"TRYING TO TRANSFER ANIMATION DATA FROM {selected_driver_collection} TO {selected_armature}")
@@ -53,6 +55,49 @@ class UI_CGT_transfer_anim_button(bpy.types.Operator):
             col_mapping[col](armature, driver_objects)
 
         # input_manager.transfer_animation()
+        return {'FINISHED'}
+
+
+class UI_CGT_smooth_empties_in_col(bpy.types.Operator):
+    bl_label = "Smooth"
+    bl_idname = "button.smooth_empties_in_col"
+    bl_description = "Smooth the animation data in the selected collection."
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode in {'OBJECT'}
+
+    def execute(self, context):
+        # safe current area, switching to graph editor area
+        current_area = bpy.context.area.type
+        layer = bpy.context.view_layer
+
+        # get objs from selected cols
+        user = bpy.context.scene.m_cgtinker_mediapipe
+        selected_driver_collection = user.selected_driver_collection.name
+        driver_collections = objects.get_child_collections(selected_driver_collection)
+        objs = []
+        for col in driver_collections:
+            objs += objects.get_objects_from_collection(col)
+
+        print("selecting objects")
+        for ob in objs:
+            ob.select_set(True)
+        layer.update()
+
+        print("start smoothing process")
+        bpy.context.area.type = 'GRAPH_EDITOR'
+        bpy.ops.graph.euler_filter()
+        bpy.ops.graph.sample()
+        bpy.ops.graph.smooth()
+
+        print("process finished")
+        bpy.context.area.type = current_area
+        for ob in objs:
+            ob.select_set(False)
+        layer.update()
+        layer.update()
+
         return {'FINISHED'}
 
 
@@ -158,8 +203,6 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
         return {'FINISHED'}
 
 
-from ...cgt_ipc import tcp_server, server_result_processor
-from multiprocessing import Queue, Process
 class WM_CGT_modal_connection_listener_operator(bpy.types.Operator):
     bl_label = "Local Connection Listener"
     bl_idname = "wm.cgt_local_connection_listener"
@@ -212,6 +255,7 @@ class WM_CGT_modal_connection_listener_operator(bpy.types.Operator):
             if payload:
                 if payload == "DONE":
                     return self.cancel(context)
+                # payload contains capture results and the corresponding frame
                 self.processor.exec(payload)
 
         return {'PASS_THROUGH'}
