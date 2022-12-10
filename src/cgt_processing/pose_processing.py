@@ -20,7 +20,7 @@ from mathutils import Euler
 
 from . import processor_interface
 from ..cgt_bridge import bpy_pose_bridge
-from ..cgt_utils import m_V
+from ..cgt_utils import cgt_math as m_V
 
 
 class PoseProcessor(processor_interface.DataProcessor):

@@ -19,7 +19,7 @@ import numpy as np
 from mathutils import Euler
 
 from . import processor_interface
-from ..cgt_utils import m_V
+from ..cgt_utils import cgt_math as m_V
 from ..cgt_bridge import bpy_face_bridge
 
 

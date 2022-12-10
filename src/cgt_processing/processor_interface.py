@@ -20,7 +20,7 @@ from math import pi
 import numpy as np
 from mathutils import Euler
 
-from ..cgt_utils import m_V
+from ..cgt_utils import cgt_math as m_V
 
 
 class DataProcessor(ABC):

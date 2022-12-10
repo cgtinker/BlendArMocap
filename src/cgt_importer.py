@@ -15,17 +15,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import json
+REGISTER_MODULES = [
+    ".src.cgt_freemocap.fm_interface"
+]
 
-
-def to_json(data, path):
-    with open(path, 'w', encoding='utf-8') as f:
-        j = json.dumps(data, ensure_ascii=False, indent=4, sort_keys=True, separators=(',', ':'))
-        f.write(j)
-    return j
-
-
-def from_json(path):
-    with open(path) as f:
-        j = json.load(f)
-    return j

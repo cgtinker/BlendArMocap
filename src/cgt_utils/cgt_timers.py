@@ -15,13 +15,13 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import traceback
+from __future__ import annotations
 from functools import wraps
 from time import time
-import logging
+from typing import Callable
 
 
-def timeit(func):
+def timeit(func: Callable):
     @wraps(func)
     def wrap(*args, **kwargs):
         start = time()
@@ -30,15 +30,25 @@ def timeit(func):
         runtime = end - start
         print(f"function: {func.__name__}(args: {args}, kwargs: {kwargs})\ntook: {round(runtime, 5)} sec\n")
         return result
+
     return wrap
 
 
-def except_error(func):
+def fps(func: Callable):
+    start = time()
+    count = 0
+
     @wraps(func)
     def wrap(*args, **kwargs):
-        try:
-            func(*args, **kwargs)
-        except Exception:
-            logging.error(traceback.format_exc())
-    return wrap
+        nonlocal count
+        nonlocal start
+        res = func(*args, **kwargs)
+        count += 1
+        if time() - start >= 1:
+            start = time()
+            print(f"function '{func.__name__}' runs at {count} fps")
+            count = 0
 
+        return res
+
+    return wrap

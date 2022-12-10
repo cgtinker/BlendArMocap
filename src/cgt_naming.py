@@ -16,12 +16,13 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import os
+import logging
 from dataclasses import dataclass
 
 
 # has to be at root
 PACKAGE = os.path.basename(os.path.dirname(os.path.dirname(__file__)))
-print(PACKAGE, "- add-on path:", os.path.dirname(os.path.dirname(__file__)))
+logging.getLogger("BlendArMocap").debug(f"{PACKAGE}, {os.path.dirname(os.path.dirname(__file__))}")
 ADDON_NAME = "BlendArMocap"
 
 

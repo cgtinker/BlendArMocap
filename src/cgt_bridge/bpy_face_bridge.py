@@ -66,13 +66,104 @@ class BpyFaceBridge(bpy_bridge_interface.BpyInstanceProvider):
         [self.init_bpy_driver_obj(
             e[0], self.face, e[1], e[2], self.col_name, e[3], e[4]) for e in custom_data_array]
         self.custom_data_arr = [custom_data[0] for custom_data in custom_data_array]
-
         # setting starting position for custom data isn't that pretty
         # data = [[e[0].idx, e[4]] for e in custom_data_array]
         # self.translate(self.face, data, 0)
 
     def get_instances(self):
         return self.face, self.custom_data_arr
+
+    @staticmethod
+    def set_hierarchy():
+        hierarchy = {
+            FACE.head: {
+                0:   {  # top lip corner
+                    2: {
+                        1: {  # nose tip
+                            4: {
+                                168: {  # eyes
+                                    189: {173: {  # right
+                                        145: {130: {'#': {'#'}}},
+                                        159: {130: {'#': {'#'}}},
+                                    }},
+                                    413: {398: {  # left
+                                        374: {263: {'#': {'#'}}},
+                                        386: {263: {'#': {'#'}}},
+                                    }},
+                                }
+                            }
+                        }
+                    }
+                },
+                152: {  # chin
+                    199: {
+                        17: {  # lower lip
+                            291: {  # left lip corner
+                                394: {
+                                    397: {
+                                        356: {'#': {'#'}}  # left temple
+                                    }
+                                },
+                                433: {  # left cheek
+                                    265: {  # left circle around eye
+                                        450: {
+                                            465: {'#': {'#'}}
+                                        },
+                                        443: {
+                                            465: {'#': {'#'}}
+                                        }
+                                    }
+                                },
+                                269: {  # move in
+                                    0: {}  # upper lip center
+                                }
+                            },
+                            61:  {  # right lip corner
+                                169: {
+                                    58: {
+                                        127: {'#': {'#'}}  # right temple
+                                    }
+                                },
+                                147: {  # right cheek
+                                    35: {  # right circle around eye
+                                        230: {
+                                            245: {'#': {'#'}}
+                                        },
+                                        223: {
+                                            245: {'#': {'#'}}
+                                        }
+                                    }
+                                },
+                                39:  {
+                                    0: {'#': {'#'}}
+                                }
+                            },
+                        }
+
+                    }
+                }
+            }
+        }
+
+        copy_dict = {}
+        def recv(name, branch, copy):
+            if name == '#':
+                copy['#'] = {'#'}
+                return
+
+            if isinstance(name, int):
+                key = f'cgt_face_vertex_{name}'
+            else:
+                key = name
+            copy[key] = dict()
+
+            for name in branch:
+                recv(name, branch[name], copy[key])
+
+        for node in hierarchy:
+            recv(node, hierarchy[node], copy_dict)
+
+        objects.set_hierarchy(copy_dict)
 
     def set_position(self, data, frame):
         """Keyframes the position of input data."""

@@ -75,7 +75,8 @@ def get_parents(file: Path, parents: list):
 
 
 def manage_imports(reload: bool = False, force: bool = False):
-    print(f"{PACKAGE_NAME} - Initializing...")
+    # from .cgt_blender.interface import ui_registration
+    # ui_registration.unregister()
     for module in INIT_MODULES:
         import_module(module)
 

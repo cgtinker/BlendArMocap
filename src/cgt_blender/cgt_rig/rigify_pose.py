@@ -20,7 +20,7 @@ import numpy as np
 from . import abs_rigging, limb_drivers
 from ..utils import objects
 from ...cgt_naming import POSE
-from ...cgt_utils import m_V
+from ...cgt_utils import cgt_math
 from .rigify_naming import rigify_pose_bone_names
 
 

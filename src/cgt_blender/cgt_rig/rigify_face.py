@@ -22,7 +22,7 @@ from . import face_drivers
 from ...cgt_naming import FACE
 from .rigify_naming import rigify_face_bone_names
 from ..utils import objects
-from ...cgt_utils import m_V
+from ...cgt_utils import cgt_math
 import numpy as np
 
 

@@ -14,7 +14,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
-
+from __future__ import annotations
 import bpy
 
 
@@ -82,6 +82,22 @@ def set_parents(parent, children):
 
 def set_parent(parent, child):
     child.parent = parent
+
+
+def set_hierarchy(hierarchy: dict[str, dict], prefix: str = ""):
+    # creates a parenting hierarchy based on a dictionary of object names
+    def recv(ob_name, branch, parent=None):
+        nonlocal prefix
+        if ob_name == '#':
+            return
+        ob = get_object_by_name(ob_name + prefix)
+        if parent is not None and ob is not None:
+            ob.parent = parent
+        for name in branch:
+            recv(name, branch[name], ob)
+
+    for key in hierarchy:
+        recv(key, hierarchy[key], None)
 
 
 # endregion

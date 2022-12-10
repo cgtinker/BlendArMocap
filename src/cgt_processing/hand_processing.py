@@ -18,11 +18,11 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 from math import degrees
 
 import numpy as np
-from mathutils import Euler
+from mathutils import Euler # noqa
 
 from . import processor_interface
 from ..cgt_bridge import bpy_hand_bridge
-from ..cgt_utils import m_V
+from ..cgt_utils import cgt_math as m_V
 
 
 class HandProcessor(processor_interface.DataProcessor):

@@ -47,6 +47,7 @@ class CGTProperties(PropertyGroup):
         items=(
             ("stream", "Stream", ""),
             ("movie", "Movie", ""),
+            ("freemocap", "Freemocap", ""),
         )
     )
 
@@ -78,6 +79,14 @@ class CGTProperties(PropertyGroup):
         subtype='FILE_PATH'
     )
 
+    freemocap_session_path: StringProperty(
+        name="Freemocap Session Path",
+        description="path to 'freemocap' session folder",
+        default=r"/Users/Scylla/Downloads/sesh_2022-09-19_16_16_50_in_class_jsm/",
+        options={'HIDDEN'},
+        maxlen=1024,
+        subtype='DIR_PATH'
+    )
     # endregion
     # endregion
 
@@ -111,7 +120,6 @@ class CGTProperties(PropertyGroup):
                 return True
         return False
 
-
     selected_rig: bpy.props.PointerProperty(
         type=bpy.types.Object,
         description="Select an armature for animation transfer.",
@@ -138,7 +146,7 @@ class CGTProperties(PropertyGroup):
             ("HAND", "Hands", ""),
             ("FACE", "Face", ""),
             ("POSE", "Pose", ""),
-            ("HOLISTIC", "Holistic (Experimental)", ""),
+            ("HOLISTIC", "Holistic", ""),
         )
     )
     # endregion

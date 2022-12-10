@@ -16,8 +16,9 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 from . import detect_hands, detect_pose, detect_face, detect_holistic, detector_interface, stream
-from ..cgt_bridge import bpy_hand_bridge, bpy_pose_bridge, bpy_face_bridge, bpy_bridge_interface, print_bridge
+from ..cgt_freemocap import fm_dir_loader
 from ..cgt_patterns import events
+from ..cgt_bridge import bpy_hand_bridge, bpy_pose_bridge, bpy_face_bridge, bpy_bridge_interface, print_bridge
 from ..cgt_processing import hand_processing, pose_processing, face_processing, processor_interface
 
 
@@ -32,7 +33,8 @@ class DetectionHandler:
         "HAND":     bpy_hand_bridge.BpyHandBridge,
         "POSE":     bpy_pose_bridge.BpyPoseBridge,
         "FACE":     bpy_face_bridge.BpyFaceBridge,
-        "HOLISTIC": [bpy_hand_bridge.BpyHandBridge, bpy_face_bridge.BpyFaceBridge, bpy_pose_bridge.BpyPoseBridge]
+        "HOLISTIC": [bpy_hand_bridge.BpyHandBridge, bpy_face_bridge.BpyFaceBridge, bpy_pose_bridge.BpyPoseBridge],
+        "FREEMOCAP": [bpy_hand_bridge.BpyHandBridge, bpy_face_bridge.BpyFaceBridge, bpy_pose_bridge.BpyPoseBridge],
     }
 
     # detection types and processors
@@ -40,7 +42,8 @@ class DetectionHandler:
         "HAND":     detect_hands.HandDetector,
         "POSE":     detect_pose.PoseDetector,
         "FACE":     detect_face.FaceDetector,
-        "HOLISTIC": detect_holistic.HolisticDetector
+        "HOLISTIC": detect_holistic.HolisticDetector,
+        "FREEMOCAP": load_freemocap.FreemocapLoader,
     }
 
     # processes mediapipe landmarks
@@ -48,7 +51,8 @@ class DetectionHandler:
         "HAND": hand_processing.HandProcessor,
         "POSE": pose_processing.PoseProcessor,
         "FACE": face_processing.FaceProcessor,
-        "HOLISTIC": [hand_processing.HandProcessor, face_processing.FaceProcessor, pose_processing.PoseProcessor]
+        "HOLISTIC": [hand_processing.HandProcessor, face_processing.FaceProcessor, pose_processing.PoseProcessor],
+        "FREEMOCAP": [bpy_hand_bridge.BpyHandBridge, bpy_face_bridge.BpyFaceBridge, bpy_pose_bridge.BpyPoseBridge],
     }
 
     # observes data and maps it to the bridge
@@ -57,6 +61,7 @@ class DetectionHandler:
         "RAW":          events.PrintRawDataUpdate,
         "DEBUG":        events.DriverDebug,   # may doesn't while working with mathutils
         "BPY_HOLISTIC": events.HolisticBpyUpdateReceiver,
+        "BPY_FREEMOCAP": events.HolisticBpyUpdateReceiver,
         "DEBUG_HOLISTIC": events.HolisticDriverDebug
     }
 
@@ -83,6 +88,10 @@ class DetectionHandler:
         if target == "HOLISTIC":
             bridge_type += "_"
             bridge_type += target
+        if target == "FREEMOCAP":
+            print("called freemocap")
+            bridge_type = "BPY_FREEMOCAP"
+
         self.observer = self.observers[bridge_type]
 
     def init_detector(self, capture_input=None, dimension: str = "sd", stream_backend: int = 0,
