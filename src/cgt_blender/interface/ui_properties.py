@@ -29,7 +29,7 @@ class CGTProperties(PropertyGroup):
         default="Start Detection"
     )
 
-    detection_operator_running: BoolProperty(
+    modal_active: BoolProperty(
         name="detection operator bool",
         description="helper bool to en- and disable detection operator",
         default=False

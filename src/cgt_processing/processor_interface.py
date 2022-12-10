@@ -20,7 +20,7 @@ from math import pi
 import numpy as np
 from mathutils import Euler
 
-from ..cgt_utils import cgt_math as m_V
+from ..cgt_utils import cgt_math
 
 
 class DataProcessor(ABC):
@@ -72,12 +72,12 @@ class DataProcessor(ABC):
         if len(self.prev_rotation) > 0:
             try:
                 combat = self.prev_rotation[idx + idx_offset]
-                return m_V.to_euler(quart, combat, axis)
+                return cgt_math.to_euler(quart, combat, axis)
             except KeyError:
                 print(f"invalid id to euler combat {idx}, {self.frame}")
-                return m_V.to_euler(quart)
+                return cgt_math.to_euler(quart)
         else:
-            return m_V.to_euler(quart)
+            return cgt_math.to_euler(quart)
 
     @staticmethod
     def offset_euler(euler, offset: []):
@@ -95,7 +95,7 @@ class DataProcessor(ABC):
 
         try:
             if offset == None:
-                m_rot = m_V.to_euler(
+                m_rot = cgt_math.to_euler(
                     quart_rotation,
                     self.prev_rotation[prev_rot_idx]
                 )
@@ -103,13 +103,13 @@ class DataProcessor(ABC):
             else:
                 # -offset for combat
                 tmp_offset = [-o for o in offset]
-                m_rot = m_V.to_euler(
+                m_rot = cgt_math.to_euler(
                     quart_rotation,
                     self.offset_euler(self.prev_rotation[prev_rot_idx], tmp_offset)
                 )
 
         except KeyError:
-            m_rot = m_V.to_euler(quart_rotation)
+            m_rot = cgt_math.to_euler(quart_rotation)
 
         return self.offset_euler(m_rot, offset)
     # endregion

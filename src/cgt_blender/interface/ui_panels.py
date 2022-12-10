@@ -79,7 +79,7 @@ class UI_PT_CGT_main_panel(DefaultPanel, Panel):
 
                 # settings
                 box.row().prop(user, "enum_detection_type")
-                if user.detection_operator_running:
+                if user.modal_active:
                     box.row().operator("wm.cgt_feature_detection_operator", text="Stop Detection")
                 else:
                     box.row().operator("wm.cgt_feature_detection_operator", text=user.button_start_detection)

@@ -15,20 +15,18 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import logging
 from abc import ABC, abstractmethod
-
 from mediapipe import solutions
-
 from ..cgt_patterns import observer_pattern
 
 
-class RealtimeDetector(ABC):
+class RealtimeDataProvider(ABC):
     stream = None
     input_type = 0
     observer, listener, _timer = None, None, None
     solution = None
     drawing_utils, drawing_style, = None, None
-
     key_step = 4
     frame = None
 
@@ -40,7 +38,7 @@ class RealtimeDetector(ABC):
         self.key_step = key_step
 
     @abstractmethod
-    def image_detection(self):
+    def frame_detection_data(self):
         """ Run mediapipes detection on an image using the active model. """
         pass
 

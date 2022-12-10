@@ -136,16 +136,16 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
         self.user = context.scene.m_cgtinker_mediapipe  # noqa
 
         # hacky way to check if operator is running
-        if self.user.detection_operator_running is True:
-            self.user.detection_operator_running = False
+        if self.user.modal_active is True:
+            self.user.modal_active = False
             return {'FINISHED'}
         else:
-            self.user.detection_operator_running = True
+            self.user.modal_active = True
 
         # create a detection handler
-        from ...cgt_detection.main import DetectionHandler
+        from ...cgt_detection.main import RealtimeDataProcessingManager
         detection_type = self.user.enum_detection_type
-        self.detection_handler = DetectionHandler(detection_type, "BPY")
+        self.detection_handler = RealtimeDataProcessingManager(detection_type, "BPY")
 
         # initialize detector using user inputs
         frame_start = bpy.context.scene.frame_start
@@ -155,17 +155,17 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
             print("Path to mov:", mov_path)
             if not Path(mov_path).is_file():
                 print("GIVEN PATH IS NOT VALID")
-                self.user.detection_operator_running = False
+                self.user.modal_active = False
                 return {'FINISHED'}
             self.detection_handler.init_detector(str(mov_path), "sd", 0, frame_start, 1, 1)
 
         elif self.user.detection_input_type == 'freemocap':
-            self.detection_handler = DetectionHandler("FREEMOCAP", "BPY")
+            self.detection_handler = RealtimeDataProcessingManager("FREEMOCAP", "BPY")
             freemocap_session_path = Path(bpy.path.abspath(self.user.freemocap_session_path)).parent
             print("Path to freemocap_session_path:", freemocap_session_path)
             if not Path(freemocap_session_path).is_dir():
                 print("GIVEN PATH IS NOT VALID")
-                self.user.detection_operator_running = False
+                self.user.modal_active = False
                 return {'FINISHED'}
             self.detection_handler.init_detector(input_type=2)  # input_type=2 <- freemocap_session
 
@@ -194,20 +194,20 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
     def modal(self, context, event):
         """ Run detection as modal operation, finish with 'Q', 'ESC' or 'RIGHT MOUSE'. """
         if event.type == "TIMER":
-            running = self.detection_handler.detector.image_detection()
+            running = self.detection_handler.realtime_data_provider.frame_detection_data()
             if running:
                 return {'PASS_THROUGH'}
             else:
                 return self.cancel(context)
 
-        if event.type in {'Q', 'ESC', 'RIGHT_MOUSE'} or self.user.detection_operator_running is False:
+        if event.type in {'Q', 'ESC', 'RIGHT_MOUSE'} or self.user.modal_active is False:
             return self.cancel(context)
 
         return {'PASS_THROUGH'}
 
     def cancel(self, context):
         """ Upon finishing detection clear the handlers. """
-        bpy.context.scene.m_cgtinker_mediapipe.detection_operator_running = False # noqa
+        bpy.context.scene.m_cgtinker_mediapipe.modal_active = False # noqa
         del self.detection_handler
         wm = context.window_manager
         wm.event_timer_remove(self._timer)

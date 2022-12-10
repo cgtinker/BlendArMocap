@@ -16,59 +16,64 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import mediapipe as mp
+from mediapipe.framework.formats import classification_pb2
 
-from . import detector_interface, stream
-
-
-# import ssl
-# ssl._create_default_https_context = ssl._create_unverified_context
+from . import realtime_data_provider_interface, stream
 
 
-class PoseDetector(detector_interface.RealtimeDetector):
-    # https://google.github.io/mediapipe/solutions/pose#python-solution-api
-    def image_detection(self):
-        # BlazePose GHUM 3D
-        with self.solution.Pose(
+class HandDetector(realtime_data_provider_interface.RealtimeDataProvider):
+    # https://google.github.io/mediapipe/solutions/hands#python-solution-api
+    def frame_detection_data(self):
+        with self.solution.Hands(
                 static_image_mode=True,
-                model_complexity=1,
-                # model_complexity=2,
+                max_num_hands=2,
                 min_detection_confidence=0.7) as mp_lib:
             return self.exec_detection(mp_lib)
 
     def stream_detection(self):
-        with self.solution.Pose(
+        with self.solution.Hands(
                 min_detection_confidence=0.8,
                 min_tracking_confidence=0.5,
                 static_image_mode=False,
-                smooth_segmentation=True
+                max_num_hands=2
         ) as mp_lib:
             while self.stream.capture.isOpened():
-                state = self.exec_detection(mp_lib)
-                if state == {'CANCELLED'}:
-                    return {'CANCELLED'}
+                return self.exec_detection(mp_lib)
 
     def initialize_model(self):
-        self.solution = mp.solutions.pose
+        self.solution = mp.solutions.hands
+
+    def seperate_hands(self, hand_data):
+        left_hand = [data[0] for data in hand_data if data[1][1] is False]
+        right_hand = [data[0] for data in hand_data if data[1][1] is True]
+        return left_hand, right_hand
+
+    def cvt_hand_orientation(self, orientation: classification_pb2):
+        if not orientation:
+            return None
+
+        return [[idx, "Right" in str(o)] for idx, o in enumerate(orientation)]
 
     def get_detection_results(self, mp_res):
-        return self.cvt2landmark_array(mp_res.pose_world_landmarks)
+        data = [self.cvt2landmark_array(hand) for hand in mp_res.multi_hand_world_landmarks]
+        # multi_hand_world_landmarks // multi_hand_landmarks
+        left_hand_data, right_hand_data = self.seperate_hands(
+            list(zip(data, self.cvt_hand_orientation(mp_res.multi_handedness))))
+        return left_hand_data, right_hand_data
 
     def contains_features(self, mp_res):
-        if not mp_res.pose_world_landmarks:
+        if not mp_res.multi_hand_landmarks and not mp_res.multi_handedness:
             return False
         return True
 
     def draw_result(self, s, mp_res, mp_drawings):
-        mp_drawings.draw_landmarks(
-            s.frame,
-            mp_res.pose_landmarks,
-            self.solution.POSE_CONNECTIONS,
-            landmark_drawing_spec=self.drawing_style.get_default_pose_landmarks_style())
+        for hand in mp_res.multi_hand_landmarks:
+            mp_drawings.draw_landmarks(s.frame, hand, self.solution.HAND_CONNECTIONS)
 
 
 # region manual tests
 def init_detector_manually(processor_type: str = "RAW"):
-    m_detector = PoseDetector()
+    m_detector = HandDetector()
     m_detector.stream = stream.Webcam()
     m_detector.initialize_model()
 
@@ -77,9 +82,9 @@ def init_detector_manually(processor_type: str = "RAW"):
         m_detector.observer = events.PrintRawDataUpdate()
     else:
         from ..cgt_bridge import print_bridge
-        from ..cgt_processing import pose_processing
+        from ..cgt_processing import hand_processing
         bridge = print_bridge.PrintBridge
-        target = pose_processing.PoseProcessor(bridge)
+        target = hand_processing.HandProcessor(bridge)
         m_detector.observer = events.DriverDebug(target)
 
     m_detector.listener = events.UpdateListener()
@@ -93,7 +98,7 @@ if __name__ == '__main__':
 
     if detection_type == "image":
         for _ in range(50):
-            detector.image_detection()
+            detector.frame_detection_data()
     else:
         detector.stream_detection()
 

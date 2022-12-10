@@ -17,16 +17,16 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 import mediapipe as mp
 
-from . import detector_interface, stream
+from . import realtime_data_provider_interface, stream
 
 from typing import Mapping, Tuple
 from mediapipe.python.solutions import face_mesh_connections
 from mediapipe.python.solutions.drawing_utils import DrawingSpec
 
 
-class FaceDetector(detector_interface.RealtimeDetector):
+class FaceDetector(realtime_data_provider_interface.RealtimeDataProvider):
     # https://google.github.io/mediapipe/solutions/face_mesh#python-solution-api
-    def image_detection(self):
+    def frame_detection_data(self):
         with self.solution.FaceMesh(
                 max_num_faces=1,
                 static_image_mode=False,
@@ -131,7 +131,7 @@ if __name__ == '__main__':
 
     if detection_type == "image":
         for _ in range(50):
-            detector.image_detection()
+            detector.frame_detection_data()
     else:
         detector.stream_detection()
 

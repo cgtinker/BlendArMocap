@@ -12,13 +12,14 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from ..cgt_detection import detector_interface
+import logging
+from ..cgt_detection import realtime_data_provider_interface
 from pathlib import Path
 import numpy as np
 import bpy
 
 
-class FreemocapLoader(detector_interface.RealtimeDetector):
+class FreemocapLoader(realtime_data_provider_interface.RealtimeDataProvider):
     mediapipe3d_frames_trackedPoints_xyz: np.array = None
     number_of_frames: int = -1
     number_of_tracked_points: int = -1
@@ -30,10 +31,10 @@ class FreemocapLoader(detector_interface.RealtimeDetector):
 
     mp_res = None
 
-    def image_detection(self):
+    def frame_detection_data(self):
+        """ Provides holistic data for each (prerecorded) frame. """
         while self.frame < self.number_of_frames:
             holistic_data = self.get_detection_results()
-            # JSM NOTE - spoofing the method in `self.exec_detection`
             self.listener.data = holistic_data
             self.update_listeners()
             return True
@@ -43,9 +44,8 @@ class FreemocapLoader(detector_interface.RealtimeDetector):
         """Load the 3d mediapipe skeleton data from a freemocap session
         (not implemented) `reprojection_error_threshold:float` = filter data by removing dottos with high reprojection error. I think for now I'll just do a mean+2*standard_deviation cut-off that leaves in 95% of the data (if stupidly assuming normal distribution) or something TODO - do this better and smarter lol
         """
-        print("Loading FREEMOCAP data...")
         freemocap_session_path = Path(bpy.context.scene.m_cgtinker_mediapipe.freemocap_session_path)
-        print(freemocap_session_path)
+        logging.debug(f"Loading FREEMOCAP data...\n{freemocap_session_path}")
 
         data_arrays_path = freemocap_session_path / 'DataArrays'
         mediapipe3d_xyz_npy_path = data_arrays_path / 'mediaPipeSkel_3d_smoothed.npy'
@@ -58,6 +58,7 @@ class FreemocapLoader(detector_interface.RealtimeDetector):
         self.number_of_tracked_points = self.mediapipe3d_frames_trackedPoints_xyz.shape[1]
 
     def get_detection_results(self, mp_res=None):
+        # TODO: Data is rotated
         if self.frame == self.number_of_frames - 1:
             return None
         tracked_points = self.mediapipe3d_frames_trackedPoints_xyz[self.frame, :, :]
@@ -72,9 +73,6 @@ class FreemocapLoader(detector_interface.RealtimeDetector):
         this_frame_right_hand_data = [[i, p] for i, p in enumerate(this_frame_right_hand_data)]
         this_frame_face_data = [[i, p] for i, p in enumerate(this_frame_face_data)]
 
-        # left seems to be missing data at idx 0
-        print("LEFT", this_frame_left_hand_data, len(this_frame_left_hand_data))
-        print("RIGHT", this_frame_right_hand_data, len(this_frame_right_hand_data))
         holistic_data = [[[this_frame_left_hand_data], [this_frame_right_hand_data]],
                          [this_frame_face_data], this_frame_body_data]
         return holistic_data

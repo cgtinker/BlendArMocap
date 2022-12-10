@@ -202,7 +202,7 @@ class RigifyPose(abs_rigging.BpyRigging):
                 joint_locs = [self.center_points[1], self.edit_bone_head(joint[1])]
             else:
                 joint_locs = [self.edit_bone_head(name) for name in joint]
-            length = m_V.get_vector_distance(np.array(joint_locs[0]), np.array(joint_locs[1]))
+            length = cgt_math.get_vector_distance(np.array(joint_locs[0]), np.array(joint_locs[1]))
             joint_lengths.append(length)
 
         objects.set_mode('OBJECT')

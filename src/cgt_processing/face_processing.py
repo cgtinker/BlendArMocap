@@ -19,7 +19,7 @@ import numpy as np
 from mathutils import Euler
 
 from . import processor_interface
-from ..cgt_utils import cgt_math as m_V
+from ..cgt_utils import cgt_math
 from ..cgt_bridge import bpy_face_bridge
 
 
@@ -85,7 +85,7 @@ class FaceProcessor(processor_interface.DataProcessor):
     def set_scale_driver_data(self):
         """ Prepares mouth and eye driver data. """
         # adds length between objects as scale to drivers using eye dist as avg scale
-        avg_scale = m_V.vector_length(m_V.to_vector(self.data[362][1], self.data[263][1]))
+        avg_scale = cgt_math.vector_length(cgt_math.to_vector(self.data[362][1], self.data[263][1]))
         # get distances
         self.mouth_driver(avg_scale)
         self.eye_driver(avg_scale)
@@ -112,24 +112,24 @@ class FaceProcessor(processor_interface.DataProcessor):
     def mouth_corners(self, avg_scale):
         """ Calculates the angle from the mouth center to the mouth corner """
         # center point of mouth corners gets projected on vector from upper to lower lip
-        corner_center = m_V.center_point(self.data[61][1], self.data[291][1])
-        projected_center = m_V.project_point_on_vector(corner_center, self.data[0][1], self.data[17][1])
+        corner_center = cgt_math.center_point(self.data[61][1], self.data[291][1])
+        projected_center = cgt_math.project_point_on_vector(corner_center, self.data[0][1], self.data[17][1])
         # center point between upper and lower lip
-        mouth_height_center = m_V.center_point(self.data[0][1], self.data[17][1])
+        mouth_height_center = cgt_math.center_point(self.data[0][1], self.data[17][1])
 
         # vectors from center points to mouth corners
-        left_vec = m_V.to_vector(projected_center, self.data[61][1])
-        left_hv = m_V.to_vector(mouth_height_center, self.data[61][1])
-        right_vec = m_V.to_vector(projected_center, self.data[291][1])
-        right_hv = m_V.to_vector(mouth_height_center, self.data[291][1])
+        left_vec = cgt_math.to_vector(projected_center, self.data[61][1])
+        left_hv = cgt_math.to_vector(mouth_height_center, self.data[61][1])
+        right_vec = cgt_math.to_vector(projected_center, self.data[291][1])
+        right_hv = cgt_math.to_vector(mouth_height_center, self.data[291][1])
 
         # angle between the vectors expecting users don't record upside down
         if mouth_height_center[2] > projected_center[2]:
-            right_corner_angle = m_V.angle_between(left_vec, left_hv)
-            left_corner_angle = m_V.angle_between(right_vec, right_hv)
+            right_corner_angle = cgt_math.angle_between(left_vec, left_hv)
+            left_corner_angle = cgt_math.angle_between(right_vec, right_hv)
         else:
-            right_corner_angle = -m_V.angle_between(left_vec, left_hv)
-            left_corner_angle = -m_V.angle_between(right_vec, right_hv)
+            right_corner_angle = -cgt_math.angle_between(left_vec, left_hv)
+            left_corner_angle = -cgt_math.angle_between(right_vec, right_hv)
 
         self._mouth_corner_driver.sca = [left_corner_angle, 0.001, right_corner_angle]
         self._mouth_corner_driver.rot = [left_corner_angle, 0.001, right_corner_angle]
@@ -178,12 +178,12 @@ class FaceProcessor(processor_interface.DataProcessor):
     def chin_rotation(self):
         """ Calculate the chin rotation. """
         # draw vector from point between eyes to mouth and chin
-        nose_dir = m_V.to_vector(self.data[168][1], self.data[2][1])
-        chin_dir = m_V.to_vector(self.data[168][1], self.data[200][1])
+        nose_dir = cgt_math.to_vector(self.data[168][1], self.data[2][1])
+        chin_dir = cgt_math.to_vector(self.data[168][1], self.data[200][1])
 
         # calculate the X rotation
-        nose_dir_z, chin_dir_z = m_V.null_axis([nose_dir, chin_dir], 'X')
-        z_angle = m_V.angle_between(nose_dir_z, chin_dir_z) * 1.8
+        nose_dir_z, chin_dir_z = cgt_math.null_axis([nose_dir, chin_dir], 'X')
+        z_angle = cgt_math.angle_between(nose_dir_z, chin_dir_z) * 1.8
 
         # there is no x-rotation available in the detection result
         # nose_dir_x, chin_dir_x = m_V.null_axis([nose_dir, chin_dir], 'Z')
@@ -197,25 +197,25 @@ class FaceProcessor(processor_interface.DataProcessor):
             points to approximate the transformation matrix. """
         origin = np.array([0, 0, 0])
 
-        forward_point = m_V.center_point(np.array(self.data[1][1]), np.array(self.data[4][1]))  # nose
-        right_point = m_V.center_point(np.array(self.data[447][1]), np.array(self.data[366][1]))  # temple.R
+        forward_point = cgt_math.center_point(np.array(self.data[1][1]), np.array(self.data[4][1]))  # nose
+        right_point = cgt_math.center_point(np.array(self.data[447][1]), np.array(self.data[366][1]))  # temple.R
         down_point = np.array(self.data[152][1])  # chin
 
         # direction vectors from imaginary origin
-        normal = m_V.normalize(m_V.to_vector(origin, forward_point))
-        tangent = m_V.normalize(m_V.to_vector(origin, right_point))
-        binormal = m_V.normalize(m_V.to_vector(origin, down_point))
+        normal = cgt_math.normalize(cgt_math.to_vector(origin, forward_point))
+        tangent = cgt_math.normalize(cgt_math.to_vector(origin, right_point))
+        binormal = cgt_math.normalize(cgt_math.to_vector(origin, down_point))
 
         # generate matrix to decompose it and access quaternion rotation
-        matrix = m_V.generate_matrix(tangent, normal, binormal)
-        loc, quart, scale = m_V.decompose_matrix(matrix)
+        matrix = cgt_math.generate_matrix(tangent, normal, binormal)
+        loc, quart, scale = cgt_math.decompose_matrix(matrix)
         self.pivot.rot = quart
 
     # region cgt_utils
     def average_length_at_scale(self, p1, p2, scale):
         """ Get length of 2d vector and normalize by 1d scale """
-        length = m_V.vector_length(m_V.to_vector(self.data[p1][1], self.data[p2][1]))
-        return m_V.vector_length(length / scale)
+        length = cgt_math.vector_length(cgt_math.to_vector(self.data[p1][1], self.data[p2][1]))
+        return cgt_math.vector_length(length / scale)
 
     def custom_landmark_origin(self):
         """ Sets face mesh position to approximate origin """
@@ -225,7 +225,7 @@ class FaceProcessor(processor_interface.DataProcessor):
 
     def approximate_pivot_location(self):
         """ Sets to approximate origin based on canonical face mesh geometry """
-        right = m_V.center_point(np.array(self.data[447][1]), np.array(self.data[366][1]))  # temple.R
-        left = m_V.center_point(np.array(self.data[137][1]), np.array(self.data[227][1]))  # temple.L
-        self.pivot.loc = m_V.center_point(right, left)  # approximate origin
+        right = cgt_math.center_point(np.array(self.data[447][1]), np.array(self.data[366][1]))  # temple.R
+        left = cgt_math.center_point(np.array(self.data[137][1]), np.array(self.data[227][1]))  # temple.L
+        self.pivot.loc = cgt_math.center_point(right, left)  # approximate origin
     # endregion

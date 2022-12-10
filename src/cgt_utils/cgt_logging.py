@@ -49,7 +49,7 @@ def add_console_log(name: str = ''):
     """ Default: log stream to console. """
     handler = logging.StreamHandler()
     handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(name)s %(levelname)s - '
+    formatter = logging.Formatter('%(asctime)s - BlendArMocap %(levelname)s - '
                                   '%(message)s - %(filename)s:%(lineno)d',
                                   '%m-%d %H:%M:%S')
     handler.setFormatter(formatter)

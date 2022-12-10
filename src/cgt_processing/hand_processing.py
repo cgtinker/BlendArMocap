@@ -22,7 +22,7 @@ from mathutils import Euler # noqa
 
 from . import processor_interface
 from ..cgt_bridge import bpy_hand_bridge
-from ..cgt_utils import cgt_math as m_V
+from ..cgt_utils import cgt_math
 
 
 class HandProcessor(processor_interface.DataProcessor):
@@ -149,42 +149,42 @@ class HandProcessor(processor_interface.DataProcessor):
         def calculate_thumb_angle():
             # create plane to project thumb mcp & pip on plane
             plane = np.array([np.array([0, 0, 0]), hand[1][1], hand[5][1]])
-            thumb_proj = [m_V.project_vec_on_plane(plane, joints, p)
+            thumb_proj = [cgt_math.project_vec_on_plane(plane, joints, p)
                           for p in [hand[1][1], hand[5][1], hand[2][1]]]
 
             # vectors to calculate angle
-            thumb_vecs = [m_V.to_vector(tp[0], tp[1]) for tp in [
+            thumb_vecs = [cgt_math.to_vector(tp[0], tp[1]) for tp in [
                 [thumb_proj[0], thumb_proj[1]],
                 [thumb_proj[0], thumb_proj[2]]]]
 
-            return m_V.angle_between(np.array(thumb_vecs[0]), np.array(thumb_vecs[1]))
+            return cgt_math.angle_between(np.array(thumb_vecs[0]), np.array(thumb_vecs[1]))
 
         data[1] = calculate_thumb_angle()
 
         # calculate other finger angles
-        tangent = m_V.to_vector(np.array(hand[5][1]), np.array(hand[17][1]))
+        tangent = cgt_math.to_vector(np.array(hand[5][1]), np.array(hand[17][1]))
         # get pips, mcps and their dists (mcps projected on tangent)
-        mcps = [m_V.project_point_on_vector(
+        mcps = [cgt_math.project_point_on_vector(
             np.array(hand[finger[0]][1]), np.array(hand[5][1]), np.array(hand[17][1]))
             for finger in self.fingers[1:]]
         pips = [np.array(hand[finger[1] - 2][1]) for finger in self.fingers[1:]]
-        dists = [m_V.get_vector_distance(mcps[i], pips[i]) for i in range(0, 4)]
+        dists = [cgt_math.get_vector_distance(mcps[i], pips[i]) for i in range(0, 4)]
 
         # circle direction vectors related to the hand to calc angles
-        pinky_vec = m_V.to_vector(np.array(hand[0][1]), np.array(hand[17][1]))
-        thumb_vec = m_V.to_vector(np.array(hand[1][1]), np.array(hand[5][1]))
+        pinky_vec = cgt_math.to_vector(np.array(hand[0][1]), np.array(hand[17][1]))
+        thumb_vec = cgt_math.to_vector(np.array(hand[1][1]), np.array(hand[5][1]))
         dirs = [pinky_vec, pinky_vec, thumb_vec, thumb_vec]
 
         points = 20
         for i in range(0, 4):
             # create a circle around tangent in target dir
             # and find the closest point from circle to pip
-            circle = m_V.create_circle_around_vector(tangent, mcps[i], dists[i], points, dirs[i])
-            closest = m_V.get_closest_idx(pips[i], circle)
+            circle = cgt_math.create_circle_around_vector(tangent, mcps[i], dists[i], points, dirs[i])
+            closest = cgt_math.get_closest_idx(pips[i], circle)
 
             # angle between the closest point on circle to mcp and pip to mcp vectors
-            mcp_pip = m_V.to_vector(mcps[i], pips[i])
-            mcp_closest = m_V.to_vector(mcps[i], circle[closest])
+            mcp_pip = cgt_math.to_vector(mcps[i], pips[i])
+            mcp_closest = cgt_math.to_vector(mcps[i], circle[closest])
 
             # expand the arr of the circle to avoid index errors
             # form a triangle on the circle facing the closet point to the pip
@@ -194,14 +194,14 @@ class HandProcessor(processor_interface.DataProcessor):
 
             # calculate the normal from the triangle
             plane = np.array([a, circle[closest], b])
-            normal = m_V.normal_from_plane(plane)
-            normal = m_V.normalize(normal)
+            normal = cgt_math.normal_from_plane(plane)
+            normal = cgt_math.normalize(normal)
 
             # get the distance from the triangle to the pip
-            dist = m_V.distance_from_plane(pips[i], normal, circle[closest])
+            dist = cgt_math.distance_from_plane(pips[i], normal, circle[closest])
 
             # check if the finger angle should be pos or neg based on the dist
-            angle = m_V.angle_between(np.array(mcp_pip), np.array(mcp_closest))
+            angle = cgt_math.angle_between(np.array(mcp_pip), np.array(mcp_closest))
             if dist < 0:
                 angle = -angle
             else:
@@ -222,12 +222,12 @@ class HandProcessor(processor_interface.DataProcessor):
         # straighten fingers by plane projection
         for idx, finger in enumerate(fingers):
             plane = np.array([np.array([0, 0, 0]), finger[1], finger[4]])
-            f = [m_V.project_vec_on_plane(plane, joints, p) for p in finger]
+            f = [cgt_math.project_vec_on_plane(plane, joints, p) for p in finger]
             fingers[idx] = f
 
         # setup joints to calc finger angles
         x_joints = [[0, 1, 2], [1, 2, 3], [2, 3, 4]]
-        x_finger_angles = [m_V.joint_angles(finger, x_joints) for finger in fingers]
+        x_finger_angles = [cgt_math.joint_angles(finger, x_joints) for finger in fingers]
 
         data = [0] * 20
         for idx, angles in enumerate(x_finger_angles):
@@ -254,22 +254,22 @@ class HandProcessor(processor_interface.DataProcessor):
             rotation = [-60, -60, 0]
 
         # rotate points before calculating the rotation
-        rotated_points = [m_V.rotate_point_euler(np.array(hand[idx][1]), rotation) for idx in [1, 5, 13]]
+        rotated_points = [cgt_math.rotate_point_euler(np.array(hand[idx][1]), rotation) for idx in [1, 5, 13]]
 
         # setup vectors to create an matrix
-        tangent = m_V.normalize(m_V.to_vector(
+        tangent = cgt_math.normalize(cgt_math.to_vector(
             rotated_points[0],
             rotated_points[1]
         ))
-        binormal = m_V.normalize(m_V.to_vector(
+        binormal = cgt_math.normalize(cgt_math.to_vector(
             rotated_points[1],
             rotated_points[2]
         ))
-        normal = m_V.normalize(np.cross(binormal, tangent))
+        normal = cgt_math.normalize(np.cross(binormal, tangent))
 
         # rotation from matrix
-        matrix = m_V.generate_matrix(normal, tangent, binormal)
-        loc, quart, sca = m_V.decompose_matrix(matrix)
+        matrix = cgt_math.generate_matrix(normal, tangent, binormal)
+        loc, quart, sca = cgt_math.decompose_matrix(matrix)
         euler = self.try_get_euler(quart, offset=[0, 0, 0], prev_rot_idx=combat_idx_offset)
         hand_rotation = ([0, euler])
         return hand_rotation

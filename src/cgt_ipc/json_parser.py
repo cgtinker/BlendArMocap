@@ -3,7 +3,7 @@ import json
 
 class JsonParser(object):
     """ Parses json mediapipe detection data, the data has to be stored
-        with a descriptor. Sample:
+        with descriptors. Sample:
         {'POSE':
             {   '0': {'x': 0.745145, 'y': 0.562732, 'z': -1.13462},
                 '1': {'x': 0.784312, 'y': 0.494899, 'z': -1.06639},
@@ -25,6 +25,7 @@ class JsonParser(object):
             }
         }
     """
+
     detection_type: str = None
     detection_types: list = ["FACE", "HANDS", "POSE", "HOLISTIC"]
     detection_contents: dict = {

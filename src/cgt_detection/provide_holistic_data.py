@@ -17,12 +17,12 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 import mediapipe as mp
 
-from . import detector_interface, stream
+from . import realtime_data_provider_interface, stream
 
 
-class HolisticDetector(detector_interface.RealtimeDetector):
+class HolisticDetector(realtime_data_provider_interface.RealtimeDataProvider):
     # https://google.github.io/mediapipe/solutions/holistic#python-solution-api
-    def image_detection(self):
+    def frame_detection_data(self):
         with self.solution.Holistic(
                 min_detection_confidence=0.7,
                 static_image_mode=True,
@@ -111,7 +111,7 @@ if __name__ == '__main__':
 
     if detection_type == "image":
         for _ in range(15):
-            detector.image_detection()
+            detector.frame_detection_data()
     else:
         detector.stream_detection()
 

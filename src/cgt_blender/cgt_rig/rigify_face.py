@@ -113,6 +113,6 @@ class RigifyFace(BpyRigging):
         objects.set_mode('EDIT')
         joints = [[self.edit_bone_head(joint[0]), self.edit_bone_head(joint[1])] for joint in bone_pairs]
         # must calc distances within edit mode (func requires nesting)
-        distances = [m_V.get_vector_distance(np.array(joint[0]), np.array(joint[1])) for joint in joints]
+        distances = [cgt_math.get_vector_distance(np.array(joint[0]), np.array(joint[1])) for joint in joints]
         objects.set_mode('OBJECT')
         return distances
