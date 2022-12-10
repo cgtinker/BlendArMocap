@@ -16,42 +16,21 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import bpy
-from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty, FloatVectorProperty
+from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty, FloatVectorProperty, PointerProperty
 from bpy.types import PropertyGroup
 
 
 class CGTProperties(PropertyGroup):
     # region USER INTERFACE
-    # region DETECTION
-    button_start_detection: StringProperty(
-        name="",
-        description="Detects features and record results in stored in the cgt_driver collection.",
-        default="Start Detection"
-    )
-
-    modal_active: BoolProperty(
-        name="detection operator bool",
-        description="helper bool to en- and disable detection operator",
-        default=False
-    )
-
-    connection_operator_running: BoolProperty(
-        name="connection operator bool",
-        description="helper bool to ensure connection to server status",
-        default=False
-    )
-
     detection_input_type: EnumProperty(
         name="Type",
         description="Select detection type for motion tracking.",
         items=(
             ("stream", "Stream", ""),
             ("movie", "Movie", ""),
-            ("freemocap", "Freemocap", ""),
         )
     )
 
-    # region WEBCAM
     webcam_input_device: IntProperty(
         name="Webcam Device Slot",
         description="Select Webcam device.",
@@ -67,7 +46,19 @@ class CGTProperties(PropertyGroup):
         max=12,
         default=4
     )
-    # endregion
+    # region DETECTION
+    modal_active: BoolProperty(
+        name="detection operator bool",
+        description="helper bool to en- and disable detection operator",
+        default=False
+    )
+
+    connection_operator_running: BoolProperty(
+        name="connection operator bool",
+        description="helper bool to ensure connection to server status",
+        default=False
+    )
+
 
     # region MOVIE
     mov_data_path: StringProperty(
@@ -188,5 +179,7 @@ class CGTProperties(PropertyGroup):
         default=True
     )
     # endregion
-def get_user():
-    return bpy.context.scene.m_cgtinker_mediapipe
+
+
+def register():
+    bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=CGTProperties)

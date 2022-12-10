@@ -16,12 +16,12 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import logging
-from . import provide_face_data, provide_pose_data, provide_hand_data
-from . import provide_holistic_data, realtime_data_provider_interface, stream
-from ..cgt_freemocap import fm_dir_loader
-from ..cgt_patterns import events
-from ..cgt_bridge import bpy_hand_bridge, bpy_pose_bridge, bpy_face_bridge, bpy_bridge_interface, print_bridge
-from ..cgt_processing import hand_processing, pose_processing, face_processing, processor_interface
+from .cgt_detection import provide_face_data, provide_pose_data, provide_hand_data
+from .cgt_detection import provide_holistic_data, realtime_data_provider_interface, stream
+from .cgt_freemocap import fm_dir_loader
+from .cgt_patterns import events
+from .cgt_bridge import bpy_hand_bridge, bpy_pose_bridge, bpy_face_bridge, bpy_bridge_interface, print_bridge
+from .cgt_processing import hand_processing, pose_processing, face_processing, processor_interface
 
 
 class RealtimeDataProcessingManager:
@@ -31,7 +31,7 @@ class RealtimeDataProcessingManager:
     bridge: bpy_bridge_interface = None
     processor: processor_interface = None
 
-    # bridge to assign to blender
+    # bridge to assign processed results to blender
     bpy_bridges = {
         "HAND":     bpy_hand_bridge.BpyHandBridge,
         "POSE":     bpy_pose_bridge.BpyPoseBridge,
@@ -40,7 +40,7 @@ class RealtimeDataProcessingManager:
         "FREEMOCAP": [bpy_hand_bridge.BpyHandBridge, bpy_face_bridge.BpyFaceBridge, bpy_pose_bridge.BpyPoseBridge],
     }
 
-    # detection types and processors
+    # provider mediapipe output data from vid/stream/freemocap
     data_providers = {
         "HAND":     provide_hand_data.HandDetector,
         "POSE":     provide_pose_data.PoseDetector,
@@ -49,7 +49,7 @@ class RealtimeDataProcessingManager:
         "FREEMOCAP": fm_dir_loader.FreemocapLoader,
     }
 
-    # processes mediapipe landmarks
+    # process mediapipe data and add 3D rotations
     processor_types = {
         "HAND": hand_processing.HandProcessor,
         "POSE": pose_processing.PoseProcessor,
@@ -58,7 +58,7 @@ class RealtimeDataProcessingManager:
         "FREEMOCAP": [hand_processing.HandProcessor, face_processing.FaceProcessor, pose_processing.PoseProcessor],
     }
 
-    # observes data and maps it to the bridge
+    # mapping options to pipe processed results
     observers = {
         "BPY":          events.BpyUpdateReceiver,
         "RAW":          events.PrintRawDataUpdate,

@@ -49,7 +49,6 @@ def register():
     ui_registration.register()
     fm_registration.register()
 
-
 def unregister():
     ui_registration.unregister()
     from .src.cgt_freemocap import fm_registration

@@ -16,7 +16,6 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import bpy
-
 from . import pref_operators
 from ..utils import dependencies
 from ... import cgt_naming

@@ -19,7 +19,7 @@ import bpy
 from bpy.props import PointerProperty
 from bpy.utils import register_class, unregister_class
 
-from . import ui_properties, ui_panels, pref_operators, pref_panels, ui_operators
+from . import ui_properties, cgt_panels, pref_operators, pref_panels, ui_operators, cgt_main_panel
 
 
 classes = (
@@ -34,24 +34,20 @@ classes = (
     ui_operators.UI_CGT_smooth_empties_in_col,
     ui_operators.WM_CGT_modal_detection_operator,
     ui_operators.WM_CGT_modal_connection_listener_operator,
-    ui_panels.UI_PT_CGT_main_panel,
+    # cgt_panels.UI_PT_Detection_Panel,
+    # cgt_panels.UI_PT_CGT_Transfer_Panel
     # ui_panels.UI_PT_RemappingPanel
 )
 
 
 def register():
-    print('Registing BlendArMocap\n')
     for _class in classes:
         register_class(_class)
-
+    cgt_main_panel.register()
+    cgt_panels.register()
     bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=ui_properties.CGTProperties)
 
 
 def unregister():
-    print("Unregister BlendArMocap")
     for cls in classes:
-        try:
-            unregister_class(cls)
-        except RuntimeError:
-            # Class may not be registered
-            pass
+        unregister_class(cls)

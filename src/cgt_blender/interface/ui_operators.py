@@ -143,7 +143,7 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
             self.user.modal_active = True
 
         # create a detection handler
-        from ...cgt_detection.main import RealtimeDataProcessingManager
+        from ...mediapipe_processing_manager import RealtimeDataProcessingManager
         detection_type = self.user.enum_detection_type
         self.detection_handler = RealtimeDataProcessingManager(detection_type, "BPY")
 

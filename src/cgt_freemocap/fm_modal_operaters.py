@@ -20,7 +20,7 @@ class WM_Load_Freemocap_Operator(Operator):
         if not self.is_valid_session_directory(self.user.freemocap_session_path):
             return {'FINISHED'}
 
-        from ..cgt_detection.main import RealtimeDataProcessingManager
+        from ..mediapipe_processing_manager import RealtimeDataProcessingManager
         self.processing_manager = RealtimeDataProcessingManager("FREEMOCAP", "BPY")
         self.processing_manager.init_detector(input_type=2)
         self.processing_manager.init_bridge()

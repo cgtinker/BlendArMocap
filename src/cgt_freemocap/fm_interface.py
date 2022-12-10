@@ -19,8 +19,8 @@ from bpy.types import Panel
 
 
 class PT_CGT_main_panel(Panel):
-    bl_label = "BlendFreemocap"
-    bl_idname = "OBJECT_PT_cgt_freemocap_panel"
+    bl_label = "Freemocap Import"
+    bl_parent_id = "OBJECT_PT_cgt_main_panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "BlendAR"
@@ -32,12 +32,16 @@ class PT_CGT_main_panel(Panel):
             return True
 
     def draw(self, context):
+        self.layout.label(text="Imports Freemocap Session Folder")
         user = context.scene.m_cgtinker_mediapipe  # noqa
-        box = self.layout.box()
-        box.row().prop(user, "freemocap_session_path")
+        box0 = self.layout.box()
+        box0.row().prop(user, "freemocap_session_path")
 
         if user.modal_active:
-            box.row().operator("wm.cgt_load_freemocap_operator", text="Stop Detection")
+            box0.row().operator("wm.cgt_load_freemocap_operator", text="Break")
         else:
-            box.row().operator("wm.cgt_load_freemocap_operator", text=user.button_start_detection)
+            box0.row().operator("wm.cgt_load_freemocap_operator", text="Import Session")
 
+        box0.row().operator("wm.fmc_load_synchronized_videos", text="Load synchronized videos")
+        box1 = self.layout.box()
+        box1.row().operator("wm.fmc_bind_freemocap_data_to_skeleton", text="Bind to rig")

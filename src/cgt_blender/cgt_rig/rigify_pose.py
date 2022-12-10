@@ -141,7 +141,7 @@ class RigifyPose(abs_rigging.BpyRigging):
         # region bone center driver setup
         # bone center drivers for limb driver chain
         objects.set_mode('EDIT')
-        self.center_points = [m_V.center_point(self.edit_bone_head(v[0]), self.edit_bone_head(v[1]))
+        self.center_points = [cgt_math.center_point(self.edit_bone_head(v[0]), self.edit_bone_head(v[1]))
                               for v in self.rigify_bone_center]
         objects.set_mode('OBJECT')
         self.bone_center_drivers = [limb_drivers.BoneCenter(

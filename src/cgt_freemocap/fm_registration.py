@@ -1,10 +1,13 @@
 import bpy
 from . import fm_interface
-from . import fm_modal_session_load_operater
+from . import fm_operators
+from . import fm_modal_operaters
 
 
 classes = [
-    fm_modal_session_load_operater.WM_Load_Freemocap_Operator,
+    fm_modal_operaters.WM_Load_Freemocap_Operator,
+    fm_operators.WM_FMC_bind_freemocap_data_to_skeleton,
+    fm_operators.WM_FMC_load_synchronized_videos,
     fm_interface.PT_CGT_main_panel
 ]
 

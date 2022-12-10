@@ -16,11 +16,8 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import subprocess
-import sys
 
 import bpy
-
-from . import ui_registration
 from ..utils import dependencies
 from ... import cgt_imports
 
@@ -104,3 +101,19 @@ class PREFERENCES_OT_CGT_uninstall_dependencies_button(bpy.types.Operator):
         bpy.ops.wm.quit_blender()
 
         return {"FINISHED"}
+
+
+classes = [
+    PREFERENCES_OT_CGT_install_dependencies_button,
+    PREFERENCES_OT_CGT_uninstall_dependencies_button
+]
+
+
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+
+def unregister():
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
