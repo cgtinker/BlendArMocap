@@ -62,6 +62,7 @@ class FreemocapLoader(realtime_data_provider_interface.RealtimeDataProvider):
         if self.frame == self.number_of_frames - 1:
             return None
         tracked_points = self.mediapipe3d_frames_trackedPoints_xyz[self.frame, :, :]
+        tracked_points = np.array([[-x, -z, -y] for x, y, z in tracked_points])
 
         this_frame_body_data = tracked_points[0:self.first_left_hand_point]
         this_frame_left_hand_data = tracked_points[self.first_left_hand_point:self.first_right_hand_point]

@@ -26,7 +26,7 @@ or when Blender's 'Reload Scripts' operator is run manually.
 
 
 SUB_DIRS = ['src/cgt_blender', 'src/cgt_processing', 'src/cgt_detection',
-            'src/cgt_utils', 'src/cgt_bridge', 'src/cgt_patterns']
+            'src/cgt_utils', 'src/cgt_bridge', 'src/cgt_patterns', 'src/cgt_freemocap']
 
 INIT_MODULES = [
     '.src.cgt_imports',

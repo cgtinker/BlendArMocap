@@ -51,3 +51,5 @@ def register():
 def unregister():
     for cls in classes:
         unregister_class(cls)
+    cgt_panels.unregister()
+    cgt_main_panel.unregister()

@@ -18,9 +18,9 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 from bpy.types import Panel
 
 
-class PT_CGT_main_panel(Panel):
+class UI_PT_CGT_Panel_Freemocap(Panel):
     bl_label = "Freemocap Import"
-    bl_parent_id = "OBJECT_PT_cgt_main_panel"
+    bl_parent_id = "UI_PT_CGT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "BlendAR"
@@ -41,7 +41,7 @@ class PT_CGT_main_panel(Panel):
             box0.row().operator("wm.cgt_load_freemocap_operator", text="Break")
         else:
             box0.row().operator("wm.cgt_load_freemocap_operator", text="Import Session")
-
         box0.row().operator("wm.fmc_load_synchronized_videos", text="Load synchronized videos")
+
         box1 = self.layout.box()
         box1.row().operator("wm.fmc_bind_freemocap_data_to_skeleton", text="Bind to rig")

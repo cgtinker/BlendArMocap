@@ -8,7 +8,7 @@ classes = [
     fm_modal_operaters.WM_Load_Freemocap_Operator,
     fm_operators.WM_FMC_bind_freemocap_data_to_skeleton,
     fm_operators.WM_FMC_load_synchronized_videos,
-    fm_interface.PT_CGT_main_panel
+    fm_interface.UI_PT_CGT_Panel_Freemocap
 ]
 
 

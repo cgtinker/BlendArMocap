@@ -119,4 +119,5 @@ class RealtimeDataProvider(ABC):
         self.listener.detach(self.observer)
         del self.observer
         del self.listener
-        del self.stream
+        if self.stream is not None:
+            del self.stream

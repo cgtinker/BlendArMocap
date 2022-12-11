@@ -33,13 +33,13 @@ class WM_FMC_bind_freemocap_data_to_skeleton(bpy.types.Operator):
 
         bpy.context.object.data.layers[31] = True
 
-        # copy location - rig & hips_center
-        constraint = this_rig.constraints.new(type="COPY_LOCATION")
-        constraint.target = bpy.data.objects['cgt_hip_center']
+        # # copy location - rig & hips_center
+        # constraint = this_rig.constraints.new(type="COPY_LOCATION")
+        # constraint.target = bpy.data.objects['cgt_hip_center']
 
-        # hands - disable copy rotations on IK rig
-        bpy.context.object.pose.bones["hand_ik.R"].constraints["Copy Rotation"].enabled = False
-        bpy.context.object.pose.bones["hand_ik.L"].constraints["Copy Rotation"].enabled = False
+        # # hands - disable copy rotations on IK rig
+        # bpy.context.object.pose.bones["hand_ik.R"].constraints["Copy Rotation"].enabled = False
+        # bpy.context.object.pose.bones["hand_ik.L"].constraints["Copy Rotation"].enabled = False
 
         return {'FINISHED'}
 

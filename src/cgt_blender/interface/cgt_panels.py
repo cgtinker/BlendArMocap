@@ -21,9 +21,9 @@ from . import cgt_main_panel
 from ..utils import dependencies
 
 
-class UI_PT_CGT_Transfer_Panel(cgt_main_panel.DefaultPanel, Panel):
+class UI_PT_CGT_Panel_Transfer(cgt_main_panel.DefaultPanel, Panel):
     bl_label = "Transfer"
-    bl_parent_id = "OBJECT_PT_cgt_main_panel"
+    bl_parent_id = "UI_PT_CGT_Panel"
 
     @classmethod
     def poll(cls, context):
@@ -57,9 +57,9 @@ class UI_PT_CGT_Transfer_Panel(cgt_main_panel.DefaultPanel, Panel):
             box.row(align=True).operator("button.smooth_empties_in_col", text="Smooth Animation")
 
 
-class UI_PT_Detection_Panel(cgt_main_panel.DefaultPanel, Panel):
+class UI_PT_Panel_Detection(cgt_main_panel.DefaultPanel, Panel):
     bl_label = "Mediapipe"
-    bl_parent_id = "OBJECT_PT_cgt_main_panel"
+    bl_parent_id = "UI_PT_CGT_Panel"
 
     @classmethod
     def poll(cls, context):
@@ -109,8 +109,8 @@ class UI_PT_CGT_warning_panel(cgt_main_panel.DefaultPanel, Panel):
 
 
 classes = [
-    UI_PT_Detection_Panel,
-    UI_PT_CGT_Transfer_Panel,
+    UI_PT_Panel_Detection,
+    UI_PT_CGT_Panel_Transfer,
 ]
 
 
@@ -121,4 +121,4 @@ def register():
 
 def unregister():
     for cls in reversed(classes):
-        bpy.utils.register_class(cls)
+        bpy.utils.unregister_class(cls)
