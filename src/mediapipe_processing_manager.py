@@ -18,7 +18,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import logging
 from .cgt_detection import provide_face_data, provide_pose_data, provide_hand_data
 from .cgt_detection import provide_holistic_data, realtime_data_provider_interface, stream
-from .cgt_freemocap import fm_dir_loader
+from .cgt_freemocap import fm_session_loader
 from .cgt_patterns import events
 from .cgt_bridge import bpy_hand_bridge, bpy_pose_bridge, bpy_face_bridge, bpy_bridge_interface, print_bridge
 from .cgt_processing import hand_processing, pose_processing, face_processing, processor_interface
@@ -46,7 +46,7 @@ class RealtimeDataProcessingManager:
         "POSE":     provide_pose_data.PoseDetector,
         "FACE":     provide_face_data.FaceDetector,
         "HOLISTIC": provide_holistic_data.HolisticDetector,
-        "FREEMOCAP": fm_dir_loader.FreemocapLoader,
+        "FREEMOCAP": fm_session_loader.FreemocapLoader,
     }
 
     # process mediapipe data and add 3D rotations

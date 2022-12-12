@@ -23,7 +23,7 @@ from ..cgt_patterns import observer_pattern as op
 from ..cgt_processing import processor_interface
 
 
-class UpdateListener(op.Listener):
+class UpdateListener(op.Subject):
     """ Listens to updates of mp-ml tracking data and notifies receivers. """
     _observers: List[op.Observer] = []
     data = None

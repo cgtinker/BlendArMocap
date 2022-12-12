@@ -63,6 +63,7 @@ class FaceProcessor(processor_interface.DataProcessor):
 
     def init_print(self):
         """ processed printing doesnt support mathutils rotation functions. """
+        print("FACE", self.data)
         self.data = self.data[0]
         self.custom_landmark_origin()
 

@@ -44,4 +44,4 @@ class UI_PT_CGT_Panel_Freemocap(Panel):
         box0.row().operator("wm.fmc_load_synchronized_videos", text="Load synchronized videos")
 
         box1 = self.layout.box()
-        box1.row().operator("wm.fmc_bind_freemocap_data_to_skeleton", text="Bind to rig")
+        box1.row().operator("wm.fmc_bind_freemocap_data_to_skeleton", text="Bind to rig (Preview)")

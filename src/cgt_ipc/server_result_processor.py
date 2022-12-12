@@ -4,7 +4,7 @@ from ..cgt_processing import processor_interface, hand_processing, face_processi
 
 
 class ServerResultsProcessor(object):
-    data_listener: observer_pattern.Listener
+    data_listener: observer_pattern.Subject
     data_observer: observer_pattern.Observer
     data_processor: processor_interface.DataProcessor
     json_parser: JsonParser

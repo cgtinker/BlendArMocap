@@ -21,9 +21,10 @@ from . import cgt_main_panel
 from ..utils import dependencies
 
 
-class UI_PT_CGT_Panel_Transfer(cgt_main_panel.DefaultPanel, Panel):
+class PT_CGT_Main_Transfer(cgt_main_panel.DefaultPanel, Panel):
     bl_label = "Transfer"
     bl_parent_id = "UI_PT_CGT_Panel"
+    bl_idname = "UI_PT_Transfer_Panel"
 
     @classmethod
     def poll(cls, context):
@@ -31,10 +32,19 @@ class UI_PT_CGT_Panel_Transfer(cgt_main_panel.DefaultPanel, Panel):
             return True
 
     def draw(self, context):
+        pass
+
+
+class PT_CGT_Data_Transfer(cgt_main_panel.DefaultPanel, Panel):
+    bl_label = "Mocap Transfer"
+    bl_parent_id = "UI_PT_Transfer_Panel"
+    bl_idname = "UI_PT_Transfer_Data"
+
+    def draw(self, context):
         user = context.scene.m_cgtinker_mediapipe  # noqa
         box = self.layout.box()
 
-        box.label(text='Animation Transfer')
+        box.label(text='Link Mocap data to a generated humanoid rigify rig.')
         box.row(align=True).prop_search(data=user,
                                         property="selected_driver_collection",
                                         search_data=bpy.data,
@@ -55,6 +65,33 @@ class UI_PT_CGT_Panel_Transfer(cgt_main_panel.DefaultPanel, Panel):
             if user.selected_rig:
                 box.row(align=True).operator("button.cgt_transfer_animation_button", text="Transfer Animation")
             box.row(align=True).operator("button.smooth_empties_in_col", text="Smooth Animation")
+
+
+class PT_CGT_Gamerig_Transfer(cgt_main_panel.DefaultPanel, Panel):
+    bl_label = "Gamerig Tools"
+    bl_parent_id = "UI_PT_Transfer_Panel"
+    bl_idname = "UI_PT_Transfer_Gamerig"
+
+    def draw(self, context):
+        user = context.scene.m_cgtinker_mediapipe  # noqa
+        box = self.layout.box()
+        box.label(text='Link Rigify Rig animation to Metarig')
+        box.row(align=True).prop_search(data=user,
+                                        property="selected_rig",
+                                        search_data=bpy.data,
+                                        search_property="objects",
+                                        text="Generated Rig",
+                                        icon="ARMATURE_DATA")
+
+        box.row(align=True).prop_search(data=user,
+                                        property="selected_metarig",
+                                        search_data=bpy.data,
+                                        search_property="objects",
+                                        text="Metarig",
+                                        icon="ARMATURE_DATA")
+
+        # box.row().operator("button.cgt_regenerate_metarig", text="Regenerate Metarig")
+        box.row().operator("button.cgt_generate_gamerig", text="Metarig2Gamerig")
 
 
 class UI_PT_Panel_Detection(cgt_main_panel.DefaultPanel, Panel):
@@ -110,7 +147,9 @@ class UI_PT_CGT_warning_panel(cgt_main_panel.DefaultPanel, Panel):
 
 classes = [
     UI_PT_Panel_Detection,
-    UI_PT_CGT_Panel_Transfer,
+    PT_CGT_Main_Transfer,
+    PT_CGT_Data_Transfer,
+    PT_CGT_Gamerig_Transfer,
 ]
 
 

@@ -96,6 +96,12 @@ class CGTProperties(PropertyGroup):
     experimental_feature_bool: BoolProperty(
         name="Transfer Legs",
         description="Transfer pose legs motion to rigify rig",
+        default=True
+    )
+
+    static_hands_bool: BoolProperty(
+        name="Static Wrists",
+        description="Transfer finger movements without wrist movement",
         default=False
     )
 
@@ -105,17 +111,30 @@ class CGTProperties(PropertyGroup):
         default=False
     )
 
-    def armature_poll(self, object):
+    def is_rigify_armature(self, object):
         if object.type == 'ARMATURE':
             if 'rig_id' in object.data:
                 return True
+        return False
+
+    def is_armature(self, object):
+        if object.type == 'ARMATURE':
+            if 'rig_id' in object.data:
+                return False
+            return True
         return False
 
     selected_rig: bpy.props.PointerProperty(
         type=bpy.types.Object,
         description="Select an armature for animation transfer.",
         name="Armature",
-        poll=armature_poll)
+        poll=is_rigify_armature)
+
+    selected_metarig: bpy.props.PointerProperty(
+        type=bpy.types.Object,
+        description="Select a metarig as future gamerig.",
+        name="Armature",
+        poll=is_armature)
 
     def cgt_collection_poll(self, object):
         return object.name in ["cgt_FACE", "cgt_HANDS", "cgt_POSE"]

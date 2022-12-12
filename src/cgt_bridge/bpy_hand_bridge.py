@@ -84,7 +84,6 @@ class BpyHandBridge(bpy_bridge_interface.BpyInstanceProvider):
 
     def __init__(self, *args):
         self.left_hand = objects.add_empties(self.references, 0.005, ".L")
-        self.left2_hand = objects.add_empties(self.references, 0.005, "2.L")
         self.right_hand = objects.add_empties(self.references, 0.005, ".R")
         objects.add_list_to_collection(self.col_name, self.left_hand, self.parent_col)
         objects.add_list_to_collection(self.col_name, self.right_hand, self.parent_col)
@@ -131,7 +130,7 @@ class BpyHandBridge(bpy_bridge_interface.BpyInstanceProvider):
         """ Keyframes input data."""
         left_hand_data, right_hand_data = data
         for hand in [[self.left_hand, left_hand_data],
-                     [self.left2_hand, left_hand_data],
+                     # [self.left2_hand, left_hand_data],
                      [self.right_hand, right_hand_data]]:
             try:
                 self.translate(hand[0], hand[1], frame)

@@ -15,12 +15,16 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import logging
+import bpy
+from pathlib import Path
 
-# TODO: Remove this script (same in bride interface....)
-class CustomData:
-    """ Container for storing blender relevant data. """
-    idx = None
-    loc = None
-    rot = None
-    sca = None
-    obj = None
+
+def is_valid_session_directory(path):
+    """ TODO: Improve directory validation. """
+    freemocap_session_path = Path(bpy.path.abspath(path)).parent
+    if not Path(freemocap_session_path).is_dir():
+        logging.error(f"Given path doesn't point to a directory containing freemocap session data {freemocap_session_path}.")
+        return False
+    logging.debug(f"Path to freemocap session: {freemocap_session_path}")
+    return True

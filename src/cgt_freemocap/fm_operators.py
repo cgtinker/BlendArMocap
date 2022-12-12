@@ -1,7 +1,92 @@
+'''
+Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+'''
+
 import bpy
+import logging
 import addon_utils
 from ..cgt_naming import COLLECTIONS
 from pathlib import Path
+from . import fm_utils
+
+
+class WM_Load_Freemocap_Operator(bpy.types.Operator):
+    bl_label = "Load Freemocap Session"
+    bl_idname = "wm.cgt_load_freemocap_operator"
+    bl_description = "Load Freemocap Session data from directory."
+
+    user = freemocap_session_path = _timer = processing_manager = None
+
+    def execute(self, context):
+        """ Loads Freemocap data from session directory. """
+        self.user = bpy.context.scene.m_cgtinker_mediapipe
+        if not self.toggle_modal():
+            return {'FINISHED'}
+
+        if not fm_utils.is_valid_session_directory(self.user.freemocap_session_path):
+            self.user.modal_active = False
+            return {'FINISHED'}
+
+        from ..mediapipe_processing_manager import RealtimeDataProcessingManager
+        self.processing_manager = RealtimeDataProcessingManager("FREEMOCAP", "BPY")
+        self.processing_manager.init_detector(input_type=2)
+        self.processing_manager.init_bridge()
+
+        wm = context.window_manager
+        self._timer = wm.event_timer_add(0.1, window=context.window)
+        context.window_manager.modal_handler_add(self)
+        logging.debug(f'Start running modal operator {self.__class__.__name__}')
+        return {'RUNNING_MODAL'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode in {'OBJECT', 'POSE'}
+
+    def modal(self, context, event):
+        """ Run detection as modal operation, finish with 'Q', 'ESC' or 'RIGHT MOUSE'. """
+        if event.type == "TIMER":
+            running = self.processing_manager.realtime_data_provider.frame_detection_data()
+            if running:
+                return {'PASS_THROUGH'}
+            else:
+                return self.cancel(context)
+
+        if event.type in {'Q', 'ESC', 'RIGHT_MOUSE'} or self.user.modal_active is False:
+            return self.cancel(context)
+
+        return {'PASS_THROUGH'}
+
+    def cancel(self, context):
+        """ Upon finishing detection clear time and remove manager. """
+        self.user.modal_active = False
+        del self.processing_manager
+        wm = context.window_manager
+        wm.event_timer_remove(self._timer)
+        logging.debug("FINISHED DETECTION")
+        return {'FINISHED'}
+
+    def toggle_modal(self) -> bool:
+        """ Check if already a modal is running.
+            If, it stops running, else, it starts. """
+        # hacky way to check if operator is running
+        if self.user.modal_active is True:
+            self.user.modal_active = False
+            return False
+        self.user.modal_active = True
+        return True
 
 
 class WM_FMC_bind_freemocap_data_to_skeleton(bpy.types.Operator):

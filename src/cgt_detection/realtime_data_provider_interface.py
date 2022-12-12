@@ -42,7 +42,7 @@ class RealtimeDataProvider(ABC):
         """ Run mediapipes detection on an image using the active model. """
         pass
 
-    def init_bridge(self, observer: observer_pattern.Observer, listener: observer_pattern.Listener, ):
+    def init_bridge(self, observer: observer_pattern.Observer, listener: observer_pattern.Subject, ):
         """ Set up the data bridge to blender or to prints for debugging purposes. """
         self.observer = observer
         self.listener = listener

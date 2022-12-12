@@ -58,7 +58,6 @@ class FreemocapLoader(realtime_data_provider_interface.RealtimeDataProvider):
         self.number_of_tracked_points = self.mediapipe3d_frames_trackedPoints_xyz.shape[1]
 
     def get_detection_results(self, mp_res=None):
-        # TODO: Data is rotated
         if self.frame == self.number_of_frames - 1:
             return None
         tracked_points = self.mediapipe3d_frames_trackedPoints_xyz[self.frame, :, :]

@@ -74,7 +74,7 @@ def remove_axis(vectors, *args):
             for vec in vectors:
                 res.append([np.delete(vec, axis[arg]) for arg in args])
         except KeyError:
-            print(arg, "AXIS NOT AVAILABLE")
+            pass
 
     return res
 
@@ -160,7 +160,7 @@ def rotate_towards(origin, destination, track='Z', up='Y'):
     return quart
 
 
-def _rotate_towards(eye: np.array, target: np.array):
+def m_rotate_towards(eye: np.array, target: np.array):
     """ manual implementation of rotate towards (Z = up, X= forward)"""
     axis_z = normalize((eye - target))
     if vector_length(axis_z) == 0:
@@ -183,7 +183,7 @@ def joint_angles(vertices, joints):
 
 
 def joint_angle(vertices, joint):
-    """ returns angle between joint. """
+    """ returns angles between joints. """
     angle = angle_between(
         to_vector(vertices[joint[0]], vertices[joint[1]]),
         to_vector(vertices[joint[1]], vertices[joint[2]]))
@@ -222,11 +222,11 @@ def intersection_2d_vectors(origin_p1: np.array, target_p1: np.array,
         "Y": 1,
         "Z": 2
     }
-
     # ignore one axis to calculate 2d intersection point
-    for point in [origin_p1, target_p1, origin_p2, target_p2]:
-        np.delete(point, axis[del_axis])
-
+    origin_p1 = np.delete(origin_p1, axis[del_axis])
+    target_p1 = np.delete(target_p1, axis[del_axis])
+    origin_p2 = np.delete(origin_p2, axis[del_axis])
+    target_p2 = np.delete(target_p2, axis[del_axis])
     intersection = seg_intersect(origin_p1, target_p1, origin_p2, target_p2)
     return intersection
 
@@ -368,7 +368,7 @@ def rotate_point(point, axis, angle):
     a = np.cos(theta / 2.0)
     b, c, d = -axis * np.sin(theta / 2.0)
     aa, bb, cc, dd = a * a, b * b, c * c, d * d
-    bc, ad, ac, = ab, bd, cd = b * c, a * d, a * c, a * b, b * d, c * d
+    bc, ad, ac, ab, bd, cd = b * c, a * d, a * c, a * b, b * d, c * d
     rotation_matrix = np.array([[aa + bb - cc - dd, 2 * (bc + ad), 2 * (bd - ac)],
                                 [2 * (bc - ad), aa + cc - bb - dd, 2 * (cd + ab)],
                                 [2 * (bd + ac), 2 * (cd - ab), aa + dd - bb - cc]])
@@ -440,6 +440,7 @@ def to_euler(quart, combat=Euler(), space='XYZ', ):
 
 # region manual numpy implementation (slower than mathutils)
 def _generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
+    # not tested
     """ generate a numpy matrix at loc [0, 0, 0]. """
     matrix = np.array([
         [tangent[0], tangent[1], tangent[2], 0],
@@ -450,6 +451,7 @@ def _generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
 
 
 def _decompose_matrix(matrix):
+    # not tested
     """ manual decompose a matrix (still in development) """
     # location -> last column of matrix
     loc = matrix[:3, 3:4]
@@ -474,6 +476,7 @@ def _decompose_matrix(matrix):
 
 
 def _to_quaternion(yaw, pitch, roll):
+    # not tested
     """ manual to euler conversion using np """
     # slower than mathutils
     cy = np.cos(yaw * .5)
@@ -493,6 +496,7 @@ def _to_quaternion(yaw, pitch, roll):
 
 
 def _to_euler(q: np.array) -> np.array:
+    # not tested
     """ Manual quaternion q (w, x, y, z) to euler conversion
     https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
     """
@@ -518,6 +522,7 @@ def _to_euler(q: np.array) -> np.array:
 
 
 def matrix3x3_2quat(m: np.matrix):
+    # blender formality xzy
     """ manual implementation - rot matrix 3x3 to quaternion"""
     if m[2, 2] < 0:
         if m[0, 0] > m[1, 1]:
