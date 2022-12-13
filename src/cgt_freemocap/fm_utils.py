@@ -15,17 +15,16 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import json
+import logging
+import bpy
+from pathlib import Path
 
 
-def to_json(data, path):
-    with open(path, 'w', encoding='utf-8') as f:
-        j = json.dumps(data, ensure_ascii=False, indent=4, sort_keys=True, separators=(',', ':'))
-        f.write(j)
-    return j
-
-
-def from_json(path):
-    with open(path) as f:
-        j = json.load(f)
-    return j
+def is_valid_session_directory(path):
+    """ TODO: Improve directory validation. """
+    freemocap_session_path = Path(bpy.path.abspath(path)).parent
+    if not Path(freemocap_session_path).is_dir():
+        logging.error(f"Given path doesn't point to a directory containing freemocap session data {freemocap_session_path}.")
+        return False
+    logging.debug(f"Path to freemocap session: {freemocap_session_path}")
+    return True

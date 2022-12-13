@@ -18,12 +18,12 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import mediapipe as mp
 from mediapipe.framework.formats import classification_pb2
 
-from . import detector_interface
+from . import realtime_data_provider_interface, stream
 
 
-class HandDetector(detector_interface.RealtimeDetector):
+class HandDetector(realtime_data_provider_interface.RealtimeDataProvider):
     # https://google.github.io/mediapipe/solutions/hands#python-solution-api
-    def image_detection(self):
+    def frame_detection_data(self):
         with self.solution.Hands(
                 static_image_mode=True,
                 max_num_hands=2,
@@ -74,7 +74,6 @@ class HandDetector(detector_interface.RealtimeDetector):
 # region manual tests
 def init_detector_manually(processor_type: str = "RAW"):
     m_detector = HandDetector()
-    from ..cgt_utils import stream
     m_detector.stream = stream.Webcam()
     m_detector.initialize_model()
 
@@ -99,7 +98,7 @@ if __name__ == '__main__':
 
     if detection_type == "image":
         for _ in range(50):
-            detector.image_detection()
+            detector.frame_detection_data()
     else:
         detector.stream_detection()
 

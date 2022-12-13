@@ -15,50 +15,56 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from .cgt_bridge import bpy_hand_bridge, bpy_pose_bridge, bpy_face_bridge, bpy_bridge_interface, print_bridge
-from .cgt_detection import detect_hands, detect_pose, detect_face, detect_holistic, detector_interface
+import logging
+from .cgt_detection import provide_face_data, provide_pose_data, provide_hand_data
+from .cgt_detection import provide_holistic_data, realtime_data_provider_interface, stream
+from .cgt_freemocap import fm_session_loader
 from .cgt_patterns import events
+from .cgt_bridge import bpy_hand_bridge, bpy_pose_bridge, bpy_face_bridge, bpy_bridge_interface, print_bridge
 from .cgt_processing import hand_processing, pose_processing, face_processing, processor_interface
-from .cgt_utils import stream
 
 
-class DetectionHandler:
+class RealtimeDataProcessingManager:
     target: str = ""
-    detector: detector_interface = None
+    logger = logging.getLogger('BlendArMocap')
+    realtime_data_provider: realtime_data_provider_interface = None
     bridge: bpy_bridge_interface = None
     processor: processor_interface = None
 
-    # TODO: implement arrays
-    # bridge to assign to blender
+    # bridge to assign processed results to blender
     bpy_bridges = {
         "HAND":     bpy_hand_bridge.BpyHandBridge,
         "POSE":     bpy_pose_bridge.BpyPoseBridge,
         "FACE":     bpy_face_bridge.BpyFaceBridge,
-        "HOLISTIC": [bpy_hand_bridge.BpyHandBridge, bpy_face_bridge.BpyFaceBridge, bpy_pose_bridge.BpyPoseBridge]
+        "HOLISTIC": [bpy_hand_bridge.BpyHandBridge, bpy_face_bridge.BpyFaceBridge, bpy_pose_bridge.BpyPoseBridge],
+        "FREEMOCAP": [bpy_hand_bridge.BpyHandBridge, bpy_face_bridge.BpyFaceBridge, bpy_pose_bridge.BpyPoseBridge],
     }
 
-    # detection types and processors
-    detection_types = {
-        "HAND":     detect_hands.HandDetector,
-        "POSE":     detect_pose.PoseDetector,
-        "FACE":     detect_face.FaceDetector,
-        "HOLISTIC": detect_holistic.HolisticDetector
+    # provider mediapipe output data from vid/stream/freemocap
+    data_providers = {
+        "HAND":     provide_hand_data.HandDetector,
+        "POSE":     provide_pose_data.PoseDetector,
+        "FACE":     provide_face_data.FaceDetector,
+        "HOLISTIC": provide_holistic_data.HolisticDetector,
+        "FREEMOCAP": fm_session_loader.FreemocapLoader,
     }
 
-    # processes mediapipe landmarks
+    # process mediapipe data and add 3D rotations
     processor_types = {
         "HAND": hand_processing.HandProcessor,
         "POSE": pose_processing.PoseProcessor,
         "FACE": face_processing.FaceProcessor,
-        "HOLISTIC": [hand_processing.HandProcessor, face_processing.FaceProcessor, pose_processing.PoseProcessor]
+        "HOLISTIC": [hand_processing.HandProcessor, face_processing.FaceProcessor, pose_processing.PoseProcessor],
+        "FREEMOCAP": [hand_processing.HandProcessor, face_processing.FaceProcessor, pose_processing.PoseProcessor],
     }
 
-    # observes data and maps it to the bridge
+    # mapping options to pipe processed results
     observers = {
         "BPY":          events.BpyUpdateReceiver,
         "RAW":          events.PrintRawDataUpdate,
         "DEBUG":        events.DriverDebug,   # may doesn't while working with mathutils
         "BPY_HOLISTIC": events.HolisticBpyUpdateReceiver,
+        "BPY_FREEMOCAP": events.HolisticBpyUpdateReceiver,
         "DEBUG_HOLISTIC": events.HolisticDriverDebug
     }
 
@@ -69,7 +75,8 @@ class DetectionHandler:
             :param target: type of ['HAND', 'POSE', 'FACE', 'HOLISTIC']
             :param bridge_type: type of ['BPY', 'PROCESSED', 'RAW']
             """
-        self.detector: detector_interface.RealtimeDetector = self.detection_types[target]
+        self.logger.info(f"Setting up {self.__class__.__name__}({target}, {bridge_type})")
+        self.realtime_data_provider = self.data_providers[target]
         self.processor: processor_interface.DataProcessor = self.processor_types[target]
         if bridge_type == "RAW":
             self.processor = None
@@ -85,6 +92,9 @@ class DetectionHandler:
         if target == "HOLISTIC":
             bridge_type += "_"
             bridge_type += target
+        if target == "FREEMOCAP":
+            bridge_type = "BPY_FREEMOCAP"
+
         self.observer = self.observers[bridge_type]
 
     def init_detector(self, capture_input=None, dimension: str = "sd", stream_backend: int = 0,
@@ -98,7 +108,10 @@ class DetectionHandler:
             :param input_type: 1: "movie" or 0: "stream" input
             :return: returns nothing: """
         # initialize the detector
-        self.detector = self.detector(frame_start=frame_start, key_step=key_step, input_type=input_type)
+        self.realtime_data_provider = self.realtime_data_provider(frame_start=frame_start, key_step=key_step, input_type=input_type)
+        if input_type == 2: # FreeMocap
+            self.realtime_data_provider.initialize_model()
+            return
 
         # stream capture dimensions
         dimensions_dict = {
@@ -113,51 +126,55 @@ class DetectionHandler:
             capture_input = 0
 
         # init tracking handler targets
-        self.detector.stream = stream.Webcam(
+        self.realtime_data_provider.stream = stream.Webcam(
             capture_input=capture_input, width=dim[0], height=dim[1], backend=stream_backend
         )
 
         # stop if opening stream failed
-        if not self.detector.stream.capture.isOpened():
+        if not self.realtime_data_provider.stream.capture.isOpened():
             raise IOError("Initializing Detector failed.")
 
         # initialize mediapipe model
-        self.detector.initialize_model()
+        self.realtime_data_provider.initialize_model()
 
     def init_bridge(self):
         """ Initialize bridge to print raw data / to blender. """
         if self.processor is None:
-            self.detector.init_bridge(self.observer(), self.listener)
+            self.realtime_data_provider.init_bridge(self.observer(), self.listener)
             return
 
+        # is holistic
         elif type(self.processor) is list:
+            # holistic
             _processor = self.processor.copy()
             _processor[0] = _processor[0](self.bridge[0])
             _processor[1] = _processor[1](self.bridge[1])
             _processor[2] = _processor[2](self.bridge[2])
             _observer = self.observer(_processor)
 
-            self.detector.init_bridge(_observer, self.listener)
+            self.realtime_data_provider.init_bridge(_observer, self.listener)
 
+        # is face, pose or hand
         else:
             _processor = self.processor(self.bridge)
             _observer = self.observer(_processor)
-            self.detector.init_bridge(_observer, self.listener)
+            self.realtime_data_provider.init_bridge(_observer, self.listener)
 
     def __del__(self):
-        del self.detector
+        del self.realtime_data_provider
 
 
 def main():
-    handler = DetectionHandler("POSE", "DEBUG")
+    handler = RealtimeDataProcessingManager("FACE", "DEBUG")
     handler.init_detector(0, "sd", 0, 0, 0, 0)
     handler.init_bridge()
 
     for _ in range(15):
-        handler.detector.image_detection()
+        handler.realtime_data_provider.frame_detection_data()
 
     del handler
 
 
 if __name__ == '__main__':
     main()
+

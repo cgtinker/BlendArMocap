@@ -15,12 +15,20 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+from abc import ABC, abstractmethod
+import bpy
 
-# TODO: Remove this script (same in bride interface....)
-class CustomData:
-    """ Container for storing blender relevant data. """
-    idx = None
-    loc = None
-    rot = None
-    sca = None
-    obj = None
+
+class BoneNameProvider(ABC):
+    def __init__(self):
+        import rigify # noqa (internal addon)
+        self.rigify_version = int(''.join(map(str, rigify.bl_info['version'])))
+        self.bpy_version = int(''.join(map(str, bpy.app.version)))
+
+    def update(self):
+        if self.rigify_version >= 65:
+            self.set_rv65_bone_names()
+
+    @abstractmethod
+    def set_rv65_bone_names(self):
+        pass

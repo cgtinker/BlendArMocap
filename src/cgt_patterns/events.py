@@ -23,14 +23,14 @@ from ..cgt_patterns import observer_pattern as op
 from ..cgt_processing import processor_interface
 
 
-class UpdateListener(op.Listener):
+class UpdateListener(op.Subject):
     """ Listens to updates of mp-ml tracking data and notifies receivers. """
     _observers: List[op.Observer] = []
     data = None
     frame = 0
 
     def attach(self, observer: op.Observer) -> None:
-        print("OBSERVER ATTACHED FROM UPDATE LISTENER")
+        print("OBSERVER ATTACHED TO UPDATE LISTENER")
         self._observers.append(observer)
 
     def detach(self, observer: op.Observer) -> None:
@@ -110,8 +110,8 @@ class HolisticBpyUpdateReceiver(op.Observer):
 
     def update(self, _listener: UpdateListener) -> None:
         for idx, processor in enumerate(self.processors):
+            # TODO: check if thats necessary by any means
             if len(_listener.data[idx][0]) < 1:
-                print("data not updated")
                 continue
 
             processor.data = _listener.data[idx]

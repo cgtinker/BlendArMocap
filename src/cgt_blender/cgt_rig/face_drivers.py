@@ -243,8 +243,8 @@ class EyebrowDriverContainer(DriverContainer):
              ] * 2
 
     outputs = [
-                  [-.3, .5],  # in
-                  [-.25, .5],  # out
+                  [-.3, .2],  # in
+                  [-.25, .2],  # out
               ] * 2
 
     def __init__(self, driver_targets, provider_objs, brow_distances, bone_names):

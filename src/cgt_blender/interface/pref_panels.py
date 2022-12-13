@@ -16,7 +16,6 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import bpy
-
 from . import pref_operators
 from ..utils import dependencies
 from ... import cgt_naming
@@ -24,11 +23,15 @@ from ... import cgt_naming
 
 class BLENDARMOCAP_CGT_preferences(bpy.types.AddonPreferences):
     bl_idname = cgt_naming.PACKAGE
-    update = True
+    update = True  # used to check dependency status just once
 
     def draw(self, context):
         layout = self.layout
-        if self.update:
+
+        user = context.scene.m_cgtinker_mediapipe  # noqa
+        layout.prop(user, "legacy_features_bool")
+
+        if self.update and user.legacy_features_bool:
             self.draw_dependencies(layout)
             self.draw_camera_settings(context, layout)
             self.update = False
@@ -76,20 +79,19 @@ class BLENDARMOCAP_CGT_preferences(bpy.types.AddonPreferences):
         _d_box = dependency_box.box()
         box_split = _d_box.split()
         cols = [box_split.column(align=False) for _ in range(4)]
-
         updated_dependency = dependencies.dependency_naming(m_dependency)
+
+        cols[3].label(text=f"{dependencies.is_package_installed(updated_dependency)}")
         if not dependencies.is_package_installed(updated_dependency):
             cols[0].label(text=f"{updated_dependency.name}")
             cols[1].label(text=f"NaN")
             cols[2].label(text=f"NaN")
-            cols[3].label(text=f"{False}")
 
         else:
             _version, _path = dependencies.get_package_info(updated_dependency)
             cols[0].label(text=f"{updated_dependency.name}")
             cols[1].label(text=f"{_version}")
             cols[2].label(text=f"{_path}")
-            cols[3].label(text=f"{True}")
 
     def draw_camera_settings(self, context, layout):
         if dependencies.dependencies_installed:

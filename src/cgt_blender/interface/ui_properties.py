@@ -16,25 +16,12 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import bpy
-from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty, FloatVectorProperty
+from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty, FloatVectorProperty, PointerProperty
 from bpy.types import PropertyGroup
 
 
 class CGTProperties(PropertyGroup):
     # region USER INTERFACE
-    # region DETECTION
-    button_start_detection: StringProperty(
-        name="",
-        description="Detects features and record results in stored in the cgt_driver collection.",
-        default="Start Detection"
-    )
-
-    detection_operator_running: BoolProperty(
-        name="detection operator bool",
-        description="helper bool to en- and disable detection operator",
-        default=False
-    )
-
     detection_input_type: EnumProperty(
         name="Type",
         description="Select detection type for motion tracking.",
@@ -44,7 +31,6 @@ class CGTProperties(PropertyGroup):
         )
     )
 
-    # region WEBCAM
     webcam_input_device: IntProperty(
         name="Webcam Device Slot",
         description="Select Webcam device.",
@@ -60,15 +46,37 @@ class CGTProperties(PropertyGroup):
         max=12,
         default=4
     )
-    # endregion
+    # region DETECTION
+    modal_active: BoolProperty(
+        name="detection operator bool",
+        description="helper bool to en- and disable detection operator",
+        default=False
+    )
+
+    connection_operator_running: BoolProperty(
+        name="connection operator bool",
+        description="helper bool to ensure connection to server status",
+        default=False
+    )
+
 
     # region MOVIE
     mov_data_path: StringProperty(
         name="File Path",
         description="File path to .mov file.",
-        default="",
+        default='*.mov;*mp4',
+        options={'HIDDEN'},
         maxlen=1024,
         subtype='FILE_PATH'
+    )
+
+    freemocap_session_path: StringProperty(
+        name="Freemocap Session Path",
+        description="path to 'freemocap' session folder",
+        default=r"/Users/Scylla/Downloads/sesh_2022-09-19_16_16_50_in_class_jsm/",
+        options={'HIDDEN'},
+        maxlen=1024,
+        subtype='DIR_PATH'
     )
     # endregion
     # endregion
@@ -80,9 +88,20 @@ class CGTProperties(PropertyGroup):
         default="Transfer Animation"
     )
 
+    legacy_features_bool: BoolProperty(
+        name="Legacy Features",
+        description="Enable legacy features which require external dependencies",
+    )
+
     experimental_feature_bool: BoolProperty(
-        name="Transfer Legs (Experimental)",
+        name="Transfer Legs",
         description="Transfer pose legs motion to rigify rig",
+        default=True
+    )
+
+    static_hands_bool: BoolProperty(
+        name="Static Wrists",
+        description="Transfer finger movements without wrist movement",
         default=False
     )
 
@@ -92,19 +111,39 @@ class CGTProperties(PropertyGroup):
         default=False
     )
 
-    def armature_poll(self, object):
-        return object.type == 'ARMATURE'
+    def is_rigify_armature(self, object):
+        if object.type == 'ARMATURE':
+            if 'rig_id' in object.data:
+                return True
+        return False
+
+    def is_armature(self, object):
+        if object.type == 'ARMATURE':
+            if 'rig_id' in object.data:
+                return False
+            return True
+        return False
 
     selected_rig: bpy.props.PointerProperty(
         type=bpy.types.Object,
         description="Select an armature for animation transfer.",
         name="Armature",
-        poll=armature_poll)
+        poll=is_rigify_armature)
 
-    selected_driver_collection: StringProperty(
+    selected_metarig: bpy.props.PointerProperty(
+        type=bpy.types.Object,
+        description="Select a metarig as future gamerig.",
+        name="Armature",
+        poll=is_armature)
+
+    def cgt_collection_poll(self, object):
+        return object.name in ["cgt_FACE", "cgt_HANDS", "cgt_POSE"]
+
+    selected_driver_collection: bpy.props.PointerProperty(
         name="",
+        type=bpy.types.Collection,
         description="Select a collection of Divers.",
-        default="Drivers"
+        poll=cgt_collection_poll
     )
     # endregion
 
@@ -117,7 +156,7 @@ class CGTProperties(PropertyGroup):
             ("HAND", "Hands", ""),
             ("FACE", "Face", ""),
             ("POSE", "Pose", ""),
-            ("HOLISTIC", "Holistic (Experimental)", ""),
+            ("HOLISTIC", "Holistic", ""),
         )
     )
     # endregion
@@ -143,15 +182,6 @@ class CGTProperties(PropertyGroup):
         )
     )
 
-    def set_bool(self, value):
-        return None
-
-    pvb: BoolProperty(
-        name="pvb",
-        default=True,
-        set=set_bool
-    )
-
     transfer_type_path: StringProperty(
         name="Dir Path",
         description="Path to folder containing Hand, Pose and Face jsons.",
@@ -168,5 +198,7 @@ class CGTProperties(PropertyGroup):
         default=True
     )
     # endregion
-def get_user():
-    return bpy.context.scene.m_cgtinker_mediapipe
+
+
+def register():
+    bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=CGTProperties)

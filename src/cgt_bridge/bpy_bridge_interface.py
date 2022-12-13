@@ -76,7 +76,8 @@ class BpyInstanceProvider(bridge_interface.BridgeInterface):
         """ Translates and keyframes bpy empty objects. """
         try:
             for p in data:
-                target[p[0]].location = Vector((p[1]))
+                target[p[0]].matrix_world.translation = Vector((p[1]))
+                # target[p[0]].location = Vector((p[1]))
                 target[p[0]].keyframe_insert(data_path="location", frame=frame)
 
         except IndexError:

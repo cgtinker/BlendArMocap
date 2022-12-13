@@ -17,15 +17,16 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 import mediapipe as mp
 
-from . import detector_interface
+from . import realtime_data_provider_interface, stream
+
 
 # import ssl
 # ssl._create_default_https_context = ssl._create_unverified_context
 
 
-class PoseDetector(detector_interface.RealtimeDetector):
+class PoseDetector(realtime_data_provider_interface.RealtimeDataProvider):
     # https://google.github.io/mediapipe/solutions/pose#python-solution-api
-    def image_detection(self):
+    def frame_detection_data(self):
         # BlazePose GHUM 3D
         with self.solution.Pose(
                 static_image_mode=True,
@@ -68,7 +69,6 @@ class PoseDetector(detector_interface.RealtimeDetector):
 # region manual tests
 def init_detector_manually(processor_type: str = "RAW"):
     m_detector = PoseDetector()
-    from ..cgt_utils import stream
     m_detector.stream = stream.Webcam()
     m_detector.initialize_model()
 
@@ -93,7 +93,7 @@ if __name__ == '__main__':
 
     if detection_type == "image":
         for _ in range(50):
-            detector.image_detection()
+            detector.frame_detection_data()
     else:
         detector.stream_detection()
 

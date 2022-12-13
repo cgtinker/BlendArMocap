@@ -161,11 +161,9 @@ constraint_mapping = {
 }
 
 
-def add_constraint(bone, target, constraint, values, overwrite):
-    """ Bit hacky way to apply constraints even of the same type. """
-    # TODO: apply proper refactoring
+def previously_added_constraint(bone, constraint):
     m_constraints = [c for c in bone.constraints]
-    # removing previously added constraints if types match
+
     for c in m_constraints:
         # prepare target constraint
         target_constraint = constraint
@@ -183,20 +181,43 @@ def add_constraint(bone, target, constraint, values, overwrite):
 
         # remove if names match while overwriting
         if constraint_name == target_constraint:
-            if overwrite:
-                bone.constraints.remove(c)
-            else:
-                return
+            return [True, c]
+    return [False, None]
+
+
+def add_constraint(bone, target, constraint, values, overwrite):
+    """ Bit hacky way to apply constraints even of the same type. """
+    is_constrained, old_constraint = previously_added_constraint(bone, constraint)
+    if not is_constrained:
+        pass
+    elif is_constrained and overwrite:
+        remove_constraint(bone, old_constraint)
+    else:
+        return
 
     try:
         # adding a new constraint
-        m_constraint = bone.constraints.new(
+        new_constraint = bone.constraints.new(
             type=constraint
         )
 
         if 'CHILD_OF' in constraint:
             values.append(bone)
-        constraint_mapping[constraint](m_constraint, target, values)
+
+        constraint_mapping[constraint](new_constraint, target, values)
     except TypeError or KeyError:
         # call custom method with bone
         constraint_mapping[constraint](bone, target, values)
+
+
+def remove_constraints(bone):
+    m_constraints = [c for c in bone.constraints]
+    for c in m_constraints:
+        remove_constraint(bone, c)
+
+
+def remove_constraint(bone, constraint=None):
+    if constraint is not None:
+        bone.constraints.remove(constraint)
+
+

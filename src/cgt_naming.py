@@ -16,12 +16,13 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import os
+import logging
 from dataclasses import dataclass
 
 
 # has to be at root
 PACKAGE = os.path.basename(os.path.dirname(os.path.dirname(__file__)))
-print(PACKAGE, "- add-on path:", os.path.dirname(os.path.dirname(__file__)))
+logging.getLogger("BlendArMocap").debug(f"{PACKAGE}, {os.path.dirname(os.path.dirname(__file__))}")
 ADDON_NAME = "BlendArMocap"
 
 
@@ -50,8 +51,8 @@ class POSE:
     right_shoulder = "cgt_shoulder.R"
     left_elbow = "cgt_elbow.L"
     right_elbow = "cgt_elbow.R"
-    left_wrist = "cgt_wrist.L"
-    right_wrist = "cgt_wrist.R"
+    left_wrist = "cgt_pose_wrist.L"
+    right_wrist = "cgt_pose_wrist.R"
     left_pinky = "cgt_pinky.L"
     right_pinky = "cgt_pinky.R"
     left_index = "cgt_index.L"

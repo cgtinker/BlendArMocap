@@ -1,11 +1,7 @@
 # BlendArMocap <br>
 BlendArMocap is a [Blender](https://www.blender.org/) add-on to preform Hand, Face and Pose Detection using [Googles Mediapipe](https://google.github.io/mediapipe/).
 To detection requires a movie file input or a webcam connected to the computer.
-The detected data can be easily transferred to [rifigy rigs](https://docs.blender.org/manual/en/2.81/addons/rigging/rigify.html). <br>
-
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=pji6IHNCnAk
-" target="_blank"><img src="http://img.youtube.com/vi/pji6IHNCnAk/0.jpg" 
-alt="" width="240" height="180" border="10" /></a>
+The detected data can be easily transferred to [rifigy rigs](https://docs.blender.org/manual/en/latest/addons/rigging/rigify/index.html). <br>
 
 
 ## Setup Instructions<br>
@@ -234,5 +230,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 
 <br><br>
-If you want to support the development you can either donate at [Gumroad](https://cgtinker.gumroad.com/) or become a [Patreon](https://www.patreon.com/cgtinker).
+For tutorials regarding my tools may check out my [YouTube-Channel](https://www.youtube.com/user/MrSerAdos).
+If you want to support the development you can donate at [Gumroad](https://cgtinker.gumroad.com/) or become a [Patreon](https://www.patreon.com/cgtinker).
+
 <br>Would be lovely, thanks!

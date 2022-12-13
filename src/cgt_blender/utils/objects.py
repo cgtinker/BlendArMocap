@@ -14,7 +14,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
-
+from __future__ import annotations
 import bpy
 
 
@@ -70,6 +70,8 @@ def get_selected_object():
         return bpy.context.selected_objects[0]
 
 
+def select_object(obj):
+    bpy.context.view_layer.objects.active = obj
 # endregion
 
 
@@ -80,6 +82,22 @@ def set_parents(parent, children):
 
 def set_parent(parent, child):
     child.parent = parent
+
+
+def set_hierarchy(hierarchy: dict[str, dict], prefix: str = ""):
+    # creates a parenting hierarchy based on a dictionary of object names
+    def recv(ob_name, branch, parent=None):
+        nonlocal prefix
+        if ob_name == '#':
+            return
+        ob = get_object_by_name(ob_name + prefix)
+        if parent is not None and ob is not None:
+            ob.parent = parent
+        for name in branch:
+            recv(name, branch[name], ob)
+
+    for key in hierarchy:
+        recv(key, hierarchy[key], None)
 
 
 # endregion
@@ -330,12 +348,16 @@ def get_frame_start():
     return frame_start
 
 
-def toggle_mode(mode: str = None):
+def set_mode(mode: str = None):
     """ MODES: 'EDIT', 'OBJECT', 'POSE' """
     if mode is None:
         raise KeyError
 
-    bpy.ops.object.mode_set(mode=mode)
+    bpy.ops.object.mode_set(mode=mode, toggle=False)
+
+
+def get_mode():
+    return bpy.context.active_object.mode
 
 
 def user_pref():

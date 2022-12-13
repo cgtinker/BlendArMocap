@@ -67,6 +67,7 @@ class BpyHandBridge(bpy_bridge_interface.BpyInstanceProvider):
         39: HAND.driver_pinky_dip,
         40: HAND.driver_pinky_tip,
     }
+
     fingers = [
         [1, 5],  # thumb
         [5, 9],  # index finger
@@ -87,6 +88,41 @@ class BpyHandBridge(bpy_bridge_interface.BpyInstanceProvider):
         objects.add_list_to_collection(self.col_name, self.left_hand, self.parent_col)
         objects.add_list_to_collection(self.col_name, self.right_hand, self.parent_col)
 
+    @staticmethod
+    def set_hierarchy():
+        hierarchy = {
+            HAND.wrist: {
+                HAND.thumb_cmc:         {
+                    HAND.thumb_mcp: {
+                        HAND.thumb_ip: {
+                            HAND.thumb_tip: {
+                                '#': '#'}}}},
+                HAND.index_finger_mcp:  {
+                    HAND.index_finger_pip: {
+                        HAND.index_finger_dip: {
+                            HAND.index_finger_tip: {
+                                '#': '#'}}}},
+                HAND.middle_finger_mcp: {
+                    HAND.middle_finger_pip: {
+                        HAND.middle_finger_dip: {
+                            HAND.middle_finger_tip: {
+                                '#': '#'}}}},
+                HAND.ring_finger_mcp:   {
+                    HAND.ring_finger_pip: {
+                        HAND.ring_finger_dip: {
+                            HAND.ring_finger_tip: {
+                                '#': '#'}}}},
+                HAND.pinky_mcp:         {
+                    HAND.pinky_pip: {
+                        HAND.pinky_dip: {
+                            HAND.pinky_tip: {
+                                '#': '#'}}}},
+            },
+        }
+
+        objects.set_hierarchy(hierarchy, ".L")
+        objects.set_hierarchy(hierarchy, ".R")
+
     def get_instances(self):
         return self.left_hand, self.right_hand
 
@@ -94,6 +130,7 @@ class BpyHandBridge(bpy_bridge_interface.BpyInstanceProvider):
         """ Keyframes input data."""
         left_hand_data, right_hand_data = data
         for hand in [[self.left_hand, left_hand_data],
+                     # [self.left2_hand, left_hand_data],
                      [self.right_hand, right_hand_data]]:
             try:
                 self.translate(hand[0], hand[1], frame)

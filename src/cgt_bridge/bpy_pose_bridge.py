@@ -100,6 +100,78 @@ class BpyPoseBridge(bpy_bridge_interface.BpyInstanceProvider):
         self.init_bpy_driver_obj(
             self.hip_center, self.pose, 0.01, POSE.hip_center, self.col_name, "SPHERE", [0, 0, 0])
 
+    @staticmethod
+    def set_hierarchy():
+        # parents pose objects similar to a bone hierarchy
+        hierarchy = {
+            POSE.nose:            {
+                POSE.left_eye_inner:  {
+                    POSE.left_eye: {
+                        POSE.left_eye_outer: {
+                            POSE.left_ear: {
+                                '#': {'#'}
+                            }
+                        }
+                    }
+                },
+                POSE.right_eye_inner: {
+                    POSE.right_eye: {
+                        POSE.right_eye_outer: {
+                            POSE.right_ear: {
+                                '#': {'#'}
+                            }
+                        }
+                    }
+                }
+            },
+            POSE.mouth_left:      {POSE.mouth_right: {'#': {'#'}}},
+            POSE.mouth_right:     {POSE.mouth_left: {'#': {'#'}}},
+            POSE.shoulder_center: {
+                POSE.left_shoulder:  {
+                    POSE.left_elbow: {
+                        POSE.left_wrist: {
+                            POSE.left_pinky: {'#': {'#'}},
+                            POSE.left_index: {'#': {'#'}},
+                            POSE.left_thumb: {'#': {'#'}},
+                        }
+                    }
+                },
+                POSE.right_shoulder: {
+                    POSE.right_elbow: {
+                        POSE.right_wrist: {
+                            POSE.right_pinky: {'#': {'#'}},
+                            POSE.right_index: {'#': {'#'}},
+                            POSE.right_thumb: {'#': {'#'}},
+                        }
+                    }
+                },
+                POSE.hip_center:     {
+                    POSE.left_hip:  {
+                        POSE.left_knee: {
+                            POSE.left_ankle: {
+                                POSE.left_heel: {
+                                    POSE.left_foot_index: {
+                                        '#': {'#'}}
+                                }
+                            }
+                        }
+                    },
+                    POSE.right_hip: {
+                        POSE.right_knee: {
+                            POSE.right_ankle: {
+                                POSE.right_heel: {
+                                    POSE.right_foot_index: {
+                                        '#': {'#'}}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        objects.set_hierarchy(hierarchy)
+
     def get_instances(self):
         return self.pose, self.shoulder_center, self.hip_center
 
@@ -120,4 +192,3 @@ class BpyPoseBridge(bpy_bridge_interface.BpyInstanceProvider):
     def set_scale(self, data, frame):
         """ Apply scale data. """
         self.scale(self.pose, data, frame)
-

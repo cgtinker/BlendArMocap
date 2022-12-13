@@ -19,7 +19,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 
 
-class Listener(ABC):
+# The Subject class maintains a list of observers and has methods
+# for attaching and detaching observers. It also has a method
+# for notifying all observers of state changes.
+class Subject(ABC):
     """The Subject interface declares a set of methods for managing subscribers."""
     @abstractmethod
     def attach(self, observer: Observer) -> None:
@@ -37,9 +40,11 @@ class Listener(ABC):
         pass
 
 
+# The Observer class has a method, update, that is called by the
+# subject when the subject's state changes.
 class Observer(ABC):
     """The Observer interface declares the update method, used by subjects."""
     @abstractmethod
-    def update(self, subject: Listener) -> None:
+    def update(self, subject: Subject) -> None:
         """Receive update from subject."""
         pass

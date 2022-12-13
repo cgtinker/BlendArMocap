@@ -20,7 +20,7 @@ from mathutils import Euler
 
 from . import processor_interface
 from ..cgt_bridge import bpy_pose_bridge
-from ..cgt_utils import m_V
+from ..cgt_utils import cgt_math
 
 
 class PoseProcessor(processor_interface.DataProcessor):
@@ -54,6 +54,7 @@ class PoseProcessor(processor_interface.DataProcessor):
         self.scale_data = []
         self.prepare_landmarks()
         self.shoulder_hip_location()
+        self.set_hip_as_origin()
         self.shoulder_hip_rotation()
         self.average_rig_scale()
 
@@ -85,16 +86,16 @@ class PoseProcessor(processor_interface.DataProcessor):
     def leg_chain_lengths(self):
         """ Every segment changes length individually during the tracking process """
         # 23: left_hip, 25: left_knee, 29: left_heel, 27: left_ankle
-        left_hip_leg_length = m_V.get_vector_distance(self.hip_center.loc, self.data[23][1])
-        left_upper_leg_length = m_V.get_vector_distance(self.data[23][1], self.data[25][1])
-        left_lower_leg_length = m_V.get_vector_distance(self.data[25][1], self.data[27][1])
-        left_foot_length = m_V.get_vector_distance(self.data[27][1], self.data[29][1])
+        left_hip_leg_length = cgt_math.get_vector_distance(self.hip_center.loc, self.data[23][1])
+        left_upper_leg_length = cgt_math.get_vector_distance(self.data[23][1], self.data[25][1])
+        left_lower_leg_length = cgt_math.get_vector_distance(self.data[25][1], self.data[27][1])
+        left_foot_length = cgt_math.get_vector_distance(self.data[27][1], self.data[29][1])
 
         # 24: right_hip, 26: right_knee, 28: right_ankle, 30: right_heel
-        right_hip_leg_length = m_V.get_vector_distance(self.hip_center.loc, self.data[24][1])
-        right_upper_leg_length = m_V.get_vector_distance(self.data[24][1], self.data[26][1])
-        right_lower_leg_length = m_V.get_vector_distance(self.data[26][1], self.data[28][1])
-        right_foot_length = m_V.get_vector_distance(self.data[28][1], self.data[30][1])
+        right_hip_leg_length = cgt_math.get_vector_distance(self.hip_center.loc, self.data[24][1])
+        right_upper_leg_length = cgt_math.get_vector_distance(self.data[24][1], self.data[26][1])
+        right_lower_leg_length = cgt_math.get_vector_distance(self.data[26][1], self.data[28][1])
+        right_foot_length = cgt_math.get_vector_distance(self.data[28][1], self.data[30][1])
 
         data = [
             [23, [1, 1, left_hip_leg_length]],
@@ -114,16 +115,16 @@ class PoseProcessor(processor_interface.DataProcessor):
         """ Every segment changes length individually during the tracking process """
 
         # 11: left_shoulder, 13: left_elbow, 15: left_wrist, 19: left_index
-        right_shoulder_arm_length = m_V.get_vector_distance(self.shoulder_center.loc, self.data[12][1])
-        right_upper_arm_length = m_V.get_vector_distance(self.data[12][1], self.data[14][1])
-        right_forearm_length = m_V.get_vector_distance(self.data[14][1], self.data[16][1])
-        right_wrist_length = m_V.get_vector_distance(self.data[16][1], self.data[20][1])
+        right_shoulder_arm_length = cgt_math.get_vector_distance(self.shoulder_center.loc, self.data[12][1])
+        right_upper_arm_length = cgt_math.get_vector_distance(self.data[12][1], self.data[14][1])
+        right_forearm_length = cgt_math.get_vector_distance(self.data[14][1], self.data[16][1])
+        right_wrist_length = cgt_math.get_vector_distance(self.data[16][1], self.data[20][1])
 
         # 12: right_shoulder, 14: right_elbow, 16: right_wrist, 20: right_index
-        left_shoulder_arm_length = m_V.get_vector_distance(self.shoulder_center.loc, self.data[11][1])
-        left_upper_arm_length = m_V.get_vector_distance(self.data[11][1], self.data[13][1])
-        left_forearm_length = m_V.get_vector_distance(self.data[13][1], self.data[15][1])
-        left_wrist_length = m_V.get_vector_distance(self.data[15][1], self.data[19][1])
+        left_shoulder_arm_length = cgt_math.get_vector_distance(self.shoulder_center.loc, self.data[11][1])
+        left_upper_arm_length = cgt_math.get_vector_distance(self.data[11][1], self.data[13][1])
+        left_forearm_length = cgt_math.get_vector_distance(self.data[13][1], self.data[15][1])
+        left_wrist_length = cgt_math.get_vector_distance(self.data[15][1], self.data[19][1])
 
         data = [
             [11, [1, 1, left_shoulder_arm_length]],
@@ -143,9 +144,9 @@ class PoseProcessor(processor_interface.DataProcessor):
         """ Calculating the torso rotation based on a plane which
             forms a triangle connecting hips and the shoulder center. """
         # approximate perpendicular points to origin
-        hip_center = m_V.center_point(np.array(self.data[23][1]), np.array(self.data[24][1]))
+        hip_center = cgt_math.center_point(np.array(self.data[23][1]), np.array(self.data[24][1]))
         right_hip = np.array(self.data[24][1])
-        shoulder_center = m_V.center_point(np.array(self.data[11][1]), np.array(self.data[12][1]))
+        shoulder_center = cgt_math.center_point(np.array(self.data[11][1]), np.array(self.data[12][1]))
 
         # generate triangle
         vertices = np.array(
@@ -155,16 +156,16 @@ class PoseProcessor(processor_interface.DataProcessor):
         connections = np.array([[0, 1, 2]])
 
         # get normal from triangle
-        normal, norm = m_V.create_normal_array(vertices, connections)
+        normal, norm = cgt_math.create_normal_array(vertices, connections)
 
         # direction vectors from imaginary origin
-        tangent = m_V.normalize(m_V.to_vector(hip_center, right_hip))
-        normal = m_V.normalize(normal[0])
-        binormal = m_V.normalize(m_V.to_vector(hip_center, shoulder_center))
+        tangent = cgt_math.normalize(cgt_math.to_vector(hip_center, right_hip))
+        normal = cgt_math.normalize(normal[0])
+        binormal = cgt_math.normalize(cgt_math.to_vector(hip_center, shoulder_center))
 
         # generate matrix to decompose it and access quaternion rotation
-        matrix = m_V.generate_matrix(tangent, binormal, normal)
-        loc, quart, scale = m_V.decompose_matrix(matrix)
+        matrix = cgt_math.generate_matrix(tangent, binormal, normal)
+        loc, quart, scale = cgt_math.decompose_matrix(matrix)
         offset = [-.5, 0, 0]
         euler = self.try_get_euler(quart, offset, self.hip_center.idx)
         return euler
@@ -174,12 +175,12 @@ class PoseProcessor(processor_interface.DataProcessor):
             the center points to left / right shoulder and hip. """
         # TODO: use own rotate towards (requires testing)
         # rotation from shoulder center to shoulder.R
-        shoulder_center = m_V.center_point(self.data[11][1], self.data[12][1])
-        shoulder_rotation = m_V.rotate_towards(shoulder_center, self.data[12][1], 'Z')
+        shoulder_center = cgt_math.center_point(self.data[11][1], self.data[12][1])
+        shoulder_rotation = cgt_math.rotate_towards(shoulder_center, self.data[12][1], 'Z')
 
         # rotation from hip center to hip.R
-        hip_center = m_V.center_point(self.data[23][1], self.data[24][1])
-        hip_rotation = m_V.rotate_towards(hip_center, self.data[24][1], 'Z')
+        hip_center = cgt_math.center_point(self.data[23][1], self.data[24][1])
+        hip_rotation = cgt_math.rotate_towards(hip_center, self.data[24][1], 'Z')
 
         # chance to offset result / rotation may not be keyframed
         offset = [0, 0, 0]
@@ -208,12 +209,19 @@ class PoseProcessor(processor_interface.DataProcessor):
 
     def shoulder_hip_location(self):
         """ Appending custom location data for driving the cgt_rig. """
-        self.shoulder_center.loc = m_V.center_point(self.data[11][1], self.data[12][1])
+        self.shoulder_center.loc = cgt_math.center_point(self.data[11][1], self.data[12][1])
         self.data.append([self.shoulder_center.idx, self.shoulder_center.loc])
 
-        self.hip_center.loc = m_V.center_point(self.data[23][1], self.data[24][1])
+        self.hip_center.loc = cgt_math.center_point(self.data[23][1], self.data[24][1])
         self.data.append([self.hip_center.idx, self.hip_center.loc])
 
     def prepare_landmarks(self):
         """ setting face mesh position to approximate origin """
-        self.data = [[idx, np.array([-landmark[0], landmark[2], -landmark[1]])] for idx, landmark in self.data]
+        self.data = [[idx, np.array([-landmark[0], landmark[2], -landmark[1]])]
+                     for idx, landmark in self.data]
+
+    def set_hip_as_origin(self):
+        self.data = [[idx, np.array([landmark[0]-self.hip_center.loc[0],
+                                     landmark[1]-self.hip_center.loc[1],
+                                     landmark[2]-self.hip_center.loc[2]])]
+                     for idx, landmark in self.data]
