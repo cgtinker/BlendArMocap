@@ -1,8 +1,7 @@
 import unittest
-from src.cgt_processing import face_processing, pose_processing, hand_processing
-from src.cgt_bridge import custom_data_container
-from src.cgt_utils import cgt_json
-
+from src.cgt_core.cgt_processing import face_processing, hand_processing, pose_processing
+from src.cgt_core.cgt_bridge import custom_data_container
+from src.cgt_core.cgt_utils import cgt_json
 
 """ This isn't a real test, it only will trigger location related errors.
     Has to be tested within blender or with blender build as Module.

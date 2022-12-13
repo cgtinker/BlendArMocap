@@ -13,7 +13,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import logging
-from ..cgt_detection import realtime_data_provider_interface
+from ..cgt_core import realtime_data_provider_interface
 from pathlib import Path
 import numpy as np
 import bpy

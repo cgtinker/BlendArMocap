@@ -18,7 +18,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import bpy
 import logging
 import addon_utils
-from ..cgt_naming import COLLECTIONS
+from src.cgt_core.cgt_naming import COLLECTIONS
 from pathlib import Path
 from . import fm_utils
 
@@ -40,7 +40,7 @@ class WM_Load_Freemocap_Operator(bpy.types.Operator):
             self.user.modal_active = False
             return {'FINISHED'}
 
-        from ..mediapipe_processing_manager import RealtimeDataProcessingManager
+        from src.cgt_core.mediapipe_processing_manager import RealtimeDataProcessingManager
         self.processing_manager = RealtimeDataProcessingManager("FREEMOCAP", "BPY")
         self.processing_manager.init_detector(input_type=2)
         self.processing_manager.init_bridge()

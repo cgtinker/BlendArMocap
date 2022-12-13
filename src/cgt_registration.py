@@ -1,5 +1,27 @@
-from cgt_freemocap import fm_interface
-from cgt_blender.interface import cgt_main_panel
+# from .cgt_freemocap import fm_registration
+from .cgt_core.cgt_interface import cgt_core_registration
+
+""" 
+BlendArMocap is split into separated modules. 
+Every module has to be registered to be active.
+"""
+
+
+def register():
+    # ui_registration.register()
+    cgt_core_registration.register()
+    # fm_registration.register()
+
+
+def unregister():
+    cgt_core_registration.unregister()
+
+    # ui_registration.unregister()
+    # fm_registration.unregister()
+
+
+# from cgt_freemocap import fm_interface
+# from cgt_rigify_transfer.interface import cgt_main_panel
 """
 from cgt_blender.interface import ui_panels
 from bpy.props import PointerProperty

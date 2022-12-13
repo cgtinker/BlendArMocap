@@ -1,6 +1,6 @@
+from src.cgt_core.cgt_utils.cgt_math import *
 import unittest
 import math
-from src.cgt_utils.cgt_math import *
 
 
 class TestMathutils(unittest.TestCase):

@@ -75,12 +75,13 @@ def get_parents(file: Path, parents: list):
 
 
 def manage_imports(reload: bool = False, force: bool = False):
+    return
     # from .cgt_blender.interface import ui_registration
     # ui_registration.unregister()
     for module in INIT_MODULES:
         import_module(module)
 
-    from .cgt_blender.utils import dependencies
+    from src.cgt_mediapipe import dependencies
     # if reload:
     reload_module('.src.cgt_blender.utils.dependencies')
     print(f"{PACKAGE_NAME} - Dependencies installed: {dependencies.dependencies_installed}")

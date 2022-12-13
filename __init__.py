@@ -38,24 +38,19 @@ def reload_modules():
 if "bl_info" in locals():
     reload_modules()
 
-from .src.cgt_blender.interface import ui_registration
+from .src import cgt_registration
 
 
 def register():
-    from .src.cgt_blender.utils import dependencies
-    from .src.cgt_freemocap import fm_registration
-    # ugly fix to delete packages to remove on restart
-    dependencies.force_remove_remains()
-    ui_registration.register()
-    fm_registration.register()
+    cgt_registration.register()
+
 
 def unregister():
-    ui_registration.unregister()
-    from .src.cgt_freemocap import fm_registration
-    fm_registration.unregister()
+    cgt_registration.unregister()
 
 
 if __name__ == '__main__':
-    from .src.cgt_utils import cgt_logging
+    from src.cgt_core.cgt_utils import cgt_logging
+
     cgt_logging.init('')
     register()

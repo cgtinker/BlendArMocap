@@ -38,7 +38,7 @@ class LoadFreemocapSession:
         self.user = bpy.context.scene.m_cgtinker_mediapipe
         self.user.freemocap_session_path = session_path
         if session_path is not None:
-            from ..mediapipe_processing_manager import RealtimeDataProcessingManager
+            from src.cgt_core.mediapipe_processing_manager import RealtimeDataProcessingManager
             self.processing_manager = RealtimeDataProcessingManager("FREEMOCAP", "BPY")
             self.processing_manager.init_detector(input_type=2)
             self.processing_manager.init_bridge()

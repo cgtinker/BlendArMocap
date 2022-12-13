@@ -1,5 +1,5 @@
 import unittest
-from src.cgt_utils.cgt_json import *
+from src.cgt_core.cgt_utils.cgt_json import *
 
 
 class TestJson(unittest.TestCase):
