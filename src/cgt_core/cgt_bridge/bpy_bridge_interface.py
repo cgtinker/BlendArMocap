@@ -19,7 +19,7 @@ from abc import abstractmethod
 
 import src.cgt_core.cgt_bpy.cgt_collection
 from .custom_data_container import CustomData
-from ..cgt_bpy import objects
+from ..cgt_bpy import cgt_bpy_utils
 from src.cgt_core.cgt_naming import COLLECTIONS
 from mathutils import Vector
 from . import bridge_interface
@@ -53,7 +53,7 @@ class BpyInstanceProvider(bridge_interface.BridgeInterface):
             children: [] = None):
         """ Creates a Custom Data object """
         # create object
-        driver.obj = objects.add_empty(size, name, style)
+        driver.obj = cgt_bpy_utils.add_empty(size, name, style)
         if position is None:
             position = [0, 0, 0]
 

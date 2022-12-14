@@ -15,7 +15,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from src.cgt_core.cgt_bpy.cgt_drivers import cgt_driver_interface
+from src.cgt_core.cgt_bpy import cgt_driver_interface
 from src.cgt_core.cgt_bpy.cgt_properties import cgt_object_prop
 
 

@@ -15,7 +15,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from src.cgt_core.cgt_bpy.cgt_drivers.driver_interface import DriverProperties, DriverContainer, DriverType, ObjectType
+from src.cgt_core.cgt_bpy.depreciated.cgt_drivers import DriverProperties, DriverContainer, DriverType, ObjectType
 from dataclasses import dataclass
 
 

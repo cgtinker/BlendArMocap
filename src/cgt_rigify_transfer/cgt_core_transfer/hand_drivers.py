@@ -19,7 +19,7 @@ from dataclasses import dataclass
 from math import radians
 
 from src.cgt_core.cgt_bpy.cgt_properties.bone_prop import CustomBoneProp
-from src.cgt_core.cgt_bpy.cgt_drivers.driver_interface import DriverProperties, DriverContainer, DriverType
+from src.cgt_core.cgt_bpy.depreciated.cgt_drivers import DriverProperties, DriverContainer, DriverType
 from src.cgt_core.cgt_bpy.mapping import Slope
 
 

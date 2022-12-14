@@ -15,7 +15,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from src.cgt_core.cgt_bpy import objects
+from src.cgt_core.cgt_bpy import cgt_bpy_utils
 from mathutils import Matrix
 
 
@@ -75,7 +75,7 @@ def copy_location_world_offset(bone, target, values):
     constraint = bone.constraints.new(
         type="COPY_LOCATION"
     )
-    objects.set_pbone_worldspace(bone, values[0], target.location)
+    cgt_bpy_utils.set_pbone_worldspace(bone, values[0], target.location)
     constraint.target = target
     constraint.influence = 1
     constraint.use_offset = True
@@ -88,7 +88,7 @@ def child_of(constraint, target, values):
     # clear bone matrix first
     constraint.inverse_matrix = Matrix.Identity(4)
     # set position to empties
-    objects.set_pbone_worldspace(values[1], values[0], target.location)
+    cgt_bpy_utils.set_pbone_worldspace(values[1], values[0], target.location)
     # invert matrix
     mw = constraint.target.matrix_world
     constraint.inverse_matrix = mw.inverted()

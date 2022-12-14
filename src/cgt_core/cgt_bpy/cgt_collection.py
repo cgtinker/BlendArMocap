@@ -44,7 +44,7 @@ def remove_collection(collection_name: str, remove_objects: bool = True) -> None
     collection = bpy.data.collections.get(collection_name)
     obs = []
     if remove_objects:
-        obs = [o for o in collection.objects if o.users == 1]
+        obs = [o for o in collection.cgt_bpy_utils if o.users == 1]
     while len(obs) > 0:
         bpy.data.objects.remove(obs.pop())
 
@@ -78,7 +78,7 @@ def _obj_to_collection(collection_name: str, obj: bpy.types.Object) -> bool:
     try:
         bpy.context.scene.collection.objects.unlink(obj)
         collection = bpy.data.collections.get(collection_name)
-        collection.objects.link(obj)
+        collection.cgt_bpy_utils.link(obj)
         return True
     except RuntimeError:
         return False

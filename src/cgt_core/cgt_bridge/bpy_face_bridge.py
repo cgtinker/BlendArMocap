@@ -17,7 +17,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import src.cgt_core.cgt_bpy.cgt_collection
 from . import custom_data_container
 from . import bpy_bridge_interface
-from ..cgt_bpy import objects
+from ..cgt_bpy import cgt_bpy_utils
 from ..cgt_naming import FACE, COLLECTIONS
 
 
@@ -32,7 +32,7 @@ class BpyFaceBridge(bpy_bridge_interface.BpyInstanceProvider):
             references[f'{i}'] = f"{FACE.face}{i}"
 
         # face empties (default data)
-        self.face = objects.add_empties(references, 0.005)
+        self.face = cgt_bpy_utils.add_empties(references, 0.005)
         src.cgt_core.cgt_bpy.cgt_collection.add_list_to_collection(self.col_name, self.face, self.parent_col)
 
         # objects for drivers
@@ -46,7 +46,7 @@ class BpyFaceBridge(bpy_bridge_interface.BpyInstanceProvider):
                               FACE.eyebrow_in_r, FACE.eyebrow_mid_r,
                               FACE.eyebrow_out_r
                               ]
-        mapping_objs = [objects.add_empty(0.01, name) for name in mapping_references]
+        mapping_objs = [cgt_bpy_utils.add_empty(0.01, name) for name in mapping_references]
         src.cgt_core.cgt_bpy.cgt_collection.add_list_to_collection(self.col_name, mapping_objs, self.parent_col)
 
         # custom data for assignment during processing

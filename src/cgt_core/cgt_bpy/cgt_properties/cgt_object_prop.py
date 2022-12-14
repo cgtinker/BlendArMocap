@@ -16,22 +16,17 @@ def set_custom_property(
         v_min: Optional[float] = None, v_max:  Optional[float] = None,
         use_soft: bool = False, overwrite: bool = False) -> bool:
 
-    """ Adds a custom property to an Object.
-        Todo: Check return types. """
-    if get_custom_property(obj, prop_name) is None or overwrite is True:
-        if obj is None:
-            return False
-
-        obj[prop_name] = value
-
-        if "_RNA_UI" not in obj.keys():
-            obj["_RNA_UI"] = {}
-
-        if use_soft:
-            obj["_RNA_UI"].update({prop_name: {"use_soft_limits": use_soft, "soft_min": v_min, "soft_max": v_max}})
-        else:
-            obj["_RNA_UI"].update({prop_name: {"min": v_min, "max": v_max}})
+    if get_custom_property(obj, prop_name) is not None and not overwrite:
         return False
+
+    obj[prop_name] = value
+    if "_RNA_UI" not in obj.keys():
+        obj["_RNA_UI"] = {}
+
+    if use_soft:
+        obj["_RNA_UI"].update({prop_name: {"use_soft_limits": use_soft, "soft_min": v_min, "soft_max": v_max}})
+    else:
+        obj["_RNA_UI"].update({prop_name: {"min": v_min, "max": v_max}})
     return True
 
 

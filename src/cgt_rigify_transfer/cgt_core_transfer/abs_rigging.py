@@ -19,8 +19,10 @@ from abc import ABC
 import bpy
 
 import src.cgt_core.cgt_bpy.cgt_properties.object_prop
+
+import src.cgt_core.cgt_bpy.cgt_driver_interface
 from ...cgt_core.cgt_bpy import objects, constraints
-from ...cgt_core.cgt_bpy.cgt_drivers import driver_interface, driver_types
+from src.cgt_core.cgt_bpy.depreciated.cgt_drivers import driver_interface
 
 
 class BpyRigging(ABC):
@@ -52,9 +54,9 @@ class BpyRigging(ABC):
 
         # driver types targets
         driver_type_dict = {
-            driver_interface.DriverType.SINGLE: driver_types.SinglePropDriver,
-            driver_interface.DriverType.BONE:   driver_types.BonePropDriver,
-            driver_interface.DriverType.CUSTOM: driver_types.CustomBonePropDriver
+            driver_interface.DriverType.SINGLE: src.cgt_core.cgt_bpy.cgt_driver_interface.SinglePropDriver,
+            driver_interface.DriverType.BONE:   src.cgt_core.cgt_bpy.cgt_driver_interface.BonePropDriver,
+            driver_interface.DriverType.CUSTOM: src.cgt_core.cgt_bpy.cgt_driver_interface.CustomBonePropDriver
         }
 
         # just for convenience
