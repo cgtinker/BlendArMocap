@@ -18,7 +18,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import mediapipe as mp
 from mediapipe.framework.formats import classification_pb2
 
-from src.cgt_mediapipe.mp_data_provider import stream
+from src.cgt_mediapipe.cgt_mp_core import stream
 from src.cgt_core import realtime_data_provider_interface
 
 
@@ -75,7 +75,7 @@ class HandDetector(realtime_data_provider_interface.RealtimeDataProvider):
 # region manual tests
 def init_detector_manually(processor_type: str = "RAW"):
     m_detector = HandDetector()
-    m_detector.stream = stream.Webcam()
+    m_detector.stream = stream.Stream()
     m_detector.initialize_model()
 
     from ..cgt_patterns import events

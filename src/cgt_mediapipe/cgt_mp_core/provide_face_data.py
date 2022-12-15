@@ -17,17 +17,19 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 import mediapipe as mp
 
-from src.cgt_mediapipe.mp_data_provider import stream
-from src.cgt_core import realtime_data_provider_interface
-
+from .mediapipe_detector import MediapipeDetector
 from typing import Mapping, Tuple
 from mediapipe.python.solutions import face_mesh_connections
 from mediapipe.python.solutions.drawing_utils import DrawingSpec
 
 
-class FaceDetector(realtime_data_provider_interface.RealtimeDataProvider):
+class FaceDetector(MediapipeDetector):
+    def __init__(self, *args, **kwargs):
+        MediapipeDetector.__init__(self, *args, **kwargs)
+        self.solution = mp.solutions.face_mesh
+
     # https://google.github.io/mediapipe/solutions/face_mesh#python-solution-api
-    def frame_detection_data(self):
+    def get_data(self):
         with self.solution.FaceMesh(
                 max_num_faces=1,
                 static_image_mode=False,
@@ -47,9 +49,6 @@ class FaceDetector(realtime_data_provider_interface.RealtimeDataProvider):
                 state = self.exec_detection(mp_lib)
                 if state == {'CANCELLED'}:
                     return {'CANCELLED'}
-
-    def initialize_model(self):
-        self.solution = mp.solutions.face_mesh
 
     def get_detection_results(self, mp_res):
         return [self.cvt2landmark_array(landmark) for landmark in mp_res.multi_face_landmarks]
@@ -106,33 +105,16 @@ class FaceDetector(realtime_data_provider_interface.RealtimeDataProvider):
 
 
 # region manual tests
-def init_detector_manually(processor_type: str = "RAW"):
-    m_detector = FaceDetector()
-    m_detector.stream = stream.Webcam()
-    m_detector.initialize_model()
-
-    from ..cgt_patterns import events
-    if processor_type == "RAW":
-        m_detector.observer = events.PrintRawDataUpdate()
-    else:
-        from ..cgt_bridge import print_bridge
-        from ..cgt_processing import face_processing
-        bridge = print_bridge.PrintBridge
-        target = face_processing.FaceProcessor(bridge)
-        m_detector.observer = events.DriverDebug(target)
-
-    m_detector.listener = events.UpdateListener()
-    m_detector.listener.attach(m_detector.observer)
-    return m_detector
-
-
 if __name__ == '__main__':
+    from . import cv_stream
     detection_type = 'image'
-    detector = init_detector_manually("PROCESSED")
+    # detector = init_detector_manually("PROCESSED")
+    detector = FaceDetector()
+    detector.stream = cv_stream.Stream()
 
     if detection_type == "image":
         for _ in range(50):
-            detector.frame_detection_data()
+            detector.get_data()
     else:
         detector.stream_detection()
 

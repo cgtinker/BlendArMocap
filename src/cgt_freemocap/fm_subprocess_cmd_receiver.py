@@ -51,7 +51,7 @@ class LoadFreemocapSession:
                 self.step *= 2
                 logging.debug(f"{self.processing_manager.realtime_data_provider.frame}/"
                               f"{self.processing_manager.realtime_data_provider.number_of_frames}")
-            running = self.processing_manager.realtime_data_provider.frame_detection_data()
+            running = self.processing_manager.realtime_data_provider.get_data()
             if not running:
                 break
 

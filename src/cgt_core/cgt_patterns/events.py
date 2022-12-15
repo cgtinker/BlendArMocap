@@ -19,7 +19,7 @@ from __future__ import annotations
 
 from typing import List
 
-from ..cgt_patterns import observer_pattern as op
+from . import observer_pattern as op
 from src.cgt_core.cgt_processing import processor_interface
 
 
@@ -52,7 +52,7 @@ class PrintRawDataUpdate(op.Observer):
 class DriverDebug(op.Observer):
     """ Doesn't apply data but useful for debugging purposes. """
 
-    def __init__(self, _processor: processor_interface.DataProcessor = None):
+    def __init__(self, _processor: processor_interface.MediapipeDataProcessor = None):
         if _processor is None:
             raise BrokenPipeError
 
@@ -85,7 +85,7 @@ class HolisticDriverDebug(op.Observer):
 
 class BpyUpdateReceiver(op.Observer):
     """ Updates empties in realtime via modal operator. """
-    def __init__(self, _processor: processor_interface.DataProcessor = None):
+    def __init__(self, _processor: processor_interface.MediapipeDataProcessor = None):
         if _processor is None:
             raise BrokenPipeError
 

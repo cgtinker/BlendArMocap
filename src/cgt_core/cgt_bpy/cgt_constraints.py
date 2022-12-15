@@ -15,209 +15,71 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from src.cgt_core.cgt_bpy import cgt_bpy_utils
-from mathutils import Matrix
+from __future__ import annotations
+import logging
+import bpy
+from typing import Optional
 
 
-def copy_rotation(constraint, target, values):
-    constraint.target = target
-    constraint.euler_order = 'XYZ'
-    constraint.influence = 1
-    constraint.mix_mode = 'ADD'
-    constraint.owner_space = 'LOCAL'
+constraints = ['CAMERA_SOLVER', 'FOLLOW_TRACK', 'OBJECT_SOLVER', 'COPY_LOCATION', 'COPY_LOCATION_OFFSET',
+               'COPY_LOCATION_WORLD', 'COPY_LOCATION_WORLD_OFFSET', 'COPY_ROTATION', 'COPY_ROTATION_WORLD',
+               'COPY_SCALE', 'COPY_TRANSFORMS', 'LIMIT_DISTANCE', 'LIMIT_LOCATION', 'LIMIT_ROTATION', 'LIMIT_SCALE',
+               'MAINTAIN_VOLUME', 'TRANSFORM', 'TRANSFORM_CACHE', 'CLAMP_TO', 'DAMPED_TRACK', 'IK', 'LOCKED_TRACK',
+               'SPLINE_IK', 'STRETCH_TO', 'TRACK_TO', 'ACTION', 'ARMATURE', 'CHILD_OF', 'FLOOR', 'FOLLOW_PATH', 'PIVOT',
+               'SHRINKWRAP']
 
 
-def limit_rotation(constraint, target, values):
-    constraint.use_limit_x = True
-    constraint.min_x = values[0][0]
-    constraint.max_x = values[0][1]
-    constraint.influence = 1
-    constraint.owner_space = 'LOCAL'
+def check_constraint(obj, **kwargs) -> bool:
+    """ Determine if a constraint is already active on an object or
+        if it should be added. Takes every kwarg into account. """
+
+    assert 'constraint' in kwargs
+    constraint_name = kwargs.pop('constraint')
+    assert constraint_name in constraints
+
+    def compare_kwargs(constraint, **kwargs) -> bool:
+        # Compare keyword args of the target constraint to the existing constraint.
+        # Returns False if any value doesn't match.
+        for k, v in kwargs.items():
+            try:
+                attr_val = getattr(constraint, k)
+                if attr_val != v:
+                    return False
+            except AttributeError:
+                logging.warning(f"Attribute Error: {obj} has no attribute {k}: {v}")
+        return True
+
+    for obj_constraint in obj.constraints:
+        cur_constraint = obj_constraint.name.upper().replace(' ', '_')
+        # Check only if constraint types match
+        if cur_constraint == constraint_name:
+            if compare_kwargs(obj_constraint, **kwargs):
+                return True
+    return False
 
 
-def copy_rotation_world_space(bone, target, values):
-    constraint = bone.constraints.new(
-        type="COPY_ROTATION"
-    )
-    constraint.target = target
-    constraint.euler_order = 'XYZ'
-    constraint.influence = 1
-    constraint.mix_mode = 'ADD'
-    constraint.owner_space = 'WORLD'
+def set_constraint(obj, **kwargs) -> Optional[bpy.types.Constraint]:
+    """ Adds a constraint to the target object if the object
+        doesn't contain a constraint with the same arguments added.
+        The constraint props are passed by dicts, sample usage:
+            props={"constraint": "COPY_ROTATION", target=bpy.data.objects["Sphere"], use_x=True}
+            set_constraint(obj, **props)
+    """
 
+    if check_constraint(obj, **kwargs):
+        logging.warning(f"Set Constraint Aborted: {obj.name} already has a constraint with matching keyword arguments.")
+        return None
 
-def copy_location(constraint, target, values):
-    constraint.target = target
-    constraint.influence = 1
-    constraint.owner_space = 'POSE'
+    constraint_name = kwargs.pop('constraint')
 
+    def set_kwargs(constraint, **kwargs):
+        # set constraint values
+        for k, v in kwargs.items():
+            try:
+                setattr(constraint, k, v)
+            except AttributeError:
+                logging.warning(f"Attribute Error: {obj} has no attribute {k}: {v}")
 
-def copy_location_offset(bone, target, values):
-    constraint = bone.constraints.new(
-        type="COPY_LOCATION"
-    )
-    constraint.target = target
-    constraint.influence = 1
-    constraint.use_offset = True
-    constraint.owner_space = 'WORLD'
-
-
-def copy_location_world(bone, target, values):
-    constraint = bone.constraints.new(
-        type="COPY_LOCATION"
-    )
-    constraint.target = target
-    constraint.influence = 1
-    constraint.owner_space = 'WORLD'
-
-
-def copy_location_world_offset(bone, target, values):
-    constraint = bone.constraints.new(
-        type="COPY_LOCATION"
-    )
-    cgt_bpy_utils.set_pbone_worldspace(bone, values[0], target.location)
-    constraint.target = target
-    constraint.influence = 1
-    constraint.use_offset = True
-    constraint.owner_space = 'WORLD'
-
-
-def child_of(constraint, target, values):
-    constraint.target = target
-    constraint.influence = 1
-    # clear bone matrix first
-    constraint.inverse_matrix = Matrix.Identity(4)
-    # set position to empties
-    cgt_bpy_utils.set_pbone_worldspace(values[1], values[0], target.location)
-    # invert matrix
-    mw = constraint.target.matrix_world
-    constraint.inverse_matrix = mw.inverted()
-
-
-def damped_track(constraint, target, values):
-    constraint.target = target
-    constraint.influence = 1
-    constraint.owner_space = 'POSE'
-    constraint.track_axis = 'TRACK_NEGATIVE_Y'
-
-
-def track_to(constraint, target, values):
-    constraint.target = target
-    constraint.influence = 1
-    constraint.owner_space = 'LOCAL'
-    constraint.up_axis = 'UP_X'
-    constraint.track_axis = 'TRACK_Y'
-
-
-def locked_track(constraint, target, values=None):
-    if values is None:
-        values = ['TRACK_Y']
-    constraint.target = target
-    constraint.influence = 1
-    constraint.track_axis = values[0]
-    constraint.lock_axis = 'LOCK_Z'
-
-
-def limit_distance(constraint, target, values):
-    constraint.target = target
-    constraint.distance = 0.05
-    constraint.owner_space = 'WORLD'
-    constraint.target_space = 'WORLD'
-
-
-constraint_mapping = {
-    "CAMERA_SOLVER":        0,
-    "FOLLOW_TRACK":         1,
-    "OBJECT_SOLVER":        2,
-    "COPY_LOCATION":        copy_location,
-    "COPY_LOCATION_OFFSET": copy_location_offset,
-    "COPY_LOCATION_WORLD":  copy_location_world,
-    "COPY_LOCATION_WORLD_OFFSET": copy_location_world_offset,
-    "COPY_ROTATION":        copy_rotation,
-    "COPY_ROTATION_WORLD":  copy_rotation_world_space,
-    "COPY_SCALE":           5,
-    "COPY_TRANSFORMS":      6,
-    "LIMIT_DISTANCE":       limit_distance,
-    "LIMIT_LOCATION":       8,
-    "LIMIT_ROTATION":       limit_rotation,
-    "LIMIT_SCALE":          10,
-    "MAINTAIN_VOLUME":      11,
-    "TRANSFORM":            12,
-    "TRANSFORM_CACHE":      13,
-    "CLAMP_TO":             14,
-    "DAMPED_TRACK":         damped_track,
-    "IK":                   16,
-    "LOCKED_TRACK":         locked_track,
-    "SPLINE_IK":            18,
-    "STRETCH_TO":           19,
-    "TRACK_TO":             track_to,
-    "ACTION":               21,
-    "ARMATURE":             22,
-    "CHILD_OF":             child_of,
-    "FLOOR":                24,
-    "FOLLOW_PATH":          25,
-    "PIVOT":                26,
-    "SHRINKWRAP":           27,
-}
-
-
-def previously_added_constraint(bone, constraint):
-    m_constraints = [c for c in bone.constraints]
-
-    for c in m_constraints:
-        # prepare target constraint
-        target_constraint = constraint
-        if "_OFFSET" in constraint:
-            target_constraint = target_constraint.replace("_OFFSET", "")
-
-        if "_WORLD" in constraint:
-            target_constraint = target_constraint.replace("_WORLD", "")
-
-        # match syntax of bpy constraint
-        constraint_name = c.name
-        constraint_name = constraint_name.replace(" ", "_")
-        constraint_name = constraint_name.upper()
-        constraint_name = constraint_name.rsplit('.', 1)[0]
-
-        # remove if names match while overwriting
-        if constraint_name == target_constraint:
-            return [True, c]
-    return [False, None]
-
-
-def add_constraint(bone, target, constraint, values, overwrite):
-    """ Bit hacky way to apply constraints even of the same type. """
-    is_constrained, old_constraint = previously_added_constraint(bone, constraint)
-    if not is_constrained:
-        pass
-    elif is_constrained and overwrite:
-        remove_constraint(bone, old_constraint)
-    else:
-        return
-
-    try:
-        # adding a new constraint
-        new_constraint = bone.constraints.new(
-            type=constraint
-        )
-
-        if 'CHILD_OF' in constraint:
-            values.append(bone)
-
-        constraint_mapping[constraint](new_constraint, target, values)
-    except TypeError or KeyError:
-        # call custom method with bone
-        constraint_mapping[constraint](bone, target, values)
-
-
-def remove_constraints(bone):
-    m_constraints = [c for c in bone.constraints]
-    for c in m_constraints:
-        remove_constraint(bone, c)
-
-
-def remove_constraint(bone, constraint=None):
-    if constraint is not None:
-        bone.constraints.remove(constraint)
-
-
+    con = obj.constraints.new(constraint_name)
+    set_kwargs(con, **kwargs)
+    return con

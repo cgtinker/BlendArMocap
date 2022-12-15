@@ -18,7 +18,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 from dataclasses import dataclass
 
 from src.cgt_core.cgt_bpy.depreciated.cgt_drivers import DriverProperties, DriverContainer, DriverType
-from src.cgt_core.cgt_bpy.cgt_properties.bone_prop import CustomBoneProp
+from src.cgt_core.cgt_bpy.depreciated.cgt_properties import CustomBoneProp
 from src.cgt_core.cgt_bpy.mapping import Slope
 
 

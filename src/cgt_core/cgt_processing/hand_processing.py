@@ -25,7 +25,7 @@ from src.cgt_core.cgt_bridge import bpy_hand_bridge
 from ..cgt_utils import cgt_math
 
 
-class HandProcessor(processor_interface.DataProcessor):
+class HandProcessor(processor_interface.MediapipeDataProcessor):
     fingers = [
         [1, 5],  # thumb
         [5, 9],  # index finger
@@ -46,12 +46,15 @@ class HandProcessor(processor_interface.DataProcessor):
     bridge = None
     frame = 0
 
-    def __init__(self, bridge=bpy_hand_bridge.BpyHandBridge):
-        self.bridge = bridge
+    # def __init__(self, bridge=bpy_hand_bridge.BpyHandBridge):
+    #     self.bridge = bridge
 
-    def init_references(self):
-        """ Generates objects for mapping. """
-        self.bridge = self.bridge("HAND")
+    # def init_references(self):
+    #     """ Generates objects for mapping. """
+    #     self.bridge = self.bridge("HAND")
+
+    def set_data(self, data):
+        self.data = data
 
     def init_data(self):
         """ Process and map received data from mediapipe before key-framing. """

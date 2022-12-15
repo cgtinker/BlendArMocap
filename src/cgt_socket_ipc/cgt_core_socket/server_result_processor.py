@@ -1,6 +1,5 @@
 from .json_parser import JsonParser
-from src.cgt_core.cgt_patterns import observer_pattern
-from src.cgt_core.cgt_patterns import events
+from src.cgt_core.cgt_patterns import events, observer_pattern
 from src.cgt_core.cgt_processing import hand_processing, face_processing
 from src.cgt_core.cgt_processing import pose_processing, processor_interface
 
@@ -8,7 +7,7 @@ from src.cgt_core.cgt_processing import pose_processing, processor_interface
 class ServerResultsProcessor(object):
     data_listener: observer_pattern.Subject
     data_observer: observer_pattern.Observer
-    data_processor: processor_interface.DataProcessor
+    data_processor: processor_interface.MediapipeDataProcessor
     json_parser: JsonParser
 
     start_frame: int = 0

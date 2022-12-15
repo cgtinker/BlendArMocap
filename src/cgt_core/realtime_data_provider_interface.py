@@ -110,9 +110,9 @@ class RealtimeDataProvider(ABC):
         self.listener.frame = self.frame
         self.listener.notify()
 
-    def cvt2landmark_array(self, landmark_list):
-        """landmark_list: A normalized landmark list proto message to be annotated on the image."""
-        return [[idx, [landmark.x, landmark.y, landmark.z]] for idx, landmark in enumerate(landmark_list.landmark)]
+    # def cvt2landmark_array(self, landmark_list):
+    #     """landmark_list: A normalized landmark list proto message to be annotated on the image."""
+    #     return [[idx, [landmark.x, landmark.y, landmark.z]] for idx, landmark in enumerate(landmark_list.landmark)]
 
     def __del__(self):
         self.listener.detach(self.observer)

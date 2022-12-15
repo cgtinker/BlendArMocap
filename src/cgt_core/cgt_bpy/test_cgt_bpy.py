@@ -1,5 +1,5 @@
 import inspect
-from . import cgt_bpy_utils
+from . import cgt_bpy_utils, cgt_constraints
 from .cgt_drivers import *
 
 
@@ -145,6 +145,19 @@ class TestBoneDrivers(object):
         driver.apply()
 
 
+class TestConstraints(object):
+    def add_constaint(self):
+        sp = cgt_bpy_utils.add_empty(1, "sp")
+        ob = cgt_bpy_utils.add_empty(1, "ob")
+        constraint_props = {
+            "constraint": "COPY_ROTATION",
+            "target":     sp,
+            "use_x":      True
+        }
+
+        cgt_constraints.set_constraint(ob, **constraint_props)
+
+
 def run_class_methods(cls):
     attrs = (getattr(cls, name) for name in dir(cls))
     methods = filter(inspect.ismethod, attrs)
@@ -160,6 +173,7 @@ def main():
     run_class_methods(TestCgtBpyUtils())
     run_class_methods(TestObjectDrivers())
     run_class_methods(TestBoneDrivers())
+    run_class_methods(TestConstraints())
 
 
 if __name__ == '__main__':

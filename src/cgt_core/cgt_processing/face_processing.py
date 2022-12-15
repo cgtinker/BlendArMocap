@@ -23,7 +23,7 @@ from ..cgt_utils import cgt_math
 from ..cgt_bridge import bpy_face_bridge
 
 
-class FaceProcessor(processor_interface.DataProcessor):
+class FaceProcessor(processor_interface.MediapipeDataProcessor):
     # used to assign custom data
     _mouth_driver = None
     _mouth_corner_driver = None
@@ -39,17 +39,17 @@ class FaceProcessor(processor_interface.DataProcessor):
     # processed results
     rotation_data, driver_scale_data = None, None
 
-    def __init__(self, bridge=bpy_face_bridge.BpyFaceBridge):
-        # bridge to blender engine
-        self.bridge = bridge
+    # def __init__(self, bridge=bpy_face_bridge.BpyFaceBridge):
+    #     # bridge to blender engine
+    #     self.bridge = bridge
 
-    def init_references(self):
-        """ Generates objects for mapping. """
-        self.bridge = self.bridge("FACE")
-        _face, custom_data_arr = self.bridge.get_instances()
-        # split only for readability
-        self.pivot, self._mouth_driver, self._mouth_corner_driver, self.eye_driver_L, = custom_data_arr[:-4]
-        self.eye_driver_R, self.chin_driver, self.eyebrow_L, self.eyebrow_R = custom_data_arr[4:]
+    # def init_references(self):
+    #     """ Generates objects for mapping. """
+    #     self.bridge = self.bridge("FACE")
+    #     _face, custom_data_arr = self.bridge.get_instances()
+    #     # split only for readability
+    #     self.pivot, self._mouth_driver, self._mouth_corner_driver, self.eye_driver_L, = custom_data_arr[:-4]
+    #     self.eye_driver_R, self.chin_driver, self.eyebrow_L, self.eyebrow_R = custom_data_arr[4:]
 
     def init_data(self):
         """ Process the landmark detection results. """

@@ -21,8 +21,8 @@ from dataclasses import dataclass
 
 import bpy
 
-from src.cgt_core.cgt_bpy.cgt_properties import cgt_object_prop
-from src.cgt_core.cgt_bpy import cgt_bpy_utils
+from src.cgt_core.cgt_bpy import cgt_object_prop
+
 
 # TODO: refactor entire driver chain - while it works, it's a confusing construct
 

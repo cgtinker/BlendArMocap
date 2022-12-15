@@ -16,7 +16,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import logging
-from src.cgt_mediapipe.mp_data_provider import provide_hand_data, provide_face_data, provide_holistic_data, \
+from src.cgt_mediapipe.cgt_mp_core import provide_hand_data, provide_face_data, provide_holistic_data, \
     provide_pose_data, stream
 from src.cgt_core import realtime_data_provider_interface
 from src.cgt_freemocap import fm_session_loader
@@ -80,7 +80,7 @@ class RealtimeDataProcessingManager:
             """
         self.logger.info(f"Setting up {self.__class__.__name__}({target}, {bridge_type})")
         self.realtime_data_provider = self.data_providers[target]
-        self.processor: processor_interface.DataProcessor = self.processor_types[target]
+        self.processor: processor_interface.MediapipeDataProcessor = self.processor_types[target]
         if bridge_type == "RAW":
             self.processor = None
 
@@ -129,7 +129,7 @@ class RealtimeDataProcessingManager:
             capture_input = 0
 
         # init tracking handler targets
-        self.realtime_data_provider.stream = stream.Webcam(
+        self.realtime_data_provider.stream = stream.Stream(
             capture_input=capture_input, width=dim[0], height=dim[1], backend=stream_backend
         )
 
@@ -173,7 +173,7 @@ def main():
     handler.init_bridge()
 
     for _ in range(15):
-        handler.realtime_data_provider.frame_detection_data()
+        handler.realtime_data_provider.get_data()
 
     del handler
 

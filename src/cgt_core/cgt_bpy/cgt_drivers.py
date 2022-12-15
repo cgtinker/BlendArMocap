@@ -19,7 +19,7 @@ from __future__ import annotations
 import bpy
 import logging
 from typing import Dict, Optional, List, Union
-from .cgt_properties import cgt_object_prop
+from . import cgt_object_prop
 from dataclasses import dataclass
 
 

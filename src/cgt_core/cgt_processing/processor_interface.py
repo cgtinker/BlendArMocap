@@ -23,7 +23,7 @@ from mathutils import Euler
 from src.cgt_core.cgt_utils import cgt_math
 
 
-class DataProcessor(ABC):
+class MediapipeDataProcessor(ABC):
     data = None
 
     # array for comparison, as noise is present every frame values should change
@@ -32,10 +32,10 @@ class DataProcessor(ABC):
     prev_sum = [0.0, 0.0]
 
     # region abstract methods
-    @abstractmethod
-    def init_references(self):
-        """ initialize reference objects for mapping. """
-        pass
+    # @abstractmethod
+    # def init_references(self):
+    #     """ initialize reference objects for mapping. """
+    #     pass
 
     @abstractmethod
     def init_data(self):

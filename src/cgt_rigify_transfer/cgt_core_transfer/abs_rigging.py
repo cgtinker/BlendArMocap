@@ -18,7 +18,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 from abc import ABC
 import bpy
 
-import src.cgt_core.cgt_bpy.cgt_properties.object_prop
+import src.cgt_core.cgt_bpy.depreciated.cgt_properties.object_prop
 
 import src.cgt_core.cgt_bpy.cgt_driver_interface
 from ...cgt_core.cgt_bpy import objects, constraints

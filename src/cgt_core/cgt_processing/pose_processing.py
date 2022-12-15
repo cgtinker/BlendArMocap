@@ -23,7 +23,7 @@ from src.cgt_core.cgt_bridge import bpy_pose_bridge
 from ..cgt_utils import cgt_math
 
 
-class PoseProcessor(processor_interface.DataProcessor):
+class PoseProcessor(processor_interface.MediapipeDataProcessor):
     arms = [
         [12, 17],  # right arm
         [11, 16]  # left arm
@@ -43,10 +43,10 @@ class PoseProcessor(processor_interface.DataProcessor):
     def __init__(self, bridge=bpy_pose_bridge.BpyPoseBridge):
         self.bridge = bridge
 
-    def init_references(self):
-        """ Create references for mapping. """
-        self.bridge = self.bridge("POSE")
-        _pose, self.shoulder_center, self.hip_center = self.bridge.get_instances()
+    # def init_references(self):
+    #     """ Create references for mapping. """
+    #     self.bridge = self.bridge("POSE")
+    #     _pose, self.shoulder_center, self.hip_center = self.bridge.get_instances()
 
     def init_data(self):
         """ Init and process the input data. """
