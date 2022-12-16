@@ -43,12 +43,12 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
         self.pivot, self._mouth_driver, self._mouth_corner_driver, self.eye_driver_L = custom_data_arr[:-4]
         self.eye_driver_R, self.chin_driver, self.eyebrow_L, self.eyebrow_R = custom_data_arr[4:]
 
-    def update(self, data):
+    def update(self, data, frame):
         """ Process the landmark detection results. """
         """ Assign the data processed data to references. """
         # remove nesting and set landmarks to custom origin
         if len(data[0][0]) == 0:
-            return [], [], []
+            return [[], [], []], frame
 
         self.data = data[0]
         # increase the data size to hold custom data (check __init__)
@@ -60,8 +60,8 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
         self.set_scale_driver_data()
         self.set_rotation_driver_data()
         if self.has_duplicated_results(self.data, "face"):
-            return [], [], []
-        return self.data, self.rotation_data, self.driver_scale_data
+            return [[], [], []], frame
+        return [self.data, self.rotation_data, self.driver_scale_data], frame
 
     def get_processed_data(self):
         """ Returns the processed data """

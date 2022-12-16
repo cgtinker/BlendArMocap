@@ -1,7 +1,7 @@
 from __future__ import annotations
-from typing import List, Union, Optional, Dict
+from typing import List
 
-from .cgt_calculators import calc_face_rot_sca, calc_pose_rot_sca, calc_hand_rot
+from .cgt_calculators_nodes import calc_face_rot_sca, calc_pose_rot_sca, calc_hand_rot
 from .cgt_patterns import cgt_nodes
 
 

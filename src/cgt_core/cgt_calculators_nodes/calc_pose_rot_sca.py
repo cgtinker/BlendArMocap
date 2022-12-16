@@ -44,10 +44,10 @@ class PoseRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
         self.shoulder_center = calc_utils.CustomData(51)
         self.hip_center = calc_utils.CustomData(52)
 
-    def update(self, data):
+    def update(self, data, frame):
         """ Apply the processed data to references. """
         if not data:
-            return [], [], []
+            return [[], [], []], frame
         self.data = data
 
         # increase the data size to hold custom data (check __init__)
@@ -68,8 +68,8 @@ class PoseRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
         self.average_rig_scale()
 
         if self.has_duplicated_results(self.data, "pose"):
-            return [], [], []
-        return self.data, self.rotation_data, self.scale_data
+            return [[], [], []], frame
+        return [self.data, self.rotation_data, self.scale_data], frame
 
     def average_rig_scale(self):
         """ Get arm and leg chain lengths as those may vary each frame. """

@@ -29,23 +29,12 @@ class HandDetector(DetectorNode):
         self.solution = mp.solutions.hands
 
     # https://google.github.io/mediapipe/solutions/hands#python-solution-api
-    @cgt_timers.fps
-    def update(self, *args):
+    def update(self, data, frame):
         with self.solution.Hands(
                 static_image_mode=True,
                 max_num_hands=2,
                 min_detection_confidence=0.7) as mp_lib:
-            return self.exec_detection(mp_lib)
-
-    def stream_detection(self):
-        with self.solution.Hands(
-                min_detection_confidence=0.8,
-                min_tracking_confidence=0.5,
-                static_image_mode=False,
-                max_num_hands=2
-        ) as mp_lib:
-            while self.stream.capture.isOpened():
-                return self.exec_detection(mp_lib)
+            return self.exec_detection(mp_lib), frame
 
     @staticmethod
     def separate_hands(hand_data):
@@ -67,7 +56,7 @@ class HandDetector(DetectorNode):
         data = [self.cvt2landmark_array(hand) for hand in mp_res.multi_hand_world_landmarks]
         left_hand_data, right_hand_data = self.separate_hands(
             list(zip(data, self.cvt_hand_orientation(mp_res.multi_handedness))))
-        return left_hand_data, right_hand_data
+        return [left_hand_data, right_hand_data]
 
     def contains_features(self, mp_res):
         if not mp_res.multi_hand_landmarks and not mp_res.multi_handedness:
@@ -80,13 +69,15 @@ class HandDetector(DetectorNode):
 
 
 if __name__ == '__main__':
-    from ...cgt_core.cgt_calculators import hand_processing
+    from ...cgt_core.cgt_calculators_nodes import calc_hand_rot
 
     detector = HandDetector(cv_stream.Stream(0))
-    calc = hand_processing.HandRotationCalculator()
+    calc = calc_hand_rot.HandRotationCalculator()
+    frame = 0
     for _ in range(50):
-        data = detector.update()
-        data = calc.update(data)
-
+        frame += 1
+        data, frame = detector.update(None, frame)
+        data, frame = calc.update(data, frame)
+        print(data)
     del detector
 # endregion

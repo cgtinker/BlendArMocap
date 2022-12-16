@@ -1,7 +1,7 @@
 from .json_parser import JsonParser
 from src.cgt_core.cgt_patterns import events, observer_pattern
-from src.cgt_core.cgt_calculators import hand_processing, face_processing
-from src.cgt_core.cgt_calculators import pose_processing, processor_interface
+from src.cgt_core.cgt_calculators_nodes import hand_processing, face_processing
+from src.cgt_core.cgt_calculators_nodes import pose_processing, processor_interface
 
 
 class ServerResultsProcessor(object):

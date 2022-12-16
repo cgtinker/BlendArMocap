@@ -20,7 +20,7 @@ from __future__ import annotations
 from typing import List
 
 from . import observer_pattern as op
-from src.cgt_core.cgt_calculators import processor_interface
+from src.cgt_core.cgt_calculators_nodes import processor_interface
 
 
 class UpdateListener(op.Subject):

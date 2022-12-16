@@ -29,26 +29,14 @@ class PoseDetector(mp_detector_node.DetectorNode):
         self.solution = mp.solutions.pose
 
     # https://google.github.io/mediapipe/solutions/pose#python-solution-api
-    def update(self, *args):
+    def update(self, data, frame):
         # BlazePose GHUM 3D
         with self.solution.Pose(
                 static_image_mode=True,
                 model_complexity=1,
                 # model_complexity=2,
                 min_detection_confidence=0.7) as mp_lib:
-            return self.exec_detection(mp_lib)
-
-    def stream_detection(self):
-        with self.solution.Pose(
-                min_detection_confidence=0.8,
-                min_tracking_confidence=0.5,
-                static_image_mode=False,
-                smooth_segmentation=True
-        ) as mp_lib:
-            while self.stream.capture.isOpened():
-                state = self.exec_detection(mp_lib)
-                if state == {'CANCELLED'}:
-                    return {'CANCELLED'}
+            return self.exec_detection(mp_lib), frame
 
     def detected_data(self, mp_res):
         return self.cvt2landmark_array(mp_res.pose_world_landmarks)
@@ -72,13 +60,15 @@ class PoseDetector(mp_detector_node.DetectorNode):
 # region manual tests
 if __name__ == '__main__':
     from . import cv_stream
-    from ...cgt_core.cgt_calculators import calc_pose_rot_sca
+    from ...cgt_core.cgt_calculators_nodes import calc_pose_rot_sca
     detector = PoseDetector(cv_stream.Stream(0))
     calc = calc_pose_rot_sca.PoseRotationCalculator()
+    frame = 0
     for _ in range(50):
-        data = detector.update()
-        data = calc.update(data)
-        print(data)
+        frame += 1
+        data, frame = detector.update(None, frame)
+        data, frame = calc.update(data, frame)
+        print(data, frame)
 
     del detector
 # endregion

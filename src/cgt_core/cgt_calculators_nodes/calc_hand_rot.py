@@ -58,7 +58,7 @@ class HandRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
         if right_hand_rot is not None:
             self.right_angles.append(right_hand_rot)
 
-    def update(self, data: np.ndarray):
+    def update(self, data, frame):
         """ Returns processing results or empty lists. """
         locations = [[], []]
         angles = [[], []]
@@ -75,7 +75,7 @@ class HandRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
                 locations[0] = self.left_hand_data
                 angles[0] = self.left_angles
 
-        return locations, angles, [[]], self.frame
+        return [locations, angles, [[], []]], frame
 
     def finger_angles(self, hand):
         """ Get finger x-angles from landmarks. """

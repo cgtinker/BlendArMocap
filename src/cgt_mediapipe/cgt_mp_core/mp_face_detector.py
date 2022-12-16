@@ -27,28 +27,13 @@ class FaceDetector(DetectorNode):
         DetectorNode.__init__(self, *args, **kwargs)
         self.solution = mp.solutions.face_mesh
 
-    # https://google.github.io/mediapipe/solutions/face_mesh#python-solution-api
-    def update(self, *args):
+    def update(self, data, frame):
         with self.solution.FaceMesh(
                 max_num_faces=1,
                 static_image_mode=False,
                 refine_landmarks=True,
                 min_detection_confidence=0.7) as mp_lib:
-            return self.exec_detection(mp_lib)
-
-    # depreciated
-    def stream_detection(self):
-        with self.solution.FaceMesh(
-                max_num_faces=1,
-                min_detection_confidence=0.8,
-                min_tracking_confidence=0.5,
-                refine_landmarks=True,
-                static_image_mode=False,
-        ) as mp_lib:
-            while self.stream.capture.isOpened():
-                state = self.exec_detection(mp_lib)
-                if state == {'CANCELLED'}:
-                    return {'CANCELLED'}
+            return self.exec_detection(mp_lib), frame
 
     def empty_data(self):
         return [[[]]]
@@ -110,12 +95,14 @@ class FaceDetector(DetectorNode):
 # region manual tests
 if __name__ == '__main__':
     from . import cv_stream
-    from ...cgt_core.cgt_calculators import calc_face_rot_sca
+    from ...cgt_core.cgt_calculators_nodes import calc_face_rot_sca
     detector = FaceDetector(cv_stream.Stream(0))
     calc = calc_face_rot_sca.FaceRotationcalculator()
+    frame = 0
     for _ in range(50):
-        data = detector.update()
-        data = calc.update(data)
+        frame += 1
+        data, frame = detector.update(None, frame)
+        data, frame = calc.update(data, frame)
         print(data)
 
     del detector

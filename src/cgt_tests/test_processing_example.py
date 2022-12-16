@@ -1,5 +1,5 @@
 import unittest
-from src.cgt_core.cgt_calculators import face_processing, hand_processing, pose_processing
+from src.cgt_core.cgt_calculators_nodes import face_processing, hand_processing, pose_processing
 from src.cgt_core.cgt_bridge import custom_data_container
 from src.cgt_core.cgt_utils import cgt_json
 

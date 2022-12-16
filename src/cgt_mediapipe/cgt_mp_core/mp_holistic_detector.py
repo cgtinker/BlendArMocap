@@ -26,24 +26,12 @@ class HolisticDetector(mp_detector_node.DetectorNode):
         self.solution = mp.solutions.holistic
 
     # https://google.github.io/mediapipe/solutions/holistic#python-solution-api
-    def update(self, *args):
+    def update(self, data, frame):
         with self.solution.Holistic(
                 min_detection_confidence=0.7,
                 static_image_mode=True,
         ) as mp_lib:
-            return self.exec_detection(mp_lib)
-
-    def stream_detection(self):
-        with self.solution.Holistic(
-                min_detection_confidence=0.8,
-                min_tracking_confidence=0.5,
-                static_image_mode=False,
-        ) as mp_lib:
-            while self.stream.capture.isOpened():
-                data = self.exec_detection(mp_lib)
-                # do something with the data
-                if data is None:
-                    return None
+            return self.exec_detection(mp_lib), frame
 
     def empty_data(self):
         return [[[], []],  [[[]]], []]
@@ -88,12 +76,10 @@ class HolisticDetector(mp_detector_node.DetectorNode):
 if __name__ == '__main__':
     detection_type = "image"
     detector = HolisticDetector(cv_stream.Stream(0))
-
-    if detection_type == "image":
-        for _ in range(15):
-            detector.update()
-    else:
-        detector.stream_detection()
+    frame = 0
+    for _ in range(15):
+        frame += 1
+        detector.update(None, frame)
 
     del detector
 # endregion

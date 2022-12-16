@@ -15,12 +15,21 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 import src.cgt_core.cgt_bpy.cgt_collection
-from ..cgt_bpy import objects
+from src.cgt_core.cgt_bpy import objects
 from src.cgt_core.cgt_naming import HAND, COLLECTIONS
-from . import bpy_bridge_interface
+from src.cgt_core.cgt_bridge import bpy_bridge_interface
 
 
 class BpyHandBridge(bpy_bridge_interface.BpyInstanceProvider):
+
+
+    fingers = [
+        [1, 5],  # thumb
+        [5, 9],  # index finger
+        [9, 13],  # middle finger
+        [13, 17],  # ring finger
+        [17, 21],  # pinky
+    ]
     references = {
         # receiver objects
         0:  HAND.wrist,
@@ -67,15 +76,6 @@ class BpyHandBridge(bpy_bridge_interface.BpyInstanceProvider):
         39: HAND.driver_pinky_dip,
         40: HAND.driver_pinky_tip,
     }
-
-    fingers = [
-        [1, 5],  # thumb
-        [5, 9],  # index finger
-        [9, 13],  # middle finger
-        [13, 17],  # ring finger
-        [17, 21],  # pinky
-    ]
-
     # hands
     left_hand = []
     right_hand = []
