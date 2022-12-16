@@ -1,8 +1,7 @@
-from . import cgt_core_panel, cgt_core_props
+from . import cgt_mp_interface
 
 classes = [
-    cgt_core_panel,
-    cgt_core_props,
+    cgt_mp_interface
 ]
 
 

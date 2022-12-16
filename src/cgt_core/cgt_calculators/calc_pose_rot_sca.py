@@ -18,12 +18,12 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import numpy as np
 from mathutils import Euler
 
-from . import processor_interface
-from src.cgt_core.cgt_bridge import bpy_pose_bridge
+from . import calc_utils
 from ..cgt_utils import cgt_math
+from ..cgt_patterns import cgt_nodes
 
 
-class PoseProcessor(processor_interface.MediapipeDataProcessor):
+class PoseRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils):
     arms = [
         [12, 17],  # right arm
         [11, 16]  # left arm
@@ -40,43 +40,36 @@ class PoseProcessor(processor_interface.MediapipeDataProcessor):
     rotation_data = []
     scale_data = []
 
-    def __init__(self, bridge=bpy_pose_bridge.BpyPoseBridge):
-        self.bridge = bridge
+    def __init__(self):
+        self.shoulder_center = calc_utils.CustomData(51)
+        self.hip_center = calc_utils.CustomData(52)
 
-    # def init_references(self):
-    #     """ Create references for mapping. """
-    #     self.bridge = self.bridge("POSE")
-    #     _pose, self.shoulder_center, self.hip_center = self.bridge.get_instances()
+    def update(self, data):
+        """ Apply the processed data to references. """
+        if not data:
+            return [], [], []
+        self.data = data
 
-    def init_data(self):
-        """ Init and process the input data. """
+        # increase the data size to hold custom data (check __init__)
+        for i in range(2):
+            self.data.append([51+i, [0., 0., 0.]])
+
         self.rotation_data = []
         self.scale_data = []
+
         self.prepare_landmarks()
         self.shoulder_hip_location()
         self.set_hip_as_origin()
-        self.shoulder_hip_rotation()
+        try:
+            self.shoulder_hip_rotation()
+        except AttributeError:
+            # TODO: only supports bpy
+            pass
         self.average_rig_scale()
 
-    def init_print(self):
-        """ processed printing doesnt support mathutils rotation functions. """
-        self.scale_data = []
-        self.prepare_landmarks()
-        self.shoulder_hip_location()
-        self.average_rig_scale()
-
-    def update(self):
-        """ Apply the processed data to references. """
         if self.has_duplicated_results(self.data, "pose"):
-            return
-
-        self.bridge.set_position(self.data, self.frame)
-        self.bridge.set_rotation(self.rotation_data, self.frame)
-        self.bridge.set_scale(self.scale_data, self.frame)
-
-    def get_processed_data(self):
-        """ Returns the processed data """
-        return self.data, self.rotation_data, self.scale_data, self.frame, self.has_duplicated_results(self.data)
+            return [], [], []
+        return self.data, self.rotation_data, self.scale_data
 
     def average_rig_scale(self):
         """ Get arm and leg chain lengths as those may vary each frame. """

@@ -29,7 +29,7 @@ class PoseDetector(mp_detector_node.DetectorNode):
         self.solution = mp.solutions.pose
 
     # https://google.github.io/mediapipe/solutions/pose#python-solution-api
-    def update(self):
+    def update(self, *args):
         # BlazePose GHUM 3D
         with self.solution.Pose(
                 static_image_mode=True,
@@ -54,7 +54,7 @@ class PoseDetector(mp_detector_node.DetectorNode):
         return self.cvt2landmark_array(mp_res.pose_world_landmarks)
 
     def empty_data(self):
-        return [[]]
+        return []
 
     def contains_features(self, mp_res):
         if not mp_res.pose_world_landmarks:
@@ -71,10 +71,13 @@ class PoseDetector(mp_detector_node.DetectorNode):
 
 # region manual tests
 if __name__ == '__main__':
+    from . import cv_stream
+    from ...cgt_core.cgt_calculators import calc_pose_rot_sca
     detector = PoseDetector(cv_stream.Stream(0))
-
+    calc = calc_pose_rot_sca.PoseRotationCalculator()
     for _ in range(50):
         data = detector.update()
+        data = calc.update(data)
         print(data)
 
     del detector

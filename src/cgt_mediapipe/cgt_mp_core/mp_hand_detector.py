@@ -30,7 +30,7 @@ class HandDetector(DetectorNode):
 
     # https://google.github.io/mediapipe/solutions/hands#python-solution-api
     @cgt_timers.fps
-    def update(self):
+    def update(self, *args):
         with self.solution.Hands(
                 static_image_mode=True,
                 max_num_hands=2,

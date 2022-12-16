@@ -28,8 +28,8 @@ class ServerResultsProcessor(object):
     def init_bridge(self, data_type: str):
         """ Initializes bridge to blender """
         if data_type == 'HOLISTIC':
-            _processor = [hand_processing.HandRotationCalculator(), face_processing.FaceProcessor(),
-                          pose_processing.PoseProcessor()]
+            _processor = [hand_processing.HandRotationCalculator(), face_processing.FaceRotationcalculator(),
+                          pose_processing.PoseRotationCalculator()]
             _listener = events.UpdateListener()
             _observer = events.HolisticBpyUpdateReceiver(_processor)
             self.data_observer = _observer
@@ -39,8 +39,8 @@ class ServerResultsProcessor(object):
 
         processors = {
             'HANDS': hand_processing.HandRotationCalculator,
-            'FACE':  face_processing.FaceProcessor,
-            'POSE':  pose_processing.PoseProcessor
+            'FACE':  face_processing.FaceRotationcalculator,
+            'POSE':  pose_processing.PoseRotationCalculator
         }
 
         _processor = processors[data_type]()

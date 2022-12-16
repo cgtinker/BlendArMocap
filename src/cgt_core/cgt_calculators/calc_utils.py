@@ -17,12 +17,21 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 import numpy as np
 from mathutils import Euler
-from src.cgt_core.cgt_utils import cgt_math
+from ..cgt_utils import cgt_math
+
+
+class CustomData:
+    idx = None
+    loc = None
+    rot = None
+    sca = None
+
+    def __init__(self, idx):
+        self.idx = idx
 
 
 class ProcessorUtils:
     data = None
-
     # array for comparison, as noise is present every frame values should change
     frame = 0
     prev_rotation = {}

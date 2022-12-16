@@ -23,7 +23,7 @@ import sys
 from importlib import machinery
 from collections import namedtuple
 from pathlib import Path
-from src.cgt_core import cgt_naming
+from ..cgt_core import cgt_naming
 import warnings
 import bpy.app
 

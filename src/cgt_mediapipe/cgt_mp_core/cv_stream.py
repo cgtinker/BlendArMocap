@@ -32,7 +32,7 @@ class Stream:
         'bgr': cv2.COLOR_RGB2BGR
     }
 
-    def __init__(self, capture_input: Union[str, int] = None, title: str = "Stream Detection",
+    def __init__(self, capture_input: Union[str, int], title: str = "Stream Detection",
                  width: int = 640, height: int = 480, backend: int = 0):
         """ Generates a video stream for webcam or opens a movie file using cv2 """
         # improved backend for windows

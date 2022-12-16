@@ -110,10 +110,12 @@ class FaceDetector(DetectorNode):
 # region manual tests
 if __name__ == '__main__':
     from . import cv_stream
+    from ...cgt_core.cgt_calculators import calc_face_rot_sca
     detector = FaceDetector(cv_stream.Stream(0))
-
+    calc = calc_face_rot_sca.FaceRotationcalculator()
     for _ in range(50):
         data = detector.update()
+        data = calc.update(data)
         print(data)
 
     del detector

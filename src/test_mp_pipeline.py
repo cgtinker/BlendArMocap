@@ -51,21 +51,6 @@ class NodeChain(Node):
         """ Adds nodes in the chain, order does matter. """
         self.nodes.append(node)
 
-
-subtree = NodeChain()
-subtree.add_node(CalculatorNode())
-subtree.add_node(CalculatorNode())
-subtree.add_node(OutputNode())
-
-tree = NodeChain()
-tree.add_node(InputNode())
-tree.add_node(ReshapeNode())
-tree.add_node(subtree)
-tree.add_node(CalculatorNode())
-tree.add_node(OutputNode())
-
-while True:
-    active = tree.update(0)
-    if not active:
-        break
-
+import bpy
+a = bpy.app.version
+print(a)

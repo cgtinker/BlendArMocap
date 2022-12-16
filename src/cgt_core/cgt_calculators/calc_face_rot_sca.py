@@ -18,12 +18,12 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import numpy as np
 from mathutils import Euler
 
-from .processor_interface import ProcessorUtils
+from .calc_utils import ProcessorUtils, CustomData
 from ..cgt_utils import cgt_math
 from ..cgt_patterns import cgt_nodes
 
 
-class FaceProcessor(cgt_nodes.CalculatorNode, ProcessorUtils):
+class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
     # used to assign custom data
     _mouth_driver = None
     _mouth_corner_driver = None
@@ -34,48 +34,34 @@ class FaceProcessor(cgt_nodes.CalculatorNode, ProcessorUtils):
     eyebrow_L = None
     eyebrow_R = None
 
-    frame = 0
-
     # processed results
     rotation_data, driver_scale_data = None, None
+
     def __init__(self):
-        pass
+        # increase shape to add specific driver data (maybe not required for the face)
+        custom_data_arr = [CustomData(idx) for idx in range(478, 478+8)]
+        self.pivot, self._mouth_driver, self._mouth_corner_driver, self.eye_driver_L = custom_data_arr[:-4]
+        self.eye_driver_R, self.chin_driver, self.eyebrow_L, self.eyebrow_R = custom_data_arr[4:]
 
-    # def init_references(self):
-    #     """ Generates objects for mapping. """
-    #     self.bridge = self.bridge("FACE")
-    #     _face, custom_data_arr = self.bridge.get_instances()
-    #     # split only for readability
-    #     self.pivot, self._mouth_driver, self._mouth_corner_driver, self.eye_driver_L, = custom_data_arr[:-4]
-    #     self.eye_driver_R, self.chin_driver, self.eyebrow_L, self.eyebrow_R = custom_data_arr[4:]
-
-    def init_data(self):
+    def update(self, data):
         """ Process the landmark detection results. """
+        """ Assign the data processed data to references. """
         # remove nesting and set landmarks to custom origin
-        self.data = self.data[0]
+        if len(data[0][0]) == 0:
+            return [], [], []
+
+        self.data = data[0]
+        # increase the data size to hold custom data (check __init__)
+        for i in range(8):
+            self.data.append([478+i, [0., 0., 0.]])
         self.custom_landmark_origin()
 
         # get distances and rotations to determine movements
         self.set_scale_driver_data()
         self.set_rotation_driver_data()
-
-    def init_print(self):
-        """ processed printing doesnt support mathutils rotation functions. """
-        print("FACE", self.data)
-        self.data = self.data[0]
-        self.custom_landmark_origin()
-
-        # get distances and rotations to determine movements
-        self.set_scale_driver_data()
-
-    def update(self):
-        """ Assign the data processed data to references. """
         if self.has_duplicated_results(self.data, "face"):
-            return
-
-        self.bridge.set_position(self.data, self.frame)
-        self.bridge.set_rotation(self.rotation_data, self.frame)
-        self.bridge.set_scale(self.driver_scale_data, self.frame)
+            return [], [], []
+        return self.data, self.rotation_data, self.driver_scale_data
 
     def get_processed_data(self):
         """ Returns the processed data """
@@ -164,7 +150,12 @@ class FaceProcessor(cgt_nodes.CalculatorNode, ProcessorUtils):
         self.chin_rotation()
 
         # check previous rotation to avoid discontinuity
-        head_rotation = self.quart_to_euler_combat(self.pivot.rot, self.pivot.idx, axis='XZY')
+        try:
+            head_rotation = self.quart_to_euler_combat(self.pivot.rot, self.pivot.idx, axis='XZY')
+        except AttributeError:
+            # TODO: add warning, only bleder atm
+            head_rotation = [0, 0, 0]
+
         chin_rotation = self.chin_driver.rot
 
         # store rotation data
@@ -206,8 +197,13 @@ class FaceProcessor(cgt_nodes.CalculatorNode, ProcessorUtils):
         binormal = cgt_math.normalize(cgt_math.to_vector(origin, down_point))
 
         # generate matrix to decompose it and access quaternion rotation
-        matrix = cgt_math.generate_matrix(tangent, normal, binormal)
-        loc, quart, scale = cgt_math.decompose_matrix(matrix)
+        try:
+            matrix = cgt_math.generate_matrix(tangent, normal, binormal)
+            loc, quart, scale = cgt_math.decompose_matrix(matrix)
+        except TypeError:
+            # TODO: add warning, only workls in blender
+            quart = None
+            pass
         self.pivot.rot = quart
 
     # region cgt_utils

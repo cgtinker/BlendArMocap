@@ -63,8 +63,7 @@ class BpyFaceBridge(bpy_bridge_interface.BpyInstanceProvider):
                                                            [FACE.right_eyebrow, [-.05, 0, .1]]]]
 
         # init custom data objects
-        [self.init_bpy_driver_obj(
-            e[0], self.face, e[1], e[2], self.col_name, e[3], e[4]) for e in custom_data_array]
+        [self.init_bpy_driver_obj(e[0], self.face, e[1], e[2], self.col_name, e[3], e[4]) for e in custom_data_array]
         self.custom_data_arr = [custom_data[0] for custom_data in custom_data_array]
         # setting starting position for custom data isn't that pretty
         # data = [[e[0].idx, e[4]] for e in custom_data_array]

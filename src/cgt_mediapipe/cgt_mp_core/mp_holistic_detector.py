@@ -26,7 +26,7 @@ class HolisticDetector(mp_detector_node.DetectorNode):
         self.solution = mp.solutions.holistic
 
     # https://google.github.io/mediapipe/solutions/holistic#python-solution-api
-    def update(self):
+    def update(self, *args):
         with self.solution.Holistic(
                 min_detection_confidence=0.7,
                 static_image_mode=True,
@@ -46,7 +46,7 @@ class HolisticDetector(mp_detector_node.DetectorNode):
                     return None
 
     def empty_data(self):
-        return [[[], []], [[]], []]
+        return [[[], []],  [[[]]], []]
 
     def detected_data(self, mp_res):
         face, pose, l_hand, r_hand = [], [], [], []

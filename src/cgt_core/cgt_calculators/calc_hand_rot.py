@@ -16,12 +16,12 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 import logging
 import numpy as np
-from . import processor_interface
+from . import calc_utils
 from ..cgt_utils import cgt_math, cgt_timers
 from ..cgt_patterns import cgt_nodes
 
 
-class HandRotationCalculator(cgt_nodes.CalculatorNode, processor_interface.ProcessorUtils):
+class HandRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils):
     fingers = [
         [1, 5],  # thumb
         [5, 9],  # index finger
@@ -58,7 +58,6 @@ class HandRotationCalculator(cgt_nodes.CalculatorNode, processor_interface.Proce
         if right_hand_rot is not None:
             self.right_angles.append(right_hand_rot)
 
-    @cgt_timers.fps
     def update(self, data: np.ndarray):
         """ Returns processing results or empty lists. """
         locations = [[], []]

@@ -15,8 +15,6 @@ class DetectorNode(cgt_nodes.InputNode):
         self.drawing_utils = solutions.drawing_utils
         self.drawing_style = solutions.drawing_styles
 
-        self._observers = []
-
     @abstractmethod
     def update(self, *args):
         pass
@@ -68,7 +66,7 @@ class DetectorNode(cgt_nodes.InputNode):
             self.stream.draw()
             if self.stream.exit_stream():
                 return None
-            return [[], []]
+            return self.empty_data()
 
         # draw results
         self.draw_result(self.stream, mp_res, self.drawing_utils)
