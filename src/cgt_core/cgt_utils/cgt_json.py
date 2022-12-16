@@ -40,7 +40,7 @@ class JsonData(object):
     def save(self, path: str = None):
         assert path is not None
         with open(path, "w", encoding='utf-8') as jsonFile:
-            json.dump(self.__dict__, jsonFile, ensure_ascii=False, indent=4, separators=(',', ':'), sort_keys=True)
+            json.dump(self.__dict__, jsonFile, ensure_ascii=False, indent=4, separators=(',', ':'), sort_keys=False)
 
     def __str__(self):
         return f'{self.__dict__}'

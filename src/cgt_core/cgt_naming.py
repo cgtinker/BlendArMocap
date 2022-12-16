@@ -25,9 +25,11 @@ PACKAGE = os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(__fil
 logging.getLogger("BlendArMocap").debug(f"{PACKAGE}, {os.path.dirname(os.path.dirname(__file__))}")
 ADDON_NAME = "BlendArMocap"
 
-
 @dataclass(frozen=True, init=True)
 class COLLECTIONS:
+    """ TODO: Store all dataclasses as json in dicts - positions matter therefore this setup aint practical
+        todo: !!!
+        """
     drivers: str = "cgt_DRIVERS"
     hands: str = "cgt_HANDS"
     face: str = "cgt_FACE"
@@ -113,7 +115,7 @@ class HAND:
     ring_finger_pip: str = "cgt_ring_pip"
     ring_finger_dip: str = "cgt_ring_dip"
     ring_finger_tip: str = "cgt_ring_tip"
-    pinky_mcp: str = "cg: strt_pinky_mcp"
+    pinky_mcp: str = "cgt_pinky_mcp"
     pinky_pip: str = "cgt_pinky_pip"
     pinky_dip: str = "cgt_pinky_dip"
     pinky_tip: str = "cgt_pinky_tip"

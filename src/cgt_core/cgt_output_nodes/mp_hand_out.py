@@ -22,11 +22,12 @@ class CgtMPHandOutNode(bpy_out_utils.BpyOutputNode):
         left_hand_data, right_hand_data = data
         return [[self.left_hand, left_hand_data], [self.right_hand, right_hand_data]]
 
-    def update(self, *args):
-        loc, rot, sca, frame = args
+    def update(self, data, frame):
+        loc, rot, sca = data
         for data, method in zip([loc, rot, sca], [self.translate, self.euler_rotate, self.scale]):
             for hand, chunk in self.split(data):
                 try:
                     method(hand, chunk, frame)
                 except IndexError:
                     pass
+        return data, frame

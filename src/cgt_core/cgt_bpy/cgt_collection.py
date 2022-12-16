@@ -78,7 +78,7 @@ def _obj_to_collection(collection_name: str, obj: bpy.types.Object) -> bool:
     try:
         bpy.context.scene.collection.objects.unlink(obj)
         collection = bpy.data.collections.get(collection_name)
-        collection.cgt_bpy_utils.link(obj)
+        collection.objects.link(obj)
         return True
     except RuntimeError:
         return False

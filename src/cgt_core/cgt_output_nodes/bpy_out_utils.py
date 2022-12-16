@@ -21,7 +21,7 @@ from abc import abstractmethod
 
 import bpy.types
 
-from src.cgt_core.cgt_naming import COLLECTIONS
+from ..cgt_naming import COLLECTIONS
 from mathutils import Vector, Quaternion, Euler
 from ..cgt_patterns import cgt_nodes
 
@@ -38,7 +38,7 @@ class BpyOutputNode(cgt_nodes.OutputNode):
     prev_rotation = {}
 
     @abstractmethod
-    def update(self, data):
+    def update(self, data, frame):
         pass
 
     @staticmethod
@@ -75,7 +75,6 @@ class BpyOutputNode(cgt_nodes.OutputNode):
             logging.debug(f"missing quat_euler_rotate index {data}, {frame}")
             pass
 
-    @staticmethod
     def euler_rotate(self, target, data, frame, idx_offset=0):
         """ Translates and keyframes bpy empty objects. """
         try:

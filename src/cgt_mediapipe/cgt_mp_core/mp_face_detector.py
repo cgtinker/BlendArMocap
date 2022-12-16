@@ -103,7 +103,6 @@ if __name__ == '__main__':
         frame += 1
         data, frame = detector.update(None, frame)
         data, frame = calc.update(data, frame)
-        print(data)
 
     del detector
 # endregion

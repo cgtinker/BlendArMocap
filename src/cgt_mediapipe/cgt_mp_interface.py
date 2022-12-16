@@ -77,6 +77,7 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
 
     _timer: bpy.types.Timer = None
     node_chain: cgt_nodes.NodeChain = None
+    frame = key_step = 1
     user = None
 
     def get_chain(self, stream: cv_stream.Stream) -> cgt_nodes.NodeChain:
@@ -103,6 +104,7 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
         return node_chain
 
     def get_stream(self):
+        self.frame = bpy.context.scene.frame_current
         if self.user.detection_input_type == 'movie':
             mov_path = bpy.path.abspath(self.user.mov_data_path)
             logging.info(f"Path to mov: {mov_path}")
@@ -115,9 +117,9 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
 
         else:
             camera_index = self.user.webcam_input_device
+            self.key_step = self.user.key_frame_step
             # dimensions = self.user.enum_stream_dim
             # backend = int(self.user.enum_stream_type)
-            # key_step = self.user.key_frame_step
             stream = cv_stream.Stream(capture_input=camera_index, backend=0)
         return stream
 
@@ -128,6 +130,7 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
         # don't activate if modal is running
         if self.user.modal_active is True:
             self.user.modal_active = False
+            logging.info("Stopped detection as modal has been active.")
             return {'FINISHED'}
         else:
             self.user.modal_active = True
@@ -150,10 +153,12 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
     def modal(self, context, event):
         """ Run detection as modal operation, finish with 'Q', 'ESC' or 'RIGHT MOUSE'. """
         if event.type == "TIMER":
-            data = self.node_chain.update(0, 0)
+            data, _ = self.node_chain.update([], self.frame)
+            self.frame += self.key_step
             if data is not None:
                 return {'PASS_THROUGH'}
             else:
+                logging.debug("Data is None, finish detection.")
                 return self.cancel(context)
 
         if event.type in {'Q', 'ESC', 'RIGHT_MOUSE'} or self.user.modal_active is False:

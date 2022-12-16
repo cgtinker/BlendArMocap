@@ -69,15 +69,17 @@ class HandDetector(DetectorNode):
 
 
 if __name__ == '__main__':
+    import logging
     from ...cgt_core.cgt_calculators_nodes import calc_hand_rot
+    logging.getLogger().setLevel(logging.DEBUG)
 
+    # Get detector and premade chain
     detector = HandDetector(cv_stream.Stream(0))
     calc = calc_hand_rot.HandRotationCalculator()
-    frame = 0
+    frame, data = 0, []
     for _ in range(50):
         frame += 1
-        data, frame = detector.update(None, frame)
+        data, frame = detector.update(data, frame)
         data, frame = calc.update(data, frame)
-        print(data)
     del detector
 # endregion

@@ -80,7 +80,7 @@ class HandRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
     def finger_angles(self, hand):
         """ Get finger x-angles from landmarks. """
         if not hand:
-            return None
+            return []
 
         x_angles = self.get_x_angles(hand)
         z_angles = self.get_z_angles(hand)
@@ -201,7 +201,7 @@ class HandRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
         """ Calculates approximate hand rotation by generating
             a matrix using the palm as approximate triangle. """
         if hand == []:
-            return None
+            return []
 
         # default hand rotation for a rigify A-Pose rig,
         if orientation == "R":

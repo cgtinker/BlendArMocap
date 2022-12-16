@@ -7,7 +7,8 @@ class DefaultPanel:
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "BlendAR"
-    bl_options = {"DEFAULT_CLOSED"}  # "HEADER_LAYOUT_EXPAND"
+    # bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {"HEADER_LAYOUT_EXPAND"}
 
 
 class UI_PT_CGT_Panel(DefaultPanel, Panel):

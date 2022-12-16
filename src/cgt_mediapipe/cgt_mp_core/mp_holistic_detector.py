@@ -75,7 +75,9 @@ class HolisticDetector(mp_detector_node.DetectorNode):
 
 if __name__ == '__main__':
     detection_type = "image"
+    from src.cgt_core.cgt_patterns import cgt_nodes
     detector = HolisticDetector(cv_stream.Stream(0))
+
     frame = 0
     for _ in range(15):
         frame += 1

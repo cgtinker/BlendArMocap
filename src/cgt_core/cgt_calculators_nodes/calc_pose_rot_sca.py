@@ -46,6 +46,8 @@ class PoseRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
 
     def update(self, data, frame):
         """ Apply the processed data to references. """
+        print("D", data)
+        print("F", frame)
         if not data:
             return [[], [], []], frame
         self.data = data
