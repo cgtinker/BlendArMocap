@@ -15,15 +15,12 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from abc import ABC, abstractmethod
-from math import pi
 import numpy as np
 from mathutils import Euler
-
 from src.cgt_core.cgt_utils import cgt_math
 
 
-class MediapipeDataProcessor(ABC):
+class ProcessorUtils:
     data = None
 
     # array for comparison, as noise is present every frame values should change
@@ -31,42 +28,17 @@ class MediapipeDataProcessor(ABC):
     prev_rotation = {}
     prev_sum = [0.0, 0.0]
 
-    # region abstract methods
-    # @abstractmethod
-    # def init_references(self):
-    #     """ initialize reference objects for mapping. """
-    #     pass
-
-    @abstractmethod
-    def init_data(self):
-        """ setup data before assignment. """
-        pass
-
-    @abstractmethod
-    def init_print(self):
-        """ mainly for printing processed data. (ignoring bpy mathutils). """
-        pass
-
-    @abstractmethod
-    def update(self):
-        """ updates every mp solution received. """
-        pass
-    # endregion
-
-    # region duplicates
     def has_duplicated_results(self, data=None, detector_type=None, idx=0):
         """ Sums data array values and compares them each frame to avoid duplicated values
             in the timeline. This fixes duplicated frame issue mainly occurring on Windows. """
         summed = np.sum([v[1] for v in data[:21]])
         if summed == self.prev_sum[idx]:
-            print("skipping duplicate keyframe", self.frame, detector_type)
+            # print("skipping duplicate keyframe", self.frame, detector_type)
             return True
 
         self.prev_sum[idx] = summed
         return False
-    # endregion
 
-    # region bpy object oriented
     def quart_to_euler_combat(self, quart, idx, idx_offset=0, axis='XYZ'):
         """ Converts quart to euler rotation while comparing with previous rotation. """
         if len(self.prev_rotation) > 0:
@@ -83,9 +55,9 @@ class MediapipeDataProcessor(ABC):
     def offset_euler(euler, offset: []):
         """ Offsets an euler rotation using euler radians *pi. """
         rotation = Euler((
-            euler[0] + pi * offset[0],
-            euler[1] + pi * offset[1],
-            euler[2] + pi * offset[2],
+            euler[0] + np.pi * offset[0],
+            euler[1] + np.pi * offset[1],
+            euler[2] + np.pi * offset[2],
         ))
         return rotation
 
@@ -112,4 +84,3 @@ class MediapipeDataProcessor(ABC):
             m_rot = cgt_math.to_euler(quart_rotation)
 
         return self.offset_euler(m_rot, offset)
-    # endregion

@@ -74,7 +74,7 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
     def modal(self, context, event):
         """ Run detection as modal operation, finish with 'Q', 'ESC' or 'RIGHT MOUSE'. """
         if event.type == "TIMER":
-            running = self.detection_handler.realtime_data_provider.get_data()
+            running = self.detection_handler.realtime_data_provider.update()
             if running:
                 return {'PASS_THROUGH'}
             else:

@@ -1,7 +1,7 @@
 from .json_parser import JsonParser
 from src.cgt_core.cgt_patterns import events, observer_pattern
-from src.cgt_core.cgt_processing import hand_processing, face_processing
-from src.cgt_core.cgt_processing import pose_processing, processor_interface
+from src.cgt_core.cgt_calculators import hand_processing, face_processing
+from src.cgt_core.cgt_calculators import pose_processing, processor_interface
 
 
 class ServerResultsProcessor(object):
@@ -28,7 +28,7 @@ class ServerResultsProcessor(object):
     def init_bridge(self, data_type: str):
         """ Initializes bridge to blender """
         if data_type == 'HOLISTIC':
-            _processor = [hand_processing.HandProcessor(), face_processing.FaceProcessor(),
+            _processor = [hand_processing.HandRotationCalculator(), face_processing.FaceProcessor(),
                           pose_processing.PoseProcessor()]
             _listener = events.UpdateListener()
             _observer = events.HolisticBpyUpdateReceiver(_processor)
@@ -38,7 +38,7 @@ class ServerResultsProcessor(object):
             return True
 
         processors = {
-            'HANDS': hand_processing.HandProcessor,
+            'HANDS': hand_processing.HandRotationCalculator,
             'FACE':  face_processing.FaceProcessor,
             'POSE':  pose_processing.PoseProcessor
         }

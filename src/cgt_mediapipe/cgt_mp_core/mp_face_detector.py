@@ -16,20 +16,19 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import mediapipe as mp
-
-from .mediapipe_detector import MediapipeDetector
+from .mp_detector_node import DetectorNode
 from typing import Mapping, Tuple
 from mediapipe.python.solutions import face_mesh_connections
 from mediapipe.python.solutions.drawing_utils import DrawingSpec
 
 
-class FaceDetector(MediapipeDetector):
+class FaceDetector(DetectorNode):
     def __init__(self, *args, **kwargs):
-        MediapipeDetector.__init__(self, *args, **kwargs)
+        DetectorNode.__init__(self, *args, **kwargs)
         self.solution = mp.solutions.face_mesh
 
     # https://google.github.io/mediapipe/solutions/face_mesh#python-solution-api
-    def get_data(self):
+    def update(self, *args):
         with self.solution.FaceMesh(
                 max_num_faces=1,
                 static_image_mode=False,
@@ -37,6 +36,7 @@ class FaceDetector(MediapipeDetector):
                 min_detection_confidence=0.7) as mp_lib:
             return self.exec_detection(mp_lib)
 
+    # depreciated
     def stream_detection(self):
         with self.solution.FaceMesh(
                 max_num_faces=1,
@@ -50,7 +50,10 @@ class FaceDetector(MediapipeDetector):
                 if state == {'CANCELLED'}:
                     return {'CANCELLED'}
 
-    def get_detection_results(self, mp_res):
+    def empty_data(self):
+        return [[[]]]
+
+    def detected_data(self, mp_res):
         return [self.cvt2landmark_array(landmark) for landmark in mp_res.multi_face_landmarks]
 
     def contains_features(self, mp_res):
@@ -107,16 +110,11 @@ class FaceDetector(MediapipeDetector):
 # region manual tests
 if __name__ == '__main__':
     from . import cv_stream
-    detection_type = 'image'
-    # detector = init_detector_manually("PROCESSED")
-    detector = FaceDetector()
-    detector.stream = cv_stream.Stream()
+    detector = FaceDetector(cv_stream.Stream(0))
 
-    if detection_type == "image":
-        for _ in range(50):
-            detector.get_data()
-    else:
-        detector.stream_detection()
+    for _ in range(50):
+        data = detector.update()
+        print(data)
 
     del detector
 # endregion

@@ -17,13 +17,16 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 import mediapipe as mp
 
-from src.cgt_mediapipe.cgt_mp_core import stream
-from src.cgt_core import realtime_data_provider_interface
+from . import cv_stream, mp_detector_node
 
 
-class HolisticDetector(realtime_data_provider_interface.RealtimeDataProvider):
+class HolisticDetector(mp_detector_node.DetectorNode):
+    def __init__(self, *args, **kwargs):
+        mp_detector_node.DetectorNode.__init__(self, *args, **kwargs)
+        self.solution = mp.solutions.holistic
+
     # https://google.github.io/mediapipe/solutions/holistic#python-solution-api
-    def frame_detection_data(self):
+    def update(self):
         with self.solution.Holistic(
                 min_detection_confidence=0.7,
                 static_image_mode=True,
@@ -37,15 +40,15 @@ class HolisticDetector(realtime_data_provider_interface.RealtimeDataProvider):
                 static_image_mode=False,
         ) as mp_lib:
             while self.stream.capture.isOpened():
-                state = self.exec_detection(mp_lib)
-                if state == {'CANCELLED'}:
-                    return {'CANCELLED'}
+                data = self.exec_detection(mp_lib)
+                # do something with the data
+                if data is None:
+                    return None
 
-    def initialize_model(self):
-        self.solution = mp.solutions.holistic
+    def empty_data(self):
+        return [[[], []], [[]], []]
 
-    def get_detection_results(self, mp_res):
-        # TODO - eval init
+    def detected_data(self, mp_res):
         face, pose, l_hand, r_hand = [], [], [], []
         if mp_res.pose_landmarks:
             pose = self.cvt2landmark_array(mp_res.pose_landmarks)
@@ -82,37 +85,13 @@ class HolisticDetector(realtime_data_provider_interface.RealtimeDataProvider):
             s.frame, mp_res.right_hand_landmarks, self.solution.HAND_CONNECTIONS)
 
 
-# region manual tests
-def init_detector_manually(processor_type: str = "RAW"):
-    m_detector = HolisticDetector()
-    m_detector.stream = stream.Stream()
-    m_detector.initialize_model()
-
-    from ..cgt_patterns import events
-    if processor_type == "RAW":
-        m_detector.observer = events.PrintRawDataUpdate()
-    else:
-        from ..cgt_bridge import print_bridge
-        from ..cgt_processing import hand_processing, face_processing, pose_processing
-        bridge = print_bridge.PrintBridge
-        hand_processor = hand_processing.HandProcessor(bridge)
-        face_processor = face_processing.FaceProcessor(bridge)
-        pose_processor = pose_processing.PoseProcessor(bridge)
-        m_detector.observer = events.HolisticDriverDebug([hand_processor, face_processor, pose_processor])
-
-    m_detector.listener = events.UpdateListener()
-    m_detector.listener.attach(m_detector.observer)
-    return m_detector
-
-
 if __name__ == '__main__':
     detection_type = "image"
-
-    detector = init_detector_manually("PROCESSED")
+    detector = HolisticDetector(cv_stream.Stream(0))
 
     if detection_type == "image":
         for _ in range(15):
-            detector.frame_detection_data()
+            detector.update()
     else:
         detector.stream_detection()
 

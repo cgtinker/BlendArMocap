@@ -178,7 +178,7 @@ class TestMathutils(unittest.TestCase):
     def test_matrix3x3_2quat(self):
         m = np.matrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
         q = [-1, 0, 0, 0]
-        self.assertEqual(matrix3x3_2quat(m), q)
+        self.assertEqual(matrix3x3_to_quaternion(m), q)
 
     def lists_almost_equals(self, l1, l2):
         for a, b in zip(l1, l2):

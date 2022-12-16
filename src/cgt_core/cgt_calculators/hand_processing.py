@@ -14,18 +14,14 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
-
-from math import degrees
-
+import logging
 import numpy as np
-from mathutils import Euler # noqa
-
 from . import processor_interface
-from src.cgt_core.cgt_bridge import bpy_hand_bridge
-from ..cgt_utils import cgt_math
+from ..cgt_utils import cgt_math, cgt_timers
+from ..cgt_patterns import cgt_nodes
 
 
-class HandProcessor(processor_interface.MediapipeDataProcessor):
+class HandRotationCalculator(cgt_nodes.CalculatorNode, processor_interface.ProcessorUtils):
     fingers = [
         [1, 5],  # thumb
         [5, 9],  # index finger
@@ -34,32 +30,19 @@ class HandProcessor(processor_interface.MediapipeDataProcessor):
         [17, 21],  # pinky
     ]
 
-    # for printing
-    max_values = [-155] * 20
-    min_values = [155] * 20
+    data: np.ndarray = None
 
-    #  position and joint angle
-    left_hand_data, right_hand_data = None, None
-    left_angles, right_angles = None, None
+    left_hand_data: np.ndarray = None
+    right_hand_data: np.ndarray = None
 
-    # bridge to blender engine
-    bridge = None
-    frame = 0
+    left_angles: list = None
+    right_angles: list = None
 
-    # def __init__(self, bridge=bpy_hand_bridge.BpyHandBridge):
-    #     self.bridge = bridge
-
-    # def init_references(self):
-    #     """ Generates objects for mapping. """
-    #     self.bridge = self.bridge("HAND")
-
-    def set_data(self, data):
-        self.data = data
+    left_scale: np.ndarray = None
+    right_scale: np.ndarray = None
 
     def init_data(self):
         """ Process and map received data from mediapipe before key-framing. """
-        # prepare landmarks
-        # TODO: check for holistic hand input (left / right) hand - consider to preprocess
         self.left_hand_data = self.set_global_origin(self.data[0])
         self.right_hand_data = self.set_global_origin(self.data[1])
 
@@ -71,20 +54,18 @@ class HandProcessor(processor_interface.MediapipeDataProcessor):
         left_hand_rot = self.global_hand_rotation(self.left_hand_data, 0, "L")
         if left_hand_rot is not None:
             self.left_angles.append(left_hand_rot)
-
         right_hand_rot = self.global_hand_rotation(self.right_hand_data, 100, "R")  # offset for euler combat
         if right_hand_rot is not None:
             self.right_angles.append(right_hand_rot)
 
-    def init_print(self):
-        """ processed printing doesnt support mathutils rotation functions. """
-        self.left_hand_data = self.set_global_origin(self.data[0])
-        self.right_hand_data = self.set_global_origin(self.data[1])
-
-    def update(self):
-        """ Applies gathered data to references. """
+    @cgt_timers.fps
+    def update(self, data: np.ndarray):
+        """ Returns processing results or empty lists. """
         locations = [[], []]
         angles = [[], []]
+
+        self.data = data
+        self.init_data()
         if self.right_hand_data is not None:
             if not self.has_duplicated_results(self.right_hand_data, "hand", 0):
                 locations[1] = self.right_hand_data
@@ -95,19 +76,11 @@ class HandProcessor(processor_interface.MediapipeDataProcessor):
                 locations[0] = self.left_hand_data
                 angles[0] = self.left_angles
 
-        self.bridge.set_position(locations, self.frame)
-        self.bridge.set_rotation(angles, self.frame)
-
-    def get_processed_data(self):
-        """ Returns the processed data """
-        position_data = [self.left_hand_data, self.right_hand_data]
-        rotation_data = [self.left_angles, self.right_angles]
-        scale_data = None
-        return position_data, rotation_data, scale_data, self.frame, self.has_duplicated_results(self.data)
+        return locations, angles, [[]], self.frame
 
     def finger_angles(self, hand):
         """ Get finger x-angles from landmarks. """
-        if hand == []:
+        if not hand:
             return None
 
         x_angles = self.get_x_angles(hand)
@@ -116,29 +89,10 @@ class HandProcessor(processor_interface.MediapipeDataProcessor):
         data = []
         for idx in range(0, 20):
             if x_angles[idx] != 0 or z_angles[idx] != 0:
-                joint_angle = [idx, Euler((x_angles[idx], 0, z_angles[idx]))]
+                joint_angle = [idx, np.array([x_angles[idx], 0, z_angles[idx]])]
                 data.append(joint_angle)
 
-        # self.print_angle_matrix(z_angles)
         return data
-
-    def print_angle_matrix(self, angles):
-        """ Prints the finger angles and their min and max values during a session
-            helps to find proper mapping values """
-        deg = [degrees(d) for d in angles]
-
-        # current
-        for finger in self.fingers:
-            cu = [[idx, self.min_values[idx], deg[idx], self.max_values[idx]] for idx in
-                  range(finger[0], finger[1] - 1)]
-            print(cu)
-
-        # min max values
-        for idx, d in enumerate(deg):
-            if d > self.max_values[idx]:
-                self.max_values[idx] = d
-            if d < self.min_values[idx]:
-                self.min_values[idx] = d
 
     def get_z_angles(self, hand):
         """ Project finger mcps on a vector between index and pinky mcp.
@@ -244,7 +198,7 @@ class HandProcessor(processor_interface.MediapipeDataProcessor):
 
         return data
 
-    def global_hand_rotation(self, hand, combat_idx_offset=0, orientation="R"):
+    def global_hand_rotation(self, hand, combat_idx_offset: int = 0, orientation: str = "R"):
         """ Calculates approximate hand rotation by generating
             a matrix using the palm as approximate triangle. """
         if hand == []:
@@ -271,17 +225,22 @@ class HandProcessor(processor_interface.MediapipeDataProcessor):
         normal = cgt_math.normalize(np.cross(binormal, tangent))
 
         # rotation from matrix
-        matrix = cgt_math.generate_matrix(normal, tangent, binormal)
-        loc, quart, sca = cgt_math.decompose_matrix(matrix)
-        euler = self.try_get_euler(quart, offset=[0, 0, 0], prev_rot_idx=combat_idx_offset)
-        hand_rotation = ([0, euler])
+        try:
+            matrix = cgt_math.generate_matrix(normal, tangent, binormal)
+            loc, quart, sca = cgt_math.decompose_matrix(matrix)
+            euler = self.try_get_euler(quart, offset=[0, 0, 0], prev_rot_idx=combat_idx_offset)
+            hand_rotation = ([0, euler])
+        except TypeError:
+            # TODO: reactivate
+            # logging.warning("Mathutils are only support in Blender, switch decomposition tag")
+            hand_rotation = ()
+
         return hand_rotation
 
-    def landmarks_to_hands(self, left_hand, right_hand): # hand_data):
+    def landmarks_to_hands(self, left_hand, right_hand):
         """ Determines to which hand the landmark data belongs """
         left_hand = self.set_global_origin(left_hand)
         right_hand = self.set_global_origin(right_hand)
-
         return left_hand, right_hand
 
     @staticmethod
@@ -290,7 +249,9 @@ class HandProcessor(processor_interface.MediapipeDataProcessor):
             Changes the x-y-z order to match blenders coordinate system. """
         if data is None or len(data) == 0:
             return data
+
         if len(data) > 0:
             data = [[idx, np.array([-landmark[0], landmark[2], -landmark[1]])] for idx, landmark in data[0]]
             data = [[idx, landmark - data[0][1]] for idx, landmark in data]
+
         return data

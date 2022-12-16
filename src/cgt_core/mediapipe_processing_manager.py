@@ -23,8 +23,8 @@ from src.cgt_freemocap import fm_session_loader
 from src.cgt_core.cgt_patterns import events
 from src.cgt_core.cgt_bridge import bpy_hand_bridge, bpy_pose_bridge, bpy_bridge_interface, print_bridge
 from src.cgt_core.cgt_bridge import bpy_face_bridge
-from src.cgt_core.cgt_processing import hand_processing, face_processing
-from src.cgt_core.cgt_processing import pose_processing, processor_interface
+from src.cgt_core.cgt_calculators import hand_processing, face_processing
+from src.cgt_core.cgt_calculators import pose_processing, processor_interface
 
 
 class RealtimeDataProcessingManager:
@@ -54,11 +54,11 @@ class RealtimeDataProcessingManager:
 
     # process mediapipe data and add 3D rotations
     processor_types = {
-        "HAND":      hand_processing.HandProcessor,
+        "HAND":      hand_processing.HandRotationCalculator,
         "POSE":      pose_processing.PoseProcessor,
         "FACE":      face_processing.FaceProcessor,
-        "HOLISTIC":  [hand_processing.HandProcessor, face_processing.FaceProcessor, pose_processing.PoseProcessor],
-        "FREEMOCAP": [hand_processing.HandProcessor, face_processing.FaceProcessor, pose_processing.PoseProcessor],
+        "HOLISTIC":  [hand_processing.HandRotationCalculator, face_processing.FaceProcessor, pose_processing.PoseProcessor],
+        "FREEMOCAP": [hand_processing.HandRotationCalculator, face_processing.FaceProcessor, pose_processing.PoseProcessor],
     }
 
     # mapping options to pipe processed results
@@ -173,7 +173,7 @@ def main():
     handler.init_bridge()
 
     for _ in range(15):
-        handler.realtime_data_provider.get_data()
+        handler.realtime_data_provider.update()
 
     del handler
 

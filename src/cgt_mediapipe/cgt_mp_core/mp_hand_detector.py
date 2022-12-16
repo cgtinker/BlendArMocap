@@ -18,13 +18,19 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import mediapipe as mp
 from mediapipe.framework.formats import classification_pb2
 
-from src.cgt_mediapipe.cgt_mp_core import stream
-from src.cgt_core import realtime_data_provider_interface
+from .mp_detector_node import DetectorNode
+from . import cv_stream
+from ...cgt_core.cgt_utils import cgt_timers
 
 
-class HandDetector(realtime_data_provider_interface.RealtimeDataProvider):
+class HandDetector(DetectorNode):
+    def __init__(self, *args, **kwargs):
+        DetectorNode.__init__(self, *args, **kwargs)
+        self.solution = mp.solutions.hands
+
     # https://google.github.io/mediapipe/solutions/hands#python-solution-api
-    def frame_detection_data(self):
+    @cgt_timers.fps
+    def update(self):
         with self.solution.Hands(
                 static_image_mode=True,
                 max_num_hands=2,
@@ -41,24 +47,25 @@ class HandDetector(realtime_data_provider_interface.RealtimeDataProvider):
             while self.stream.capture.isOpened():
                 return self.exec_detection(mp_lib)
 
-    def initialize_model(self):
-        self.solution = mp.solutions.hands
-
-    def seperate_hands(self, hand_data):
+    @staticmethod
+    def separate_hands(hand_data):
         left_hand = [data[0] for data in hand_data if data[1][1] is False]
         right_hand = [data[0] for data in hand_data if data[1][1] is True]
         return left_hand, right_hand
 
-    def cvt_hand_orientation(self, orientation: classification_pb2):
+    @staticmethod
+    def cvt_hand_orientation(orientation: classification_pb2):
         if not orientation:
             return None
 
         return [[idx, "Right" in str(o)] for idx, o in enumerate(orientation)]
 
-    def get_detection_results(self, mp_res):
+    def empty_data(self):
+        return [[], []]
+
+    def detected_data(self, mp_res):
         data = [self.cvt2landmark_array(hand) for hand in mp_res.multi_hand_world_landmarks]
-        # multi_hand_world_landmarks // multi_hand_landmarks
-        left_hand_data, right_hand_data = self.seperate_hands(
+        left_hand_data, right_hand_data = self.separate_hands(
             list(zip(data, self.cvt_hand_orientation(mp_res.multi_handedness))))
         return left_hand_data, right_hand_data
 
@@ -72,36 +79,14 @@ class HandDetector(realtime_data_provider_interface.RealtimeDataProvider):
             mp_drawings.draw_landmarks(s.frame, hand, self.solution.HAND_CONNECTIONS)
 
 
-# region manual tests
-def init_detector_manually(processor_type: str = "RAW"):
-    m_detector = HandDetector()
-    m_detector.stream = stream.Stream()
-    m_detector.initialize_model()
-
-    from ..cgt_patterns import events
-    if processor_type == "RAW":
-        m_detector.observer = events.PrintRawDataUpdate()
-    else:
-        from ..cgt_bridge import print_bridge
-        from ..cgt_processing import hand_processing
-        bridge = print_bridge.PrintBridge
-        target = hand_processing.HandProcessor(bridge)
-        m_detector.observer = events.DriverDebug(target)
-
-    m_detector.listener = events.UpdateListener()
-    m_detector.listener.attach(m_detector.observer)
-    return m_detector
-
-
 if __name__ == '__main__':
-    detection_type = "image"
-    detector = init_detector_manually("PROCESSED")
+    from ...cgt_core.cgt_calculators import hand_processing
 
-    if detection_type == "image":
-        for _ in range(50):
-            detector.frame_detection_data()
-    else:
-        detector.stream_detection()
+    detector = HandDetector(cv_stream.Stream(0))
+    calc = hand_processing.HandRotationCalculator()
+    for _ in range(50):
+        data = detector.update()
+        data = calc.update(data)
 
     del detector
 # endregion

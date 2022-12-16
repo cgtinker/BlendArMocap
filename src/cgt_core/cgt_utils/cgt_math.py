@@ -16,7 +16,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import numpy as np
-from mathutils import Euler, Matrix, Vector
+from mathutils import Euler, Matrix, Vector, Quaternion
 from math import radians
 
 
@@ -206,6 +206,8 @@ def get_closest_idx(target, points):
     distances = np.sum((points - target) ** 2, axis=1)
     # closest = points[np.argmin(distances)]
     return np.argmin(distances)
+
+
 # endregion
 
 
@@ -318,6 +320,8 @@ def create_circle_around_vector(vector, center, radius, points, normal=None):
     V = np.cross(Q, U)
     circle = circle_along_UV(center, U, V, radius, points)
     return circle
+
+
 # endregion
 
 
@@ -362,8 +366,8 @@ def rotate_point(point, axis, angle):
     Return the point location associated with counterclockwise rotation about
     the given axis by theta radians.
     """
-    theta = 2*np.pi/360
-    theta = theta*angle
+    theta = 2 * np.pi / 360
+    theta = theta * angle
     axis = axis / np.sqrt(np.dot(axis, axis))
     a = np.cos(theta / 2.0)
     b, c, d = -axis * np.sin(theta / 2.0)
@@ -374,6 +378,8 @@ def rotate_point(point, axis, angle):
                                 [2 * (bd + ac), 2 * (cd - ab), aa + dd - bb - cc]])
     loc = np.dot(rotation_matrix, point)
     return loc
+
+
 # endregion
 
 
@@ -381,13 +387,13 @@ def rotate_point(point, axis, angle):
 def distance_from_plane(point, normal, plane_point):
     """ returns the distance of a point to a plane using the normal
         of the plane and a random point from the plane """
-    d = np.sum(np.dot(point-plane_point, normal))
+    d = np.sum(np.dot(point - plane_point, normal))
     return d
 
 
 def normal_from_plane(plane):
     """ get the normal from a plane """
-    normal = np.cross(plane[1]-plane[0], plane[2]-plane[0])
+    normal = np.cross(plane[1] - plane[0], plane[2] - plane[0])
     return normal
 
 
@@ -410,7 +416,7 @@ def create_normal_array(vertices: np.array, faces: np.array):
 # endregion
 
 
-# region matrix
+# region mathutils stuff
 # http://renderdan.blogspot.com/2006/05/rotation-matrix-from-axis-vectors.html
 def generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
     """ returns matrix
@@ -425,19 +431,65 @@ def generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
     ))
 
 
-def decompose_matrix(matrix: Matrix):
+def decompose_matrix(matrix: Matrix) -> (Vector, Quaternion, Vector):
     """ returns loc, quaternion, scale """
     loc, quart, scale = matrix.decompose()
     quart.invert()
     return loc, quart, scale
 
 
-def to_euler(quart, combat=Euler(), space='XYZ', ):
+def to_euler(quart, combat=Euler(), space='XYZ') -> Euler:
     """ quaternion to euler using mathutils """
     euler = quart.to_euler(space, combat)
     return euler
 
 
+def quart_to_euler_combat(quart, idx, idx_offset=0, axis='XYZ', prev_rotation=None) -> Euler:
+    """ Converts quart to euler rotation while comparing with previous rotation. """
+    if prev_rotation is not None and len(prev_rotation) > 0:
+        try:
+            combat = prev_rotation[idx + idx_offset]
+            return to_euler(quart, combat, axis)
+        except KeyError:
+            return to_euler(quart)
+    else:
+        return to_euler(quart)
+
+
+def offset_euler(euler, offset: []) -> Euler:
+    """ Offsets an euler rotation using euler radians *pi. """
+    rotation = Euler((
+        euler[0] + np.pi * offset[0],
+        euler[1] + np.pi * offset[1],
+        euler[2] + np.pi * offset[2],
+    ))
+    return rotation
+
+
+def try_get_euler(quart_rotation, offset: [], prev_rot_idx: int = -1, prev_rotation=None):
+    """ Gets an euler rotation from quaternion with using the previously
+        created rotation as combat to avoid discontinuity. """
+    try:
+        if offset == None:
+            m_rot = to_euler(
+                quart_rotation,
+                prev_rotation[prev_rot_idx]
+            )
+
+        else:
+            # -offset for combat
+            tmp_offset = [-o for o in offset]
+            m_rot = to_euler(
+                quart_rotation,
+                offset_euler(prev_rotation[prev_rot_idx], tmp_offset)
+            )
+
+    except KeyError:
+        m_rot = to_euler(quart_rotation)
+
+    return offset_euler(m_rot, offset)
+
+# endregion
 # region manual numpy implementation (slower than mathutils)
 def _generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
     # not tested
@@ -450,16 +502,16 @@ def _generate_matrix(tangent: np.array, normal: np.array, binormal: np.array):
     return matrix
 
 
-def _decompose_matrix(matrix):
+def _decompose_matrix(matrix: np.matrix):
     # not tested
     """ manual decompose a matrix (still in development) """
     # location -> last column of matrix
-    loc = matrix[:3, 3:4]
+    loc = np.array(matrix[:3, 3:4])
 
     # scale -> length of the first the column vectors
-    sx = vector_length(matrix[:3, 0:1])
-    sy = vector_length(matrix[:3, 1:2])
-    sz = vector_length(matrix[:3, 2:3])
+    sx = vector_length(np.array(matrix[:3, 0:1]))
+    sy = vector_length(np.array(matrix[:3, 1:2]))
+    sz = vector_length(np.array(matrix[:3, 2:3]))
     sca = np.array([sx, sy, sz])
 
     # rotation -> divide first three column vectors by the scaling factors
@@ -470,12 +522,12 @@ def _decompose_matrix(matrix):
 
     # recreate matrix (loc = [0, 0, 0]
     rotation_matrix = np.matrix([np.append(col, [v]) for col, v in
-                                [[c1, 0], [c2, 0], [c3, 0], [loc, 1]]])
-    quat = matrix3x3_2quat(rotation_matrix)
-    return loc, quat, sca
+                                 [[c1, 0], [c2, 0], [c3, 0], [loc, 1]]])
+    quat = matrix3x3_to_quaternion(rotation_matrix)
+    return [loc, quat, sca]
 
 
-def _to_quaternion(yaw, pitch, roll):
+def euler_to_quaternion(yaw, pitch, roll):
     # not tested
     """ manual to euler conversion using np """
     # slower than mathutils
@@ -495,7 +547,7 @@ def _to_quaternion(yaw, pitch, roll):
     return quart
 
 
-def _to_euler(q: np.array) -> np.array:
+def quaternion_to_euler(q: np.array) -> np.array:
     # not tested
     """ Manual quaternion q (w, x, y, z) to euler conversion
     https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
@@ -508,7 +560,7 @@ def _to_euler(q: np.array) -> np.array:
     # y axis pitch
     sinp = 2 * (q[0] * q[1] - q[3] * q[1])
     if abs(sinp) >= 1:
-        pitch = np.copysign(np.pi / 2, sinp) # use 90 degrees if out of range
+        pitch = np.copysign(np.pi / 2, sinp)  # use 90 degrees if out of range
     else:
         pitch = np.asin(sinp)
 
@@ -521,9 +573,9 @@ def _to_euler(q: np.array) -> np.array:
     return angles
 
 
-def matrix3x3_2quat(m: np.matrix):
+def matrix3x3_to_quaternion(m: np.matrix):
     # blender formality xzy
-    """ manual implementation - rot matrix 3x3 to quaternion"""
+    """ Returns quaternion from 3x3 matrix. """
     if m[2, 2] < 0:
         if m[0, 0] > m[1, 1]:
             t = 1 + m[0, 0] - m[1, 1] - m[2, 2]
@@ -544,6 +596,25 @@ def matrix3x3_2quat(m: np.matrix):
     # bpy sys -w x y z
     q = [-q[3], q[0], q[1], q[2]]
     return q
-# endregion
-# endregion
 
+
+def matrix3x3_to_euler(matrix: np.ndarray) -> np.ndarray:
+    """ Returns euler x, y, z angles from 3x3 rotation matrix """
+    # http://eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
+    # https://www.meccanismocomplesso.org/en/3d-rotations-and-euler-angles-in-python/
+    tol = np.float64(0.000000000000001)
+    if abs(matrix[0][0]) < tol and abs(matrix[1][0]) < tol:
+        phi = 0
+        theta = np.arctan2(-matrix[2][0], matrix[0][0])
+        psi = np.arctan2(-matrix[1][2], matrix[1][1])
+    else:
+        phi = np.arctan2(matrix[1][0], matrix[0][0])
+        sp = np.sin(phi)
+        cp = np.cos(phi)
+        theta = np.arctan2(-matrix[2][0], cp * matrix[0][0] + sp * matrix[1][0])
+        psi = np.arctan2(sp * matrix[0][2] - cp * matrix[1][2], cp * matrix[1][1] - sp * matrix[0][1])
+
+    return np.array([psi, theta, phi])
+
+# endregion
+# endregion

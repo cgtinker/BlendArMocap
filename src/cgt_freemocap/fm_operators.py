@@ -58,7 +58,7 @@ class WM_Load_Freemocap_Operator(bpy.types.Operator):
     def modal(self, context, event):
         """ Run detection as modal operation, finish with 'Q', 'ESC' or 'RIGHT MOUSE'. """
         if event.type == "TIMER":
-            running = self.processing_manager.realtime_data_provider.get_data()
+            running = self.processing_manager.realtime_data_provider.update()
             if running:
                 return {'PASS_THROUGH'}
             else:

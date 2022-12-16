@@ -17,17 +17,19 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 import mediapipe as mp
 
-from src.cgt_mediapipe.cgt_mp_core import stream
-from src.cgt_core import realtime_data_provider_interface
-
+from . import cv_stream, mp_detector_node
 
 # import ssl
 # ssl._create_default_https_context = ssl._create_unverified_context
 
 
-class PoseDetector(realtime_data_provider_interface.RealtimeDataProvider):
+class PoseDetector(mp_detector_node.DetectorNode):
+    def __init__(self, *args, **kwargs):
+        mp_detector_node.DetectorNode.__init__(self, *args, **kwargs)
+        self.solution = mp.solutions.pose
+
     # https://google.github.io/mediapipe/solutions/pose#python-solution-api
-    def frame_detection_data(self):
+    def update(self):
         # BlazePose GHUM 3D
         with self.solution.Pose(
                 static_image_mode=True,
@@ -48,11 +50,11 @@ class PoseDetector(realtime_data_provider_interface.RealtimeDataProvider):
                 if state == {'CANCELLED'}:
                     return {'CANCELLED'}
 
-    def initialize_model(self):
-        self.solution = mp.solutions.pose
-
-    def get_detection_results(self, mp_res):
+    def detected_data(self, mp_res):
         return self.cvt2landmark_array(mp_res.pose_world_landmarks)
+
+    def empty_data(self):
+        return [[]]
 
     def contains_features(self, mp_res):
         if not mp_res.pose_world_landmarks:
@@ -68,35 +70,12 @@ class PoseDetector(realtime_data_provider_interface.RealtimeDataProvider):
 
 
 # region manual tests
-def init_detector_manually(processor_type: str = "RAW"):
-    m_detector = PoseDetector()
-    m_detector.stream = stream.Stream()
-    m_detector.initialize_model()
-
-    from ..cgt_patterns import events
-    if processor_type == "RAW":
-        m_detector.observer = events.PrintRawDataUpdate()
-    else:
-        from ..cgt_bridge import print_bridge
-        from ..cgt_processing import pose_processing
-        bridge = print_bridge.PrintBridge
-        target = pose_processing.PoseProcessor(bridge)
-        m_detector.observer = events.DriverDebug(target)
-
-    m_detector.listener = events.UpdateListener()
-    m_detector.listener.attach(m_detector.observer)
-    return m_detector
-
-
 if __name__ == '__main__':
-    detection_type = "image"
-    detector = init_detector_manually("PROCESSED")
+    detector = PoseDetector(cv_stream.Stream(0))
 
-    if detection_type == "image":
-        for _ in range(50):
-            detector.frame_detection_data()
-    else:
-        detector.stream_detection()
+    for _ in range(50):
+        data = detector.update()
+        print(data)
 
     del detector
 # endregion

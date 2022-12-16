@@ -18,12 +18,12 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import numpy as np
 from mathutils import Euler
 
-from . import processor_interface
+from .processor_interface import ProcessorUtils
 from ..cgt_utils import cgt_math
-from ..cgt_bridge import bpy_face_bridge
+from ..cgt_patterns import cgt_nodes
 
 
-class FaceProcessor(processor_interface.MediapipeDataProcessor):
+class FaceProcessor(cgt_nodes.CalculatorNode, ProcessorUtils):
     # used to assign custom data
     _mouth_driver = None
     _mouth_corner_driver = None
@@ -38,10 +38,8 @@ class FaceProcessor(processor_interface.MediapipeDataProcessor):
 
     # processed results
     rotation_data, driver_scale_data = None, None
-
-    # def __init__(self, bridge=bpy_face_bridge.BpyFaceBridge):
-    #     # bridge to blender engine
-    #     self.bridge = bridge
+    def __init__(self):
+        pass
 
     # def init_references(self):
     #     """ Generates objects for mapping. """

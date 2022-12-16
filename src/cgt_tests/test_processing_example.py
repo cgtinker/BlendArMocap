@@ -1,5 +1,5 @@
 import unittest
-from src.cgt_core.cgt_processing import face_processing, hand_processing, pose_processing
+from src.cgt_core.cgt_calculators import face_processing, hand_processing, pose_processing
 from src.cgt_core.cgt_bridge import custom_data_container
 from src.cgt_core.cgt_utils import cgt_json
 
@@ -68,7 +68,7 @@ class TestProcessing(unittest.TestCase):
         data = cgt_json.from_json("data/face_data.json")
 
         # init processor bridge
-        face = hand_processing.HandProcessor(TestBridge)
+        face = hand_processing.HandRotationCalculator(TestBridge)
         face.init_references()
 
         # process data
