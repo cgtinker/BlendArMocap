@@ -25,6 +25,7 @@ from ..cgt_naming import COLLECTIONS
 from mathutils import Vector, Quaternion, Euler
 from ..cgt_patterns import cgt_nodes
 
+
 class CustomData:
     idx = None
     loc = None
@@ -46,8 +47,8 @@ class BpyOutputNode(cgt_nodes.OutputNode):
         """ Translates and keyframes bpy empty objects. """
         try:
             for p in data:
-                target[p[0]].matrix_world.translation = Vector((p[1]))
-                # target[p[0]].location = Vector((p[1]))
+                # target[p[0]].matrix_world.translation = Vector((p[1]))
+                target[p[0]].location = Vector((p[1]))
                 target[p[0]].keyframe_insert(data_path="location", frame=frame)
 
         except IndexError:

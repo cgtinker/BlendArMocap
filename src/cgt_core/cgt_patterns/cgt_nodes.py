@@ -22,7 +22,7 @@ class NodeChain(Node):
     def update(self, data: Any, frame: int) -> Tuple[Optional[Any], int]:
         """ Nodes executed inside a chain. """
         for node in self.nodes:
-            logging.debug(f"{node.__class__.__name__}.update({data}, {frame})")
+            # logging.debug(f"{node.__class__.__name__}.update({data}, {frame})")
             if data is None:
                 return None, frame
             data, frame = node.update(data, frame)

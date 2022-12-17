@@ -49,7 +49,7 @@ def add_console_log(name: str = ''):
     """ Default: log stream to console. """
     handler = logging.StreamHandler()
     handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - BlendArMocap %(levelname)s - '
+    formatter = logging.Formatter('%(asctime)s - BlendArMocap: %(levelname)s - '
                                   '%(message)s - %(filename)s:%(lineno)d',
                                   '%m-%d %H:%M:%S')
     handler.setFormatter(formatter)
@@ -60,7 +60,7 @@ def add_custom_log(name: str = ''):
     """ Error: Generates popup in Blender when an Error occurs. """
     handler = BlenderPopupHandler()
     handler.setLevel(logging.ERROR)
-    formatter = logging.Formatter('%(levelname)-8s %(message)s')
+    formatter = logging.Formatter('%(levelname)-8s %(message)s, %(filename)s:%(lineno)d')
     handler.setFormatter(formatter)
     logging.getLogger(name).addHandler(handler)
 

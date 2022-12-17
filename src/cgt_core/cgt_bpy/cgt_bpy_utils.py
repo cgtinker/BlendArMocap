@@ -22,8 +22,8 @@ import mathutils
 import bpy
 
 
-def add_empties(data: dict, size: float, prefix: str = "") -> List[bpy.types.Object]:
-    return [add_empty(size=size, name=value + prefix) for key, value in data.items()]
+def add_empties(data: dict, size: float, prefix: str = "", suffix: str = "") -> List[bpy.types.Object]:
+    return [add_empty(size=size, name=suffix + value + prefix) for key, value in data.items()]
 
 
 def add_empty(size, name, display='ARROWS') -> bpy.types.Object:

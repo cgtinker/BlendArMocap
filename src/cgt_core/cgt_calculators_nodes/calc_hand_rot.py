@@ -227,7 +227,7 @@ class HandRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
         try:
             matrix = cgt_math.generate_matrix(normal, tangent, binormal)
             loc, quart, sca = cgt_math.decompose_matrix(matrix)
-            euler = self.try_get_euler(quart, offset=[0, 0, 0], prev_rot_idx=combat_idx_offset)
+            euler = self.try_get_euler(quart, prev_rot_idx=combat_idx_offset)
             hand_rotation = ([0, euler])
         except TypeError:
             # TODO: reactivate

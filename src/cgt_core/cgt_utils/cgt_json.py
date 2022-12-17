@@ -23,6 +23,8 @@ import json
 class JsonData(object):
     """ Import json data, preferably as dict.
         Can load lists, will store them as dict with "data" as key. """
+    data: dict = None
+
     def __init__(self, path: str = None, **data):
         if path:
             with open(path, 'rb') as jsonFile:
@@ -44,3 +46,6 @@ class JsonData(object):
 
     def __str__(self):
         return f'{self.__dict__}'
+
+    def __call__(self):
+        return self.data

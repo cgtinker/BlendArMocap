@@ -41,20 +41,18 @@ class PoseRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
     scale_data = []
 
     def __init__(self):
-        self.shoulder_center = calc_utils.CustomData(51)
-        self.hip_center = calc_utils.CustomData(52)
+        self.shoulder_center = calc_utils.CustomData(33)
+        self.hip_center = calc_utils.CustomData(34)
 
     def update(self, data, frame):
         """ Apply the processed data to references. """
-        print("D", data)
-        print("F", frame)
         if not data:
             return [[], [], []], frame
         self.data = data
 
         # increase the data size to hold custom data (check __init__)
         for i in range(2):
-            self.data.append([51+i, [0., 0., 0.]])
+            self.data.append([33+i, [0., 0., 0.]])
 
         self.rotation_data = []
         self.scale_data = []
@@ -65,7 +63,6 @@ class PoseRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
         try:
             self.shoulder_hip_rotation()
         except AttributeError:
-            # TODO: only supports bpy
             pass
         self.average_rig_scale()
 

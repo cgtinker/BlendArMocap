@@ -23,31 +23,30 @@ from ..cgt_utils import cgt_json
 from pathlib import Path
 
 
-class CgtMPHandOutNode(mp_out_utils.BpyOutputNode):
-    left_hand = []
-    right_hand = []
-    col_name = COLLECTIONS.hands
+class MPFaceOutputNode(mp_out_utils.BpyOutputNode):
+    face = []
+    col_name = COLLECTIONS.face
     parent_col = COLLECTIONS.drivers
 
     def __init__(self):
-        path = Path(__file__).parent / "data/hand.json"
+        path = Path(__file__).parent / "data/face.json"
         data = cgt_json.JsonData(str(path))
-        references = data()
-        self.left_hand = cgt_bpy_utils.add_empties(references, 0.005, prefix=".L", suffix="cgt_")
-        self.right_hand = cgt_bpy_utils.add_empties(references, 0.005, prefix=".R", suffix="cgt_")
-        cgt_collection.add_list_to_collection(self.col_name, self.left_hand, self.parent_col)
-        cgt_collection.add_list_to_collection(self.col_name, self.right_hand, self.parent_col)
 
-    def split(self, data):
-        left_hand_data, right_hand_data = data
-        return [[self.left_hand, left_hand_data], [self.right_hand, right_hand_data]]
+        references = {}
+        for i in range(468):
+            references[f'{i}'] = f"cgt_face_vertex_{i}"
+        for k, v in data.data.items():
+            references[f'{468+int(k)}'] = v
+
+        self.face = cgt_bpy_utils.add_empties(references, 0.005)
+        cgt_collection.add_list_to_collection(self.col_name, self.face, self.parent_col)
 
     def update(self, data, frame):
         loc, rot, sca = data
         for data, method in zip([loc, rot, sca], [self.translate, self.euler_rotate, self.scale]):
-            for hand, chunk in self.split(data):
-                try:
-                    method(hand, chunk, frame)
-                except IndexError:
-                    pass
+            try:
+                method(self.face, data, frame)
+            except IndexError:
+                pass
         return data, frame
+

@@ -15,6 +15,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import logging
 import numpy as np
 from mathutils import Euler
 
@@ -39,15 +40,20 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
 
     def __init__(self):
         # increase shape to add specific driver data (maybe not required for the face)
-        custom_data_arr = [CustomData(idx) for idx in range(478, 478+8)]
-        self.pivot, self._mouth_driver, self._mouth_corner_driver, self.eye_driver_L = custom_data_arr[:-4]
-        self.eye_driver_R, self.chin_driver, self.eyebrow_L, self.eyebrow_R = custom_data_arr[4:]
+        n = 468
+        custom_data_arr = [CustomData(idx+n) for idx in range(0, 8)]
+        self.pivot, self.chin_driver, self._mouth_driver, self._mouth_corner_driver = custom_data_arr[:-4]
+        self.eye_driver_L, self.eye_driver_R,  self.eyebrow_L, self.eyebrow_R = custom_data_arr[4:]
 
     def update(self, data, frame):
         """ Process the landmark detection results. """
         """ Assign the data processed data to references. """
         # remove nesting and set landmarks to custom origin
-        if len(data[0][0]) == 0:
+        try:
+            if len(data[0][0]) == 0:
+                return [[], [], []], frame
+        except IndexError:
+            logging.error("Index Error occurred: {data}, {frame} - check face nodes")
             return [[], [], []], frame
 
         self.data = data[0]
@@ -146,18 +152,17 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
 
     def set_rotation_driver_data(self):
         """ Get face and chin rotation """
-        self.face_mesh_rotation()
-        self.chin_rotation()
-
         # check previous rotation to avoid discontinuity
+        self.face_mesh_rotation()
         try:
-            head_rotation = self.quart_to_euler_combat(self.pivot.rot, self.pivot.idx, axis='XZY')
+            head_rotation = self.try_get_euler(self.pivot.rot, prev_rot_idx=self.pivot.idx)
+            # head_rotation = self.quart_to_euler_combat(self.pivot.rot, self.pivot.idx, axis='XZY')
         except AttributeError:
-            # TODO: add warning, only bleder atm
+            logging.warning("Exchange method in cgt_maths for other targets than blender.")
             head_rotation = [0, 0, 0]
 
+        self.chin_rotation()
         chin_rotation = self.chin_driver.rot
-
         # store rotation data
         self.rotation_data = [
             [self.pivot.idx, head_rotation],
@@ -171,11 +176,11 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
         nose_dir = cgt_math.to_vector(self.data[168][1], self.data[2][1])
         chin_dir = cgt_math.to_vector(self.data[168][1], self.data[200][1])
 
-        # calculate the X rotation
+        # calculate the Z rotation
         nose_dir_z, chin_dir_z = cgt_math.null_axis([nose_dir, chin_dir], 'X')
         z_angle = cgt_math.angle_between(nose_dir_z, chin_dir_z) * 1.8
 
-        # there is no x-rotation available in the detection result
+        # in the detection results is no X-rotation available
         # nose_dir_x, chin_dir_x = m_V.null_axis([nose_dir, chin_dir], 'Z')
         # chin_rotation = m_V.rotate_towards(self.data[152][1], self.data[6][1], 'Y', 'Z')
 
@@ -201,7 +206,7 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
             matrix = cgt_math.generate_matrix(tangent, normal, binormal)
             loc, quart, scale = cgt_math.decompose_matrix(matrix)
         except TypeError:
-            # TODO: add warning, only workls in blender
+            logging.warning("Exchange method in cgt_math for other targets than Blender.")
             quart = None
             pass
         self.pivot.rot = quart

@@ -34,7 +34,7 @@ class HolisticDetector(mp_detector_node.DetectorNode):
             return self.exec_detection(mp_lib), frame
 
     def empty_data(self):
-        return [[[], []],  [[[]]], []]
+        return [[[], []], [[[]]], []]
 
     def detected_data(self, mp_res):
         face, pose, l_hand, r_hand = [], [], [], []
