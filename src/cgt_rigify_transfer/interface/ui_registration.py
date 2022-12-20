@@ -20,41 +20,21 @@ from bpy.props import PointerProperty
 from bpy.utils import register_class, unregister_class
 
 from . import ui_properties, cgt_panels, ui_operators
-from ...cgt_core.cgt_interface import cgt_main_panel
-from ...cgt_mediapipe import pref_operators, pref_panels
+from .. import cgt_rigify_transfer_preferences
+# from ...cgt_mediapipe import pref_operators, pref_panels
 
-classes = (
-    pref_operators.PREFERENCES_OT_CGT_install_dependencies_button,
-    pref_operators.PREFERENCES_OT_CGT_uninstall_dependencies_button,
-    pref_panels.BLENDARMOCAP_CGT_preferences,
-
-    ui_properties.CGTProperties,
-
-    # ui_operators.UI_CGT_transfer_anim_button,
-    # ui_operators.UI_CGT_toggle_drivers_button,
-    # ui_operators.UI_CGT_smooth_empties_in_col,
-    # ui_operators.WM_CGT_modal_detection_operator,
-    # ui_operators.WM_CGT_modal_connection_listener_operator,
-    # cgt_panels.UI_PT_Detection_Panel,
-    # cgt_panels.UI_PT_CGT_Transfer_Panel
-    # ui_panels.UI_PT_RemappingPanel
+modules = (
+    cgt_rigify_transfer_preferences,
+    ui_operators,
+    cgt_panels
 )
 
 
 def register():
-    for _class in classes:
-        register_class(_class)
-
-    ui_operators.register()
-    cgt_main_panel.register()
-    cgt_panels.register()
-    bpy.types.Scene.m_cgtinker_mediapipe = PointerProperty(type=ui_properties.CGTProperties)
+    for module in modules:
+        module.register()
 
 
 def unregister():
-    for cls in classes:
-        unregister_class(cls)
-
-    cgt_panels.unregister()
-    cgt_main_panel.unregister()
-    ui_operators.unregister()
+    for module in modules:
+        module.unregister()

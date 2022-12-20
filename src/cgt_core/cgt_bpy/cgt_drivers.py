@@ -1,199 +1,241 @@
-'''
-Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
-
 from __future__ import annotations
 import bpy
 import logging
-from typing import Dict, Optional, List, Union
-from . import cgt_object_prop
-from dataclasses import dataclass
+from typing import Any
+from abc import abstractmethod
+from collections import namedtuple
+
+transform_modes = {'WORLD_SPACE', 'TRANSFORM_SPACE', 'LOCAL_SPACE'}
+rotation_modes = {'AUTO', 'XYZ', 'XZY', 'YXZ', 'YZX', 'ZYX', 'QUATERNION', 'SWING_TWIST_X', 'SWING_TWIST_Y',
+                  'SWING_TWIST_Z'}
 
 
-@dataclass(frozen=True)
-class CgtPropertyType(object):
-    loc = 'location'
-    scale = 'scale'
-    rot = 'rotation_euler'
-    quart = 'rotation_quaternion'
+class Variable:
+    name: str = None
+    type: str = None
+    obj: Any = None
 
+    @abstractmethod
+    def assign(self):
+        pass
 
-@dataclass(frozen=True)
-class CgtVariableType(object):
-    transforms = 'TRANSFORMS'
-    single_prop = 'SINGLE_PROP'
+    def _set_variable(self, driver_variable: bpy.types.DriverVariable = None):
+        self._validate(driver_variable)
+        self.variable = driver_variable.driver.variables.new()
+        self.variable.name = self.name
+        self.variable.type = self.type
 
-
-@dataclass(repr=True)
-class CgtDriver(object):
-    # Apply Properties to:
-    target_obj: Union[bpy.types.Object, bpy.types.PoseBone]
-    property_type: CgtPropertyType
-    expressions: Dict[str]
-
-    # Provide Properties using:
-    variable_type: CgtVariableType
-    provider_obj: Optional[Union[bpy.types.Object, bpy.types.PoseBone]]
-    property_name: Optional[str]
-    data_paths: Optional[Dict[int, str]]
-    transforms_space: Optional[str]
-
-    # Internal:
-    _drivers: Dict[int, List[bpy.types.FCurve]] = None
-    _variables: Dict[int, bpy.types.DriverVariable] = None
-
-    def __init__(self,
-                 target: Union[bpy.types.Object, bpy.types.PoseBone] = None,
-                 property_type: CgtPropertyType = None,
-                 expressions: Dict[int, str] = None,
-
-                 provider_obj: Optional[Union[bpy.types.Object, bpy.types.PoseBone]] = None,
-                 property_name: Optional[str] = None,
-                 data_paths: Optional[Dict[int, str]] = None,
-                 variable_type: Optional[CgtVariableType] = CgtVariableType.single_prop,
-                 transforms_space: Optional[str] = "WORLD_SPACE"):
-        """
-        Create a driver using a unique property name as custom data to avoid overwrites.
-           :param target Union[bpy.types.Object, bpy.types.PoseBone]: Driver gets applied to target object.
-           :param property_type PropertyType: Property type that gets influenced by the driver. [loc, scale, rot, quart]
-           :param expressions Dict[str]=None: Dict of driver expressions b.e. { 0: 'frame*unique_str', 1: 'frame*3', 2: 'frame' }.
-
-           :param variable_type: CgtVariableType: Define variable type to use. [transforms, single_prop]
-           :param provider_obj Optional[Union[bpy.types.Object, bpy.types.PoseBone]]: Access properties from provider obj.
-           :param property_name: Optional[str]: Name of the provided property. (unique_str)
-           :param data_path: Optional[Dict[str]]: Data paths of the provided property. { 0: location[0], 2: location[2] }
-           :param transforms_space: Optional[str] = "WORLD_SPACE": Space when using variable type transform. ["WORLD_SPACE", "LOCAL_SPACE", POSE_SPACE"]
-
-        """
-        if expressions is None:
-            expressions = {}
-
-        self.target_obj = target
-        self.provider_obj = provider_obj
-        self.property_type = property_type
-        self.property_name = property_name
-        self.expressions = expressions
-        self.data_paths = data_paths
-        self.variable_type = variable_type
-        self.transforms_space = transforms_space
-
-        self._drivers = dict()
-        self._variables = dict()
-        self.post_init()
-
-    def post_init(self):
-        """ Adds FCurves to the target object which are required in the driver set up process. """
-        assert self.target_obj is not None
-        assert self.property_type is not None
-        assert len(self.data_paths) == len(self.expressions)
-
-        if self.provider_obj is None:
-            # point to obj holding property paths
-            self.provider_obj = self.target_obj
-
-        for idx, value in self.expressions.items():
-            # don't add driver if there won't be an expression
-            driver = self.target_obj.driver_add(str(self.property_type), int(idx))
-            self._drivers[int(idx)] = driver
-
-    def apply(self):
-        """ Sets driver variables and applies driver expressions. """
-        self.set_driver_variables()
-        self.apply_driver_expression()
-
-    def set_driver_variables(self):
-        """ Sets the driver variables for single prop and transform prop drivers.
-            Currently, supports PoseBones and Objects. """
-        if self.property_name is None:
-            logging.debug(f"Property name not set, aborted driver preparation: {self}")
-            return
-
-        if not cgt_object_prop.set_custom_property(obj=self.target_obj, prop_name=self.property_name, value=-1):
-            logging.debug(f"Property has been set previously, aborted driver preparation: {self}")
-            return
-
-        if self.variable_type == CgtVariableType.single_prop:
-            self.init_single_prop_driver()
-        elif self.variable_type == CgtVariableType.transforms:
-            self.init_transforms_driver()
+    def _set_variable_target(self, variable_target, obj):
+        if isinstance(self.obj, bpy.types.PoseBone):
+            variable_target.id = obj.id_data
+            variable_target.bone_target = obj.name
         else:
-            logging.error("Unknown type inserted.")
-            raise TypeError
+            variable_target.id = obj
 
-    def init_single_prop_driver(self):
-        """ Init a single property value, data path has to be provided. """
-        for idx, driver in self._drivers.items():
-            if self.data_paths is None:
-                continue
+    def _validate(self, driver_variable):
+        assert driver_variable is not None
+        assert self.name is not None
+        assert self.type in {'SINGLE_PROP', 'TRANSFORMS', 'ROTATION_DIFF', 'LOC_DIFF'}
 
-            # create new variable
-            variable = driver.driver.variables.new()
-            variable.name = self.property_name
-            variable.type = 'SINGLE_PROP'
 
-            # set target and data path
-            if isinstance(self.provider_obj, bpy.types.Object):
-                variable.targets[0].id = self.provider_obj
-                variable.targets[0].data_path = self.data_paths[idx]
-            elif isinstance(self.provider_obj, bpy.types.PoseBone):
-                variable.targets[0].id = self.provider_obj.id_data
-                variable.targets[0].data_path = f'pose.bones.["{self.provider_obj.name}"].{self.data_paths[idx]}'
-            else:
-                raise TypeError
+class SingleProperty(Variable):
+    path: str = None
 
-    def init_transforms_driver(self):
-        """ Using transform values of pose bones to access their props in global space.
-            Set up a new init method for single props if you need head/ tail coords. """
-        for idx, driver in self._drivers.items():
-            if self.data_paths is None:
-                continue
+    def __init__(self, name: str, obj: Any, path: str):
+        self.type = 'SINGLE_PROP'
+        self.name = name
+        self.obj = obj
+        self.path = path
 
-            # create new variable
-            variable = driver.driver.variables.new()
-            variable.name = self.property_name
-            variable.type = 'TRANSFORMS'
+    def assign(self, driver_variable: bpy.types.DriverVariable = None):
+        self._set_variable(driver_variable)
+        if isinstance(self.obj, bpy.types.PoseBone):
+            self.variable.targets[0].id = self.obj.id_data
+            self.variable.targets[0].data_path = f'pose.bones.["{self.obj.name}"].{self.path}'
+        else:
+            self.variable.targets[0].id = self.obj
+            self.variable.targets[0].data_path = self.path
 
-            # set variable target
-            if isinstance(self.provider_obj, bpy.types.Object):
-                variable.targets[0].id = self.provider_obj
-            elif isinstance(self.provider_obj, bpy.types.PoseBone):
-                variable.targets[0].id = self.provider_obj.id_data
-                variable.targets[0].bone_target = self.provider_obj.name
-            else:
-                raise TypeError
 
-            trans_path = {
-                "location[0]":       'LOC_X',
-                "location[1]":       'LOC_Y',
-                "location[2]":       'LOC_Z',
-                "rotation_euler[0]": 'ROT_X',
-                "rotation_euler[1]": 'ROT_Y',
-                "rotation_euler[2]": 'ROT_Z',
-                "scale[0]":          'SCALE_X',
-                "scale[1]":          'SCALE_Y',
-                "scale[2]":          'SCALE_Z',
-            }
+class TransformChannel(Variable):
+    transform_type = None
+    transform_space = None
 
-            # apply data paths and transform type
-            variable.targets[0].transform_space = self.transforms_space
-            data_path = trans_path[self.data_paths.get(idx, None)]
-            variable.targets[0].transform_type = data_path
+    def __init__(self, name: str, obj: bpy.types.Object, transform: str, idx: int,
+                 transform_space: str = 'WORLD_SPACE'):
+        self.type = 'TRANSFORMS'
+        self.name = name
+        self.obj = obj
+        self.transform_type = self.get_transform_type(transform, idx)
+        self.transform_space = transform_space
 
-    def apply_driver_expression(self):
-        """ Add the expressions to the driver. """
-        logging.debug(f"Attempt to set driver expression: {self}")
-        for i, d in self._drivers.items():
-            d.driver.expression = self.expressions[i] if self.expressions[i] else ""
+    def _validated_transform_space(self, transform, transform_space):
+        if transform == 'rotation_euler':
+            assert transform_space in {'AUTO', 'XYZ', 'XZY', 'YXZ', 'YZX', 'ZYX', 'QUATERNION', 'SWING_TWIST_X',
+                                       'SWING_TWIST_Y', 'SWING_TWIST_Z'}
+        else:
+            assert transform_space in {'WORLD_SPACE', 'TRANSFORM_SPACE', 'LOCAL_SPACE'}
+
+    def get_transform_type(self, transform, idx):
+        assert transform in {'location', 'rotation_euler', 'scale'}
+        assert 0 <= idx <= 3
+        transform_type = {
+            'location':       {0: 'LOC_X', 1: 'LOC_Y', 2: 'LOC_Z'},
+            'rotation_euler': {0: 'ROT_X', 1: 'ROT_Y', 2: 'ROT_Z', 3: 'ROT_W'},
+            'scale':          {0: 'SCALE_X', 1: 'SCALE_Y', 2: 'SCALE_Z', 3: 'SCALE_AVG'}
+        }
+        return transform_type[transform][idx]
+
+    def assign(self, driver_variable: bpy.types.DriverVariable = None):
+        self._set_variable(driver_variable)
+        self._set_variable_target(self.variable.targets[0], self.obj)
+        if isinstance(self.obj, bpy.types.PoseBone):
+            self.variable.targets[0].id = self.obj.id_data
+            self.variable.targets[0].bone_target = self.obj.name
+        else:
+            self.variable.targets[0].id = self.obj
+
+        # apply data paths and transform type
+        self.variable.targets[0].transform_space = self.transform_space
+        self.variable.targets[0].transform_type = self.transform_type
+
+
+class RotationalDifference(Variable):
+    other_object: bpy.types.Object = None
+
+    def __init__(self, name: str, obj: bpy.types.Object, other_obj: bpy.types.Object):
+        self.type = 'ROTATION_DIFF'
+        self.name = name
+        self.obj = obj
+        self.other_obj = other_obj
+
+    def assign(self, driver_variable: bpy.types.DriverVariable = None):
+        self._set_variable(driver_variable)
+        self._set_variable_target(self.variable.targets[0], self.obj)
+        self._set_variable_target(self.variable.targets[1], self.other_obj)
+
+
+class Distance(Variable):
+    other_obj: bpy.types.Object
+    transform_space: str
+    other_transform_space: str
+
+    def __init__(self, name: str, obj: bpy.types.Object, other_obj: bpy.types.Object,
+                 transform_space: str = 'WORLD_SPACE', other_transform_space: str = 'WORLD_SPACE'):
+        self.type = 'LOC_DIFF'
+        self.name = name
+        self.obj = obj
+        self.other_obj = other_obj
+        assert transform_space and other_transform_space in {'WORLD_SPACE', 'TRANSFORM_SPACE', 'LOCAL_SPACE'}
+        self.transform_space = transform_space
+        self.other_transform_space = other_transform_space
+
+    def assign(self, driver_variable: bpy.types.DriverVariable = None):
+        self._set_variable(driver_variable)
+        self._set_variable_target(self.variable.targets[0], self.obj)
+        self.variable.targets[0].transform_space = self.transform_space
+        self._set_variable_target(self.variable.targets[1], self.other_obj)
+        self.variable.targets[1].transform_space = self.other_transform_space
+
+
+DriverVariable = namedtuple('DriverVariable', ['variable', 'path', 'idx'])
+DriverExpression = namedtuple('DriverExpression', ['expression', 'path', 'idx'])
+
+
+class DriverFactory:
+    expressions: dict
+
+    def __init__(self, target: Any, type: str = 'SCRIPTED'):
+        assert type in ['MAX', 'MIN', 'AVERAGE', 'SCRIPTED', 'SUM']
+        self.type = type
+        self.target = target
+        self.expressions = {}
+        self._driver_variables = {}
+        self.variables = list()
+
+    def add_variable(self, variable: Variable, path: str, idx: int, is_transform: bool = True):
+        """ Adds driver variable. """
+        if is_transform:
+            self._validate(path, idx)
+        self.variables.append(DriverVariable(variable, path, idx))
+
+    def add_expression(self, expression: str, path: str, idx: int = None, is_transform: bool = True):
+        """ Adds a driver expression. """
+        if is_transform:
+            self._validate(path, idx)
+        assert idx is not None
+
+        if path not in self.expressions:
+            self.expressions[path] = {}
+        if idx not in self.expressions[path]:
+            self.expressions[path][idx] = None
+
+        self.expressions[path][idx] = expression
+
+    def _add_driver_variable(self, path: str, idx: int, driver_variable: Any):
+        """ Adds a driver variable to the driver variables dict. """
+        if path not in self._driver_variables:
+            self._driver_variables[path] = {}
+        if idx not in self._driver_variables[path]:
+            self._driver_variables[path][idx] = None
+
+        self._driver_variables[path][idx] = driver_variable
+
+    def _in_driver_variables(self, path: str, idx: int):
+        """ Checks if path and idx are in the driver variables dict. """
+        if path not in self._driver_variables.keys():
+            return False
+        if idx not in self._driver_variables[path].keys():
+            return False
+        return True
+
+    def execute(self):
+        """ Adds driver variables to object and stores them. """
+        for var in self.variables:
+            driver_variable = self.target.driver_add(var.path, var.idx)
+            var.variable.assign(driver_variable)
+            self._add_driver_variable(var.path, var.idx, driver_variable)
+
+        """ Assign expression to driver variables, if necessary create new driver variables. """
+        for str_key, dictionary in self.expressions.items():
+            for int_key, expression in dictionary.items():
+                if expression is None:
+                    continue
+
+                if not self._in_driver_variables(str_key, int_key):
+                    self._add_driver_variable(str_key, int_key, self.target.driver_add(str_key, int_key))
+
+                if self.type == 'SCRIPTED':
+                    self._driver_variables[str_key][int_key].driver.expression = expression
+                else:
+                    self._driver_variables[str_key][int_key].driver.type = self.type
+
+    @staticmethod
+    def _validate(path, idx):
+        assert path in ['location', 'rotation_euler', 'scale', 'quaternion']
+        assert 0 <= idx <= 3
+
+
+if __name__ == '__main__':
+    # some objs
+    cube = bpy.data.objects['Cube']
+    plane = bpy.data.objects['Plane']
+    sphere = bpy.data.objects['Sphere']
+
+    factory = DriverFactory(cube)
+
+    prop = TransformChannel("test", plane, "location", 1, "LOCAL_SPACE")
+    factory.add_variable(prop, 'location', 1)
+    prop = SingleProperty("prop_name", sphere, 'rotation_euler[0]')
+    factory.add_variable(prop, 'location', 2)
+    prop = Distance("dist", sphere, plane)
+    factory.add_variable(prop, 'location', 2)
+    prop = RotationalDifference("rot", sphere, plane)
+    factory.add_variable(prop, 'rotation_euler', 2)
+    prop = SingleProperty("prop_nameok", cube, '["prop"]')
+    factory.add_variable(prop, 'scale', 2)
+
+    factory.add_expression("2*dist", 'location', 2)
+    factory.add_expression("abs(-4+1+1)", 'rotation_euler', 0)
+
+    factory.execute()

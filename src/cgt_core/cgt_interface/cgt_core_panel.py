@@ -11,7 +11,7 @@ class DefaultPanel:
     bl_options = {"HEADER_LAYOUT_EXPAND"}
 
 
-class UI_PT_CGT_Panel(DefaultPanel, Panel):
+class PT_UI_CGT_Panel(DefaultPanel, Panel):
     bl_label = cgt_naming.ADDON_NAME
     bl_idname = "UI_PT_CGT_Panel"
 
@@ -19,9 +19,22 @@ class UI_PT_CGT_Panel(DefaultPanel, Panel):
         pass
 
 
+class APT_UI_CGT_Panel(bpy.types.AddonPreferences):
+    bl_label = cgt_naming.ADDON_NAME
+    bl_idname = "BlendArMocap"
+
+    def draw(self, context):
+        layout = self.layout
+        box = layout.box()
+
+        box.label(text='Lin ig.')
+
+
 def register():
-    bpy.utils.register_class(UI_PT_CGT_Panel)
+    bpy.utils.register_class(APT_UI_CGT_Panel)
+    bpy.utils.register_class(PT_UI_CGT_Panel)
 
 
 def unregister():
-    bpy.utils.unregister_class(UI_PT_CGT_Panel)
+    bpy.utils.unregister_class(PT_UI_CGT_Panel)
+    bpy.utils.unregister_class(APT_UI_CGT_Panel)

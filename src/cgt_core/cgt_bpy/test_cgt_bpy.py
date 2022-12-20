@@ -1,6 +1,6 @@
 import inspect
 from . import cgt_bpy_utils, cgt_constraints
-from .cgt_drivers import *
+from src.cgt_core.cgt_bpy.depreciated.cgt_drivers import *
 
 
 class TestCgtBpyUtils(object):

@@ -37,5 +37,7 @@ class Slope:
         self.name = name
 
 
-def slope(min_in, max_in, min_out, max_out):
-    return (max_out - min_out) / (max_in - min_in)
+def remap(value, min_in, max_in, min_out, max_out):
+    slope = (max_out - min_out) / (max_in - min_in)
+    offset = min_out - slope * min_in
+    return slope * value + offset

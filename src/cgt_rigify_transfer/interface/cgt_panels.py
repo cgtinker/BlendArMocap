@@ -17,11 +17,55 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 import bpy
 from bpy.types import Panel
-from ...cgt_core.cgt_interface import cgt_main_panel
-from ...cgt_mediapipe import dependencies
+from ...cgt_core.cgt_interface import cgt_core_panel
 
 
-class PT_CGT_Main_Transfer(cgt_main_panel.DefaultPanel, Panel):
+
+import bpy
+from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty, FloatVectorProperty, PointerProperty
+from bpy.types import PropertyGroup
+
+
+class CgtRigifyTransferProperties(PropertyGroup):
+
+    def is_rigify_armature(self, object):
+        if object.type == 'ARMATURE':
+            if 'rig_id' in object.data:
+                return True
+        return False
+
+
+    selected_rig: bpy.props.PointerProperty(
+        type=bpy.types.Object,
+        description="Select an armature for animation transfer.",
+        name="Armature",
+        poll=is_rigify_armature)
+
+    def is_armature(self, object):
+        if object.type == 'ARMATURE':
+            if 'rig_id' in object.data:
+                return False
+            return True
+        return False
+
+    selected_metarig: bpy.props.PointerProperty(
+        type=bpy.types.Object,
+        description="Select a metarig as future gamerig.",
+        name="Armature",
+        poll=is_armature)
+
+    def cgt_collection_poll(self, object):
+        return object.name in ["cgt_FACE", "cgt_HANDS", "cgt_POSE"]
+
+    selected_driver_collection: bpy.props.PointerProperty(
+        name="",
+        type=bpy.types.Collection,
+        description="Select a collection of Divers.",
+        poll=cgt_collection_poll
+    )
+
+
+class PT_CGT_Main_Transfer(cgt_core_panel.DefaultPanel, Panel):
     bl_label = "Transfer"
     bl_parent_id = "UI_PT_CGT_Panel"
     bl_idname = "UI_PT_Transfer_Panel"
@@ -35,13 +79,13 @@ class PT_CGT_Main_Transfer(cgt_main_panel.DefaultPanel, Panel):
         pass
 
 
-class PT_CGT_Data_Transfer(cgt_main_panel.DefaultPanel, Panel):
+class PT_CGT_Data_Transfer(cgt_core_panel.DefaultPanel, Panel):
     bl_label = "Mocap Transfer"
     bl_parent_id = "UI_PT_Transfer_Panel"
     bl_idname = "UI_PT_Transfer_Data"
 
     def draw(self, context):
-        user = context.scene.m_cgtinker_mediapipe  # noqa
+        user = context.scene.cgtinker_rigify_transfer  # noqa
         box = self.layout.box()
 
         box.label(text='Link Mocap data to a generated humanoid rigify rig.')
@@ -67,13 +111,13 @@ class PT_CGT_Data_Transfer(cgt_main_panel.DefaultPanel, Panel):
             box.row(align=True).operator("button.smooth_empties_in_col", text="Smooth Animation")
 
 
-class PT_CGT_Gamerig_Transfer(cgt_main_panel.DefaultPanel, Panel):
+class PT_CGT_Gamerig_Transfer(cgt_core_panel.DefaultPanel, Panel):
     bl_label = "Gamerig Tools"
     bl_parent_id = "UI_PT_Transfer_Panel"
     bl_idname = "UI_PT_Transfer_Gamerig"
 
     def draw(self, context):
-        user = context.scene.m_cgtinker_mediapipe  # noqa
+        user = context.scene.cgtinker_rigify_transfer  # noqa
         box = self.layout.box()
         box.label(text='Link Rigify Rig animation to Metarig')
         box.row(align=True).prop_search(data=user,
@@ -94,31 +138,8 @@ class PT_CGT_Gamerig_Transfer(cgt_main_panel.DefaultPanel, Panel):
         box.row().operator("button.cgt_generate_gamerig", text="Metarig2Gamerig")
 
 
-
-class UI_PT_CGT_warning_panel(cgt_main_panel.DefaultPanel, Panel):
-     bl_label = "CGT_WARN"
-     bl_idname = "OBJECT_PT_warning_panel"
-
-     @classmethod
-     def poll(self, context):
-         return not dependencies.dependencies_installed
-
-     def draw(self, context):
-         layout = self.layout
-
-         lines = [f"Please install the missing dependencies for BlendArMocap.",
-                  f"1. Open the preferences (Edit > Preferences > Add-ons).",
-                  f"2. Search for the BlendArMocap add-on.",
-                  f"3. Open the details section of the add-on.",
-                  f"4. Click on the 'install dependencies' button.",
-                  f"   This will download and install the missing Python packages, if Blender has the required",
-                  f"   permissions."]
-
-         for line in lines:
-             layout.label(text=line)
-
-
 classes = [
+    CgtRigifyTransferProperties,
     PT_CGT_Main_Transfer,
     PT_CGT_Data_Transfer,
     PT_CGT_Gamerig_Transfer,
@@ -128,6 +149,7 @@ classes = [
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
+    bpy.types.Scene.cgtinker_rigify_transfer = PointerProperty(type=CgtRigifyTransferProperties)
 
 
 def unregister():

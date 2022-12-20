@@ -18,9 +18,8 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import logging
 import bpy
 
-import src.cgt_core.cgt_bpy.cgt_collection
-from ...cgt_core.cgt_bpy import objects
-from src.cgt_core.cgt_naming import COLLECTIONS
+from ...cgt_core.cgt_bpy import cgt_bpy_utils, cgt_collection
+from ...cgt_core.cgt_naming import COLLECTIONS
 
 
 # region TRANSFER
@@ -34,6 +33,7 @@ class OT_UI_CGT_transfer_anim_button(bpy.types.Operator):
         return context.mode in {'OBJECT'}
 
     def execute(self, context):
+        # TODO: APPLY FIX HERE
         from ..cgt_core_transfer import rigify_pose, rigify_face, rigify_fingers
 
         col_mapping = {
@@ -42,18 +42,18 @@ class OT_UI_CGT_transfer_anim_button(bpy.types.Operator):
             COLLECTIONS.pose:  rigify_pose.RigifyPose
         }
 
-        user = bpy.context.scene.m_cgtinker_mediapipe
+        user = bpy.context.scene.cgtinker_rigify_transfer
 
         selected_driver_collection = user.selected_driver_collection.name
         selected_armature = user.selected_rig.name_full
 
         print(f"TRYING TO TRANSFER ANIMATION DATA FROM {selected_driver_collection} TO {selected_armature}")
 
-        driver_collections = src.cgt_core.cgt_bpy.cgt_collection.get_child_collections(selected_driver_collection)
+        driver_collections = cgt_collection.get_child_collections(selected_driver_collection)
         for col in driver_collections:
 
             armature = bpy.data.objects[selected_armature]
-            driver_objects = src.cgt_core.cgt_bpy.cgt_collection.get_objects_from_collection(col)
+            driver_objects =cgt_collection.get_objects_from_collection(col)
             col_mapping[col](armature, driver_objects)
 
         # input_manager.transfer_animation()
@@ -70,17 +70,18 @@ class OT_UI_CGT_smooth_empties_in_col(bpy.types.Operator):
         return context.mode in {'OBJECT'}
 
     def execute(self, context):
+        # TODO: CHECK, should still work
         # safe current area, switching to graph editor area
         current_area = bpy.context.area.type
         layer = bpy.context.view_layer
 
         # get objs from selected cols
-        user = bpy.context.scene.m_cgtinker_mediapipe
+        user = bpy.context.scene.cgtinker_rigify_transfer
         selected_driver_collection = user.selected_driver_collection.name
-        driver_collections = src.cgt_core.cgt_bpy.cgt_collection.get_child_collections(selected_driver_collection)
+        driver_collections = cgt_collection.get_child_collections(selected_driver_collection)
         objs = []
         for col in driver_collections:
-            objs += src.cgt_core.cgt_bpy.cgt_collection.get_objects_from_collection(col)
+            objs += cgt_collection.get_objects_from_collection(col)
 
         print("selecting objects")
         for ob in objs:
@@ -113,7 +114,8 @@ class OT_CGT_Gamerig(bpy.types.Operator):
         return context.mode in {'OBJECT'}
 
     def execute(self, context):
-        user = bpy.context.scene.m_cgtinker_mediapipe
+        # TODO: CHECK: should will work
+        user = bpy.context.scene.cgtinker_rigify_transfer
         metarig = user.selected_metarig
         rig = user.selected_rig
 
@@ -193,25 +195,6 @@ class OT_CGT_RegenerateMetarig(bpy.types.Operator):
         bpy.ops.object.mode_set(mode='OBJECT')
 
 
-class OT_UI_CGT_toggle_drivers_button(bpy.types.Operator):
-    bl_label = "Toggle Drivers"
-    bl_idname = "button.cgt_toggle_drivers_button"
-    bl_description = "Toggle drivers to improve performance while motion capturing"
-    # TODO: IMPLEMENT PROPER WAY TO TOGGLE
-
-    @classmethod
-    def poll(cls, context):
-        return context.mode == 'OBJECT'
-
-    def execute(self, context):
-        user = bpy.context.scene.m_cgtinker_mediapipe  # noqa
-        user.toggle_drivers_bool = not user.toggle_drivers_bool
-        print("toggled", user.toggle_drivers_bool)
-
-        driver_collections = src.cgt_core.cgt_bpy.cgt_collection.get_child_collections('CGT_DRIVERS')
-        objs = src.cgt_core.cgt_bpy.cgt_collection.get_objects_from_collection('CGT_DRIVERS')
-        print(objs)
-        return {'FINISHED'}
 # endregion
 
 
@@ -221,7 +204,6 @@ classes = [
     OT_UI_CGT_smooth_empties_in_col,
     OT_CGT_Gamerig,
     # OT_CGT_RegenerateMetarig,
-    OT_UI_CGT_toggle_drivers_button,
 ]
 
 
