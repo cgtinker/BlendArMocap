@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Optional, List
 import bpy
+import logging
 
 
 def set_viewport_visibility(collection_name: str, active: bool) -> None:
@@ -73,14 +74,19 @@ def add_object_to_collection(
     return _obj_to_collection(collection_name, obj)
 
 
-def _obj_to_collection(collection_name: str, obj: bpy.types.Object) -> bool:
+def _obj_to_collection(collection_name: str, obj: bpy.types.Object, from_collection=None) -> bool:
     """ Internal: Links object to target collection. """
     try:
-        bpy.context.scene.collection.objects.unlink(obj)
+        if from_collection is None:
+            bpy.context.scene.collection.objects.unlink(obj)
+        else:
+            other_col = bpy.data.collections.get(from_collection)
+            other_col.objects.unlink(obj)
         collection = bpy.data.collections.get(collection_name)
         collection.objects.link(obj)
         return True
     except RuntimeError:
+        logging.error(f"Linking from {collection_name} to {from_collection} failed")
         return False
 
 
@@ -104,3 +110,10 @@ def get_objects_from_collection(col_name):
         return [ob for ob in col.all_objects]
     else:
         return None
+
+
+def move_list_to_collection(to_collection: str, objects: List[bpy.types.Object], from_collection: str = None) -> None:
+    """ Move list of elements from, to a collection. """
+    assert from_collection is not None
+    for ob in objects:
+        _obj_to_collection(to_collection, ob, from_collection)

@@ -136,8 +136,9 @@ class CGTProperties(PropertyGroup):
         name="Armature",
         poll=is_armature)
 
+    # TODO: USE DEFAULTS
     def cgt_collection_poll(self, object):
-        return object.name in ["cgt_FACE", "cgt_HANDS", "cgt_POSE"]
+        return object.name in ["cgt_FACE", "cgt_HAND", "cgt_POSE", "cgt_DRIVERS"]
 
     selected_driver_collection: bpy.props.PointerProperty(
         name="",

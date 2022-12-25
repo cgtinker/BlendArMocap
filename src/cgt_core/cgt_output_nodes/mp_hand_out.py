@@ -17,10 +17,8 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 from __future__ import annotations
 from . import mp_out_utils
-from ..cgt_naming import COLLECTIONS
-from ..cgt_bpy import cgt_bpy_utils, cgt_collection
-from ..cgt_utils import cgt_json
-from pathlib import Path
+from ..cgt_naming import COLLECTIONS, cgt_defaults
+from ..cgt_bpy import cgt_bpy_utils, cgt_collection, cgt_object_prop
 
 
 class CgtMPHandOutNode(mp_out_utils.BpyOutputNode):
@@ -30,13 +28,19 @@ class CgtMPHandOutNode(mp_out_utils.BpyOutputNode):
     parent_col = COLLECTIONS.drivers
 
     def __init__(self):
-        path = Path(__file__).parent / "data/hand.json"
-        data = cgt_json.JsonData(str(path))
-        references = data()
-        self.left_hand = cgt_bpy_utils.add_empties(references, 0.005, prefix=".L", suffix="cgt_")
-        self.right_hand = cgt_bpy_utils.add_empties(references, 0.005, prefix=".R", suffix="cgt_")
-        cgt_collection.add_list_to_collection(self.col_name, self.left_hand, self.parent_col)
-        cgt_collection.add_list_to_collection(self.col_name, self.right_hand, self.parent_col)
+        data = cgt_defaults
+        references = data.hand
+        self.left_hand = cgt_bpy_utils.add_empties(references, 0.005, prefix=".L")
+        self.right_hand = cgt_bpy_utils.add_empties(references, 0.005, prefix=".R")
+
+        for ob in self.left_hand+self.right_hand:
+            cgt_object_prop.set_custom_property(ob, "cgt_id", data.identifier)
+
+        cgt_collection.create_collection(self.col_name, self.parent_col)
+        cgt_collection.create_collection(self.col_name+".L", self.col_name)
+        cgt_collection.create_collection(self.col_name+".R", self.col_name)
+        cgt_collection.add_list_to_collection(self.col_name+".L", self.left_hand, self.parent_col)
+        cgt_collection.add_list_to_collection(self.col_name+".R", self.right_hand, self.parent_col)
 
     def split(self, data):
         left_hand_data, right_hand_data = data

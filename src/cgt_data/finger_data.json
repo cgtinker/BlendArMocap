@@ -1,51 +1,5 @@
 {
-    "source":{
-        "0":"wrist",
-        "1":"thumb_cmc",
-        "2":"thumb_mcp",
-        "3":"thumb_ip",
-        "4":"thumb_tip",
-        "5":"index_finger_mcp",
-        "6":"index_finger_pip",
-        "7":"index_finger_dip",
-        "8":"index_finger_tip",
-        "9":"middle_finger_mcp",
-        "10":"middle_finger_pip",
-        "11":"middle_finger_dip",
-        "12":"middle_finger_tip",
-        "13":"ring_finger_mcp",
-        "14":"ring_finger_pip",
-        "15":"ring_finger_dip",
-        "16":"ring_finger_tip",
-        "17":"pinky_mcp",
-        "18":"pinky_pip",
-        "19":"pinky_dip",
-        "20":"pinky_tip"
-    },
-    "drivers":{
-        "wrist":"driver_wrist",
-        "thumb_cmc":"driver_thumb_cmc",
-        "thumb_mcp":"driver_thumb_mcp",
-        "thumb_ip":"driver_thumb_ip",
-        "thumb_tip":"driver_thumb_tip",
-        "index_finger_mcp":"driver_index_finger_mcp",
-        "index_finger_pip":"driver_index_finger_pip",
-        "index_finger_dip":"driver_index_finger_dip",
-        "index_finger_tip":"driver_index_finger_tip",
-        "middle_finger_mcp":"driver_middle_finger_mcp",
-        "middle_finger_pip":"driver_middle_finger_pip",
-        "middle_finger_dip":"driver_middle_finger_dip",
-        "middle_finger_tip":"driver_middle_finger_tip",
-        "ring_finger_mcp":"driver_ring_finger_mcp",
-        "ring_finger_pip":"driver_ring_finger_pip",
-        "ring_finger_dip":"driver_ring_finger_dip",
-        "ring_finger_tip":"driver_ring_finger_tip",
-        "pinky_mcp":"driver_pinky_mcp",
-        "pinky_pip":"driver_pinky_pip",
-        "pinky_dip":"driver_pinky_dip",
-        "pinky_tip":"driver_pinky_tip"
-    },
-    "constraint_targets":{
+    "hand_constraint_targets":{
         "wrist":"hand_ik",
         "thumb_cmc":"thumb.01",
         "thumb_mcp":"thumb.02",
@@ -63,7 +17,7 @@
         "pinky_pip":"f_pinky.02",
         "pinky_dip":"f_pinky.03"
     },
-    "bone_constraints":{
+    "hand_constraints":{
         "wrist":{
             "COPY_LOCATION":{
                 "target":"wrist",

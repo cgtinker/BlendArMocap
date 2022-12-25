@@ -136,6 +136,7 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
 
     def eyebrow_drivers(self, avg_scale):
         """ Get the eyebrow data. """
+        # TODO: Split in 3 separate objects
         # to determine if the eyebrows are raised up or down
         eyebrow_in_l = self.average_length_at_scale(336, 338, avg_scale)
         eyebrow_mid_l = self.average_length_at_scale(296, 297, avg_scale)

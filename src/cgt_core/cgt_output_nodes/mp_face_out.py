@@ -17,10 +17,8 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 from __future__ import annotations
 from . import mp_out_utils
-from ..cgt_naming import COLLECTIONS
-from ..cgt_bpy import cgt_bpy_utils, cgt_collection
-from ..cgt_utils import cgt_json
-from pathlib import Path
+from ..cgt_naming import COLLECTIONS, cgt_defaults
+from ..cgt_bpy import cgt_bpy_utils, cgt_collection, cgt_object_prop
 
 
 class MPFaceOutputNode(mp_out_utils.BpyOutputNode):
@@ -29,17 +27,20 @@ class MPFaceOutputNode(mp_out_utils.BpyOutputNode):
     parent_col = COLLECTIONS.drivers
 
     def __init__(self):
-        path = Path(__file__).parent / "data/face.json"
-        data = cgt_json.JsonData(str(path))
+        data = cgt_defaults
 
         references = {}
         for i in range(468):
             references[f'{i}'] = f"cgt_face_vertex_{i}"
-        for k, v in data.data.items():
+        for k, v in data.face.items():
             references[f'{468+int(k)}'] = v
 
         self.face = cgt_bpy_utils.add_empties(references, 0.005)
-        cgt_collection.add_list_to_collection(self.col_name, self.face, self.parent_col)
+        for ob in self.face[468:]:
+            cgt_object_prop.set_custom_property(ob, "cgt_id", data.identifier)
+
+        cgt_collection.add_list_to_collection(self.col_name, self.face[468:], self.parent_col)
+        cgt_collection.add_list_to_collection(self.col_name+"_DATA", self.face[:468], self.col_name)
 
     def update(self, data, frame):
         loc, rot, sca = data

@@ -19,14 +19,15 @@ import bpy
 from bpy.props import PointerProperty
 from bpy.utils import register_class, unregister_class
 
-from . import ui_properties, cgt_panels, ui_operators
+from . import ui_properties, cgt_panels, ui_operators, cgt_transfer_props
 from .. import cgt_rigify_transfer_preferences
 # from ...cgt_mediapipe import pref_operators, pref_panels
 
 modules = (
     cgt_rigify_transfer_preferences,
     ui_operators,
-    cgt_panels
+    cgt_panels,
+    cgt_transfer_props,
 )
 
 

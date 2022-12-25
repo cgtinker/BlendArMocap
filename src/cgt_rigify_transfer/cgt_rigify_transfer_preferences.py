@@ -17,8 +17,8 @@ class UI_APT_CGT_RigifyTransfer(bpy.types.AddonPreferences):
 
         box.label(text='Linssss ig.')
 
+
 def register():
-    print("called", __package__)
     bpy.utils.register_class(UI_APT_CGT_RigifyTransfer)
 
 

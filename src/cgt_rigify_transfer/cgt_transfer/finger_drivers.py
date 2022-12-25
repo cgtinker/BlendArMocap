@@ -1,28 +1,79 @@
 from __future__ import annotations
-from typing import List
+from typing import List, Tuple, Union
 import bpy
+import logging
 from ...cgt_core.cgt_bpy.cgt_drivers import SingleProperty, DriverFactory, TransformChannel
+from ...cgt_core.cgt_bpy.cgt_object_prop import set_custom_property, get_custom_property
+from ...cgt_core.cgt_bpy import cgt_bpy_utils, cgt_drivers, cgt_object_prop
 from .helper import add_remap_properties, add_simple_remap_expression
 
 
-def remap_property_driver(target: bpy.types.Object, provider: bpy.types.Object, prop_name: str,
-                          data_path: str, data_path_idx: int, transform_space: str, mapping: List[float]):
+def remap_property_driver(target: bpy.types.Object, provider: bpy.types.Object, prop_name: str, data_path: str,
+                          data_path_idx: int, transform_space: str, mapping: List[float]) -> Tuple[str, str]:
     """ Copy value from provider to target object and remap it using a slope. """
-    target_driver_factory = DriverFactory(target)
+    driver_factory = DriverFactory(target)
 
     variable = TransformChannel(prop_name, provider, data_path, data_path_idx, transform_space)
-    target_driver_factory.add_variable(variable, data_path, data_path_idx)
+    driver_factory.add_variable(variable, data_path, data_path_idx)
 
-    slope_name, offset_name = add_remap_properties(target_driver_factory, prop_name, *mapping)
-    target_driver_factory = add_simple_remap_expression(target_driver_factory, prop_name, data_path, data_path_idx,
+    slope_name, offset_name = add_remap_properties(driver_factory, prop_name, *mapping)
+    target_driver_factory = add_simple_remap_expression(driver_factory, prop_name, data_path, data_path_idx,
                                                         slope_name, offset_name)
     target_driver_factory.execute()
+    return slope_name, offset_name
 
 
-def xAngles(x_inputs, x_outputs):
-    for x_in, x_out in zip(x_inputs, x_outputs):
-        mapping = x_in + x_out  # flatten
-        
+def link_custom_property(target: Union[bpy.types.PoseBone, bpy.types.Object],
+                         provider: Union[bpy.types.PoseBone, bpy.types.Object], prop_name: str):
+    """ The provider property gets linked to the target object.
+        Only the linked property can be modified. """
+    default_value = get_custom_property(provider, prop_name)
+    set_custom_property(target, prop_name, default_value)
+
+    # adds a driver to the provider so the value can be adjusted at another place
+    driver_factory = DriverFactory(provider)
+    prop = SingleProperty(prop_name, target, f'["{prop_name}"]')
+    driver_factory.add_variable(prop, f'["{prop_name}"]', -1)
+    driver_factory.add_expression(prop_name, f'["{prop_name}"]', -1)
+    driver_factory.execute()
+
+
+def get_driver_object_name(name: str) -> str:
+    # TODO: to driver name -> find objects in scene
+    return "driver_" + name
+
+
+def dooo(driver_properties, bone_targets):
+    for driver_property in driver_properties:
+        # get object references
+        provider_obj = cgt_bpy_utils.get_object_by_name(driver_property)
+        assert provider_obj is not None
+
+        # get or create driver object
+        driver_object_name = get_driver_object_name(driver_property)
+        target_obj = cgt_bpy_utils.get_object_by_name(driver_object_name)
+        if target_obj is None:
+            target_obj = cgt_bpy_utils.add_empty(0.01, driver_object_name)
+
+        # get angle properties for remapping
+        angle_properties = []
+        for angle_property in driver_properties[driver_property]:
+            for angles in driver_properties[driver_property][angle_property]:
+                angle_properties.append(driver_properties[driver_property][angle_property][angles])
+
+        # assign drivers
+        if len(angle_properties) == 4:
+            remap_property_driver(target_obj, provider_obj, "xRot", "rotation", 0,
+                                  "WORLD_SPACE", angle_properties[0] + angle_properties[1])
+            remap_property_driver(target_obj, provider_obj, "zRot", "rotation", 2,
+                                  "WORLD_SPACE", angle_properties[2] + angle_properties[3])
+
+        elif len(angle_properties) == 2:
+            remap_property_driver(target_obj, provider_obj, "xRot", "rotation", 0,
+                                  "WORLD_SPACE", angle_properties[0] + angle_properties[1])
+        else:
+            logging.error(f"Angle properties for {target_obj} of {len(angle_properties)} are not supported.")
+
 
 def do_stuff(targets: List[bpy.types.Object], providers: List[bpy.types.Object], bones: List[bpy.types.PoseBone]):
     prop_name = 'xRot'
@@ -32,91 +83,22 @@ def do_stuff(targets: List[bpy.types.Object], providers: List[bpy.types.Object],
     mapping = [0, 1, 2, 3]
 
     for target, provider, bone in zip(targets, providers, bones):
-        remap_property_driver(target, provider, prop_name, data_path, data_path_idx, transform_space, mapping)
+        slope_name, offset_name = remap_property_driver(
+            target, provider, prop_name, data_path, data_path_idx, transform_space, mapping)
 
 
-class FingerDrivers:
-    # order: thumb / index / middle / ring / pinky
-    # slope values for z-angles in degrees
-    z_inputs = [[0.3491, 1.0472], [-0.4363, 1.0472], [-0.6109, 0.6981], [-0.4363, 0.6981], [-0.6981, 0.8727]]
-    z_outputs = [[-0.4363, 0.4363], [0.4363, -0.6981], [0.6109, -0.4363], [0.1745, -0.5236], [0.3491, -0.5236]]
-
-    # slope values for x-angles in radians
-    x_inputs = [
-        [0.011, 0.630], [0.010, 0.536], [0.008, 1.035],
-        [0.105, 1.331], [0.014, 1.858], [0.340, 1.523],
-        [0.046, 1.326], [0.330, 1.803], [0.007, 1.911],
-        [0.012, 1.477], [0.244, 1.674], [0.021, 1.614],
-        [0.120, 1.322], [0.213, 1.584], [0.018, 1.937]
+def okdoki():
+    z_angle_map = [
+        [[0.34911, 1.0472], [-0.4363, 0.4363]],
+        [[-0.4363, 1.0472], [0.4363, -0.6981]],
+        [[-0.6109, 0.6981], [0.6109, -0.4363]],
+        [[-0.4363, 0.6981], [0.1745, -0.5236]],
+        [[-0.6981, 0.8727], [0.3491, -0.5236]]
     ]
-    x_outputs = [
-        [-.60, 0.63], [-.30, 0.54], [-.15, 1.03],
-        [-.50, 1.33], [-.20, 1.86], [-.55, 1.52],
-        [-.50, 1.33], [-.30, 1.80], [-.15, 1.91],
-        [-.60, 1.48], [-.30, 1.67], [-.30, 1.61],
-        [-.80, 1.32], [-.50, 1.58], [-.30, 1.94]
+    x_angle_map = [
+        [[[0.011, 0.63], [-0.6, 0.63]], [[0.01, 0.536], [-0.3, 0.54]], [[0.008, 1.035], [-0.15, 1.03]]],
+        [[[0.105, 1.331], [-0.5, 1.33]], [[0.014, 1.858], [-0.2, 1.86]], [[0.34, 1.523], [-0.55, 1.52]]],
+        [[[0.046, 1.326], [-0.5, 1.33]], [[0.33, 1.803], [-0.3, 1.8]], [[0.007, 1.911], [-0.15, 1.91]]],
+        [[[0.012, 1.477], [-0.6, 1.48]], [[0.244, 1.674], [-0.3, 1.67]], [[0.021, 1.614], [-0.3, 1.61]]],
+        [[[0.12, 1.322], [-0.8, 1.32]], [[0.213, 1.584], [-0.5, 1.58]], [[0.018, 1.937], [-0.3, 1.94]]]
     ]
-
-    def __init__(self, driver_targets: list, provider_objs: list, orientation: str, bone_names: list):
-        """ Generates driver properties for fingers using custom properties. """
-        # generate slopes for x angles
-
-        x_slopes = [
-            Slope(self.x_inputs[idx][0], self.x_inputs[idx][1], self.x_outputs[idx][0], self.x_outputs[idx][1], "x_map")
-            for idx in range(0, 15)
-        ]
-
-        # generate z slopes for the right hand
-        z_slopes_r = [
-            Slope(self.z_inputs_r[idx][0], self.z_inputs_r[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1],
-                  "z_map")
-            for idx in range(0, 5)
-        ]
-
-        # values have to be mirrored to fit angles (for left and right hand)
-        self.z_outputs = [[i[0] * -1, i[1] * -1] for idx, i in enumerate(self.z_outputs)]
-        z_slopes_l = [
-            Slope(self.z_inputs_l[idx][0], self.z_inputs_l[idx][1], self.z_outputs[idx][0], self.z_outputs[idx][1],
-                  "z_map")
-            for idx in range(0, 5)
-        ]
-
-        # helper method to access the slopes
-        def get_z_slope(idx):
-            if idx not in range(0, 15, 3):
-                return Slope(0, 1, 0, 1)
-
-            if orientation == "right":
-                return z_slopes_r[int(idx / 3)]
-            else:
-                return z_slopes_l[int(idx / 3)]
-
-        self.pose_drivers = []
-
-        # adding driver using x props
-        for idx, _ in enumerate(driver_targets):
-            # x-angle custom prop
-            self.pose_drivers.append(CustomBoneProp(driver_targets[idx],
-                                                    bone_names[idx],
-                                                    "rotation_euler",
-                                                    x_slopes[idx].name,
-                                                    (x_slopes[idx].min_out, x_slopes[idx].max_out)))
-            # default finger angle drivers use only x-prop
-            if idx % 3 != 0:
-                self.pose_drivers.append(DefaultFingerAngleDriver(driver_targets[idx],
-                                                                  provider_objs[idx],
-                                                                  x_slopes[idx]))
-            else:
-                # mcps contain also z-angles
-                self.pose_drivers.append(CustomBoneProp(
-                    driver_targets[idx],
-                    bone_names[idx],
-                    "rotation_euler",
-                    get_z_slope(idx).name,
-                    (get_z_slope(idx).min_out, get_z_slope(idx).max_out)
-                ))
-
-                self.pose_drivers.append(FingerAngleDriver(driver_targets[idx],
-                                                           provider_objs[idx],
-                                                           x_slopes[idx],
-                                                           get_z_slope(idx)))

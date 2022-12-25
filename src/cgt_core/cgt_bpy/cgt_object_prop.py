@@ -4,15 +4,16 @@ from dataclasses import dataclass
 from typing import Optional, Any
 
 import bpy
+from typing import Union
 
 
-def get_custom_property(target_obj: bpy.types.Object, prop_name: str) -> Optional[Any]:
+def get_custom_property(target_obj: Union[bpy.types.Object, bpy.types.PoseBone], prop_name: str) -> Optional[Any]:
     """ Returns the custom property by name or None. """
     return target_obj.get(prop_name)
 
 
 def set_custom_property(
-        obj: bpy.types.Object, prop_name: str, value: float,
+        obj: Union[bpy.types.Object, bpy.types.PoseBone], prop_name: str, value: float,
         v_min: Optional[float] = None, v_max:  Optional[float] = None,
         use_soft: bool = False, overwrite: bool = False) -> bool:
 

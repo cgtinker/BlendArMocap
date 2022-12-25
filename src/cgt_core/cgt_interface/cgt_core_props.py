@@ -20,3 +20,4 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(CGTProperties)
+    del bpy.types.Scene.m_cgtinker_mediapipe

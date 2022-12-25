@@ -104,8 +104,9 @@ class PT_CGT_Data_Transfer(cgt_core_panel.DefaultPanel, Panel):
 
         # box.row().prop(user, "overwrite_drivers_bool")
         if user.selected_driver_collection:
-            if user.selected_driver_collection.name == "cgt_POSE":
-                box.row().prop(user, "experimental_feature_bool")  # , icon="ERROR")
+
+            # if user.selected_driver_collection.name == "cgt_POSE":
+            #    box.row().prop(user, "experimental_feature_bool")  # , icon="ERROR")
             if user.selected_rig:
                 box.row(align=True).operator("button.cgt_transfer_animation_button", text="Transfer Animation")
             box.row(align=True).operator("button.smooth_empties_in_col", text="Smooth Animation")

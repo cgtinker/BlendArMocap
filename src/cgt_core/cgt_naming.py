@@ -18,12 +18,28 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import os
 import logging
 from dataclasses import dataclass
-
+from .cgt_utils.cgt_json import JsonData
+from pathlib import Path
 
 # has to be at root
 PACKAGE = os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 logging.getLogger("BlendArMocap").debug(f"{PACKAGE}, {os.path.dirname(os.path.dirname(__file__))}")
 ADDON_NAME = "BlendArMocap"
+
+
+class CGTDefaultsJson(JsonData):
+    pose: dict
+    face: dict
+    hand: dict
+    identifier: str
+
+    def __init__(self):
+        path = Path(__file__).parent / "cgt_defaults.json"
+        super().__init__(str(path))
+
+
+cgt_defaults = CGTDefaultsJson()
+
 
 @dataclass(frozen=True, init=True)
 class COLLECTIONS:
@@ -31,7 +47,7 @@ class COLLECTIONS:
         todo: !!!
         """
     drivers: str = "cgt_DRIVERS"
-    hands: str = "cgt_HANDS"
+    hands: str = "cgt_HAND"
     face: str = "cgt_FACE"
     pose: str = "cgt_POSE"
 
