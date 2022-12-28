@@ -13,14 +13,14 @@ def pool_transfer_target(self, obj):
 def get_shape_key_enum(self, context):
     ob = self.target
     if ob is None:
-        return
+        return [('NONE', 'None', "")]
     return [(key.name, key.name, "") for key in ob.data.shape_keys.key_blocks]
 
 
 def get_bones_enum(self, context):
     obj = self.target
     if obj is None:
-        return
+        return [('NONE', 'None', "")]
     return [(bone.name, bone.name, "") for bone in obj.data.bones]
 
 
@@ -110,10 +110,24 @@ class OBJECT_PGT_CGT_ValueMapping(bpy.types.PropertyGroup):
     active: bpy.props.BoolProperty(name="active", default=False)
 
     remap_default: bpy.props.EnumProperty(
-        items=((axis, axis, "") for axis in ['DEFAULT', 'XYZ', 'XZY', 'YXZ', 'YZX', 'ZXY', 'ZYX']),
+        items=(
+            ('DEFAULT', 'DEFAULT', ''),
+            ('XYZ', 'XYZ', ""),
+            ('XZY', 'XZY', ""),
+            ('YXZ', 'YXZ', ""),
+            ('YZX', 'YZX', ""),
+            ('ZXY', 'ZXY', ""),
+            ('ZYX', 'ZYX', "")
+
+        ),
         name="Remap Axis")
     remap_details: bpy.props.EnumProperty(
-        items=((axis, axis, "") for axis in ['DEFAULT', 'X', 'Y', 'Z']),
+        items=(
+            ('DEFAULT', 'DEFAULT', ''),
+            ('X', 'X', ""),
+            ('Y', 'Y', ""),
+            ('Z', 'Z', ""),
+        ),
         name="Remap Axis")
 
     factor: bpy.props.FloatProperty(name="multiply", default=1.0)

@@ -3,8 +3,8 @@ from __future__ import  annotations
 from typing import Tuple
 import bpy
 import rigify # noqa
-from ...cgt_core.cgt_bpy import cgt_object_prop
-from ...cgt_core.cgt_bpy.cgt_drivers import DriverFactory, Distance, RotationalDifference, SingleProperty, TransformChannel
+from src.cgt_core.cgt_bpy import cgt_object_prop
+from src.cgt_core.cgt_bpy.cgt_drivers import DriverFactory, Distance, RotationalDifference, SingleProperty, TransformChannel
 
 
 def add_remap_properties(

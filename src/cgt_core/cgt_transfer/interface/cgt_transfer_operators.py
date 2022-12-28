@@ -18,8 +18,8 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import logging
 import bpy
 
-from ...cgt_core.cgt_bpy import cgt_bpy_utils, cgt_collection
-from ...cgt_core.cgt_naming import COLLECTIONS
+from ...cgt_bpy import cgt_collection
+from ...cgt_naming import COLLECTIONS
 
 
 # region TRANSFER

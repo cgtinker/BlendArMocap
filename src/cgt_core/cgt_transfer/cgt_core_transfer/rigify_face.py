@@ -21,8 +21,8 @@ from .abs_rigging import BpyRigging
 from . import face_drivers
 from src.cgt_core.cgt_naming import FACE
 from .rigify_naming import rigify_face_bone_names
-from ...cgt_core.cgt_bpy import objects
-from ...cgt_core.cgt_utils import cgt_math
+from src.cgt_core.cgt_bpy import objects
+from src.cgt_core.cgt_utils import cgt_math
 import numpy as np
 
 

@@ -18,9 +18,9 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import numpy as np
 
 from . import abs_rigging, limb_drivers
-from ...cgt_core.cgt_bpy import objects
+from src.cgt_core.cgt_bpy import objects
 from src.cgt_core.cgt_naming import POSE
-from ...cgt_core.cgt_utils import cgt_math
+from src.cgt_core.cgt_utils import cgt_math
 from .rigify_naming import rigify_pose_bone_names
 
 

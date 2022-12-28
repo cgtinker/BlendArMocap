@@ -3,10 +3,16 @@ from . import (
     cgt_driver_obj_props,
     cgt_driver_prop_panel
 )
+from .interface import (
+    cgt_transfer_panel,
+    cgt_transfer_operators
+)
 
 modules = [
     cgt_driver_obj_props,
-    cgt_driver_prop_panel
+    cgt_driver_prop_panel,
+    cgt_transfer_operators,
+    cgt_transfer_panel,
 ]
 
 

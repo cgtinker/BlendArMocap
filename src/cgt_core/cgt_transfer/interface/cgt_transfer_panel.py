@@ -17,24 +17,28 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 import bpy
 from bpy.types import Panel
-from ...cgt_core.cgt_interface import cgt_core_panel
+from ...cgt_interface import cgt_core_panel
 
 
 
 import bpy
-from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty, FloatVectorProperty, PointerProperty
-from bpy.types import PropertyGroup
+from bpy.props import PointerProperty
 
 
-class CgtRigifyTransferProperties(PropertyGroup):
-
+class CgtRigifyTransferProperties(bpy.types.PropertyGroup):
     def is_rigify_armature(self, object):
         if object.type == 'ARMATURE':
             if 'rig_id' in object.data:
                 return True
         return False
 
-
+    transfer_types: bpy.props.EnumProperty(
+        name="Target Type",
+        items=(
+            ("RIGIFY", "Rigify Rig", ""),
+            ("OTHER", "Other Rig", ""),
+        )
+    )
     selected_rig: bpy.props.PointerProperty(
         type=bpy.types.Object,
         description="Select an armature for animation transfer.",
@@ -89,6 +93,7 @@ class PT_CGT_Data_Transfer(cgt_core_panel.DefaultPanel, Panel):
         box = self.layout.box()
 
         box.label(text='Link Mocap data to a generated humanoid rigify rig.')
+        box.row().prop(user, "transfer_types", text="Transfer Type")
         box.row(align=True).prop_search(data=user,
                                         property="selected_driver_collection",
                                         search_data=bpy.data,
@@ -139,10 +144,37 @@ class PT_CGT_Gamerig_Transfer(cgt_core_panel.DefaultPanel, Panel):
         box.row().operator("button.cgt_generate_gamerig", text="Metarig2Gamerig")
 
 
+class PT_CGT_TransferTypeGeneration(cgt_core_panel.DefaultPanel, Panel):
+    bl_label = "Transfer Generation Tools"
+    bl_parent_id = "UI_PT_Transfer_Data"
+    bl_idname = "UI_PT_TransferTypeGeneration"
+
+    def draw(self, context):
+        user = context.scene.cgtinker_rigify_transfer  # noqa
+        box = self.layout.box()
+        box.label(text='Link Rigify Rig animation to Metarig')
+        box.row(align=True).prop_search(data=user,
+                                        property="selected_rig",
+                                        search_data=bpy.data,
+                                        search_property="objects",
+                                        text="New Transfer Type",
+                                        icon="ARMATURE_DATA")
+
+        box.row(align=True).prop_search(data=user,
+                                        property="selected_metarig",
+                                        search_data=bpy.data,
+                                        search_property="objects",
+                                        text="Test",
+                                        icon="ARMATURE_DATA")
+
+        # box.row().operator("button.cgt_regenerate_metarig", text="Regenerate Metarig")
+        box.row().operator("button.cgt_generate_gamerig", text="")
+
 classes = [
     CgtRigifyTransferProperties,
     PT_CGT_Main_Transfer,
     PT_CGT_Data_Transfer,
+    PT_CGT_TransferTypeGeneration,
     PT_CGT_Gamerig_Transfer,
 ]
 

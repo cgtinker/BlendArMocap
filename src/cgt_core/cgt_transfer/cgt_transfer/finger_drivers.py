@@ -2,9 +2,9 @@ from __future__ import annotations
 from typing import List, Tuple, Union
 import bpy
 import logging
-from ...cgt_core.cgt_bpy.cgt_drivers import SingleProperty, DriverFactory, TransformChannel
-from ...cgt_core.cgt_bpy.cgt_object_prop import set_custom_property, get_custom_property
-from ...cgt_core.cgt_bpy import cgt_bpy_utils, cgt_drivers, cgt_object_prop
+from src.cgt_core.cgt_bpy.cgt_drivers import SingleProperty, DriverFactory, TransformChannel
+from src.cgt_core.cgt_bpy.cgt_object_prop import set_custom_property, get_custom_property
+from src.cgt_core.cgt_bpy import cgt_bpy_utils, cgt_drivers, cgt_object_prop
 from .helper import add_remap_properties, add_simple_remap_expression
 
 
