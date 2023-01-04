@@ -146,6 +146,10 @@ class DriverFactory:
     expressions: dict
 
     def __init__(self, target: Any, type: str = 'SCRIPTED'):
+        """ Init a driver factory
+            params target: Property or Object in Blender with accessible data path.
+            params type: Driver type to use. ['MAX', 'MIN', 'AVERAGE', 'SCRIPTED', 'SUM'], default = SCRIPTED.
+        """
         assert type in ['MAX', 'MIN', 'AVERAGE', 'SCRIPTED', 'SUM']
         self.type = type
         self.target = target
@@ -153,17 +157,16 @@ class DriverFactory:
         self._driver_variables = {}
         self.variables = list()
 
-    def add_variable(self, variable: Variable, path: str, idx: int, is_transform: bool = True):
+    def add_variable(self, variable: Variable, path: str, idx: int):
         """ Adds driver variable. """
-        if is_transform:
-            self._validate(path, idx)
+        if idx is None:
+            idx = -1
         self.variables.append(DriverVariable(variable, path, idx))
 
-    def add_expression(self, expression: str, path: str, idx: int = None, is_transform: bool = True):
+    def add_expression(self, expression: str, path: str, idx: int = None):
         """ Adds a driver expression. """
-        if is_transform:
-            self._validate(path, idx)
-        assert idx is not None
+        if idx is None:
+            idx = -1
 
         if path not in self.expressions:
             self.expressions[path] = {}
@@ -171,6 +174,20 @@ class DriverFactory:
             self.expressions[path][idx] = None
 
         self.expressions[path][idx] = expression
+
+    def expand_expression(self, expression: str, path: str, idx: int = None):
+        """ Previous expression gets encapsulated and wrapped in a new expression.
+            Make sure to use brackets to place the previous expression {}."""
+        assert idx is not None
+        assert "{}" in expression
+
+        if path not in self.expressions:
+            self.expressions[path] = {}
+        if idx not in self.expressions[path]:
+            self.expressions[path][idx] = ""
+
+        previous = f"({self.expressions[path][idx]})"
+        self.expressions[path][idx] = expression.format(previous)
 
     def _add_driver_variable(self, path: str, idx: int, driver_variable: Any):
         """ Adds a driver variable to the driver variables dict. """
@@ -189,10 +206,15 @@ class DriverFactory:
             return False
         return True
 
+    def driver_add_variable(self, path, idx):
+        if idx == -1:
+            return self.target.driver_add(path)
+        return self.target.driver_add(path, idx)
+
     def execute(self):
         """ Adds driver variables to object and stores them. """
         for var in self.variables:
-            driver_variable = self.target.driver_add(var.path, var.idx)
+            driver_variable = self.driver_add_variable(var.path, var.idx)
             var.variable.assign(driver_variable)
             self._add_driver_variable(var.path, var.idx, driver_variable)
 
@@ -203,17 +225,12 @@ class DriverFactory:
                     continue
 
                 if not self._in_driver_variables(str_key, int_key):
-                    self._add_driver_variable(str_key, int_key, self.target.driver_add(str_key, int_key))
+                    self._add_driver_variable(str_key, int_key, self.driver_add_variable(str_key, int_key))
 
                 if self.type == 'SCRIPTED':
                     self._driver_variables[str_key][int_key].driver.expression = expression
                 else:
                     self._driver_variables[str_key][int_key].driver.type = self.type
-
-    @staticmethod
-    def _validate(path, idx):
-        assert path in ['location', 'rotation_euler', 'scale', 'quaternion']
-        assert 0 <= idx <= 3
 
 
 if __name__ == '__main__':

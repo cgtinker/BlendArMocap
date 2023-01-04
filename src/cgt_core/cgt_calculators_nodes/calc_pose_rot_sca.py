@@ -41,8 +41,8 @@ class PoseRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
     scale_data = []
 
     def __init__(self):
-        self.shoulder_center = calc_utils.CustomData(33)
-        self.hip_center = calc_utils.CustomData(34)
+        self.shoulder_center = calc_utils.CustomData(34)
+        self.hip_center = calc_utils.CustomData(33)
 
     def update(self, data, frame):
         """ Apply the processed data to references. """

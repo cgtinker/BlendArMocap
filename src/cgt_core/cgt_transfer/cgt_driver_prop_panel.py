@@ -22,22 +22,6 @@ from __future__ import annotations
 import bpy
 
 
-# TODO: utils -> remove
-def get_constraint_props(c: bpy.types.Constraint):
-    pool = {'__doc__', 'target', 'subtarget', '__module__', '__slots__', 'is_valid',
-            'active', 'bl_rna', 'error_location', 'error_rotation', 'head_tail',
-            'is_proxy_local', 'mute', 'rna_type', 'show_expanded', 'use_bbone_shape'}
-    props = {key: getattr(c, key, None) for key in dir(c) if key not in pool}
-    return props
-
-
-# TODO: CHECK IF REQUIRED IN ANY WAY. REQ FOR CONSTRAINTS
-def get_custom_props(ob: bpy.types.Object):
-    pool = {'prop', '_RNA_UI', 'cgt_id', 'cycles', 'cycles_visibility'}
-    props = {key: getattr(ob, key, None) for key in ob.keys() if key not in pool}
-    return props
-
-
 class OBJECT_PT_BlendArMocapTransfer(bpy.types.Panel):
     # Transfer panel in object constraint space
     bl_label = "BlendArMocap"
@@ -129,12 +113,46 @@ class OBJECT_PT_CGT_DriverProperties(bpy.types.Panel):
         col = layout.column()
         if ob.cgt_props.driver_type == 'CHAIN':
             col.prop(ob.cgt_props, "to_obj", text="Parent")
+            col.separator_spacer()
+
+            # REMAP BY PROPS
+            col.prop(ob.cgt_props.by_obj, "target", text="Remap By")
+            col.prop(ob.cgt_props.by_obj, "target_type", text="Remap Type")
+
+            if ob.cgt_props.by_obj.target_type == 'BONE_LEN' and ob.cgt_props.by_obj.target is not None:
+                col.prop_search(ob.cgt_props.by_obj, "target_bone", ob.cgt_props.by_obj.target.data, "bones")
+
+            elif ob.cgt_props.by_obj.target_type == 'BONE_DIST' and ob.cgt_props.by_obj.target is not None:
+                col.prop_search(ob.cgt_props.by_obj, "target_bone", ob.cgt_props.by_obj.target.data, "bones",
+                                text="From Bone")
+                col.prop(ob.cgt_props.by_obj, "target_bone_type", text="Type")
+                col.prop_search(ob.cgt_props.by_obj, "other_bone", ob.cgt_props.by_obj.target.data, "bones",
+                                text="To Bone")
+                col.prop(ob.cgt_props.by_obj, "other_bone_type", text="Type")
 
         elif ob.cgt_props.driver_type == 'REMAP':
-            pass
+            if ob.cgt_props.by_obj.target_type != 'NONE':
+                col.prop(ob.cgt_props.by_obj, "target", text="Remap By")
+            col.prop(ob.cgt_props.by_obj, "target_type", text="Remap Type")
+
+            if ob.cgt_props.by_obj.target_type == 'BONE_LEN' and ob.cgt_props.by_obj.target is not None:
+                col.prop_search(ob.cgt_props.by_obj, "target_bone", ob.cgt_props.by_obj.target.data, "bones")
+
+            elif ob.cgt_props.by_obj.target_type == 'BONE_DIST' and ob.cgt_props.by_obj.target is not None:
+                col.prop_search(ob.cgt_props.by_obj, "target_bone", ob.cgt_props.by_obj.target.data, "bones",
+                                text="From Bone")
+                col.prop(ob.cgt_props.by_obj, "target_bone_type", text="Type")
+                col.prop_search(ob.cgt_props.by_obj, "other_bone", ob.cgt_props.by_obj.target.data, "bones",
+                                text="To Bone")
+                col.prop(ob.cgt_props.by_obj, "other_bone_type", text="Type")
 
         elif ob.cgt_props.driver_type == 'REMAP_DIST':
+            col.prop(ob.cgt_props, "from_obj", text="Distance From")
             col.prop(ob.cgt_props, "to_obj", text="Distance To")
+            col.separator_spacer()
+
+            col.prop(ob.cgt_props, "remap_from_obj", text="Normalize Distance From")
+            col.prop(ob.cgt_props, "remap_to_obj", text="Normalize Distance To")
             col.separator_spacer()
 
             # PROPS
@@ -169,9 +187,9 @@ class OBJECT_PT_CGT_DriverPropertyDetails(bpy.types.Panel):
         ob = context.object
         if ob is None:
             return False
-        if ob.cgt_props.driver_type in ['PASS_THROUGH', 'CHAIN']:
-            return False
-        return True
+        if ob.cgt_props.driver_type in ['REMAP', 'REMAP_DIST', 'CHAIN']:
+            return True
+        return False
 
     def draw(self, context):
         layout = self.layout
@@ -186,6 +204,7 @@ class OBJECT_PT_CGT_DriverPropertyDetails(bpy.types.Panel):
         def draw_props(identifier, group, remap_type="remap_default"):
             row = col.row(heading=f"{identifier} To Axis", align=True)
             row.use_property_decorate = False
+
             sub = row.row(align=True)
             sub.prop(group, remap_type, text=f"{identifier} To Axis")
             row.label(icon='BLANK1')
@@ -213,48 +232,53 @@ class OBJECT_PT_CGT_DriverPropertyDetails(bpy.types.Panel):
                 if group.active:
                     draw_props(identifier, group, remap_type)
 
-        row = col.row(heading="From Location", align=True)
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(ob.cgt_props.use_loc_x, "active", text="X", toggle=True)
-        sub.prop(ob.cgt_props.use_loc_y, "active", text="Y", toggle=True)
-        sub.prop(ob.cgt_props.use_loc_z, "active", text="Z", toggle=True)
-        sub.prop(ob.cgt_props, "loc_details", text="+", toggle=True)
-        row.label(icon='BLANK1')
-        if ob.cgt_props.loc_details:
-            detailed_properties(
-                ['X', 'Y', 'Z'],
-                [ob.cgt_props.use_loc_x, ob.cgt_props.use_loc_y, ob.cgt_props.use_loc_z],
-                "remap_details")
-        elif any([ob.cgt_props.use_loc_x.active, ob.cgt_props.use_loc_y.active, ob.cgt_props.use_loc_z.active]):
-            draw_props("", ob.cgt_props.use_loc_x, "remap_default")
+        def draw_sub_props(label, props, details):
+            row = col.row(heading=label, align=True)
+            row.use_property_decorate = False
+            sub = row.row(align=True)
 
-        row = col.row(heading="From Rotation", align=True)
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(ob.cgt_props.use_rot_x, "active", text="X", toggle=True)
-        sub.prop(ob.cgt_props.use_rot_y, "active", text="Y", toggle=True)
-        sub.prop(ob.cgt_props.use_rot_z, "active", text="Z", toggle=True)
-        sub.prop(ob.cgt_props, "rot_details", text="+", toggle=True)
-        row.label(icon='BLANK1')
-        if ob.cgt_props.rot_details:
-            detailed_properties(
-                ['X', 'Y', 'Z'],
-                [ob.cgt_props.use_rot_x, ob.cgt_props.use_rot_y, ob.cgt_props.use_rot_z],
-                "remap_details")
-        elif any([ob.cgt_props.use_rot_x.active, ob.cgt_props.use_rot_y.active, ob.cgt_props.use_rot_z.active]):
-            draw_props("", ob.cgt_props.use_rot_x, "remap_default")
+            for prop, name, text in props:
+                sub.prop(prop, name, text=text, toggle=True)
 
-        if ob.cgt_props.driver_type != "REMAP_DIST":
-            return
-        # TODO: Remove? We can use actual distance between objects (even if it's a bit more to calc)
-        row = col.row(heading="From Scale", align=True)
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(ob.cgt_props.use_sca_x, "active", text="Length", toggle=True)
-        # sub.prop(ob.cgt_props.use_sca_y, "active", text="Y", toggle=True)
-        # sub.prop(ob.cgt_props.use_sca_z, "active", text="Z", toggle=True)
-        row.label(icon='BLANK1')
+            row.label(icon='BLANK1')
+            if getattr(ob.cgt_props, details[0], False):
+                detailed_properties(['X', 'Y', 'Z'], [prop[0] for prop in loc_props], details[1])
+            elif any([prop[0].active for prop in props]):
+                draw_props("", ob.cgt_props.use_loc_x, details[2])
+
+
+        loc_props = [
+            [ob.cgt_props.use_loc_x, "active", "X"],
+            [ob.cgt_props.use_loc_y, "active", "Y"],
+            [ob.cgt_props.use_loc_z, "active", "Z"],
+            [ob.cgt_props, "loc_details", "+"],
+        ]
+
+        rot_props = [
+            [ob.cgt_props.use_rot_x, "active", "X"],
+            [ob.cgt_props.use_rot_y, "active", "Y"],
+            [ob.cgt_props.use_rot_z, "active", "Z"],
+            [ob.cgt_props, "rot_details", "+"],
+        ]
+
+        sca_props = [
+            [ob.cgt_props.use_sca_x, "active", "X"],
+            [ob.cgt_props.use_sca_y, "active", "Y"],
+            [ob.cgt_props.use_sca_z, "active", "Z"],
+            [ob.cgt_props, "sca_details", "+"],
+        ]
+
+        if ob.cgt_props.driver_type == 'REMAP':
+            draw_sub_props("From Location", loc_props, ("loc_details", "remap_details", "remap_default"))
+            draw_sub_props("From Rotation", rot_props, ("rot_details", "remap_details", "remap_default"))
+
+        elif ob.cgt_props.driver_type == 'REMAP_DIST':
+            draw_sub_props("To Location", loc_props, ("loc_details", "remap_none", "remap_default"))
+            draw_sub_props("To Rotation", rot_props, ("rot_details", "remap_none", "remap_default"))
+            draw_sub_props("To Scale", sca_props, ("sca_details", "remap_none", "remap_default"))
+
+        elif ob.cgt_props.driver_type == 'CHAIN':
+            draw_sub_props("To Location", loc_props, ("loc_details", "remap_details", "remap_default"))
 
 
 classes = [

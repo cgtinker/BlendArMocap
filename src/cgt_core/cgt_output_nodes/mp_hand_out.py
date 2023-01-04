@@ -30,8 +30,8 @@ class CgtMPHandOutNode(mp_out_utils.BpyOutputNode):
     def __init__(self):
         data = cgt_defaults
         references = data.hand
-        self.left_hand = cgt_bpy_utils.add_empties(references, 0.005, prefix=".L")
-        self.right_hand = cgt_bpy_utils.add_empties(references, 0.005, prefix=".R")
+        self.left_hand = cgt_bpy_utils.add_empties(references, 0.005, prefix=".L", suffix='cgt_')
+        self.right_hand = cgt_bpy_utils.add_empties(references, 0.005, prefix=".R", suffix='cgt_')
 
         for ob in self.left_hand+self.right_hand:
             cgt_object_prop.set_custom_property(ob, "cgt_id", data.identifier)

@@ -12,16 +12,22 @@ def pool_transfer_target(self, obj):
 
 def get_shape_key_enum(self, context):
     ob = self.target
-    if ob is None:
-        return [('NONE', 'None', "")]
+    if ob is None or ob.type != 'MESH':
+        return [('NONE', "None", "")]
+    if ob.data.shape_keys is None:
+        return [('NONE', "None", "")]
     return [(key.name, key.name, "") for key in ob.data.shape_keys.key_blocks]
 
 
 def get_bones_enum(self, context):
     obj = self.target
+
+    items = [('NONE', "None", "")]
     if obj is None:
-        return [('NONE', 'None', "")]
-    return [(bone.name, bone.name, "") for bone in obj.data.bones]
+        return items
+    if obj.type != 'ARMATURE':
+        return items
+    return [('NONE', "None", "")]+[(bone.name, bone.name, "") for bone in obj.data.bones]
 
 
 def is_armature(self, obj):
@@ -61,11 +67,11 @@ class OBJECT_PGT_CGT_TransferTarget(bpy.types.PropertyGroup):
         name="Target Type",
         items=(
             ("OBJECT", "Object", ""),
-            ("SHAPE_KEY", "Shape Key", ""),
+            # ("SHAPE_KEY", "Shape Key", ""),
         )
     )
 
-    target_bone: bpy.props.EnumProperty(items=get_bones_enum, name='Bone')
+    target_bone: bpy.props.EnumProperty(items=get_bones_enum, name='Bone', default=None)
     target_shape_key: bpy.props.EnumProperty(items=get_shape_key_enum)
 
 
@@ -81,11 +87,12 @@ class OBJECT_PGT_CGT_RemapDistance(bpy.types.PropertyGroup):
     target_type: bpy.props.EnumProperty(
         name="Target",
         items=(
+            ("NONE", "None", ""),
             ("BONE_LEN", "Bone Length", ""),
             ("BONE_DIST", "Bone Distance", ""),
         )
     )
-    target_bone: bpy.props.EnumProperty(items=get_bones_enum, name="Bone")
+    target_bone: bpy.props.EnumProperty(items=get_bones_enum, name="Bone", default=None)
     target_bone_type: bpy.props.EnumProperty(
         name="Bone Type",
         items=(
@@ -94,7 +101,7 @@ class OBJECT_PGT_CGT_RemapDistance(bpy.types.PropertyGroup):
             ("LOCATION", "Location", ""),
         )
     )
-    other_bone: bpy.props.EnumProperty(items=get_bones_enum)
+    other_bone: bpy.props.EnumProperty(items=get_bones_enum, name="Bone", default=None)
     other_bone_type: bpy.props.EnumProperty(
         name="Bone Type",
         items=(
@@ -109,6 +116,12 @@ class OBJECT_PGT_CGT_ValueMapping(bpy.types.PropertyGroup):
     """ Default value remapping. """
     active: bpy.props.BoolProperty(name="active", default=False)
 
+    remap_none: bpy.props.EnumProperty(
+        items=(
+            ('DEFAULT', 'DEFAULT', ''),
+        ),
+        name="Remap Axis")
+
     remap_default: bpy.props.EnumProperty(
         items=(
             ('DEFAULT', 'DEFAULT', ''),
@@ -121,6 +134,7 @@ class OBJECT_PGT_CGT_ValueMapping(bpy.types.PropertyGroup):
 
         ),
         name="Remap Axis")
+
     remap_details: bpy.props.EnumProperty(
         items=(
             ('DEFAULT', 'DEFAULT', ''),
@@ -147,10 +161,10 @@ class OBJECT_PGT_CGT_TransferProperties(bpy.types.PropertyGroup):
     driver_type: bpy.props.EnumProperty(
         name="driver_type",
         items=(
-            ("PASS_THROUGH", "Pass Through", ""),
+            ("NONE", "None", ""),
             ("REMAP", "Remap Value", ""),
             ("CHAIN", "IK Chain", ""),
-            ("REMAP_DIST", "Remap Value by Distance", ""),
+            ("REMAP_DIST", "Value by Distance", ""),
         )
     )
 
@@ -174,8 +188,15 @@ class OBJECT_PGT_CGT_TransferProperties(bpy.types.PropertyGroup):
     target: bpy.props.PointerProperty(type=OBJECT_PGT_CGT_TransferTarget)
 
     # Remapping Objs
-    to_obj: bpy.props.PointerProperty(type=bpy.types.Object)
     by_obj: bpy.props.PointerProperty(type=OBJECT_PGT_CGT_RemapDistance)
+
+    # for parenting etc
+    to_obj: bpy.props.PointerProperty(type=bpy.types.Object)
+    from_obj: bpy.props.PointerProperty(type=bpy.types.Object)
+
+    # props relevant for remap by dist
+    remap_from_obj: bpy.props.PointerProperty(type=bpy.types.Object)
+    remap_to_obj: bpy.props.PointerProperty(type=bpy.types.Object)
 
 
 classes = [

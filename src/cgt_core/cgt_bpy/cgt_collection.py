@@ -76,18 +76,13 @@ def add_object_to_collection(
 
 def _obj_to_collection(collection_name: str, obj: bpy.types.Object, from_collection=None) -> bool:
     """ Internal: Links object to target collection. """
-    try:
-        if from_collection is None:
-            bpy.context.scene.collection.objects.unlink(obj)
-        else:
-            other_col = bpy.data.collections.get(from_collection)
-            other_col.objects.unlink(obj)
+    for col in obj.users_collection:
+        if col.name == collection_name:
+            continue
+        col.objects.unlink(obj)
         collection = bpy.data.collections.get(collection_name)
         collection.objects.link(obj)
-        return True
-    except RuntimeError:
-        logging.error(f"Linking from {collection_name} to {from_collection} failed")
-        return False
+    return True
 
 
 def get_child_collections(col_name: str):

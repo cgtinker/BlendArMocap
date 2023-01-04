@@ -98,6 +98,7 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
         mouth_w = self.average_length_at_scale(62, 292, avg_scale)  # mouth span
         mouth_h = self.average_length_at_scale(13, 14, avg_scale)  # mouth width
         self.mouth_corners(avg_scale)
+        # TODO: Z-only
         self._mouth_driver.sca = [mouth_w, 0.001, mouth_h]
 
     def mouth_corners(self, avg_scale):
@@ -122,6 +123,7 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
             right_corner_angle = -cgt_math.angle_between(left_vec, left_hv)
             left_corner_angle = -cgt_math.angle_between(right_vec, right_hv)
 
+        # TODO: duplicate
         self._mouth_corner_driver.sca = [left_corner_angle, 0.001, right_corner_angle]
         self._mouth_corner_driver.rot = [left_corner_angle, 0.001, right_corner_angle]
 
@@ -136,7 +138,6 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
 
     def eyebrow_drivers(self, avg_scale):
         """ Get the eyebrow data. """
-        # TODO: Split in 3 separate objects
         # to determine if the eyebrows are raised up or down
         eyebrow_in_l = self.average_length_at_scale(336, 338, avg_scale)
         eyebrow_mid_l = self.average_length_at_scale(296, 297, avg_scale)
@@ -146,6 +147,7 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
         eyebrow_mid_r = self.average_length_at_scale(66, 67, avg_scale)
         eyebrow_out_r = self.average_length_at_scale(105, 103, avg_scale)
 
+        # TODO: Split in 3 separate objects
         self.eyebrow_L.sca = [eyebrow_in_l, eyebrow_mid_l, eyebrow_out_l]
         self.eyebrow_R.sca = [eyebrow_in_r, eyebrow_mid_r, eyebrow_out_r]
 
@@ -153,7 +155,6 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
 
     def set_rotation_driver_data(self):
         """ Get face and chin rotation """
-        # check previous rotation to avoid discontinuity
         self.face_mesh_rotation()
         try:
             head_rotation = self.try_get_euler(self.pivot.rot, prev_rot_idx=self.pivot.idx)
@@ -209,7 +210,6 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
         except TypeError:
             logging.warning("Exchange method in cgt_math for other targets than Blender.")
             quart = None
-            pass
         self.pivot.rot = quart
 
     # region cgt_utils
