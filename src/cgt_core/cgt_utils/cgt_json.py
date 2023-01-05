@@ -45,7 +45,25 @@ class JsonData(object):
             json.dump(self.__dict__, jsonFile, ensure_ascii=False, indent=4, separators=(',', ':'), sort_keys=False)
 
     def __str__(self):
-        return f'{self.__dict__}'
+        s = ["{"]
+
+        def recv(d, depth=0):
+            for k, v in d.items():
+                if isinstance(v, dict):
+                    tabs = "\t"*depth
+                    s.append(f"\n{tabs}{k}: ")
+                    s.append("{")
+                    recv(v, depth+1)
+                    tabs = "\t"*depth
+                    s.append(f"\n{tabs}")
+                    s.append("},")
+                else:
+                    tabs = "\t"*depth
+                    s.append(f"\n{tabs}{k}: {v},")
+
+        recv(self.__dict__, 1)
+        s.append("\n}")
+        return "".join(s)
 
     def __call__(self):
         return self.data
