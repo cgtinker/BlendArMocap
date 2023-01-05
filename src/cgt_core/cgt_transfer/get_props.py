@@ -61,8 +61,31 @@ def get_target(tar_props: cgt_driver_obj_props.OBJECT_PGT_CGT_TransferTarget) ->
     assert RuntimeError, f'Type not defined. \n{tar_props}'
 
 
+def get_value_by_distance_properties(cgt_props: cgt_driver_obj_props.OBJECT_PGT_CGT_TransferProperties):
+    # todo: unpacking? improve check (less harsh one?)
+    cgt_props = check_props.check_distance_mapping_object_props(cgt_props)
+    return cgt_props
+
+
+def get_remapping_properties(cgt_props: cgt_driver_obj_props.OBJECT_PGT_CGT_TransferProperties) -> List[List[cgt_driver_obj_props.OBJECT_PGT_CGT_ValueMapping]]:
+    """ Validates, updates and returns remapping properties. """
+    loc_xyz = [cgt_props.loc_details, [cgt_props.use_loc_x, cgt_props.use_loc_y, cgt_props.use_loc_z]]
+    rot_xyz = [cgt_props.rot_details, [cgt_props.use_rot_x, cgt_props.use_rot_y, cgt_props.use_rot_z]]
+    sca_xyz = [cgt_props.sca_details, [cgt_props.use_sca_x, cgt_props.use_sca_y, cgt_props.use_sca_z]]
+
+    updated_props = []
+    for details, props in [loc_xyz, rot_xyz, sca_xyz]:
+        if details:
+            props = check_props.check_value_mapping_detail_props(props)
+        else:
+            props = check_props.check_value_mapping_generic_props(props)
+        updated_props.append(props)
+
+    return updated_props
+
+
 def get_distance(cur_props):
-    # TODO: move dist to custom func (will be used for custom props aswell)
+    """ Returns 'remap by' dist either from bones or the bone len... """
     if cur_props.by_obj.target is None:
         return None
 
@@ -95,19 +118,3 @@ def get_distance(cur_props):
     return m_dist
 
 
-def get_remapping_properties(cgt_props: cgt_driver_obj_props.OBJECT_PGT_CGT_TransferProperties) -> List[
-        List[cgt_driver_obj_props.OBJECT_PGT_CGT_ValueMapping]]:
-    """ Validates, updates and returns remapping properties. """
-    loc_xyz = [cgt_props.loc_details, [cgt_props.use_loc_x, cgt_props.use_loc_y, cgt_props.use_loc_z]]
-    rot_xyz = [cgt_props.rot_details, [cgt_props.use_rot_x, cgt_props.use_rot_y, cgt_props.use_rot_z]]
-    sca_xyz = [cgt_props.sca_details, [cgt_props.use_sca_x, cgt_props.use_sca_y, cgt_props.use_sca_z]]
-
-    updated_props = []
-    for details, props in [loc_xyz, rot_xyz, sca_xyz]:
-        if details:
-            props = check_props.check_value_mapping_detail_props(props)
-        else:
-            props = check_props.check_value_mapping_generic_props(props)
-        updated_props.append(props)
-
-    return updated_props

@@ -26,8 +26,10 @@ def set_constraint_props(constraint: bpy.types.Constraint, props: dict):
             logging.debug(err)
 
 
+# region remapping
 def set_object_remapping_drivers(factory: cgt_drivers.DriverFactory, provider: bpy.types.Object,
-                                 remapping_props: List[List[cgt_driver_obj_props.OBJECT_PGT_CGT_ValueMapping]]):
+                                 remapping_props: List[List[cgt_driver_obj_props.OBJECT_PGT_CGT_ValueMapping]],
+                                 dist: float = 1.0):
     """ Set object remapping drivers. """
     d = {'X': 0, 'Y': 1, 'Z': 2}
 
@@ -43,12 +45,42 @@ def set_object_remapping_drivers(factory: cgt_drivers.DriverFactory, provider: b
             if not prop.active:
                 continue
             data_path_id = d[prop.remap_details]
-            set_default_remapping_driver(factory, provider, data_path, data_path_id, id_path, i)
+            set_default_remapping_driver(factory, provider, data_path, data_path_id, id_path, i, dist)
 
 
-def set_default_remapping_driver(factory: cgt_drivers.DriverFactory,
-                                 provider: bpy.types.Object,
-                                 data_path: str, idx: int, id_path: str, from_idx: int):
+def _set_remapping_properties(factory: cgt_drivers.DriverFactory, provider: bpy.types.Object,
+                              data_path: str, idx: int, id_path: str):
+    """ Adds remapping properties to driver factory. """
+    factory.add_variable(cgt_drivers.SingleProperty("from_min", provider, f'{id_path}.from_min'), data_path, idx)
+    factory.add_variable(cgt_drivers.SingleProperty("from_max", provider, f'{id_path}.from_max'), data_path, idx)
+    factory.add_variable(cgt_drivers.SingleProperty("to_min", provider, f'{id_path}.to_min'), data_path, idx)
+    factory.add_variable(cgt_drivers.SingleProperty("to_max", provider, f'{id_path}.to_max'), data_path, idx)
+    factory.add_variable(cgt_drivers.SingleProperty("factor", provider, f'{id_path}.factor'), data_path, idx)
+    factory.add_variable(cgt_drivers.SingleProperty("offset", provider, f'{id_path}.offset'), data_path, idx)
+    return factory
+
+
+def set_remapping_expansion_driver(factory: cgt_drivers.DriverFactory, provider: bpy.types.Object,
+                                   data_path: str, idx: int, id_path: str, multiplier: float = 1.0):
+    """ Set remapping expansion variables and expression. May not be used to redirect values.
+        :param factory: Any Driver Factory.
+        :param provider: Objects yielding properties.
+        :param data_path: Data path to map [location, scale, ...]
+        :param idx: idx of the data path (None or -1 the data path doesn't point to an array)
+        :param id_path: Path to properties (b.e. cgt_props.use_loc_x)
+        :param multiplier: multiply by bone dist value
+    """
+    _set_remapping_properties(factory, provider, data_path, idx, id_path)
+    slope = f"(to_max*{round(multiplier, 4)} - to_min*{round(multiplier, 4)}) / (from_max - from_min)"
+    offset = f"to_min*{round(multiplier, 4)} - {slope} * from_min"
+    value = "{}"
+    expression = f"({slope} * {value} + {offset}) * factor + offset"
+
+    factory.expand_expression(expression, data_path, idx)
+
+
+def set_default_remapping_driver(factory: cgt_drivers.DriverFactory, provider: bpy.types.Object,
+                                 data_path: str, idx: int, id_path: str, from_idx: int, multiplier: float = 1.0):
     """ Set remapping variables and expression.
         :param factory: Any Driver Factory.
         :param provider: Objects yielding properties.
@@ -56,28 +88,53 @@ def set_default_remapping_driver(factory: cgt_drivers.DriverFactory,
         :param idx: idx of the data path (None or -1 the data path doesn't point to an array)
         :param id_path: Path to properties (b.e. cgt_props.use_loc_x)
         :param from_idx: Data path id from provider
+        :param multiplier: multiply by bone dist value
     """
-    factory.add_variable(cgt_drivers.SingleProperty("from_min", provider, f'{id_path}.from_min'), data_path, idx)
-    factory.add_variable(cgt_drivers.SingleProperty("from_max", provider, f'{id_path}.from_max'), data_path, idx)
-    factory.add_variable(cgt_drivers.SingleProperty("to_min", provider, f'{id_path}.to_min'), data_path, idx)
-    factory.add_variable(cgt_drivers.SingleProperty("to_max", provider, f'{id_path}.to_max'), data_path, idx)
-    factory.add_variable(cgt_drivers.SingleProperty("factor", provider, f'{id_path}.factor'), data_path, idx)
-    factory.add_variable(cgt_drivers.SingleProperty("offset", provider, f'{id_path}.offset'), data_path, idx)
-
+    _set_remapping_properties(factory, provider, data_path, idx, id_path)
     value_prop = cgt_drivers.TransformChannel("value", provider, data_path, from_idx, "WORLD_SPACE")
     factory.add_variable(value_prop, data_path, idx)
 
-    # TODO check for expansion thingies
-    slope = "(to_max - to_min) / (from_max - from_min)"
-    offset = f"to_min - {slope} * from_min"
-    # value = "{}"
+    slope = f"(to_max*{round(multiplier, 4)} - to_min*{round(multiplier, 4)}) / (from_max - from_min)"
+    offset = f"to_min*{round(multiplier, 4)} - {slope} * from_min"
     value = "value"
     expression = f"({slope} * {value} + {offset}) * factor + offset"
 
-    # factory.expand_expression(expression, data_path, idx)
     factory.add_expression(expression, data_path, idx)
 
 
+# endregion
+def set_distance_remapping_drivers(
+        factory: cgt_drivers.DriverFactory, cgt_props: cgt_driver_obj_props.OBJECT_PGT_CGT_TransferProperties,
+        remapping_props: List[List[cgt_driver_obj_props.OBJECT_PGT_CGT_ValueMapping]], provider: bpy.types.Object,
+        distance: float):
+    d = {'X': 0, 'Y': 1, 'Z': 2}
+
+    id_paths = [
+        ['cgt_props.use_loc_x', 'cgt_props.use_loc_y', 'cgt_props.use_loc_z'],
+        ['cgt_props.use_rot_x', 'cgt_props.use_rot_y', 'cgt_props.use_rot_z'],
+        ['cgt_props.use_sca_x', 'cgt_props.use_sca_y', 'cgt_props.use_sca_z']
+    ]
+
+    dist = cgt_drivers.Distance("dist", cgt_props.from_obj, cgt_props.to_obj, "WORLD_SPACE", "WORLD_SPACE")
+    rel_dist = cgt_drivers.Distance("rel_dist", cgt_props.remap_from_obj, cgt_props.remap_to_obj, "WORLD_SPACE", "WORLD_SPACE")
+
+    for props, data_path, m_id_paths in zip(remapping_props, ["location", "rotation_euler", "scale"], id_paths):
+        for i, data in enumerate(zip(props, m_id_paths)):
+            prop, id_path = data
+            if not prop.active:
+                continue
+
+            data_path_id = d[prop.remap_details]
+
+            # add distance props
+            factory.add_variable(dist, data_path, data_path_id)
+            factory.add_variable(rel_dist, data_path, data_path_id)
+            factory.add_expression("(dist/rel_dist)", data_path, data_path_id)
+
+            set_remapping_expansion_driver(factory, provider, data_path, data_path_id, id_path, distance)
+
+
+# region ik chain
 def set_chain_driver(prev_obj: bpy.types.Object, obj: bpy.types.Object, previous_driver: bpy.types.Object,
                      factory: cgt_drivers.DriverFactory, distance: float):
     # TODO: use factory instead of driver target
@@ -110,4 +167,4 @@ def set_copy_location_driver(target, factory: cgt_drivers.DriverFactory, space: 
         factory.add_variable(prop, "location", i)
         factory.add_expression("loc", "location", i)
     factory.execute()
-
+# endregion

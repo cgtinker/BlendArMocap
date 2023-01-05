@@ -157,7 +157,7 @@ class OBJECT_PT_CGT_DriverProperties(bpy.types.Panel):
 
             # PROPS
             col.prop(ob.cgt_props.by_obj, "target", text="Remap By")
-            col.prop(ob.cgt_props.by_obj, "target_type", text="Remap Type")
+            col.prop(ob.cgt_props.by_obj, "target_type", text="Multiply MinMax By")
 
             if ob.cgt_props.by_obj.target_type == 'BONE_LEN' and ob.cgt_props.by_obj.target is not None:
                 col.prop_search(ob.cgt_props.by_obj, "target_bone", ob.cgt_props.by_obj.target.data, "bones")
@@ -242,9 +242,9 @@ class OBJECT_PT_CGT_DriverPropertyDetails(bpy.types.Panel):
 
             row.label(icon='BLANK1')
             if getattr(ob.cgt_props, details[0], False):
-                detailed_properties(['X', 'Y', 'Z'], [prop[0] for prop in loc_props], details[1])
+                detailed_properties(['X', 'Y', 'Z'], [prop[0] for prop in props], details[1])
             elif any([prop[0].active for prop in props]):
-                draw_props("", ob.cgt_props.use_loc_x, details[2])
+                draw_props("", props[0][0], details[2])
 
 
         loc_props = [

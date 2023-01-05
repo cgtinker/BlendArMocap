@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import List
 
 from . import cgt_driver_obj_props
+import logging
 
 
 def check_value_mapping_generic_props(props: List[cgt_driver_obj_props.OBJECT_PGT_CGT_ValueMapping]) -> List[cgt_driver_obj_props.OBJECT_PGT_CGT_ValueMapping]:
@@ -36,5 +37,28 @@ def check_value_mapping_detail_props(props: List[cgt_driver_obj_props.OBJECT_PGT
         prop.remap_details = axis_d[i]
 
     active_props = [prop for prop in props if prop.active]
-    assert len(set(active_props)) == len(active_props)
+
+    if not len(set(active_props)) == len(active_props):
+        logging.error(f"Internal Error, active properties don't match expected properties. {props[0].id_data}")
+        raise RuntimeError
     return props
+
+
+def check_distance_mapping_object_props(props: cgt_driver_obj_props.OBJECT_PGT_CGT_TransferProperties) -> cgt_driver_obj_props.OBJECT_PGT_CGT_TransferProperties:
+    """ Checks if required objects assigned and updates mapping props. """
+    objects = [
+        # props.by_obj,
+        props.to_obj,
+        props.from_obj,
+        props.remap_from_obj,
+        props.remap_to_obj
+    ]
+
+    if not all([True if ob is not None else False for ob in objects]):
+        logging.error(f"All object pointers for distance remapping have to be set. {props.id_data}")
+        raise RuntimeError
+    return props
+
+
+
+

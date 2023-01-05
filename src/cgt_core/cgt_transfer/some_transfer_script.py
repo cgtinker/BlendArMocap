@@ -48,25 +48,45 @@ def manage_object_transfer(obj: bpy.types.Object):
 
 
 def remap_by_object_distance(obj, target_obj, sub_target, target_type, properties):
-    # TODO: implement distance remapping
-    pass
+    # get mapping properties
+    dist = get_props.get_distance(properties)
+    if dist is None:
+        dist = 1
+
+    props = get_props.get_value_by_distance_properties(properties)
+    remapping_props = get_props.get_remapping_properties(properties)
+
+    # create driver object
+    driver_target = get_driver_target(obj)
+    factory = cgt_drivers.DriverFactory(driver_target)
+
+    # apply drivers
+    set_props.set_distance_remapping_drivers(factory, props, remapping_props, obj, dist)
+    factory.execute()
+
+    if target_type in ['OBJECT', 'ARMATURE']:
+        apply_constraints(target_obj, obj, driver_target)
+    elif target_type in ['BONE', 'POSE_BONE']:
+        apply_constraints(sub_target, obj, driver_target)
 
 
 def remap_object_properties(obj, target_obj, sub_target, target_type, properties):
     """ Default remap properties (from(min/max), to(min/max), factor...) """
+    # get props
+    dist = get_props.get_distance(properties)
+    if dist is None:
+        dist = 1
+    remapping_properties = get_props.get_remapping_properties(properties)
+
     # create driver object
-    if obj.name + '.D' in bpy.data.objects:
-        bpy.data.objects.remove(bpy.data.objects[obj.name + '.D'])
-    driver_target = cgt_bpy_utils.add_empty(0.01, obj.name + '.D')
+    driver_target = get_driver_target(obj)
     factory = cgt_drivers.DriverFactory(driver_target)
 
-    # apply props
-    remapping_properties = get_props.get_remapping_properties(properties)
-    # TODO; Check remapping prop usage
-    set_props.set_object_remapping_drivers(factory, obj, remapping_properties)
+    # apply drivers
+    set_props.set_object_remapping_drivers(factory, obj, remapping_properties, dist)
     factory.execute()
 
-    # apply Constraints
+    # apply constraints
     if target_type in ['OBJECT', 'ARMATURE']:
         apply_constraints(target_obj, obj, driver_target)
     elif target_type in ['BONE', 'POSE_BONE']:
