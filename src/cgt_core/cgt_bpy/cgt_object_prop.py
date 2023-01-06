@@ -13,7 +13,7 @@ def get_custom_property(target_obj: Union[bpy.types.Object, bpy.types.PoseBone],
 
 
 def set_custom_property(
-        obj: Union[bpy.types.Object, bpy.types.PoseBone], prop_name: str, value: float,
+        obj: Union[bpy.types.Object, bpy.types.PoseBone], prop_name: str, value: Any,
         v_min: Optional[float] = None, v_max:  Optional[float] = None,
         use_soft: bool = False, overwrite: bool = False) -> bool:
 

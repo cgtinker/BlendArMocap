@@ -1,5 +1,3 @@
-# get transfer props
-import logging
 import typing
 from typing import Dict
 from . import cgt_driver_obj_props
