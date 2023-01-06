@@ -32,12 +32,7 @@ def set_object_remapping_drivers(factory: cgt_drivers.DriverFactory, provider: b
                                  dist: float = 1.0):
     """ Set object remapping drivers. """
     d = {'X': 0, 'Y': 1, 'Z': 2}
-
-    id_paths = [
-        ['cgt_props.use_loc_x', 'cgt_props.use_loc_y', 'cgt_props.use_loc_z'],
-        ['cgt_props.use_rot_x', 'cgt_props.use_rot_y', 'cgt_props.use_rot_z'],
-        ['cgt_props.use_sca_x', 'cgt_props.use_sca_y', 'cgt_props.use_sca_z']
-    ]
+    id_paths = _get_remapping_data_paths(provider)
 
     for props, data_path, m_id_paths in zip(remapping_props, ["location", "rotation_euler", "scale"], id_paths):
         for i, data in enumerate(zip(props, m_id_paths)):
@@ -102,18 +97,29 @@ def set_default_remapping_driver(factory: cgt_drivers.DriverFactory, provider: b
     factory.add_expression(expression, data_path, idx)
 
 
-# endregion
-def set_distance_remapping_drivers(
-        factory: cgt_drivers.DriverFactory, cgt_props: object_prop_reflection.OBJECT_PGT_CGT_TransferProperties,
-        remapping_props: List[List[object_prop_reflection.OBJECT_PGT_CGT_ValueMapping]], provider: bpy.types.Object,
-        distance: float):
-    d = {'X': 0, 'Y': 1, 'Z': 2}
-
+def _get_remapping_data_paths(provider: bpy.types.Object):
     id_paths = [
         ['cgt_props.use_loc_x', 'cgt_props.use_loc_y', 'cgt_props.use_loc_z'],
         ['cgt_props.use_rot_x', 'cgt_props.use_rot_y', 'cgt_props.use_rot_z'],
         ['cgt_props.use_sca_x', 'cgt_props.use_sca_y', 'cgt_props.use_sca_z']
     ]
+
+    if not provider.cgt_props.loc_details:
+        id_paths[0] = ['cgt_props.use_loc_x', 'cgt_props.use_loc_x', 'cgt_props.use_loc_x']
+    if not provider.cgt_props.rot_details:
+        id_paths[1] = ['cgt_props.use_rot_x', 'cgt_props.use_rot_x', 'cgt_props.use_rot_x']
+    if not provider.cgt_props.sca_details:
+        id_paths[2] = ['cgt_props.use_sca_x', 'cgt_props.use_sca_x', 'cgt_props.use_sca_x']
+
+    return id_paths
+
+
+def set_distance_remapping_drivers(
+        factory: cgt_drivers.DriverFactory, cgt_props: object_prop_reflection.OBJECT_PGT_CGT_TransferProperties,
+        remapping_props: List[List[object_prop_reflection.OBJECT_PGT_CGT_ValueMapping]], provider: bpy.types.Object,
+        distance: float):
+    d = {'X': 0, 'Y': 1, 'Z': 2}
+    id_paths = _get_remapping_data_paths(provider)
 
     dist = cgt_drivers.Distance("dist", cgt_props.from_obj, cgt_props.to_obj, "WORLD_SPACE", "WORLD_SPACE")
     rel_dist = cgt_drivers.Distance("rel_dist", cgt_props.remap_from_obj, cgt_props.remap_to_obj, "WORLD_SPACE", "WORLD_SPACE")
@@ -121,6 +127,7 @@ def set_distance_remapping_drivers(
     for props, data_path, m_id_paths in zip(remapping_props, ["location", "rotation_euler", "scale"], id_paths):
         for i, data in enumerate(zip(props, m_id_paths)):
             prop, id_path = data
+
             if not prop.active:
                 continue
 
@@ -132,6 +139,7 @@ def set_distance_remapping_drivers(
             factory.add_expression("(dist/rel_dist)", data_path, data_path_id)
 
             set_remapping_expansion_driver(factory, provider, data_path, data_path_id, id_path, distance)
+# endregion
 
 
 # region ik chain
