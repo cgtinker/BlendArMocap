@@ -69,7 +69,7 @@ def set_remapping_expansion_driver(factory: cgt_drivers.DriverFactory, provider:
     slope = f"(to_max*{round(multiplier, 4)} - to_min*{round(multiplier, 4)}) / (from_max - from_min)"
     offset = f"to_min*{round(multiplier, 4)} - {slope} * from_min"
     value = "{}"
-    expression = f"({slope} * {value} + {offset}) * factor + offset"
+    expression = f"({slope} * {value} + {offset}) * factor + offset * {round(multiplier, 4)}"
 
     factory.expand_expression(expression, data_path, idx)
 

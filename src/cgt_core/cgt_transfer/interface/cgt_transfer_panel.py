@@ -59,7 +59,7 @@ class CgtRigifyTransferProperties(bpy.types.PropertyGroup):
         poll=is_armature)
 
     def cgt_collection_poll(self, object):
-        return object.name in ["cgt_FACE", "cgt_HANDS", "cgt_POSE"]
+        return object.name.startswith('cgt_')
 
     selected_driver_collection: bpy.props.PointerProperty(
         name="",
@@ -80,15 +80,6 @@ class PT_CGT_Main_Transfer(cgt_core_panel.DefaultPanel, Panel):
             return True
 
     def draw(self, context):
-        pass
-
-
-class PT_CGT_Data_Transfer(cgt_core_panel.DefaultPanel, Panel):
-    bl_label = "Mocap Transfer"
-    bl_parent_id = "UI_PT_Transfer_Panel"
-    bl_idname = "UI_PT_Transfer_Data"
-
-    def draw(self, context):
         user = context.scene.cgtinker_rigify_transfer  # noqa
         box = self.layout.box()
 
@@ -107,14 +98,10 @@ class PT_CGT_Data_Transfer(cgt_core_panel.DefaultPanel, Panel):
                                         text="Armature",
                                         icon="ARMATURE_DATA")
 
-        # box.row().prop(user, "overwrite_drivers_bool")
-        if user.selected_driver_collection:
+        if not user.selected_driver_collection and user.selected_rig:
+            return
 
-            # if user.selected_driver_collection.name == "cgt_POSE":
-            #    box.row().prop(user, "experimental_feature_bool")  # , icon="ERROR")
-            if user.selected_rig:
-                box.row(align=True).operator("button.cgt_transfer_animation_button", text="Transfer Animation")
-            box.row(align=True).operator("button.smooth_empties_in_col", text="Smooth Animation")
+        box.row(align=True).operator("button.cgt_transfer_animation_button", text="Transfer Animation")
 
 
 class PT_CGT_Gamerig_Transfer(cgt_core_panel.DefaultPanel, Panel):
@@ -146,7 +133,7 @@ class PT_CGT_Gamerig_Transfer(cgt_core_panel.DefaultPanel, Panel):
 
 class PT_CGT_TransferTypeGeneration(cgt_core_panel.DefaultPanel, Panel):
     bl_label = "Transfer Generation Tools"
-    bl_parent_id = "UI_PT_Transfer_Data"
+    bl_parent_id = "UI_PT_Transfer_Panel"
     bl_idname = "UI_PT_TransferTypeGeneration"
 
     def draw(self, context):
@@ -168,12 +155,11 @@ class PT_CGT_TransferTypeGeneration(cgt_core_panel.DefaultPanel, Panel):
                                         icon="ARMATURE_DATA")
 
         # box.row().operator("button.cgt_regenerate_metarig", text="Regenerate Metarig")
-        box.row().operator("button.cgt_generate_gamerig", text="")
+        box.row().operator("button.cgt_generate_gamerig", text="SomeRandomName")
 
 classes = [
-    CgtRigifyTransferProperties,
     PT_CGT_Main_Transfer,
-    PT_CGT_Data_Transfer,
+    CgtRigifyTransferProperties,
     PT_CGT_TransferTypeGeneration,
     PT_CGT_Gamerig_Transfer,
 ]
@@ -188,3 +174,4 @@ def register():
 def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
+    del bpy.types.Scene.cgtinker_rigify_transfer

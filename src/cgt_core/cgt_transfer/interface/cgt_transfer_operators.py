@@ -22,7 +22,7 @@ import numpy as np
 from ...cgt_bpy import cgt_collection
 from ...cgt_naming import COLLECTIONS
 from ...cgt_utils import cgt_math
-from .. import transfer_management
+from .. import transfer_management, save_props, load_props
 
 
 # region TRANSFER
@@ -57,7 +57,7 @@ class OT_UI_CGT_transfer_anim_button(bpy.types.Operator):
         for col in driver_collections:
 
             armature = bpy.data.objects[selected_armature]
-            driver_objects =cgt_collection.get_objects_from_collection(col)
+            driver_objects = cgt_collection.get_objects_from_collection(col)
             col_mapping[col](armature, driver_objects)
 
         # input_manager.transfer_animation()
@@ -66,39 +66,35 @@ class OT_UI_CGT_transfer_anim_button(bpy.types.Operator):
 
 class OT_UI_CGT_smooth_empties_in_col(bpy.types.Operator):
     bl_label = "Smooth"
-    bl_idname = "button.smooth_empties_in_col"
-    bl_description = "Smooth the animation data in the selected collection."
+    bl_idname = "button.smooth_selected_empties"
+    bl_description = "Smooth animation data of selected objects."
 
     @classmethod
     def poll(cls, context):
         return context.mode in {'OBJECT'}
 
     def execute(self, context):
-        # TODO: CHECK, should still work
+        objs = context.selected_objects
+        if len(objs) == 0:
+            return {"CANCELED"}
+
         # safe current area, switching to graph editor area
         current_area = bpy.context.area.type
         layer = bpy.context.view_layer
 
-        # get objs from selected cols
-        user = bpy.context.scene.cgtinker_rigify_transfer
-        selected_driver_collection = user.selected_driver_collection.name
-        driver_collections = cgt_collection.get_child_collections(selected_driver_collection)
-        objs = []
-        for col in driver_collections:
-            objs += cgt_collection.get_objects_from_collection(col)
-
-        print("selecting objects")
         for ob in objs:
             ob.select_set(True)
         layer.update()
 
-        print("start smoothing process")
         bpy.context.area.type = 'GRAPH_EDITOR'
-        bpy.ops.graph.euler_filter()
-        bpy.ops.graph.sample()
-        bpy.ops.graph.smooth()
+        try:
+            bpy.ops.graph.euler_filter()
+            bpy.ops.graph.sample()
+            bpy.ops.graph.smooth()
+        except RuntimeError:
+            logging.warning('Selection may not contain animation data to smooth.')
+            pass
 
-        print("process finished")
         bpy.context.area.type = current_area
         for ob in objs:
             ob.select_set(False)
@@ -268,51 +264,19 @@ class OT_CGT_ObjectMinMax(bpy.types.Operator):
                 continue
             msg.append(f"\n{name}: min {[round(m, 5) for m in _min]}, max {[round(m, 5) for m in _max]}")
 
+        a_min_dist, a_max_dist, b_min_dist, b_max_dist = None, None, None, None
         if ob.cgt_props.from_obj is not None and ob.cgt_props.to_obj is not None:
-            min_dist, max_dist = self.get_minmax_dist(ob.cgt_props.from_obj, ob.cgt_props.to_obj)
+            a_min_dist, a_max_dist = self.get_minmax_dist(ob.cgt_props.from_obj, ob.cgt_props.to_obj)
             msg.append(f"\nDist from {ob.cgt_props.from_obj.name} to {ob.cgt_props.to_obj.name}: "
-                       f"\nmin: {round(min_dist, 5)} max: {round(max_dist, 5)}\n")
+                       f"\nmin: {round(a_min_dist, 5)} max: {round(a_max_dist, 5)}\n")
 
         if ob.cgt_props.remap_from_obj is not None and ob.cgt_props.remap_to_obj is not None:
-            min_dist, max_dist = self.get_minmax_dist(ob.cgt_props.remap_from_obj, ob.cgt_props.remap_to_obj)
+            b_min_dist, b_max_dist = self.get_minmax_dist(ob.cgt_props.remap_from_obj, ob.cgt_props.remap_to_obj)
             msg.append(f"\nDist from {ob.cgt_props.remap_from_obj.name} to {ob.cgt_props.remap_to_obj.name}: "
-                       f"\nmin: {round(min_dist, 5)}, max: {round(max_dist, 5)}")
+                       f"\nmin: {round(b_min_dist, 5)}, max: {round(b_max_dist, 5)}\n")
 
-        self.report({'INFO'}, "".join(msg))
-        return {'FINISHED'}
-
-    def old_execute(self, context: bpy.context):
-        if not context.object:
-            self.report({'ERROR'}, "Ensure to select an object.")
-            return {'CANCELED'}
-
-        ob = context.object
-        d = {
-            "location":       "loc",
-            "rotation_euler": "rot",
-            "scale":          "sca",
-            "quaternion":     "qua",
-        }
-
-        if ob.animation_data is None or (ob.animation_data.action is None):
-            self.report({'WARNING'}, f"{ob.name} doesn't contain any action.")
-            return {'CANCELED'}
-
-        msg = [ob.name]
-        fcurves = ob.animation_data.action.fcurves
-        prev_path = None
-
-        # min&max loc, rot, sca
-        for i, fc in enumerate(fcurves):
-            vals = [c.co[1] for c in fc.keyframe_points]
-
-            if fc.data_path != prev_path:
-                if prev_path is not None:
-                    msg.append("\n")
-                prev_path = fc.data_path
-
-            s = f"{d[fc.data_path]}[{i % 3}]: min: {round(min(vals), 5)}, max: {round(max(vals), 5)}\n"
-            msg.append(s)
+        if all([a_min_dist, a_max_dist, b_min_dist, b_max_dist]):
+            msg.append(f"\nMapped results:\nmin: {round(a_min_dist/b_min_dist, 5)}, min: {round(a_max_dist/b_max_dist, 5)}\n")
 
         self.report({'INFO'}, "".join(msg))
         return {'FINISHED'}
@@ -330,6 +294,55 @@ class OT_CGT_TransferObjectProperties(bpy.types.Operator):
     def execute(self, context):
         transfer_management.main(context.selected_objects)
         return {'FINISHED'}
+
+
+class OT_CGT_SaveObjectProperties(bpy.types.Operator):
+    bl_label = "Save Transfer Properties"
+    bl_idname = "button.cgt_object_save_properties"
+    bl_description = "Saves transfer properties from available objects."
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode in {'OBJECT'}
+
+    def execute(self, context):
+        json_data = save_props.save([ob for ob in bpy.data.objects if ob.get("cgt_id") is not None])
+        # todo: json_data.save(path)
+        return {'FINISHED'}
+
+
+class OT_CGT_LoadObjectProperties(bpy.types.Operator):
+    bl_label = "Load Transfer Properties"
+    bl_idname = "button.cgt_object_load_properties"
+    bl_description = "Load transfer properties to objects."
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode in {'OBJECT'}
+
+    def execute(self, context):
+        # todo: add path and target armature
+        path = None
+        target_armature = None
+        load_props.load(path, target_armature)
+        return {'FINISHED'}
+
+
+class OT_CGT_ApplyObjectProperties(bpy.types.Operator):
+    bl_label = "Apply Transfer Properties"
+    bl_idname = "button.cgt_object_apply_properties"
+    bl_description = "Apply transfer properties from available objects."
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode in {'OBJECT'}
+
+    def execute(self, context):
+        # TODO: consider to select collection?
+        objs = [ob for ob in bpy.data.objects if ob.get("cgt_id") is not None]
+        transfer_management.main(objs)
+        return {'FINISHED'}
+
 
 # endregion
 

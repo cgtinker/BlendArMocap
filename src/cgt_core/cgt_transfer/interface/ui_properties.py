@@ -138,7 +138,8 @@ class CGTProperties(PropertyGroup):
 
     # TODO: USE DEFAULTS
     def cgt_collection_poll(self, object):
-        return object.name in ["cgt_FACE", "cgt_HAND", "cgt_POSE", "cgt_DRIVERS"]
+        return object.name.startswith('cgt_')
+        # return object.name in ["cgt_FACE", "cgt_HAND", "cgt_POSE", "cgt_DRIVERS"]
 
     selected_driver_collection: bpy.props.PointerProperty(
         name="",
