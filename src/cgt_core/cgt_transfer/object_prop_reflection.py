@@ -1,6 +1,6 @@
 import typing
 from typing import Dict
-from . import cgt_driver_obj_props
+from . import object_properties
 import bpy
 
 
@@ -42,7 +42,7 @@ def copy_ptr_prop_cls(class_name_dict: Dict[str, RuntimeClass]) -> Dict[str, Run
         Helper cls improves usage of internal registered types. """
     for cls_name in class_name_dict:
         """ Get all registered PropertyGroup properties. """
-        cls = getattr(cgt_driver_obj_props, cls_name, None)
+        cls = getattr(object_properties, cls_name, None)
         if cls is None:
             continue
 

@@ -6,7 +6,7 @@ from typing import List
 import bpy
 
 from ..cgt_bpy import cgt_drivers, cgt_bpy_utils
-from . import cgt_driver_obj_props
+from . import object_prop_reflection
 
 
 def update_driver_target(obj: bpy.types.Object):
@@ -28,7 +28,7 @@ def set_constraint_props(constraint: bpy.types.Constraint, props: dict):
 
 # region remapping
 def set_object_remapping_drivers(factory: cgt_drivers.DriverFactory, provider: bpy.types.Object,
-                                 remapping_props: List[List[cgt_driver_obj_props.OBJECT_PGT_CGT_ValueMapping]],
+                                 remapping_props: List[List[object_prop_reflection.OBJECT_PGT_CGT_ValueMapping]],
                                  dist: float = 1.0):
     """ Set object remapping drivers. """
     d = {'X': 0, 'Y': 1, 'Z': 2}
@@ -104,8 +104,8 @@ def set_default_remapping_driver(factory: cgt_drivers.DriverFactory, provider: b
 
 # endregion
 def set_distance_remapping_drivers(
-        factory: cgt_drivers.DriverFactory, cgt_props: cgt_driver_obj_props.OBJECT_PGT_CGT_TransferProperties,
-        remapping_props: List[List[cgt_driver_obj_props.OBJECT_PGT_CGT_ValueMapping]], provider: bpy.types.Object,
+        factory: cgt_drivers.DriverFactory, cgt_props: object_prop_reflection.OBJECT_PGT_CGT_TransferProperties,
+        remapping_props: List[List[object_prop_reflection.OBJECT_PGT_CGT_ValueMapping]], provider: bpy.types.Object,
         distance: float):
     d = {'X': 0, 'Y': 1, 'Z': 2}
 

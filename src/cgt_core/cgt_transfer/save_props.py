@@ -2,7 +2,8 @@ from __future__ import annotations
 from typing import List
 import bpy
 import logging
-from . import cgt_reflect_driver_properties, get_props
+from . import get_props
+from . import object_prop_reflection
 from ..cgt_utils import cgt_json
 
 
@@ -12,7 +13,7 @@ armature_name = None
 def convert_object_ptrs2str(cls) -> None:
     """ Pointers to objects to strs (inplace). """
     for key, value in cls.__dict__.items():
-        if isinstance(value, cgt_reflect_driver_properties.RuntimeClass):
+        if isinstance(value, object_prop_reflection.RuntimeClass):
             convert_object_ptrs2str(value)
         elif isinstance(value, bpy.types.Object):
 
@@ -33,7 +34,7 @@ def convert_object_ptrs2str(cls) -> None:
 def convert_cls2dict(cls, d: dict) -> None:
     """ Convert cls and subcls to dict """
     for key, value in cls.__dict__.items():
-        if isinstance(value, cgt_reflect_driver_properties.RuntimeClass):
+        if isinstance(value, object_prop_reflection.RuntimeClass):
             d[key] = {}
             convert_cls2dict(value, d[key])
         else:
@@ -45,7 +46,7 @@ def delete_typeof_none(cls) -> None:
     removable_attrs = []
 
     for key, value in cls.__dict__.items():
-        if isinstance(value, cgt_reflect_driver_properties.RuntimeClass):
+        if isinstance(value, object_prop_reflection.RuntimeClass):
             delete_typeof_none(value)
         elif value is None:
             removable_attrs.append((cls, key))
@@ -63,7 +64,7 @@ def delete_id_data(cls) -> None:
     for key, value in cls.__dict__.items():
         if key == 'id_data':
             removable_attrs.append((cls, key))
-        if isinstance(value, cgt_reflect_driver_properties.RuntimeClass):
+        if isinstance(value, object_prop_reflection.RuntimeClass):
             delete_id_data(value)
         else:
             pass
