@@ -1,11 +1,11 @@
 # TODO: Transfer will be part of core
 from . import (
-    object_properties,
-    cgt_driver_prop_panel
+    object_properties
 )
 from .interface import (
     cgt_transfer_panel,
-    cgt_transfer_operators
+    cgt_transfer_operators,
+    cgt_driver_prop_panel
 )
 
 modules = [

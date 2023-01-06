@@ -281,10 +281,32 @@ class OBJECT_PT_CGT_DriverPropertyDetails(bpy.types.Panel):
             draw_sub_props("To Location", loc_props, ("loc_details", "remap_details", "remap_default"))
 
 
+class OBJECT_PT_CGT_DriverTools(bpy.types.Panel):
+    """ Spy for easier mapping and transfer button"""
+
+    bl_label = "Tools"
+    bl_parent_id = "OBJECT_PT_CGT_Transfer_Opts"
+    bl_idname = "OBJECT_PT_CGT_DriverTools"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
+        col = flow.column(align=True)
+
+        col.row().operator("button.cgt_object_transfer_selection", text="Transfer Selection")
+        col.separator()
+        col.row().operator("button.cgt_object_fcurve_min_max", text="Log Object Info")
+
+
 classes = [
     OBJECT_PT_BlendArMocapTransfer,
     OBJECT_PT_BlendArMocapTransferTarget,
     OBJECT_PT_CGT_DriverProperties,
+    OBJECT_PT_CGT_DriverTools,
     OBJECT_PT_CGT_DriverPropertyDetails,
 ]
 

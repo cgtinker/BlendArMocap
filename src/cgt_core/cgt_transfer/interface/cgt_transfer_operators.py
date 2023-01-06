@@ -17,9 +17,12 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 import logging
 import bpy
+import numpy as np
 
 from ...cgt_bpy import cgt_collection
 from ...cgt_naming import COLLECTIONS
+from ...cgt_utils import cgt_math
+from .. import transfer_management
 
 
 # region TRANSFER
@@ -37,9 +40,10 @@ class OT_UI_CGT_transfer_anim_button(bpy.types.Operator):
         from ..cgt_core_transfer import rigify_pose, rigify_face, rigify_fingers
 
         col_mapping = {
-            COLLECTIONS.hands: rigify_fingers.RigifyHands,
-            COLLECTIONS.face:  rigify_face.RigifyFace,
-            COLLECTIONS.pose:  rigify_pose.RigifyPose
+            COLLECTIONS.drivers: 0,
+            COLLECTIONS.hands: 0,
+            COLLECTIONS.face:  0,
+            COLLECTIONS.pose:  0,
         }
 
         user = bpy.context.scene.cgtinker_rigify_transfer
@@ -195,14 +199,147 @@ class OT_CGT_RegenerateMetarig(bpy.types.Operator):
         bpy.ops.object.mode_set(mode='OBJECT')
 
 
-# endregion
+class OT_CGT_ObjectMinMax(bpy.types.Operator):
+    bl_label = "Object MinMax-fCurve"
+    bl_idname = "button.cgt_object_fcurve_min_max"
+    bl_description = "Get minimum and maximum values from objects fCurves."
 
+    @classmethod
+    def poll(cls, context):
+        return context.mode in {'OBJECT'}
+
+    def get_minmax_dist(self, a, b):
+        loc_a, *_ = self.get_minmax_transforms(a, True, True, True)
+        loc_b, *_ = self.get_minmax_transforms(b, True, True, True)
+
+        if not any(loc_a) and any(loc_b):
+            return 0.0, 0.0
+
+        a_min, a_max = loc_a
+        b_min, b_max = loc_b
+
+        dists = [
+            cgt_math.get_vector_distance(np.array(a_min), np.array(b_min)),
+            cgt_math.get_vector_distance(np.array(a_min), np.array(b_max)),
+            cgt_math.get_vector_distance(np.array(a_max), np.array(b_min)),
+            cgt_math.get_vector_distance(np.array(a_max), np.array(b_max))
+        ]
+
+        return min(dists), max(dists)
+
+    def get_minmax_transforms(self, ob, use_loc=True, use_rot=True, use_sca=True):
+        loc = [[None, None, None], [None, None, None]]
+        rot = [[None, None, None], [None, None, None]]
+        sca = [[None, None, None], [None, None, None]]
+
+        if ob.animation_data is None or (ob.animation_data.action is None):
+            return loc, rot, sca
+
+        fcurves = ob.animation_data.action.fcurves
+        for i, fc in enumerate(fcurves):
+            vals = [c.co[1] for c in fc.keyframe_points]
+
+            if fc.data_path == 'location' and use_loc:
+                loc[0][i % 3] = min(vals)
+                loc[1][i % 3] = max(vals)
+
+            elif fc.data_path == 'scale' and use_sca:
+                sca[0][i % 3] = min(vals)
+                sca[1][i % 3] = max(vals)
+
+            elif fc.data_path == 'rotation_euler' and use_rot:
+                rot[0][i % 3] = min(vals)
+                rot[1][i % 3] = max(vals)
+
+        return loc, rot, sca
+
+    def execute(self, context: bpy.context):
+        ob = context.object
+        if not ob:
+            self.report({'ERROR'}, "Ensure to select an object.")
+            return {'CANCELED'}
+
+        msg = [ob.name, ':']
+
+        loc, rot, sca = self.get_minmax_transforms(ob, True, True, True)
+        for data, name in zip([loc, rot, sca], ['loc', 'rot', 'sca']):
+            _min, _max = data
+            if not any(_min) and not any(_max):
+                continue
+            msg.append(f"\n{name}: min {[round(m, 5) for m in _min]}, max {[round(m, 5) for m in _max]}")
+
+        if ob.cgt_props.from_obj is not None and ob.cgt_props.to_obj is not None:
+            min_dist, max_dist = self.get_minmax_dist(ob.cgt_props.from_obj, ob.cgt_props.to_obj)
+            msg.append(f"\nDist from {ob.cgt_props.from_obj.name} to {ob.cgt_props.to_obj.name}: "
+                       f"\nmin: {round(min_dist, 5)} max: {round(max_dist, 5)}\n")
+
+        if ob.cgt_props.remap_from_obj is not None and ob.cgt_props.remap_to_obj is not None:
+            min_dist, max_dist = self.get_minmax_dist(ob.cgt_props.remap_from_obj, ob.cgt_props.remap_to_obj)
+            msg.append(f"\nDist from {ob.cgt_props.remap_from_obj.name} to {ob.cgt_props.remap_to_obj.name}: "
+                       f"\nmin: {round(min_dist, 5)}, max: {round(max_dist, 5)}")
+
+        self.report({'INFO'}, "".join(msg))
+        return {'FINISHED'}
+
+    def old_execute(self, context: bpy.context):
+        if not context.object:
+            self.report({'ERROR'}, "Ensure to select an object.")
+            return {'CANCELED'}
+
+        ob = context.object
+        d = {
+            "location":       "loc",
+            "rotation_euler": "rot",
+            "scale":          "sca",
+            "quaternion":     "qua",
+        }
+
+        if ob.animation_data is None or (ob.animation_data.action is None):
+            self.report({'WARNING'}, f"{ob.name} doesn't contain any action.")
+            return {'CANCELED'}
+
+        msg = [ob.name]
+        fcurves = ob.animation_data.action.fcurves
+        prev_path = None
+
+        # min&max loc, rot, sca
+        for i, fc in enumerate(fcurves):
+            vals = [c.co[1] for c in fc.keyframe_points]
+
+            if fc.data_path != prev_path:
+                if prev_path is not None:
+                    msg.append("\n")
+                prev_path = fc.data_path
+
+            s = f"{d[fc.data_path]}[{i % 3}]: min: {round(min(vals), 5)}, max: {round(max(vals), 5)}\n"
+            msg.append(s)
+
+        self.report({'INFO'}, "".join(msg))
+        return {'FINISHED'}
+
+
+class OT_CGT_TransferObjectProperties(bpy.types.Operator):
+    bl_label = "Transfer from selected"
+    bl_idname = "button.cgt_object_transfer_selection"
+    bl_description = "Transfer properties from selected objects by generating drivers and populating constraints."
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode in {'OBJECT'}
+
+    def execute(self, context):
+        transfer_management.main(context.selected_objects)
+        return {'FINISHED'}
+
+# endregion
 
 
 classes = [
     OT_UI_CGT_transfer_anim_button,
     OT_UI_CGT_smooth_empties_in_col,
     OT_CGT_Gamerig,
+    OT_CGT_ObjectMinMax,
+    OT_CGT_TransferObjectProperties,
     # OT_CGT_RegenerateMetarig,
 ]
 

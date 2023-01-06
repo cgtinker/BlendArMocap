@@ -18,7 +18,7 @@ def update_driver_target(obj: bpy.types.Object):
 
 
 def set_constraint_props(constraint: bpy.types.Constraint, props: dict):
-    logging.debug(f"apply {constraint.name}, {props}")
+    # logging.debug(f"apply {constraint.name}, {props}")
     for key, value in props.items():
         try:
             setattr(constraint, key, value)
