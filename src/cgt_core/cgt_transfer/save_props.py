@@ -24,7 +24,7 @@ def convert_object_ptrs2str(cls) -> None:
                     armature_name = value.name
 
                 if armature_name != value.name:
-                    logging.error(f"Armature targets don't match in cls which may lead to errors when importing: \n{cls}")
+                    logging.warning(f"Armature targets don't match in cls which may lead to errors when importing: \n{cls}")
 
             setattr(cls, key, [value.name, value.type])
         else:
@@ -74,7 +74,7 @@ def delete_id_data(cls) -> None:
 
 
 def save(objs: List[bpy.types.Object]) -> cgt_json.JsonData:
-    """ Saves all avaibale remapping objects, boils down transfer properties to the required minimum. """
+    """ Saves all available remapping objects, boils down transfer properties to the required minimum. """
     # armature name as helper to check only one armature is used
     global armature_name
     armature_name = None
@@ -132,7 +132,18 @@ def save(objs: List[bpy.types.Object]) -> cgt_json.JsonData:
         cls_dict = dict()
         convert_cls2dict(props, cls_dict)
 
-        properties[id_name] = cls_dict
+        # get constraints
+        constraints = {c.type: get_props.get_constraint_props(c) for c in obj.constraints}
+
+        # id_name contains 'object name' and 'object type', get in first lvl depth for easier loading
+        properties[id_name[0]] = {}
+        properties[id_name[0]]['cgt_props'] = cls_dict
+        properties[id_name[0]]['constraints'] = constraints
+
+        if obj.users_collection:
+            properties[id_name[0]]['collection'] = obj.users_collection[0].name
+        else:
+            properties[id_name[0]]['collection'] = "cgt_DRIVERS"
 
     json_data = cgt_json.JsonData(**properties)
     return json_data

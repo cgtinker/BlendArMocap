@@ -18,6 +18,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import logging
 import bpy
 from math import degrees
+from pathlib import Path
 import numpy as np
 
 from ...cgt_bpy import cgt_collection
@@ -105,54 +106,6 @@ class OT_UI_CGT_smooth_empties_in_col(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class OT_CGT_Gamerig(bpy.types.Operator):
-    bl_label = "Rigify to Gamerig"
-    bl_idname = "button.cgt_generate_gamerig"
-    bl_description = "Transfer the animation from a generated rigify rig to a metarig."
-
-    @classmethod
-    def poll(cls, context):
-        return context.mode in {'OBJECT'}
-
-    def execute(self, context):
-        # TODO: CHECK: should will work
-        user = bpy.context.scene.cgtinker_rigify_transfer
-        metarig = user.selected_metarig
-        rig = user.selected_rig
-
-        d = {}
-        if metarig is None:
-            logging.warning("No rig to transfer to selected.")
-            return {'CANCELLED'}
-
-        if rig is None:
-            logging.warning("No rig to transfer from selected.")
-            return {'CANCELLED'}
-
-        for bone in metarig.data.bones:
-            d[bone.name] = ''
-
-        rig = bpy.data.objects['rig']
-        for bone in rig.data.bones:
-            if bone.layers[29] or bone.use_deform:
-                name = bone.name
-                if name.startswith('DEF-'):
-                    name = name.replace('DEF-', '')
-                if name not in d:
-                    d[name] = None
-                else:
-                    d[name] = bone.name
-
-        for key, value in d.items():
-            if value != None:
-                constraint = metarig.pose.bones[key].constraints.new('COPY_TRANSFORMS')
-                constraint.target = rig
-                constraint.subtarget = value
-                constraint.influence = 1
-
-        return {'FINISHED'}
-
-
 class OT_CGT_RegenerateMetarig(bpy.types.Operator):
     """ TODO: Implement regen """
     bl_label = "Regenerate Metarig"
@@ -164,7 +117,7 @@ class OT_CGT_RegenerateMetarig(bpy.types.Operator):
         return context.mode in {'OBJECT'}
 
     def execute(self, context: bpy.context):
-        user = bpy.context.scene.m_cgtinker_mediapipe
+        user = bpy.context.scene.cgtinker_transfer
         if not user.selected_rig:
             logging.error("Ensure to select a generated rig to regenerate it's metarig.")
             return {'CANCELLED'}
@@ -317,7 +270,8 @@ class OT_CGT_SaveObjectProperties(bpy.types.Operator):
         return context.mode in {'OBJECT'}
 
     def execute(self, context):
-        s = context.scene.cgtinker_rigify_transfer.save_object_properties_name
+        user = context.scene.cgtinker_transfer
+        s = user.save_object_properties_name
         if len(s) < 3:
             self.report({'ERROR'}, "Use a descriptive type name with at least 3 characters.")
             return {'CANCELLED'}
@@ -326,11 +280,13 @@ class OT_CGT_SaveObjectProperties(bpy.types.Operator):
             self.report({'ERROR'}, "Type name may not contain special characters.")
             return {'CANCELLED'}
 
-        # todo: json_data.save(path)
-        # json_data = save_props.save([ob for ob in bpy.data.objects if ob.get("cgt_id") is not None])
+        s += '.json'
+        path = Path(__file__).parent.parent / "data" / s
+        json_data = save_props.save([ob for ob in bpy.data.objects if ob.get("cgt_id") is not None])
+        json_data.save(str(path))
 
-        context.scene.cgtinker_rigify_transfer.save_object_properties_bool = False
-        context.scene.cgtinker_rigify_transfer.save_object_properties_name = ""
+        user.save_object_properties_bool = False
+        user.save_object_properties_name = ""
         self.report({'INFO'}, "save")
         return {'FINISHED'}
 
@@ -345,11 +301,16 @@ class OT_CGT_LoadObjectProperties(bpy.types.Operator):
         return context.mode in {'OBJECT'}
 
     def execute(self, context):
-        # todo: add path and target armature
-        path = None
-        target_armature = None
-        self.report({'INFO'}, "load")
-        # load_props.load(path, target_armature)
+        user = context.scene.cgtinker_transfer  # noqa
+        config = user.transfer_types
+        armature = user.selected_rig
+
+        if config is None or armature is None:
+            return {'CANCELLED'}
+
+        config += '.json'
+        path = Path(__file__).parent.parent / "data" / config
+        load_props.load(str(path), armature)
         return {'FINISHED'}
 
 
@@ -363,15 +324,20 @@ class OT_CGT_DeleteObjectProperties(bpy.types.Operator):
         return context.mode in {'OBJECT'}
 
     def execute(self, context):
-        user = context.scene.cgtinker_rigify_transfer  # noqa
-        col = user.selected_driver_collection
-        if col is not None and (col.name == ''):
+        user = context.scene.cgtinker_transfer  # noqa
+        config = user.transfer_types
+
+        if config is None:
+            return {'CANCELLED'}
+        if config not in ['Rigify', 'None']:
             self.report({'ERROR'}, "Default transfer type may not be deleted")
             return {'CANCELLED'}
 
-        # TODO: Delete config file.
+        config += '.json'
+        path = Path(__file__).parent.parent / "data" / config
+        path.unlink()
 
-        context.scene.cgtinker_rigify_transfer.delete_object_properties_bool = False
+        user.delete_object_properties_bool = False
         return {'FINISHED'}
 
 
@@ -385,10 +351,21 @@ class OT_CGT_ApplyObjectProperties(bpy.types.Operator):
         return context.mode in {'OBJECT'}
 
     def execute(self, context):
-        # TODO: consider to select collection?
-        objs = [ob for ob in bpy.data.objects if ob.get("cgt_id") is not None]
-        self.report({'INFO'}, "transfer")
-        # transfer_management.main(objs)
+        user = context.scene.cgtinker_transfer # noqa
+        col = user.selected_driver_collection
+        if col is None:
+            return {'CANCELLED'}
+
+        objects = []
+
+        def get_objects(m_col):
+            nonlocal objects
+            objects += m_col.objects
+            for sub in m_col.children:
+                get_objects(sub)
+
+        get_objects(col)
+        transfer_management.main(objects)
         return {'FINISHED'}
 
 
@@ -398,7 +375,6 @@ class OT_CGT_ApplyObjectProperties(bpy.types.Operator):
 classes = [
     OT_UI_CGT_transfer_anim_button,
     OT_UI_CGT_smooth_empties_in_col,
-    OT_CGT_Gamerig,
     OT_CGT_ObjectMinMax,
 
     OT_CGT_TransferObjectProperties,
@@ -406,7 +382,6 @@ classes = [
     OT_CGT_DeleteObjectProperties,
     OT_CGT_LoadObjectProperties,
     OT_CGT_SaveObjectProperties,
-    # OT_CGT_RegenerateMetarig,
 ]
 
 

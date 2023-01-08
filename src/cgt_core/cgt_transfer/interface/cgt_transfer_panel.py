@@ -16,15 +16,15 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import bpy
+from pathlib import Path
 from bpy.types import Panel
 from ...cgt_interface import cgt_core_panel
 
-import bpy
 from bpy.props import PointerProperty
 
 
 class CgtRigifyTransferProperties(bpy.types.PropertyGroup):
-    advanced_features: bpy.props.BoolProperty(default=False)
+    advanced_features: bpy.props.BoolProperty(default=True)
     save_object_properties_bool: bpy.props.BoolProperty(
         default=False,
         description="Save data for transferring animation data (located in the object constraint properties) toggle."
@@ -49,38 +49,21 @@ class CgtRigifyTransferProperties(bpy.types.PropertyGroup):
         name="Armature",
         poll=is_armature)
 
-    #
-    # # TODO: CHECK: IS ALL OBSOLETE?
-    # def is_rigify_armature(self, object):
-    #     if object.type == 'ARMATURE':
-    #         if 'rig_id' in object.data:
-    #             return True
-    #     return False
-    # todo: from folder
+    def json_files(self, context):
+        path = Path(__file__).parent.parent / 'data'
+
+        files = [x for x in path.glob('**/*') if x.is_file()]
+        if len(files) == 0:
+            return [('None', 'None', "")]
+        return [(str(x.name)[:-5], str(x.name)[:-5], "") for x in files]
+
     transfer_types: bpy.props.EnumProperty(
         name="Target Type",
-        items=(
-            ("RIGIFY", "Rigify Rig", ""),
-            ("OTHER", "Other Rig", ""),
-        )
+        items=json_files
     )
 
-    def is_armature(self, object):
-        if object.type == 'ARMATURE':
-            if 'rig_id' in object.data:
-                return False
-            return True
-        return False
-
-    selected_metarig: bpy.props.PointerProperty(
-        type=bpy.types.Object,
-        description="Select a metarig as future gamerig.",
-        name="Armature",
-        poll=is_armature)
-
-    # todo: keep using or R?
-    def cgt_collection_poll(self, object):
-        return object.name.startswith('cgt_')
+    def cgt_collection_poll(self, col):
+        return col.name.startswith('cgt_')
 
     selected_driver_collection: bpy.props.PointerProperty(
         name="",
@@ -101,18 +84,32 @@ class PT_CGT_Main_Transfer(cgt_core_panel.DefaultPanel, Panel):
             return True
 
     def draw(self, context):
-        user = context.scene.cgtinker_rigify_transfer  # noqa
+        user = context.scene.cgtinker_transfer  # noqa
         layout = self.layout
+
         row = layout.row(align=True)
         row.prop_search(data=user, property="selected_rig", search_data=bpy.data,
                         search_property="objects", text="Armature", icon="ARMATURE_DATA")
         row.label(icon='BLANK1')
 
         row = layout.row(align=True)
+        row.prop_search(data=user, property="selected_driver_collection", search_data=bpy.data,
+                        search_property="collections", text="Drivers")
+        row.label(icon='BLANK1')
+
+        row = layout.row(align=True)
         row.prop(user, "transfer_types", text="Transfer Type")
+
+        if not user.advanced_features:
+            row.label(icon='BLANK1')
+            row = layout.row(align=True)
+            row.use_property_decorate = False
+            row.operator("button.cgt_object_apply_properties", text="Transfer Animation", icon="PLAY")
+            return
+
         row.prop(user, "delete_object_properties_bool", text="", icon='TRASH')
 
-        flow = layout.grid_flow(row_major=True, columns=2, even_columns=True, even_rows=True, align=True)
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
         col = flow.column(align=True)
 
         if user.delete_object_properties_bool:
@@ -121,13 +118,14 @@ class PT_CGT_Main_Transfer(cgt_core_panel.DefaultPanel, Panel):
             row.label(text="Deletion is permanent. Proceed?")
             row.operator("button.cgt_object_delete_properties", text="", icon='CHECKMARK')
             row.prop(user, "delete_object_properties_bool", text="", icon='CANCEL', invert_checkbox=True)
+            col.separator()
 
         row = col.row(align=True)
         row.use_property_decorate = False
         sub = row.row(align=True)
         sub.operator("button.cgt_object_load_properties", text="Load", icon='IMPORT')
+        sub.prop(user, "save_object_properties_bool", text="Save Config", icon='FILE_NEW')
 
-        sub.prop(user, "save_object_properties_bool", text="Add", toggle=True, icon='FILE_NEW')
         if user.save_object_properties_bool:
             row = col.row(align=True)
             row.use_property_decorate = False
@@ -137,7 +135,7 @@ class PT_CGT_Main_Transfer(cgt_core_panel.DefaultPanel, Panel):
 
         row = col.row(align=True)
         row.use_property_decorate = False
-        row.operator("button.cgt_object_transfer_selection", text="Transfer Animation", icon="PLAY")
+        row.operator("button.cgt_object_apply_properties", text="Transfer Animation", icon="PLAY")
 
 
 class PT_CGT_Advanced_Transfer(cgt_core_panel.DefaultPanel, Panel):
@@ -146,25 +144,10 @@ class PT_CGT_Advanced_Transfer(cgt_core_panel.DefaultPanel, Panel):
     bl_idname = "UI_PT_CGT_Transfer_Tools"
 
     def draw(self, context):
-        user = context.scene.cgtinker_rigify_transfer  # noqa
-        box = self.layout.box()
-        box.label(text='Link Rigify Rig animation to Metarig')
-        box.row(align=True).prop_search(data=user,
-                                        property="selected_rig",
-                                        search_data=bpy.data,
-                                        search_property="objects",
-                                        text="Generated Rig",
-                                        icon="ARMATURE_DATA")
-
-        box.row(align=True).prop_search(data=user,
-                                        property="selected_metarig",
-                                        search_data=bpy.data,
-                                        search_property="objects",
-                                        text="Metarig",
-                                        icon="ARMATURE_DATA")
-
-        # box.row().operator("button.cgt_regenerate_metarig", text="Regenerate Metarig")
-        box.row().operator("button.cgt_generate_gamerig", text="Metarig2Gamerig")
+        user = context.scene.cgtinker_transfer  # noqa
+        layout = self.layout
+        row = layout.row(align=True)
+        row.prop(user, "advanced_features", text="Use Advanced Features", toggle=True)
 
 
 classes = [
@@ -177,10 +160,10 @@ classes = [
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    bpy.types.Scene.cgtinker_rigify_transfer = PointerProperty(type=CgtRigifyTransferProperties)
+    bpy.types.Scene.cgtinker_transfer = PointerProperty(type=CgtRigifyTransferProperties)
 
 
 def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
-    del bpy.types.Scene.cgtinker_rigify_transfer
+    del bpy.types.Scene.cgtinker_transfer
