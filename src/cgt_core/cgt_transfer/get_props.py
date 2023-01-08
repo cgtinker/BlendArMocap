@@ -28,10 +28,9 @@ def get_properties_from_object(obj: bpy.types.Object) -> object_prop_reflection.
 
 
 def get_constraint_props(c: bpy.types.Constraint):
-    pool = {'__doc__', 'target', 'type', 'subtarget', '__module__', '__slots__', 'is_valid',
-            'active', 'bl_rna', 'error_location', 'error_rotation', 'head_tail',
-            'is_proxy_local', 'mute', 'rna_type', 'show_expanded', 'use_bbone_shape'}
-    props = {key: getattr(c, key, None) for key in dir(c) if key not in pool}
+    pool = {'target', 'type', 'subtarget', 'is_valid', 'active', 'bl_rna', 'error_location', 'error_rotation',
+            'head_tail', 'is_proxy_local', 'mute', 'rna_type', 'show_expanded', 'use_bbone_shape'}
+    props = {key: getattr(c, key, None) for key in dir(c) if key not in pool and not key.startswith('_')}
     return props
 
 

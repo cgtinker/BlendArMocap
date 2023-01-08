@@ -22,22 +22,6 @@ from __future__ import annotations
 import bpy
 
 
-# TODO: utils -> remove
-def get_constraint_props(c: bpy.types.Constraint):
-    pool = {'__doc__', 'target', 'subtarget', '__module__', '__slots__', 'is_valid',
-            'active', 'bl_rna', 'error_location', 'error_rotation', 'head_tail',
-            'is_proxy_local', 'mute', 'rna_type', 'show_expanded', 'use_bbone_shape'}
-    props = {key: getattr(c, key, None) for key in dir(c) if key not in pool}
-    return props
-
-
-# TODO: CHECK IF REQUIRED IN ANY WAY. REQ FOR CONSTRAINTS
-def get_custom_props(ob: bpy.types.Object):
-    pool = {'prop', '_RNA_UI', 'cgt_id', 'cycles', 'cycles_visibility'}
-    props = {key: getattr(ob, key, None) for key in ob.keys() if key not in pool}
-    return props
-
-
 class OBJECT_PT_BlendArMocapTransfer(bpy.types.Panel):
     # Transfer panel in object constraint space
     bl_label = "BlendArMocap"
@@ -51,7 +35,6 @@ class OBJECT_PT_BlendArMocapTransfer(bpy.types.Panel):
 
     @classmethod
     def poll(self, context):
-        return True
         if context.object.get("cgt_id") == "11b1fb41-1349-4465-b3aa-78db80e8c761":
             return True
         return False

@@ -17,6 +17,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 import logging
 import bpy
+from math import degrees
 import numpy as np
 
 from ...cgt_bpy import cgt_collection
@@ -122,11 +123,11 @@ class OT_CGT_Gamerig(bpy.types.Operator):
         d = {}
         if metarig is None:
             logging.warning("No rig to transfer to selected.")
-            return {'CANCELED'}
+            return {'CANCELLED'}
 
         if rig is None:
             logging.warning("No rig to transfer from selected.")
-            return {'CANCELED'}
+            return {'CANCELLED'}
 
         for bone in metarig.data.bones:
             d[bone.name] = ''
@@ -166,7 +167,7 @@ class OT_CGT_RegenerateMetarig(bpy.types.Operator):
         user = bpy.context.scene.m_cgtinker_mediapipe
         if not user.selected_rig:
             logging.error("Ensure to select a generated rig to regenerate it's metarig.")
-            return {'CANCELED'}
+            return {'CANCELLED'}
 
         bone_data = {}
         source_rig = user.selected_rig.name
@@ -253,7 +254,7 @@ class OT_CGT_ObjectMinMax(bpy.types.Operator):
         ob = context.object
         if not ob:
             self.report({'ERROR'}, "Ensure to select an object.")
-            return {'CANCELED'}
+            return {'CANCELLED'}
 
         msg = [ob.name, ':']
 
@@ -262,7 +263,17 @@ class OT_CGT_ObjectMinMax(bpy.types.Operator):
             _min, _max = data
             if not any(_min) and not any(_max):
                 continue
-            msg.append(f"\n{name}: min {[round(m, 5) for m in _min]}, max {[round(m, 5) for m in _max]}")
+            if name == 'rot':
+                msg.append(f"\n{name} in radians: "
+                           f"min {[round(m, 5) for m in _min]}, "
+                           f"max {[round(m, 5) for m in _max]}")
+
+                msg.append(f"\n{name} in degrees: "
+                           f"min {[round(degrees(m), 5) for m in _min]}, "
+                           f"max {[round(degrees(m), 5) for m in _max]}")
+
+            else:
+                msg.append(f"\n{name}: min {[round(m, 5) for m in _min]}, max {[round(m, 5) for m in _max]}")
 
         a_min_dist, a_max_dist, b_min_dist, b_max_dist = None, None, None, None
         if ob.cgt_props.from_obj is not None and ob.cgt_props.to_obj is not None:
@@ -299,15 +310,28 @@ class OT_CGT_TransferObjectProperties(bpy.types.Operator):
 class OT_CGT_SaveObjectProperties(bpy.types.Operator):
     bl_label = "Save Transfer Properties"
     bl_idname = "button.cgt_object_save_properties"
-    bl_description = "Saves transfer properties from available objects."
+    bl_description = "Saves transfer properties from available objects to file."
 
     @classmethod
     def poll(cls, context):
         return context.mode in {'OBJECT'}
 
     def execute(self, context):
-        json_data = save_props.save([ob for ob in bpy.data.objects if ob.get("cgt_id") is not None])
+        s = context.scene.cgtinker_rigify_transfer.save_object_properties_name
+        if len(s) < 3:
+            self.report({'ERROR'}, "Use a descriptive type name with at least 3 characters.")
+            return {'CANCELLED'}
+
+        if any([True if ch in s else False for ch in ['*', '/', '"', "'", '$', '&', '´', '`', '°', '^', '@']]):
+            self.report({'ERROR'}, "Type name may not contain special characters.")
+            return {'CANCELLED'}
+
         # todo: json_data.save(path)
+        # json_data = save_props.save([ob for ob in bpy.data.objects if ob.get("cgt_id") is not None])
+
+        context.scene.cgtinker_rigify_transfer.save_object_properties_bool = False
+        context.scene.cgtinker_rigify_transfer.save_object_properties_name = ""
+        self.report({'INFO'}, "save")
         return {'FINISHED'}
 
 
@@ -324,7 +348,30 @@ class OT_CGT_LoadObjectProperties(bpy.types.Operator):
         # todo: add path and target armature
         path = None
         target_armature = None
-        load_props.load(path, target_armature)
+        self.report({'INFO'}, "load")
+        # load_props.load(path, target_armature)
+        return {'FINISHED'}
+
+
+class OT_CGT_DeleteObjectProperties(bpy.types.Operator):
+    bl_label = "Delete Transfer Properties"
+    bl_idname = "button.cgt_object_delete_properties"
+    bl_description = "Delete transfer properties to objects."
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode in {'OBJECT'}
+
+    def execute(self, context):
+        user = context.scene.cgtinker_rigify_transfer  # noqa
+        col = user.selected_driver_collection
+        if col is not None and (col.name == ''):
+            self.report({'ERROR'}, "Default transfer type may not be deleted")
+            return {'CANCELLED'}
+
+        # TODO: Delete config file.
+
+        context.scene.cgtinker_rigify_transfer.delete_object_properties_bool = False
         return {'FINISHED'}
 
 
@@ -340,7 +387,8 @@ class OT_CGT_ApplyObjectProperties(bpy.types.Operator):
     def execute(self, context):
         # TODO: consider to select collection?
         objs = [ob for ob in bpy.data.objects if ob.get("cgt_id") is not None]
-        transfer_management.main(objs)
+        self.report({'INFO'}, "transfer")
+        # transfer_management.main(objs)
         return {'FINISHED'}
 
 
@@ -352,7 +400,12 @@ classes = [
     OT_UI_CGT_smooth_empties_in_col,
     OT_CGT_Gamerig,
     OT_CGT_ObjectMinMax,
+
     OT_CGT_TransferObjectProperties,
+    OT_CGT_ApplyObjectProperties,
+    OT_CGT_DeleteObjectProperties,
+    OT_CGT_LoadObjectProperties,
+    OT_CGT_SaveObjectProperties,
     # OT_CGT_RegenerateMetarig,
 ]
 
