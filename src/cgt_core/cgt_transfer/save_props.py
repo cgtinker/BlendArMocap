@@ -6,7 +6,6 @@ from . import get_props
 from . import object_prop_reflection
 from ..cgt_utils import cgt_json
 
-
 armature_name = None
 
 
@@ -24,7 +23,8 @@ def convert_object_ptrs2str(cls) -> None:
                     armature_name = value.name
 
                 if armature_name != value.name:
-                    logging.warning(f"Armature targets don't match in cls which may lead to errors when importing: \n{cls}")
+                    logging.warning(
+                        f"Armature targets don't match in cls which may lead to errors when importing: \n{cls}")
 
             setattr(cls, key, [value.name, value.type])
         else:
@@ -75,6 +75,7 @@ def delete_id_data(cls) -> None:
 
 def save(objs: List[bpy.types.Object]) -> cgt_json.JsonData:
     """ Saves all available remapping objects, boils down transfer properties to the required minimum. """
+    # TODO: SAVING MUST CHECK X AXIS WHEN USING DEFAULT REMAP VALUES
     # armature name as helper to check only one armature is used
     global armature_name
     armature_name = None
@@ -94,29 +95,51 @@ def save(objs: List[bpy.types.Object]) -> cgt_json.JsonData:
 
         # Remove unused remap properties
         remap_props = [
-            "use_loc_x", "use_loc_y", "use_loc_z",
-            "use_rot_x", "use_rot_y", "use_rot_z",
-            "use_sca_x", "use_sca_y", "use_sca_z"
+            ["use_loc_x", "use_loc_y", "use_loc_z"],
+            ["use_rot_x", "use_rot_y", "use_rot_z"],
+            ["use_sca_x", "use_sca_y", "use_sca_z"]
         ]
 
-        for remap_prop in remap_props:
-            sub_cls = getattr(props, remap_prop, None)
-            if sub_cls is None:
-                continue
-
-            if getattr(sub_cls, "active", False):
-                continue
-
-            delattr(props, remap_prop)
-
-        # remove unused detail toggles
         detail_toggles = [
             "loc_details", "rot_details", "sca_details"
         ]
-        for toggle in detail_toggles:
-            if getattr(props, toggle, False):
-                continue
-            delattr(props, toggle)
+
+        remap_defaults = {
+            "factor":        1.0,
+            "offset":        0.0,
+            "from_min":      0.0,
+            "from_max":      1.0,
+            "to_min":        0.0,
+            "to_max":        1.0
+        }
+
+        # keep x values if details aren't used, remove inactive remap props
+        for remap_prop, details in zip(remap_props, detail_toggles):
+            use_details = getattr(props, details, False)
+            if not use_details:
+                delattr(props, details)
+
+            for i, axis in enumerate(remap_prop):
+                # remove default values
+                sub_cls = getattr(props, axis, None)
+                for key, value in remap_defaults.items():
+                    if not getattr(sub_cls, key, value) == value:
+                        continue
+                    delattr(sub_cls, key)
+
+                # keep x-remap-props if not use details
+                if not use_details and i == 0:
+                    continue
+
+                # check cls
+                if sub_cls is None:
+                    continue
+
+                if getattr(sub_cls, "active", False):
+                    continue
+
+                # del cls
+                delattr(props, axis)
 
         # remove properties set to None
         if props.by_obj.target is None:

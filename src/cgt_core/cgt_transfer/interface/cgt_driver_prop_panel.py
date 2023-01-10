@@ -187,7 +187,7 @@ class OBJECT_PT_CGT_DriverPropertyDetails(bpy.types.Panel):
         ob = context.object
         if ob is None:
             return False
-        if ob.cgt_props.driver_type in ['REMAP', 'REMAP_DIST', 'CHAIN']:
+        if ob.cgt_props.driver_type in ['REMAP', 'REMAP_DIST']:
             return True
         return False
 
@@ -277,6 +277,7 @@ class OBJECT_PT_CGT_DriverPropertyDetails(bpy.types.Panel):
             draw_sub_props("To Rotation", rot_props, ("rot_details", "remap_none", "remap_default"))
             draw_sub_props("To Scale", sca_props, ("sca_details", "remap_none", "remap_default"))
 
+        # TODO: consider to implement x,y,z mapping for chain elements in the future
         elif ob.cgt_props.driver_type == 'CHAIN':
             draw_sub_props("To Location", loc_props, ("loc_details", "remap_details", "remap_default"))
 

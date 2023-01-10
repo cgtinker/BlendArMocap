@@ -104,13 +104,15 @@ class PT_CGT_Main_Transfer(cgt_core_panel.DefaultPanel, Panel):
             row.label(icon='BLANK1')
             row = layout.row(align=True)
             row.use_property_decorate = False
-            row.operator("button.cgt_object_apply_properties", text="Transfer Animation", icon="PLAY")
+            row.operator("button.cgt_object_apply_properties", text="Transfer Animation", icon="DRIVER")
             return
 
         row.prop(user, "delete_object_properties_bool", text="", icon='TRASH')
 
-        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-        col = flow.column(align=True)
+        # flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+        # col = flow.column(align=True)
+        row = layout.row(align=True)
+        col = row.column(align=True)
 
         if user.delete_object_properties_bool:
             row = col.row(align=True)
@@ -123,7 +125,7 @@ class PT_CGT_Main_Transfer(cgt_core_panel.DefaultPanel, Panel):
         row = col.row(align=True)
         row.use_property_decorate = False
         sub = row.row(align=True)
-        sub.operator("button.cgt_object_load_properties", text="Load", icon='IMPORT')
+        sub.operator("button.cgt_object_load_properties", text="Load", icon='FILE_TICK')
         sub.prop(user, "save_object_properties_bool", text="Save Config", icon='FILE_NEW')
 
         if user.save_object_properties_bool:
@@ -135,7 +137,7 @@ class PT_CGT_Main_Transfer(cgt_core_panel.DefaultPanel, Panel):
 
         row = col.row(align=True)
         row.use_property_decorate = False
-        row.operator("button.cgt_object_apply_properties", text="Transfer Animation", icon="PLAY")
+        row.operator("button.cgt_object_apply_properties", text="Transfer Animation", icon="DRIVER")
 
 
 class PT_CGT_Advanced_Transfer(cgt_core_panel.DefaultPanel, Panel):

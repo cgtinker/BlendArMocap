@@ -124,6 +124,8 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
             left_corner_angle = -cgt_math.angle_between(right_vec, right_hv)
 
         # TODO: duplicate
+
+        self._mouth_corner_driver.loc = [left_corner_angle, 0.001, right_corner_angle]
         self._mouth_corner_driver.sca = [left_corner_angle, 0.001, right_corner_angle]
         self._mouth_corner_driver.rot = [left_corner_angle, 0.001, right_corner_angle]
 

@@ -28,45 +28,7 @@ from .. import transfer_management, save_props, load_props
 
 
 # region TRANSFER
-class OT_UI_CGT_transfer_anim_button(bpy.types.Operator):
-    bl_label = "Transfer Animation"
-    bl_idname = "button.cgt_transfer_animation_button"
-    bl_description = "Transfer driver animation to cgt_rig"
-
-    @classmethod
-    def poll(cls, context):
-        return context.mode in {'OBJECT'}
-
-    def execute(self, context):
-        # TODO: APPLY FIX HERE
-        from ..cgt_core_transfer import rigify_pose, rigify_face, rigify_fingers
-
-        col_mapping = {
-            COLLECTIONS.drivers: 0,
-            COLLECTIONS.hands: 0,
-            COLLECTIONS.face:  0,
-            COLLECTIONS.pose:  0,
-        }
-
-        user = bpy.context.scene.cgtinker_rigify_transfer
-
-        selected_driver_collection = user.selected_driver_collection.name
-        selected_armature = user.selected_rig.name_full
-
-        print(f"TRYING TO TRANSFER ANIMATION DATA FROM {selected_driver_collection} TO {selected_armature}")
-
-        driver_collections = cgt_collection.get_child_collections(selected_driver_collection)
-        for col in driver_collections:
-
-            armature = bpy.data.objects[selected_armature]
-            driver_objects = cgt_collection.get_objects_from_collection(col)
-            col_mapping[col](armature, driver_objects)
-
-        # input_manager.transfer_animation()
-        return {'FINISHED'}
-
-
-class OT_UI_CGT_smooth_empties_in_col(bpy.types.Operator):
+class OT_UI_CGT_smooth_empties(bpy.types.Operator):
     bl_label = "Smooth"
     bl_idname = "button.smooth_selected_empties"
     bl_description = "Smooth animation data of selected objects."
@@ -280,6 +242,12 @@ class OT_CGT_SaveObjectProperties(bpy.types.Operator):
             self.report({'ERROR'}, "Type name may not contain special characters.")
             return {'CANCELLED'}
 
+        path = Path(__file__).parent.parent / 'data'
+        files = [x for x in path.glob('**/*') if x.is_file()]
+        if s in [(str(x.name)[:-5], str(x.name)[:-5], "") for x in files]:
+            self.report({'ERROR'}, "Type name already exists.")
+            return {'CANCELLED'}
+
         s += '.json'
         path = Path(__file__).parent.parent / "data" / s
         json_data = save_props.save([ob for ob in bpy.data.objects if ob.get("cgt_id") is not None])
@@ -304,13 +272,14 @@ class OT_CGT_LoadObjectProperties(bpy.types.Operator):
         user = context.scene.cgtinker_transfer  # noqa
         config = user.transfer_types
         armature = user.selected_rig
+        col = user.selected_driver_collection
 
-        if config is None or armature is None:
+        if config in ['None', None] or armature is None:
             return {'CANCELLED'}
 
         config += '.json'
         path = Path(__file__).parent.parent / "data" / config
-        load_props.load(str(path), armature)
+        load_props.load(str(path), armature, col)
         return {'FINISHED'}
 
 
@@ -327,9 +296,9 @@ class OT_CGT_DeleteObjectProperties(bpy.types.Operator):
         user = context.scene.cgtinker_transfer  # noqa
         config = user.transfer_types
 
-        if config is None:
+        if config in ['None', None]:
             return {'CANCELLED'}
-        if config not in ['Rigify', 'None']:
+        if config in ['Rigify', 'None']:
             self.report({'ERROR'}, "Default transfer type may not be deleted")
             return {'CANCELLED'}
 
@@ -356,6 +325,8 @@ class OT_CGT_ApplyObjectProperties(bpy.types.Operator):
         if col is None:
             return {'CANCELLED'}
 
+        bpy.ops.button.cgt_object_load_properties() # noqa
+
         objects = []
 
         def get_objects(m_col):
@@ -373,8 +344,7 @@ class OT_CGT_ApplyObjectProperties(bpy.types.Operator):
 
 
 classes = [
-    OT_UI_CGT_transfer_anim_button,
-    OT_UI_CGT_smooth_empties_in_col,
+    OT_UI_CGT_smooth_empties,
     OT_CGT_ObjectMinMax,
 
     OT_CGT_TransferObjectProperties,

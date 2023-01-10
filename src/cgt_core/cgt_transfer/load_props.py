@@ -1,6 +1,6 @@
 from __future__ import annotations
 import bpy
-from typing import Union
+from typing import Union, Any
 import logging
 from ..cgt_utils import cgt_json
 from ..cgt_bpy import cgt_bpy_utils, cgt_object_prop, cgt_collection
@@ -34,7 +34,7 @@ def idle_object_props(props):
     props.by_obj.target = None
 
 
-def apply_props2obj(props: dict, obj: bpy.types.Object, target_armature: bpy.types.Object = None):
+def apply_props2obj(props: dict, obj: Union[bpy.types.Object, bpy.types.Constraint], target_armature: bpy.types.Object = None):
     """ Apply CGT_Object_Properties stored state. """
     if obj == {} or props == {} or target_armature is None:
         return
@@ -77,24 +77,17 @@ def apply_props2obj(props: dict, obj: bpy.types.Object, target_armature: bpy.typ
                 logging.warning(err)
 
 
-def apply_constraints(props: dict, obj: Union[bpy.types.Constraint, bpy.types.Object]):
+def apply_constraints(props: dict, obj: bpy.types.Object, target_armature: bpy.types.Object):
     """ Add stored constraints to objects. """
     if obj == {} or props == {}:
         return
 
     for key, value in props.items():
-        if isinstance(value, dict):     # recv
-            constraint = obj.constraints.new(key.replace(" ", "_").upper())
-            apply_props2obj(value, constraint)
-
-        else:
-            try:
-                setattr(obj, key, value)
-            except AttributeError as err:
-                logging.warning(err)
+        constraint = obj.constraints.new(key.replace(" ", "_").upper())
+        apply_props2obj(value, constraint, target_armature)
 
 
-def load(path: str = None, target_armature: bpy.types.Object = None):
+def load(path: str = None, target_armature: bpy.types.Object = None, col: bpy.types.Collection = None):
     """ Load CGT_Object_Properties and Constraints from json and apply the data. """
     assert path is not None
     if target_armature is None:
@@ -109,6 +102,7 @@ def load(path: str = None, target_armature: bpy.types.Object = None):
     for ob in bpy.data.objects:
         if not cgt_object_prop.get_custom_property(ob, 'cgt_id') == '11b1fb41-1349-4465-b3aa-78db80e8c761':
             continue
+
         ob.constraints.clear()
         idle_object_props(ob.cgt_props)
 
@@ -116,6 +110,11 @@ def load(path: str = None, target_armature: bpy.types.Object = None):
         # only link if collection exists
         if bpy.data.collections.get(d['collection'], None) is None:
             continue
+
+        # poll by driver col
+        if not col.name == 'cgt_DRIVERS':
+            if not bpy.data.collections.get(d['collection'], None) == col:
+                continue
 
         # get object target
         obj = cgt_bpy_utils.add_empty(0.01, key)
@@ -125,4 +124,4 @@ def load(path: str = None, target_armature: bpy.types.Object = None):
 
         # apply data
         apply_props2obj(d['cgt_props'], obj.cgt_props, target_armature)
-        apply_constraints(d['constraints'], obj)
+        apply_constraints(d['constraints'], obj, target_armature)

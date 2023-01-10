@@ -4,7 +4,7 @@ import logging
 from typing import Optional, Union, List, Dict
 
 from . import get_props, set_props
-from ..cgt_bpy import cgt_drivers, cgt_bpy_utils
+from ..cgt_bpy import cgt_drivers, cgt_bpy_utils, cgt_collection
 
 from collections import namedtuple
 
@@ -163,7 +163,9 @@ def get_driver_target(obj: bpy.types.Object) -> bpy.types.Object:
         Deletes driver object of the same name if it exists. """
     if obj.name + '.D' in bpy.data.objects:
         bpy.data.objects.remove(bpy.data.objects[obj.name + '.D'])
-    return cgt_bpy_utils.add_empty(0.05, obj.name + '.D', 'SPHERE')
+    driver_target = cgt_bpy_utils.add_empty(0.05, obj.name + '.D', 'SPHERE')
+    cgt_collection.add_object_to_collection('cgt_DRIVERS', driver_target)
+    return driver_target
 
 
 def apply_constraints(target_obj: Union[bpy.types.Object, bpy.types.PoseBone], obj: bpy.types.Object,
