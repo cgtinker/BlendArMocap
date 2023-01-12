@@ -29,12 +29,12 @@ class UI_PT_CGT_Properties_Freemocap(bpy.types.PropertyGroup):
 
 
 class UI_PT_CGT_Panel_Freemocap(bpy.types.Panel):
-    bl_label = "Freemocap Import"
+    bl_label = "Freemocap"
     bl_parent_id = "UI_PT_CGT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "BlendAR"
-    # bl_options = {}
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -42,17 +42,16 @@ class UI_PT_CGT_Panel_Freemocap(bpy.types.Panel):
             return True
 
     def draw(self, context):
-        self.layout.label(text="Imports Freemocap Session Folder")
         layout = self.layout
 
         user = context.scene.cgt_freemocap  # noqa
         layout.row().prop(user, "freemocap_session_path")
 
         if user.modal_active:
-            layout.row().operator("wm.cgt_load_freemocap_operator", text="Break")
+            layout.row().operator("wm.cgt_load_freemocap_operator", text="Stop Import", icon='CANCEL')
         else:
-            layout.row().operator("wm.cgt_load_freemocap_operator", text="Import Session")
-        layout.row().operator("wm.fmc_load_synchronized_videos", text="Load synchronized videos")
+            layout.row().operator("wm.cgt_load_freemocap_operator", text="Import Session Folder", icon='IMPORT')
+        layout.row().operator("wm.fmc_load_synchronized_videos", text="Load synchronized videos", icon='IMAGE_PLANE')
         # layout.separator()
         # layout.row().operator("wm.fmc_bind_freemocap_data_to_skeleton", text="Bind to rig (Preview)")
 

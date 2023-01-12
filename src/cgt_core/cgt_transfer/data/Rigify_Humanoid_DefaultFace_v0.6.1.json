@@ -1868,7 +1868,7 @@
                 "remap_none":"DEFAULT",
                 "remap_default":"DEFAULT",
                 "remap_details":"DEFAULT",
-                "factor":100.0
+                "factor":1.0
             },
             "use_loc_y":{
                 "active":true,

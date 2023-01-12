@@ -77,6 +77,7 @@ class PT_CGT_Main_Transfer(cgt_core_panel.DefaultPanel, Panel):
     bl_label = "Transfer"
     bl_parent_id = "UI_PT_CGT_Panel"
     bl_idname = "UI_PT_Transfer_Panel"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -155,7 +156,7 @@ class PT_CGT_Advanced_Transfer(cgt_core_panel.DefaultPanel, Panel):
 classes = [
     PT_CGT_Main_Transfer,
     CgtRigifyTransferProperties,
-    PT_CGT_Advanced_Transfer,
+    # PT_CGT_Advanced_Transfer,
 ]
 
 
