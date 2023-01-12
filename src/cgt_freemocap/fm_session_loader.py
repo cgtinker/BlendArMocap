@@ -13,13 +13,14 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import logging
-from ..cgt_core import realtime_data_provider_interface
 from pathlib import Path
 import numpy as np
 import bpy
+from ..cgt_core.cgt_core_chains import HolisticNodeChainGroup
+from ..cgt_core.cgt_utils.cgt_timers import timeit
 
 
-class FreemocapLoader(realtime_data_provider_interface.RealtimeDataProvider):
+class FreemocapLoader:
     mediapipe3d_frames_trackedPoints_xyz: np.array = None
     number_of_frames: int = -1
     number_of_tracked_points: int = -1
@@ -29,38 +30,52 @@ class FreemocapLoader(realtime_data_provider_interface.RealtimeDataProvider):
     first_right_hand_point: int = 54
     first_face_point: int = 75
 
-    mp_res = None
+    def __init__(self):
+        """ Load the 3d mediapipe skeleton data from a freemocap session
+            (not implemented) `reprojection_error_threshold:float` = filter data 
+            by removing dottos with high reprojection error. I think for now I'll 
+            just do a mean+2*standard_deviation cut-off that leaves in 95% of the data 
+            (if stupidly assuming normal distribution) or something TODO: - do this better and smarter lol """
+        self.frame = 0
 
-    def frame_detection_data(self):
-        """ Provides holistic data for each (prerecorded) frame. """
-        while self.frame < self.number_of_frames:
-            holistic_data = self.get_detection_results()
-            self.listener.data = holistic_data
-            self.update_listeners()
-            return True
-        return False
-
-    def initialize_model(self):
-        """Load the 3d mediapipe skeleton data from a freemocap session
-        (not implemented) `reprojection_error_threshold:float` = filter data by removing dottos with high reprojection error. I think for now I'll just do a mean+2*standard_deviation cut-off that leaves in 95% of the data (if stupidly assuming normal distribution) or something TODO - do this better and smarter lol
-        """
-        freemocap_session_path = Path(bpy.context.scene.m_cgtinker_mediapipe.freemocap_session_path)
+        freemocap_session_path = Path(bpy.context.scene.cgt_freemocap.freemocap_session_path)
         logging.debug(f"Loading FREEMOCAP data...\n{freemocap_session_path}")
 
+        # data paths
         data_arrays_path = freemocap_session_path / 'DataArrays'
         mediapipe3d_xyz_npy_path = data_arrays_path / 'mediaPipeSkel_3d_smoothed.npy'
         mediapipe3d_reprojectionError_npy_path = data_arrays_path / 'mediaPipeSkel_reprojErr.npy'
 
+        # session data
         self.mediapipe3d_frames_trackedPoints_xyz = np.load(str(mediapipe3d_xyz_npy_path)) / 1000  # convert to meters
         mediapipe3d_frames_trackedPoints_reprojectionError = np.load(str(mediapipe3d_reprojectionError_npy_path))
-
         self.number_of_frames = self.mediapipe3d_frames_trackedPoints_xyz.shape[0]
         self.number_of_tracked_points = self.mediapipe3d_frames_trackedPoints_xyz.shape[1]
 
-    def get_detection_results(self, mp_res=None):
+        # init calculator node chain
+        # TODO: flag for just apply (?)
+        self.node_chain = HolisticNodeChainGroup()
+
+    def update(self):
+        """ Provides holistic data for each (prerecorded) frame. """
+        if self.frame < self.number_of_frames:
+            holistic_data = self.get_freemocap_session_data(self.frame)
+            if holistic_data is None:
+                return False
+
+            self.frame += 1
+            self.node_chain.update(holistic_data, self.frame)
+            return True
+
+        return False
+
+    @timeit
+    def get_freemocap_session_data(self, frame: int):
+        """ Gets data from frame. Splits to default mediapipe formatting. """
         if self.frame == self.number_of_frames - 1:
             return None
-        tracked_points = self.mediapipe3d_frames_trackedPoints_xyz[self.frame, :, :]
+
+        tracked_points = self.mediapipe3d_frames_trackedPoints_xyz[frame, :, :]
         tracked_points = np.array([[-x, -z, -y] for x, y, z in tracked_points])
 
         this_frame_body_data = tracked_points[0:self.first_left_hand_point]
@@ -68,17 +83,11 @@ class FreemocapLoader(realtime_data_provider_interface.RealtimeDataProvider):
         this_frame_right_hand_data = tracked_points[self.first_right_hand_point:self.first_face_point]
         this_frame_face_data = tracked_points[self.first_face_point:]
 
-        this_frame_body_data = [[i, p] for i, p in enumerate(this_frame_body_data)]
-        this_frame_left_hand_data = [[i, p] for i, p in enumerate(this_frame_left_hand_data)]
-        this_frame_right_hand_data = [[i, p] for i, p in enumerate(this_frame_right_hand_data)]
-        this_frame_face_data = [[i, p] for i, p in enumerate(this_frame_face_data)]
+        this_frame_body_data = list(enumerate(this_frame_body_data))
+        this_frame_left_hand_data = list(enumerate(this_frame_left_hand_data))
+        this_frame_right_hand_data = list(enumerate(this_frame_right_hand_data))
+        this_frame_face_data = list(enumerate(this_frame_face_data))
 
         holistic_data = [[[this_frame_left_hand_data], [this_frame_right_hand_data]],
                          [this_frame_face_data], this_frame_body_data]
         return holistic_data
-
-    def contains_features(self, mp_res):
-        pass
-
-    def draw_result(self, s, mp_res, mp_drawings):
-        pass

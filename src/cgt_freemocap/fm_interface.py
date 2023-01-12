@@ -14,17 +14,27 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
+import bpy
 
-from bpy.types import Panel
+
+class UI_PT_CGT_Properties_Freemocap(bpy.types.PropertyGroup):
+    freemocap_session_path: bpy.props.StringProperty(
+        name="Path",
+        description="Directory path to freemocap session.",
+        options={'HIDDEN'},
+        maxlen=1024,
+        subtype='DIR_PATH'
+    )
+    modal_active: bpy.props.BoolProperty(default=False)
 
 
-class UI_PT_CGT_Panel_Freemocap(Panel):
+class UI_PT_CGT_Panel_Freemocap(bpy.types.Panel):
     bl_label = "Freemocap Import"
     bl_parent_id = "UI_PT_CGT_Panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "BlendAR"
-    bl_options = {"DEFAULT_CLOSED"}
+    # bl_options = {}
 
     @classmethod
     def poll(cls, context):
@@ -33,15 +43,42 @@ class UI_PT_CGT_Panel_Freemocap(Panel):
 
     def draw(self, context):
         self.layout.label(text="Imports Freemocap Session Folder")
-        user = context.scene.m_cgtinker_mediapipe  # noqa
-        box0 = self.layout.box()
-        box0.row().prop(user, "freemocap_session_path")
+        layout = self.layout
+
+        user = context.scene.cgt_freemocap  # noqa
+        layout.row().prop(user, "freemocap_session_path")
 
         if user.modal_active:
-            box0.row().operator("wm.cgt_load_freemocap_operator", text="Break")
+            layout.row().operator("wm.cgt_load_freemocap_operator", text="Break")
         else:
-            box0.row().operator("wm.cgt_load_freemocap_operator", text="Import Session")
-        box0.row().operator("wm.fmc_load_synchronized_videos", text="Load synchronized videos")
+            layout.row().operator("wm.cgt_load_freemocap_operator", text="Import Session")
+        layout.row().operator("wm.fmc_load_synchronized_videos", text="Load synchronized videos")
+        # layout.separator()
+        # layout.row().operator("wm.fmc_bind_freemocap_data_to_skeleton", text="Bind to rig (Preview)")
 
-        box1 = self.layout.box()
-        box1.row().operator("wm.fmc_bind_freemocap_data_to_skeleton", text="Bind to rig (Preview)")
+
+classes = [
+    UI_PT_CGT_Properties_Freemocap,
+    UI_PT_CGT_Panel_Freemocap,
+]
+
+
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    bpy.types.Scene.cgt_freemocap = bpy.props.PointerProperty(type=UI_PT_CGT_Properties_Freemocap)
+
+
+def unregister():
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
+    del bpy.types.Scene.cgt_freemocap # noqa
+
+
+if __name__ == '__main__':
+    try:
+        unregister()
+    except RuntimeError:
+        pass
+
+    register()
