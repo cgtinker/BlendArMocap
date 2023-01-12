@@ -126,6 +126,7 @@ def link_object_chain(chains_dict: Dict[bpy.types.Object, dict]):
             driver_target = get_driver_target(current_obj)
             factory = cgt_drivers.DriverFactory(driver_target)
             set_props.set_chain_driver(previous_obj, current_obj, previous_driver, factory, tar_dist)
+            set_props.set_copy_rotation_driver(current_obj, factory, 'WORLD_SPACE')
 
             # apply constraints
             if target_type in ['OBJECT', 'ARMATURE']:
@@ -145,6 +146,7 @@ def link_object_chain(chains_dict: Dict[bpy.types.Object, dict]):
         driver_target = get_driver_target(chain_obj)
         factory = cgt_drivers.DriverFactory(driver_target)
         set_props.set_copy_location_driver(sub_target, factory, 'WORLD_SPACE')
+        set_props.set_copy_rotation_driver(sub_target, factory, 'WORLD_SPACE')
 
         # recv chain links
         apply_chain_link(chains_dict[chain_obj], chain_obj, driver_target)
@@ -163,7 +165,7 @@ def get_driver_target(obj: bpy.types.Object) -> bpy.types.Object:
         Deletes driver object of the same name if it exists. """
     if obj.name + '.D' in bpy.data.objects:
         bpy.data.objects.remove(bpy.data.objects[obj.name + '.D'])
-    driver_target = cgt_bpy_utils.add_empty(0.05, obj.name + '.D', 'SPHERE')
+    driver_target = cgt_bpy_utils.add_empty(0.001, obj.name + '.D', 'SPHERE')
     cgt_collection.add_object_to_collection('cgt_DRIVERS', driver_target)
     return driver_target
 
@@ -178,7 +180,7 @@ def apply_constraints(target_obj: Union[bpy.types.Object, bpy.types.PoseBone], o
         target_obj.constraints.remove(c)
 
     for c in obj.constraints:
-        constraint_name = c.name.upper().replace(" ", "_")
+        constraint_name = c.type
         constraint_props = get_props.get_constraint_props(c)
         constraint = target_obj.constraints.new(constraint_name)
         constraint_props['target'] = driver_target

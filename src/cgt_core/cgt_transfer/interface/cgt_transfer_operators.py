@@ -234,6 +234,12 @@ class OT_CGT_SaveObjectProperties(bpy.types.Operator):
     def execute(self, context):
         user = context.scene.cgtinker_transfer
         s = user.save_object_properties_name
+
+        print(s)
+        if s in ['Rigify_Humanoid_DefaultFace_v0.6.1', 'None']:
+            self.report({'ERROR'}, "May not overwrite defaults types.")
+            return {'CANCELLED'}
+
         if len(s) < 3:
             self.report({'ERROR'}, "Use a descriptive type name with at least 3 characters.")
             return {'CANCELLED'}
@@ -257,7 +263,6 @@ class OT_CGT_SaveObjectProperties(bpy.types.Operator):
         user.save_object_properties_name = ""
         self.report({'INFO'}, "save")
         return {'FINISHED'}
-
 
 class OT_CGT_LoadObjectProperties(bpy.types.Operator):
     bl_label = "Load Transfer Properties"
@@ -286,7 +291,7 @@ class OT_CGT_LoadObjectProperties(bpy.types.Operator):
 class OT_CGT_DeleteObjectProperties(bpy.types.Operator):
     bl_label = "Delete Transfer Properties"
     bl_idname = "button.cgt_object_delete_properties"
-    bl_description = "Delete transfer properties to objects."
+    bl_description = "Delete transfer properties file."
 
     @classmethod
     def poll(cls, context):
@@ -296,9 +301,7 @@ class OT_CGT_DeleteObjectProperties(bpy.types.Operator):
         user = context.scene.cgtinker_transfer  # noqa
         config = user.transfer_types
 
-        if config in ['None', None]:
-            return {'CANCELLED'}
-        if config in ['Rigify', 'None']:
+        if config in ['Rigify_Humanoid_DefaultFace_v0.6.1', 'None', None]:
             self.report({'ERROR'}, "Default transfer type may not be deleted")
             return {'CANCELLED'}
 

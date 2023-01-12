@@ -6,7 +6,7 @@ from ..cgt_mediapipe import dependencies
 from pathlib import Path
 from .cgt_mp_core import cv_stream, mp_hand_detector, mp_face_detector, mp_pose_detector, mp_holistic_detector
 from ..cgt_core.cgt_interface import cgt_core_panel
-from ..cgt_core.cgt_calculators_nodes import calc_face_rot_sca, calc_pose_rot_sca, calc_hand_rot
+from ..cgt_core.cgt_calculators_nodes import calc_face_rot, calc_pose_rot, calc_hand_rot
 from ..cgt_core.cgt_patterns import cgt_nodes
 from ..cgt_core import cgt_core_chains
 

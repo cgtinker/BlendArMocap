@@ -60,9 +60,9 @@ class PoseDetector(mp_detector_node.DetectorNode):
 # region manual tests
 if __name__ == '__main__':
     from . import cv_stream
-    from ...cgt_core.cgt_calculators_nodes import calc_pose_rot_sca
+    from ...cgt_core.cgt_calculators_nodes import calc_pose_rot
     detector = PoseDetector(cv_stream.Stream(0))
-    calc = calc_pose_rot_sca.PoseRotationCalculator()
+    calc = calc_pose_rot.PoseRotationCalculator()
     frame = 0
     for _ in range(50):
         frame += 1

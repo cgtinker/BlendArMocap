@@ -32,8 +32,8 @@ class MPFaceOutputNode(mp_out_utils.BpyOutputNode):
         references = {}
         for i in range(468):
             references[f'{i}'] = f"cgt_face_vertex_{i}"
-        for k, v in data.face.items():
-            references[f'{468+int(k)}'] = v
+        for k, name in data.face.items():
+            references[f'{468+int(k)}'] = name
 
         self.face = cgt_bpy_utils.add_empties(references, 0.005)
         for ob in self.face[468:]:

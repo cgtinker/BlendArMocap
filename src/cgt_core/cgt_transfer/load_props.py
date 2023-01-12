@@ -77,16 +77,18 @@ def apply_props2obj(props: dict, obj: Union[bpy.types.Object, bpy.types.Constrai
                 logging.warning(err)
 
 
-def apply_constraints(props: dict, obj: bpy.types.Object, target_armature: bpy.types.Object):
+def apply_constraints(constraints: list, obj: bpy.types.Object, target_armature: bpy.types.Object):
     """ Add stored constraints to objects. """
-    if obj == {} or props == {}:
+    if obj == {} or len(constraints) == 0:
         return
 
-    for key, value in props.items():
-        constraint = obj.constraints.new(key.replace(" ", "_").upper())
-        apply_props2obj(value, constraint, target_armature)
+    # storing constraints as list of [constraint_name, constraint_properties]
+    for name, props in constraints:
+        constraint = obj.constraints.new(name)
+        apply_props2obj(props, constraint, target_armature)
 
 
+# TODO: Col polling unused
 def load(path: str = None, target_armature: bpy.types.Object = None, col: bpy.types.Collection = None):
     """ Load CGT_Object_Properties and Constraints from json and apply the data. """
     assert path is not None
@@ -100,7 +102,7 @@ def load(path: str = None, target_armature: bpy.types.Object = None, col: bpy.ty
 
     # clean existing objs
     for ob in bpy.data.objects:
-        if not cgt_object_prop.get_custom_property(ob, 'cgt_id') == '11b1fb41-1349-4465-b3aa-78db80e8c761':
+        if cgt_object_prop.get_custom_property(ob, 'cgt_id') is None:
             continue
 
         ob.constraints.clear()
@@ -110,11 +112,6 @@ def load(path: str = None, target_armature: bpy.types.Object = None, col: bpy.ty
         # only link if collection exists
         if bpy.data.collections.get(d['collection'], None) is None:
             continue
-
-        # poll by driver col
-        if not col.name == 'cgt_DRIVERS':
-            if not bpy.data.collections.get(d['collection'], None) == col:
-                continue
 
         # get object target
         obj = cgt_bpy_utils.add_empty(0.01, key)

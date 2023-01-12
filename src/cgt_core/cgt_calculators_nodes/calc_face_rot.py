@@ -24,26 +24,14 @@ from ..cgt_utils import cgt_math
 from ..cgt_patterns import cgt_nodes
 
 
-class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
-    # used to assign custom data
-    _mouth_driver = None
-    _mouth_corner_driver = None
-    pivot = None
-    chin_driver = None
-    eye_driver_L = None
-    eye_driver_R = None
-    eyebrow_L = None
-    eyebrow_R = None
-
+class FaceRotationCalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
     # processed results
-    rotation_data, driver_scale_data = None, None
-
     def __init__(self):
         # increase shape to add specific driver data (maybe not required for the face)
         n = 468
-        custom_data_arr = [CustomData(idx+n) for idx in range(0, 8)]
-        self.pivot, self.chin_driver, self._mouth_driver, self._mouth_corner_driver = custom_data_arr[:-4]
-        self.eye_driver_L, self.eye_driver_R,  self.eyebrow_L, self.eyebrow_R = custom_data_arr[4:]
+        self.rotation_data = []
+        custom_data_arr = [CustomData(idx+n) for idx in range(0, 5)]
+        self.pivot, self.chin_driver, self.left_mouth_corner, self.right_mouth_corner, *_ = custom_data_arr
 
     def update(self, data, frame):
         """ Process the landmark detection results. """
@@ -58,51 +46,23 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
 
         self.data = data[0]
         # increase the data size to hold custom data (check __init__)
-        for i in range(8):
-            self.data.append([478+i, [0., 0., 0.]])
+        for i in range(4):
+            self.data.append([468+i, [0., 0., 0.]])
         self.custom_landmark_origin()
 
         # get distances and rotations to determine movements
-        self.set_scale_driver_data()
         self.set_rotation_driver_data()
         if self.has_duplicated_results(self.data, "face"):
             return [[], [], []], frame
-        return [self.data, self.rotation_data, self.driver_scale_data], frame
+        return [self.data, self.rotation_data, []], frame
 
     def get_processed_data(self):
         """ Returns the processed data """
-        return self.data, self.rotation_data, self.driver_scale_data, self.frame, self.has_duplicated_results(self.data)
+        return self.data, self.rotation_data, [], self.frame, self.has_duplicated_results(self.data)
 
-    def set_scale_driver_data(self):
-        """ Prepares mouth and eye driver data. """
-        # adds length between objects as scale to drivers using eye dist as avg scale
-        avg_scale = cgt_math.vector_length(cgt_math.to_vector(self.data[362][1], self.data[263][1]))
-        # get distances
-        self.mouth_driver(avg_scale)
-        self.eye_driver(avg_scale)
-        self.eyebrow_drivers(avg_scale)
-
-        # store prepared data
-        self.driver_scale_data = [
-            [self._mouth_corner_driver.idx, self._mouth_corner_driver.sca],
-            [self._mouth_driver.idx, self._mouth_driver.sca],
-            [self.eye_driver_L.idx, self.eye_driver_L.sca],
-            [self.eye_driver_R.idx, self.eye_driver_R.sca],
-            [self.eyebrow_L.idx, self.eyebrow_L.sca],
-            [self.eyebrow_R.idx, self.eyebrow_R.sca]
-        ]
-
-    def mouth_driver(self, avg_scale):
-        """ Get mouth driver scale data. """
-        # mouth width and height
-        mouth_w = self.average_length_at_scale(62, 292, avg_scale)  # mouth span
-        mouth_h = self.average_length_at_scale(13, 14, avg_scale)  # mouth width
-        self.mouth_corners(avg_scale)
-        # TODO: Z-only
-        self._mouth_driver.sca = [mouth_w, 0.001, mouth_h]
-
-    def mouth_corners(self, avg_scale):
+    def mouth_corners(self):
         """ Calculates the angle from the mouth center to the mouth corner """
+        avg_scale = cgt_math.vector_length(cgt_math.to_vector(self.data[362][1], self.data[263][1]))
         # center point of mouth corners gets projected on vector from upper to lower lip
         corner_center = cgt_math.center_point(self.data[61][1], self.data[291][1])
         projected_center = cgt_math.project_point_on_vector(corner_center, self.data[0][1], self.data[17][1])
@@ -123,37 +83,10 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
             right_corner_angle = -cgt_math.angle_between(left_vec, left_hv)
             left_corner_angle = -cgt_math.angle_between(right_vec, right_hv)
 
-        # TODO: duplicate
-
-        self._mouth_corner_driver.loc = [left_corner_angle, 0.001, right_corner_angle]
-        self._mouth_corner_driver.sca = [left_corner_angle, 0.001, right_corner_angle]
-        self._mouth_corner_driver.rot = [left_corner_angle, 0.001, right_corner_angle]
-
-    def eye_driver(self, avg_scale):
-        """ Get eye lid data. """
-        # to determine if the eyes are opened or closed
-        eye_l = self.average_length_at_scale(386, 374, avg_scale)  # left eye
-        eye_r = self.average_length_at_scale(159, 145, avg_scale)  # right eye
-
-        self.eye_driver_L.sca = [1.5, 0.001, eye_l]
-        self.eye_driver_R.sca = [1.5, 0.001, eye_r]
-
-    def eyebrow_drivers(self, avg_scale):
-        """ Get the eyebrow data. """
-        # to determine if the eyebrows are raised up or down
-        eyebrow_in_l = self.average_length_at_scale(336, 338, avg_scale)
-        eyebrow_mid_l = self.average_length_at_scale(296, 297, avg_scale)
-        eyebrow_out_l = self.average_length_at_scale(334, 332, avg_scale)
-
-        eyebrow_in_r = self.average_length_at_scale(107, 109, avg_scale)
-        eyebrow_mid_r = self.average_length_at_scale(66, 67, avg_scale)
-        eyebrow_out_r = self.average_length_at_scale(105, 103, avg_scale)
-
-        # TODO: Split in 3 separate objects
-        self.eyebrow_L.sca = [eyebrow_in_l, eyebrow_mid_l, eyebrow_out_l]
-        self.eyebrow_R.sca = [eyebrow_in_r, eyebrow_mid_r, eyebrow_out_r]
-
-    # endregion
+        self.left_mouth_corner.loc = [0, 0, left_corner_angle]
+        self.right_mouth_corner.loc = [0, 0, right_corner_angle]
+        self.data.append([self.left_mouth_corner.idx, self.left_mouth_corner.loc])
+        self.data.append([self.right_mouth_corner.idx, self.right_mouth_corner.loc])
 
     def set_rotation_driver_data(self):
         """ Get face and chin rotation """
@@ -171,7 +104,7 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
         self.rotation_data = [
             [self.pivot.idx, head_rotation],
             [self.chin_driver.idx, chin_rotation],
-            [self._mouth_corner_driver.idx, self._mouth_corner_driver.rot]
+            # [self._mouth_corner_driver.idx, self._mouth_corner_driver.rot]
         ]
 
     def chin_rotation(self):
@@ -215,11 +148,6 @@ class FaceRotationcalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
         self.pivot.rot = quart
 
     # region cgt_utils
-    def average_length_at_scale(self, p1, p2, scale):
-        """ Get length of 2d vector and normalize by 1d scale """
-        length = cgt_math.vector_length(cgt_math.to_vector(self.data[p1][1], self.data[p2][1]))
-        return cgt_math.vector_length(length / scale)
-
     def custom_landmark_origin(self):
         """ Sets face mesh position to approximate origin """
         self.data = [[idx, np.array([-lmrk[0], lmrk[2], -lmrk[1]])] for idx, lmrk in self.data[:468]]

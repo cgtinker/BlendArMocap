@@ -42,7 +42,7 @@ class TestProcessing(unittest.TestCase):
         data = cgt_json.JsonData("data/face_data.json")
         data = data.data
         # init processor bridge
-        face = face_processing.FaceRotationcalculator(TestBridge)
+        face = face_processing.FaceRotationCalculator(TestBridge)
         face.init_references()
 
         # process data

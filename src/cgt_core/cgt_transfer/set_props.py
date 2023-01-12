@@ -175,4 +175,12 @@ def set_copy_location_driver(target, factory: cgt_drivers.DriverFactory, space: 
         factory.add_variable(prop, "location", i)
         factory.add_expression("loc", "location", i)
     factory.execute()
+
+
+def set_copy_rotation_driver(target, factory: cgt_drivers.DriverFactory, space: str = 'WORLD_SPACE'):
+    for i in range(0, 3):
+        prop = cgt_drivers.TransformChannel("rot", target, "rotation_euler", i, space)
+        factory.add_variable(prop, "rotation_euler", i)
+        factory.add_expression("rot", "rotation_euler", i)
+    factory.execute()
 # endregion

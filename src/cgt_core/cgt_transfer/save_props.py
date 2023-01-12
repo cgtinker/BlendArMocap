@@ -156,7 +156,7 @@ def save(objs: List[bpy.types.Object]) -> cgt_json.JsonData:
         convert_cls2dict(props, cls_dict)
 
         # get constraints
-        constraints = {c.type: get_props.get_constraint_props(c) for c in obj.constraints}
+        constraints = [(c.type, get_props.get_constraint_props(c)) for c in obj.constraints]
 
         # id_name contains 'object name' and 'object type', get in first lvl depth for easier loading
         properties[id_name[0]] = {}

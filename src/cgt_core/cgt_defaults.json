@@ -2,26 +2,9 @@
     "face":{
         "0":"head",
         "1":"chin",
-        "2":"mouth",
-        "3":"mouth_corners",
-        "4":"left_eye",
-        "5":"right_eye",
-        "6":"right_eyebrow",
-        "7":"left_eyebrow",
-        "8":"right_eye_t",
-        "9":"right_eye_b",
-        "10":"left_eye_t",
-        "11":"left_eye_b",
-        "12":"mouth_t",
-        "13":"mouth_b",
-        "14":"mouth_r",
-        "15":"mouth_l",
-        "16":"eyebrow_in_l",
-        "17":"eyebrow_mid_l",
-        "18":"eyebrow_out_l",
-        "19":"eyebrow_in_r",
-        "20":"eyebrow_mid_r",
-        "21":"eyebrow_out_r"
+        "2":"mouth_corner.L",
+        "3":"mouth_corner.R",
+        "4":"face_none"
     },
     "hand":{
         "0":"wrist",
@@ -44,7 +27,8 @@
         "17":"pinky_mcp",
         "18":"pinky_pip",
         "19":"pinky_dip",
-        "20":"pinky_tip"
+        "20":"pinky_tip",
+        "21":"hand_none"
     },
     "pose":{
         "0":"nose",
@@ -81,7 +65,9 @@
         "31":"left_foot_index",
         "32":"right_foot_index",
         "33":"hip_center",
-        "34":"shoulder_center"
+        "34":"shoulder_center",
+        "35":"pose_location",
+        "36":"pose_none"
     },
     "identifier": "11b1fb41-1349-4465-b3aa-78db80e8c761"
 }
