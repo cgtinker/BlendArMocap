@@ -2,6 +2,7 @@ import typing
 from typing import Dict
 from . import object_properties
 import bpy
+import logging
 
 
 class RuntimeClass:
@@ -80,6 +81,8 @@ def get_object_attributes(cls_template, obj, cls_out):
     """ Use the runtime dict to get all properties from Object required for remapping. """
     for key, value in cls_template.__dict__.items():
         if value == "dynamic_enum":
+            if not hasattr(obj, key):
+                continue
             # TODO: static classes for reflection to avoid hacky solution for dynamic enums
             # regular a dynamic enum will have a target ob
             if obj.target is not None:

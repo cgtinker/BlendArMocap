@@ -1,6 +1,6 @@
 from __future__ import annotations
 import bpy
-from typing import Union, Any
+from typing import Union, Any, List
 import logging
 from ..cgt_utils import cgt_json
 from ..cgt_bpy import cgt_bpy_utils, cgt_object_prop, cgt_collection
@@ -89,22 +89,21 @@ def apply_constraints(constraints: list, obj: bpy.types.Object, target_armature:
 
 
 # TODO: Col polling unused
-def load(path: str = None, target_armature: bpy.types.Object = None, col: bpy.types.Collection = None):
+def load(objects: Any, path: str = None, target_armature: bpy.types.Object = None):
     """ Load CGT_Object_Properties and Constraints from json and apply the data. """
     assert path is not None
     if target_armature is None:
-        objs = bpy.context.selected_objects
-        assert len(objs) != 0
-        assert objs[0].type == 'ARMATURE'
-        target_armature = objs[0]
+        _objs = bpy.context.selected_objects
+        assert len(_objs) != 0
+        assert _objs[0].type == 'ARMATURE'
+        target_armature = _objs[0]
 
     json_data = cgt_json.JsonData(path)
 
     # clean existing objs
-    for ob in bpy.data.objects:
+    for ob in objects:
         if cgt_object_prop.get_custom_property(ob, 'cgt_id') is None:
             continue
-
         ob.constraints.clear()
         idle_object_props(ob.cgt_props)
 
@@ -114,11 +113,18 @@ def load(path: str = None, target_armature: bpy.types.Object = None, col: bpy.ty
             continue
 
         # get object target
-        obj = cgt_bpy_utils.add_empty(0.01, key)
-        if not cgt_object_prop.get_custom_property(obj, 'cgt_id') == '11b1fb41-1349-4465-b3aa-78db80e8c761':
-            cgt_object_prop.set_custom_property(obj, 'cgt_id', '11b1fb41-1349-4465-b3aa-78db80e8c761')
+        obj = objects.get(key, None)
+        if obj is None:
+            obj = cgt_bpy_utils.add_empty(0.01, key)
+
+        if cgt_object_prop.get_custom_property(obj, 'cgt_id') is None:
+            logging.debug(f'\nAdded obj {obj.name}')
+            cgt_object_prop.set_custom_property(obj, 'cgt_id', key)
             cgt_collection.add_object_to_collection(d['collection'], obj)
 
         # apply data
+        logging.debug(f'\nApply props to {obj}')
         apply_props2obj(d['cgt_props'], obj.cgt_props, target_armature)
+
+        logging.debug(f'\nApply constraints to {obj}')
         apply_constraints(d['constraints'], obj, target_armature)

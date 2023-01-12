@@ -32,6 +32,7 @@ class OT_UI_CGT_smooth_empties(bpy.types.Operator):
     bl_label = "Smooth"
     bl_idname = "button.smooth_selected_empties"
     bl_description = "Smooth animation data of selected objects."
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -65,6 +66,7 @@ class OT_UI_CGT_smooth_empties(bpy.types.Operator):
         layer.update()
         layer.update()
 
+        self.report({'INFO'}, f"Smoothed {len(objs)} object animations.")
         return {'FINISHED'}
 
 
@@ -109,12 +111,13 @@ class OT_CGT_RegenerateMetarig(bpy.types.Operator):
             b.head, b.tail, b.roll = bone_data[b.name]
 
         bpy.ops.object.mode_set(mode='OBJECT')
-
+        return {'FINISHED'}
 
 class OT_CGT_ObjectMinMax(bpy.types.Operator):
     bl_label = "Object MinMax-fCurve"
     bl_idname = "button.cgt_object_fcurve_min_max"
     bl_description = "Get minimum and maximum values from objects fCurves."
+    bl_options = {"REGISTER"}
 
     @classmethod
     def poll(cls, context):
@@ -212,6 +215,7 @@ class OT_CGT_TransferObjectProperties(bpy.types.Operator):
     bl_label = "Transfer from selected"
     bl_idname = "button.cgt_object_transfer_selection"
     bl_description = "Transfer properties from selected objects by generating drivers and populating constraints."
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -219,6 +223,7 @@ class OT_CGT_TransferObjectProperties(bpy.types.Operator):
 
     def execute(self, context):
         transfer_management.main(context.selected_objects)
+        self.report({'INFO'}, f"Transferred from {len(context.selected_objects)} selected objects.")
         return {'FINISHED'}
 
 
@@ -226,6 +231,7 @@ class OT_CGT_SaveObjectProperties(bpy.types.Operator):
     bl_label = "Save Transfer Properties"
     bl_idname = "button.cgt_object_save_properties"
     bl_description = "Saves transfer properties from available objects to file."
+    bl_options = {"REGISTER"}
 
     @classmethod
     def poll(cls, context):
@@ -261,13 +267,15 @@ class OT_CGT_SaveObjectProperties(bpy.types.Operator):
 
         user.save_object_properties_bool = False
         user.save_object_properties_name = ""
-        self.report({'INFO'}, "save")
+        self.report({'INFO'}, f"Saved file to {str(path)}.")
         return {'FINISHED'}
+
 
 class OT_CGT_LoadObjectProperties(bpy.types.Operator):
     bl_label = "Load Transfer Properties"
     bl_idname = "button.cgt_object_load_properties"
     bl_description = "Load transfer properties to objects."
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -277,14 +285,15 @@ class OT_CGT_LoadObjectProperties(bpy.types.Operator):
         user = context.scene.cgtinker_transfer  # noqa
         config = user.transfer_types
         armature = user.selected_rig
-        col = user.selected_driver_collection
 
         if config in ['None', None] or armature is None:
             return {'CANCELLED'}
 
         config += '.json'
         path = Path(__file__).parent.parent / "data" / config
-        load_props.load(str(path), armature, col)
+
+        load_props.load(context.scene.objects, str(path), armature)
+        self.report({'INFO'}, f"Loaded properties from {str(path)}.")
         return {'FINISHED'}
 
 
@@ -292,6 +301,7 @@ class OT_CGT_DeleteObjectProperties(bpy.types.Operator):
     bl_label = "Delete Transfer Properties"
     bl_idname = "button.cgt_object_delete_properties"
     bl_description = "Delete transfer properties file."
+    bl_options = {"REGISTER"}
 
     @classmethod
     def poll(cls, context):
@@ -310,6 +320,7 @@ class OT_CGT_DeleteObjectProperties(bpy.types.Operator):
         path.unlink()
 
         user.delete_object_properties_bool = False
+        self.report({'INFO'}, f"Deleted {str(path)}.")
         return {'FINISHED'}
 
 
@@ -317,6 +328,7 @@ class OT_CGT_ApplyObjectProperties(bpy.types.Operator):
     bl_label = "Apply Transfer Properties"
     bl_idname = "button.cgt_object_apply_properties"
     bl_description = "Apply transfer properties from available objects."
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -340,6 +352,8 @@ class OT_CGT_ApplyObjectProperties(bpy.types.Operator):
 
         get_objects(col)
         transfer_management.main(objects)
+        context.view_layer.update()
+        self.report({'INFO'}, f"Transferred objects from {col.name}.")
         return {'FINISHED'}
 
 

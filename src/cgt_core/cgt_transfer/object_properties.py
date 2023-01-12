@@ -1,4 +1,5 @@
 import bpy
+import logging
 
 
 # region pools and dynamic enums
@@ -20,14 +21,17 @@ def get_shape_key_enum(self, context):
 
 
 def get_bones_enum(self, context):
-    obj = self.target
-
     items = [('NONE', "None", "")]
-    if obj is None:
+    if not hasattr(self, 'target'):
         return items
-    if obj.type != 'ARMATURE':
+
+    obj = self.target
+    if hasattr(obj, 'data') and (hasattr(obj.data, 'bones')):
+        items += [(bone.name, bone.name, "") for bone in obj.data.bones]
+    else:
         return items
-    return [('NONE', "None", "")]+[(bone.name, bone.name, "") for bone in obj.data.bones]
+
+    return items
 
 
 def is_armature(self, obj):

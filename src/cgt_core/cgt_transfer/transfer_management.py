@@ -10,40 +10,47 @@ from collections import namedtuple
 
 ChainLink = namedtuple('ChainLink', ['obj', 'parent'])
 chain_link_items = []
-memory_props = {}
 
 
 def main(objects: List[bpy.types.Object]):
     """ Apply list of objects containing active cgt_props. """
-    memory_props.clear()
+    global chain_link_items
     chain_link_items.clear()
 
+    logging.debug('########## START TRANSFER ##########')
     for obj in objects:
         manage_object_transfer(obj)
-
+    logging.debug('########## REMAP TRANSFER MANAGED ##########')
     chain_links = find_chain_links(chain_link_items)
+    logging.debug('########## FOUND CHAIN LINKS ##########')
     link_object_chain(chain_links)
+    logging.debug('########## LINKED CHAINS ##########')
 
 
 def manage_object_transfer(obj: bpy.types.Object):
     """ Stores chain links in global list and applies drivers which are based on single objects. """
-    logging.debug(f"Managing {obj.name}.")
-    properties = get_properties(obj)
+    logging.debug(f"GET PROPS {obj.name}.")
+    properties = get_props.get_properties_from_object(obj)
     target_obj, sub_target, target_type = get_props.get_target(properties.target)
 
     if target_type == 'ABORT':
+        logging.debug(f"ABORT {obj.name}.")
         return
 
     if properties.driver_type == 'NONE':
+        logging.debug(f"NONE {obj.name}.")
         return
 
     elif properties.driver_type == 'REMAP':
+        logging.debug(f"REMAP {obj.name}.")
         remap_object_properties(obj, target_obj, sub_target, target_type, properties)
 
     elif properties.driver_type == 'CHAIN':
+        logging.debug(f"CHAIN {obj.name}.")
         chain_link_items.append(ChainLink(obj, properties.to_obj))
 
     elif properties.driver_type == 'REMAP_DIST':
+        logging.debug(f"DIST {obj.name}.")
         remap_by_object_distance(obj, target_obj, sub_target, target_type, properties)
 
 
@@ -114,9 +121,10 @@ def find_chain_links(chain_items: List[ChainLink]) -> Dict[bpy.types.Object, dic
 def link_object_chain(chains_dict: Dict[bpy.types.Object, dict]):
     """ Apply chain links recursively based on obj trie structure with cgt_props. """
     def apply_chain_link(chain_link_dict, previous_obj, previous_driver):
+        logging.debug(f"RECV CHAIN ELEMENT: {chain_link_dict}")
         for current_obj in chain_link_dict.keys():
             # get properties for chain link
-            properties = get_properties(current_obj)
+            properties = get_props.get_properties_from_object(current_obj)
             target_obj, sub_target, target_type = get_props.get_target(properties.target)
             tar_dist = get_props.get_distance(properties)
             if not tar_dist:
@@ -138,8 +146,9 @@ def link_object_chain(chains_dict: Dict[bpy.types.Object, dict]):
             apply_chain_link(chain_link_dict[current_obj], current_obj, driver_target)
 
     for chain_obj in chains_dict.keys():
+        logging.debug(f"CURRENT CHAIN START: {chain_obj}")
         # get props for chain start
-        properties = get_properties(chain_obj)
+        properties = get_props.get_properties_from_object(chain_obj)
         target_obj, sub_target, target_type = get_props.get_target(properties.target)
 
         # set driver for chain start
@@ -153,13 +162,6 @@ def link_object_chain(chains_dict: Dict[bpy.types.Object, dict]):
 
 
 # region helper
-def get_properties(obj: bpy.types.Object):
-    """ Get properties from object and store them in memory. """
-    if obj not in memory_props:
-        memory_props[obj] = get_props.get_properties_from_object(obj)
-    return memory_props[obj]
-
-
 def get_driver_target(obj: bpy.types.Object) -> bpy.types.Object:
     """ Returns a driver factory which uses an obj based on the name of the input obj.
         Deletes driver object of the same name if it exists. """
