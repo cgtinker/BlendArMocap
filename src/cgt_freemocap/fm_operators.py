@@ -44,8 +44,14 @@ class WM_Load_Freemocap_Operator(bpy.types.Operator):
             return {'FINISHED'}
 
         # init loader
-        self.session_loader = fm_session_loader.FreemocapLoader()
+        self.session_loader = fm_session_loader.FreemocapLoader(self.user.freemocap_session_path)
         self.user.modal_active = True
+
+        # quickload raw data
+        if self.user.load_raw:
+            self.session_loader.quickload()
+            self.user.modal_active = False
+            return {'FINISHED'}
 
         # init modal
         wm = context.window_manager

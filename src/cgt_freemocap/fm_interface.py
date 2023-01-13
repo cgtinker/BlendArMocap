@@ -20,12 +20,14 @@ import bpy
 class UI_PT_CGT_Properties_Freemocap(bpy.types.PropertyGroup):
     freemocap_session_path: bpy.props.StringProperty(
         name="Path",
+        default="/Users/Scylla/Downloads/sesh_2022-09-19_16_16_50_in_class_jsm/",
         description="Directory path to freemocap session.",
         options={'HIDDEN'},
         maxlen=1024,
         subtype='DIR_PATH'
     )
     modal_active: bpy.props.BoolProperty(default=False)
+    load_raw: bpy.props.BoolProperty(default=False)
 
 
 class UI_PT_CGT_Panel_Freemocap(bpy.types.Panel):

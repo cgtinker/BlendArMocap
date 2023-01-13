@@ -75,6 +75,7 @@ class HandRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
                 locations[0] = self.left_hand_data
                 angles[0] = self.left_angles
 
+        return [locations, [[],[]], [[], []]], frame
         return [locations, angles, [[], []]], frame
 
     def finger_angles(self, hand):

@@ -35,3 +35,4 @@ class HolisticNodeChainGroup(cgt_nodes.NodeChainGroup):
         self.nodes.append(HandNodeChain())
         self.nodes.append(FaceNodeChain())
         self.nodes.append(PoseNodeChain())
+

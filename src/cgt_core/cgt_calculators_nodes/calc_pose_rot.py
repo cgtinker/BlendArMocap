@@ -43,7 +43,7 @@ class PoseRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
 
         # increase the data size to hold custom data (check __init__)
         for i in range(2):
-            self.data.append([33+i, [0., 0., 0.]])
+            self.data.append([33 + i, [0., 0., 0.]])
 
         self.rotation_data = []
         self.scale_data = []
@@ -58,6 +58,7 @@ class PoseRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
 
         if self.has_duplicated_results(self.data, "pose"):
             return [[], [], []], frame
+        return [self.data, [], []], frame
         return [self.data, self.rotation_data, []], frame
 
     def calculate_rotations(self):
@@ -69,17 +70,18 @@ class PoseRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
 
     def limb_rotations(self):
         """ Calculate ik chain rotations. """
+
         def calc_chain_rotations(data):
             rotations = []
             for i in range(1, len(data)):
                 quart = cgt_math.rotate_towards(data[i][1], data[i - 1][1], '-Y', 'Z')
-                euler = self.try_get_euler(quart, prev_rot_idx=data[i-1][0])
-                rotations.append([data[i-1][0], euler])
+                euler = self.try_get_euler(quart, prev_rot_idx=data[i - 1][0])
+                rotations.append([data[i - 1][0], euler])
             return rotations
 
         # calculate foot rotation separately
-        left_leg = [self.data[23], self.data[25], self.data[27]]    # , self.data[31]]
-        right_leg = [self.data[24], self.data[26], self.data[28]]   # , self.data[32]]
+        left_leg = [self.data[23], self.data[25], self.data[27]]  # , self.data[31]]
+        right_leg = [self.data[24], self.data[26], self.data[28]]  # , self.data[32]]
         left_arm = [self.data[11], self.data[13], self.data[15], self.data[19]]
         right_arm = [self.data[12], self.data[14], self.data[16], self.data[20]]
 
@@ -88,10 +90,11 @@ class PoseRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
 
     def foot_rotation(self):
         """ Calculate foot rotations. """
+
         def rot_from_matrix(loc: List[np.array], tar_idx: int):
             tangent = cgt_math.normal_from_plane(loc)
-            binormal = loc[0]-loc[2]
-            normal = loc[1]-loc[2]
+            binormal = loc[0] - loc[2]
+            normal = loc[1] - loc[2]
 
             vectors = [tangent, normal, binormal]
             matrix = cgt_math.generate_matrix(*[cgt_math.normalize(vec) for vec in vectors])
@@ -130,7 +133,7 @@ class PoseRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
 
         # direction vectors from imaginary origin
         tangent = cgt_math.normalize(cgt_math.to_vector(hip_center, right_hip))
-        normal = cgt_math.normalize(normal)     # [0])
+        normal = cgt_math.normalize(normal)  # [0])
         binormal = cgt_math.normalize(cgt_math.to_vector(hip_center, shoulder_center))
 
         # generate matrix to decompose it and access quaternion rotation
@@ -177,8 +180,8 @@ class PoseRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
 
     def set_hip_as_origin(self):
         self.pose_offset.loc = self.hip_center.loc
-        self.data = [[idx, np.array([landmark[0]-self.hip_center.loc[0],
-                                     landmark[1]-self.hip_center.loc[1],
-                                     landmark[2]-self.hip_center.loc[2]])]
+        self.data = [[idx, np.array([landmark[0] - self.hip_center.loc[0],
+                                     landmark[1] - self.hip_center.loc[1],
+                                     landmark[2] - self.hip_center.loc[2]])]
                      for idx, landmark in self.data]
         self.data.append([self.pose_offset.idx, self.pose_offset.loc])

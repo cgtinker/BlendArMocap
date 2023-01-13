@@ -27,7 +27,7 @@ class LoadFreemocapSession:
     user = freemocap_session_path = timeout = processing_manager = None
     log_step = 25
 
-    def __init__(self, session_path: str, timeout: int = None):
+    def __init__(self, session_path: str, timeout: int = None, load_raw: bool = False):
         """ Loads Freemocap data from session directory.
             Attention: May not use the WM_Load_Freemocap_Operator.
             Modal operations deliver unexpected results when blender is in background. """
@@ -40,10 +40,14 @@ class LoadFreemocapSession:
         # set session path
         self.user = bpy.context.scene.cgt_freemocap
         self.user.freemocap_session_path = session_path
+        self.user.load_raw = load_raw
         if fm_utils.is_valid_session_directory(session_path):
-            self.loader = fm_session_loader.FreemocapLoader()
+            self.loader = fm_session_loader.FreemocapLoader(session_path)
 
-    def run(self):
+    def quickload(self):
+        self.loader.quickload()
+
+    def run_modal(self):
         """ Imports the data, breaks if timeout is reached or import finished. """
         start = time.time()
         while time.time() - start <= self.timeout:
@@ -55,7 +59,6 @@ class LoadFreemocapSession:
             running = self.loader.update()
             if not running:
                 break
-
         logging.debug("Stopped importing data.")
 
 
@@ -63,19 +66,25 @@ def import_freemocap_session(
         session_directory: str,
         bind_to_rig: bool = False,
         load_synch_videos: bool = False,
-        timeout: int = None):
+        timeout: int = None,
+        load_raw: bool = False):
 
     logging.debug("Called import freemocap session.")
     if "cgt_freemocap" not in bpy.context.scene:
         bpy.context.scene["cgt_freemocap"] = {}
         bpy.context.scene["cgt_freemocap"]["freemocap_session_path"] = ""
+        bpy.context.scene["cgt_freemocap"]["load_raw"] = False
 
     if not fm_utils.is_valid_session_directory(session_directory):
         logging.error("Aborted, session path not valid.")
         return -1
 
+    # import data
     importer = LoadFreemocapSession(session_directory, timeout)
-    importer.run()
+    if load_raw:
+        importer.quickload()
+    else:
+        importer.run_modal()
 
     if bind_to_rig:
         bpy.ops.wm.fmc_bind_freemocap_data_to_skeleton()

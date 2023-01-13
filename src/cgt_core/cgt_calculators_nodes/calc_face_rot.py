@@ -54,6 +54,7 @@ class FaceRotationCalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
         self.set_rotation_driver_data()
         if self.has_duplicated_results(self.data, "face"):
             return [[], [], []], frame
+        return [self.data, [], []], frame
         return [self.data, self.rotation_data, []], frame
 
     def get_processed_data(self):
