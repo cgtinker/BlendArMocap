@@ -391,11 +391,6 @@ def analyze_dependencies(_dependencies):
 
 Dependency = namedtuple("Dependency", ["module", "package", "name", "pkg"])
 required_dependencies = (
-    # # gets properly installed by mediapipe package
-    # Dependency(module="numpy", package=None, name="numpy", pkg="numpy"),
-    # Dependency(module="absl-py", package=None, name="absl", pkg="absl_py"),
-    # Dependency(module="attrs>=19.1.0", package=None, name="attrs", pkg="attrs"),
-    # Dependency(module="matplotlib", package=None, name="matplotlib", pkg="matplotlib"),
     Dependency(module="opencv-contrib-python>=4.5.5.64", package=None, name="cv2", pkg="opencv_contrib_python"),
     Dependency(module="protobuf>=3.11.4<=3.20.0", package=None, name="google.protobuf", pkg="protobuf"),
     Dependency(module="mediapipe>=0.8.10", package=None, name="mediapipe", pkg="mediapipe"),

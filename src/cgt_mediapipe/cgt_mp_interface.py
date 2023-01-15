@@ -1,9 +1,9 @@
 import bpy
 import logging
 from bpy.types import Panel
-from ..cgt_mediapipe import dependencies
 
 from pathlib import Path
+from . import dependencies
 from .cgt_mp_core import cv_stream, mp_hand_detector, mp_face_detector, mp_pose_detector, mp_holistic_detector
 from ..cgt_core.cgt_interface import cgt_core_panel
 from ..cgt_core.cgt_patterns import cgt_nodes
@@ -81,16 +81,16 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
 
     def get_chain(self, stream: cv_stream.Stream) -> cgt_nodes.NodeChain:
         detectors = {
-            "HAND": mp_hand_detector.HandDetector,
-            "FACE": mp_face_detector.FaceDetector,
-            "POSE": mp_pose_detector.PoseDetector,
+            "HAND":     mp_hand_detector.HandDetector,
+            "FACE":     mp_face_detector.FaceDetector,
+            "POSE":     mp_pose_detector.PoseDetector,
             "HOLISTIC": mp_holistic_detector.HolisticDetector,
         }
 
         calculators = {
-            "HAND": cgt_core_chains.HandNodeChain,
-            "FACE": cgt_core_chains.FaceNodeChain,
-            "POSE": cgt_core_chains.PoseNodeChain,
+            "HAND":     cgt_core_chains.HandNodeChain,
+            "FACE":     cgt_core_chains.FaceNodeChain,
+            "POSE":     cgt_core_chains.PoseNodeChain,
             "HOLISTIC": cgt_core_chains.HolisticNodeChainGroup,
         }
 
@@ -154,9 +154,7 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
         if event.type == "TIMER":
             data, _ = self.node_chain.update([], self.frame)
             self.frame += self.key_step
-            if data is not None:
-                return {'PASS_THROUGH'}
-            else:
+            if data is None:
                 logging.debug("Data is None, finish detection.")
                 return self.cancel(context)
 
@@ -217,26 +215,26 @@ class UI_PT_Panel_Detection(cgt_core_panel.DefaultPanel, Panel):
 
 
 class UI_PT_CGT_warning_panel(cgt_core_panel.DefaultPanel, Panel):
-     bl_label = "CGT_WARN"
-     bl_idname = "OBJECT_PT_warning_panel"
+    bl_label = "CGT_WARN"
+    bl_idname = "OBJECT_PT_warning_panel"
 
-     @classmethod
-     def poll(self, context):
-         return not dependencies.dependencies_installed
+    @classmethod
+    def poll(self, context):
+        return not dependencies.dependencies_installed
 
-     def draw(self, context):
-         layout = self.layout
+    def draw(self, context):
+        layout = self.layout
 
-         lines = [f"Please install the missing dependencies for BlendArMocap.",
-                  f"1. Open the preferences (Edit > Preferences > Add-ons).",
-                  f"2. Search for the BlendArMocap add-on.",
-                  f"3. Open the details section of the add-on.",
-                  f"4. Click on the 'install dependencies' button.",
-                  f"   This will download and install the missing Python packages, if Blender has the required",
-                  f"   permissions."]
+        lines = [f"Please install the missing dependencies for BlendArMocap.",
+                 f"1. Open the preferences (Edit > Preferences > Add-ons).",
+                 f"2. Search for the BlendArMocap add-on.",
+                 f"3. Open the details section of the add-on.",
+                 f"4. Click on the 'install dependencies' button.",
+                 f"   This will download and install the missing Python packages, if Blender has the required",
+                 f"   permissions."]
 
-         for line in lines:
-             layout.label(text=line)
+        for line in lines:
+            layout.label(text=line)
 
 
 classes = [

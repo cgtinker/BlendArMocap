@@ -16,8 +16,8 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 '''
 
 import bpy
-from src.cgt_mediapipe import dependencies, pref_operators
-from src.cgt_core import cgt_naming
+from ..cgt_mediapipe import dependencies, pref_operators
+from ..cgt_core import cgt_naming
 
 
 class BLENDARMOCAP_CGT_preferences(bpy.types.AddonPreferences):

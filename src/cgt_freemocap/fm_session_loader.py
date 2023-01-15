@@ -15,8 +15,12 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import logging
 from pathlib import Path
 import numpy as np
+import multiprocessing as mp
 from ..cgt_core.cgt_core_chains import HolisticNodeChainGroup
 from ..cgt_core.cgt_bpy import fc_actions, cgt_bpy_utils
+from ..cgt_core.cgt_calculators_nodes import calc_face_rot, calc_pose_rot, calc_hand_rot
+from ..cgt_core.cgt_utils.cgt_timers import timeit
+from ..cgt_core.cgt_utils.cgt_json import JsonData
 
 
 class FreemocapLoader:
@@ -29,7 +33,7 @@ class FreemocapLoader:
     first_right_hand_point: int = 54
     first_face_point: int = 75
 
-    def __init__(self, session_path: str):
+    def __init__(self, session_path: str, flag=True):
         """ Load the 3d mediapipe skeleton data from a freemocap session
             (not implemented) `reprojection_error_threshold:float` = filter data 
             by removing dottos with high reprojection error. I think for now I'll 
@@ -52,8 +56,8 @@ class FreemocapLoader:
         self.number_of_tracked_points = self.mediapipe3d_frames_trackedPoints_xyz.shape[1]
 
         # init calculator node chain
-        # TODO: flag for just apply (?)
-        self.node_chain = HolisticNodeChainGroup()
+        if flag:
+            self.node_chain = HolisticNodeChainGroup()
 
     def update(self):
         """ Provides holistic data for each (prerecorded) frame. """
@@ -68,15 +72,64 @@ class FreemocapLoader:
             return True
         return False
 
-    def quickload(self):
+    @timeit
+    def quickload_raw(self):
         """ Quickload raw data. """
+        path = Path(__file__).parent.parent / 'cgt_core/cgt_defaults.json'
+        json = JsonData(str(path))
+
+        objs = []
+        for i in range(0, self.first_left_hand_point):
+            ob = cgt_bpy_utils.add_empty(0.01, 'cgt_'+json.pose[str(i)])
+            objs.append(ob)
+        for i in range(self.first_left_hand_point, self.first_right_hand_point):
+            ob = cgt_bpy_utils.add_empty(0.01, 'cgt_'+json.hand[str(i-self.first_left_hand_point)]+'.L')
+            objs.append(ob)
+        for i in range(self.first_right_hand_point, self.first_face_point):
+            ob = cgt_bpy_utils.add_empty(0.01, 'cgt_'+json.hand[str(i-self.first_right_hand_point)]+'.R')
+            objs.append(ob)
+        for i in range(self.first_face_point, self.mediapipe3d_frames_trackedPoints_xyz.shape[1]):
+            ob = cgt_bpy_utils.add_empty(0.01, f'cgt_face_vertex_{str(i-self.first_face_point)}')
+            objs.append(ob)
+
         frames = list(range(self.number_of_frames))
         for i in range(self.mediapipe3d_frames_trackedPoints_xyz.shape[1]):
-            ob = cgt_bpy_utils.add_empty(0.01, f'freemocap_{i}')
+            ob = objs[i]
             helper = fc_actions.create_actions([ob])[0]
             obj_data = self.mediapipe3d_frames_trackedPoints_xyz[:, i]
             x, y, z = obj_data[:, 0], obj_data[:, 1], obj_data[:, 2]
             helper.foreach_set('location', frames, x, y, z)
+
+    @timeit
+    def quickload_processed(self):
+        # deploy calculators
+        calc_face = calc_face_rot.FaceRotationCalculator()
+        calc_pose = calc_pose_rot.PoseRotationCalculator()
+        calc_hand = calc_hand_rot.HandRotationCalculator()
+
+        # prepare tracking data
+        frames = list(range(self.number_of_frames))
+        np.multiply(self.mediapipe3d_frames_trackedPoints_xyz, -1)
+        hand_data, face_data, pose_data = [], [], []
+        idx = np.array([0, 2, 1])
+        for frame in frames:
+            tracked_points = self.mediapipe3d_frames_trackedPoints_xyz[frame, :, :]
+            tracked_points = [point[idx] for point in tracked_points]
+
+            this_frame_body_data = list(enumerate(tracked_points[0:self.first_left_hand_point]))
+            this_frame_left_hand_data = list(enumerate(tracked_points[self.first_left_hand_point:self.first_right_hand_point]))
+            this_frame_right_hand_data = list(enumerate(tracked_points[self.first_right_hand_point:self.first_face_point]))
+            this_frame_face_data = list(enumerate(tracked_points[self.first_face_point:]))
+
+            hand_data.append([[this_frame_left_hand_data], [this_frame_right_hand_data]])
+            pose_data.append(this_frame_body_data)
+            face_data.append([this_frame_face_data])
+
+        # calculate rotations
+        with mp.Pool(processes=mp.cpu_count()) as pool:
+            res_a = pool.map(calc_hand.update, hand_data)
+            res_b = pool.map(calc_face.update, face_data)
+            res_c = pool.map(calc_pose.update, pose_data)
 
     def get_freemocap_session_data(self, frame: int):
         """ Gets data from frame. Splits to default mediapipe formatting. """
@@ -103,8 +156,8 @@ class FreemocapLoader:
 
 def main():
     path = '/Users/Scylla/Downloads/sesh_2022-09-19_16_16_50_in_class_jsm/'
-    loader = FreemocapLoader(path)
-    loader.quickload()
+    loader = FreemocapLoader(path, False)
+    loader.quickload_processed()
     pass
 
 

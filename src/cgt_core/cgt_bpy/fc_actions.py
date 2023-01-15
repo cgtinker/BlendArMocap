@@ -53,18 +53,14 @@ def create_actions(objects):
         action_name = ob.name
         ad = ob.animation_data_create()
 
-        # add old action to objects animation data
-        if action_name in bpy.data.actions:
-            old_action = bpy.data.actions[action_name]
-            actions.append(old_action)
-            ad.action = old_action
-            continue
+        # remove old action from objects animation data
+        action_data = bpy.data.actions
+        if action_name in action_data:
+            action_data.remove(action_data[action_name])
 
         # create new action
         new_action = bpy.data.actions.new(action_name)
         actions.append(new_action)
-
-        # add new action to objects animation data
         ad.action = new_action
 
     fc_helpers = []

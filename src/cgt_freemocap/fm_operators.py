@@ -49,7 +49,7 @@ class WM_Load_Freemocap_Operator(bpy.types.Operator):
 
         # quickload raw data
         if self.user.load_raw:
-            self.session_loader.quickload()
+            self.session_loader.quickload_raw()
             self.user.modal_active = False
             return {'FINISHED'}
 

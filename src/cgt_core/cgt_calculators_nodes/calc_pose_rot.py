@@ -35,7 +35,7 @@ class PoseRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
         self.pose_offset = calc_utils.CustomData(35)
         self.hip_center = calc_utils.CustomData(33)
 
-    def update(self, data: List, frame: int):
+    def update(self, data: List, frame: int=-1):
         """ Apply the processed data to references. """
         if not data:
             return [[], [], []], frame
@@ -58,7 +58,6 @@ class PoseRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
 
         if self.has_duplicated_results(self.data, "pose"):
             return [[], [], []], frame
-        return [self.data, [], []], frame
         return [self.data, self.rotation_data, []], frame
 
     def calculate_rotations(self):

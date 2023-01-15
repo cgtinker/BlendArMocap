@@ -5,7 +5,7 @@ import bpy
 import numpy as np
 
 from src.cgt_core.cgt_naming import HAND, POSE
-from src.cgt_core.cgt_bpy import objects
+from src.cgt_core.cgt_bpy import cgt_bpy_utils as objects
 from src.cgt_core.cgt_utils import cgt_math
 
 pose_hierarchy = {

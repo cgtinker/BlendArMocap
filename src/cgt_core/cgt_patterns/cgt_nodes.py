@@ -29,12 +29,7 @@ class NodeChain(Node):
             if data is None:
                 return None, frame
 
-            if isinstance(node, CalculatorNode):
-                results = self.pool.apply_async(node.update, args=(data, frame,))
-                data, frame = results.get()
-
-            else:
-                data, frame = node.update(data, frame)
+            data, frame = node.update(data, frame)
         return data, frame
 
     def append(self, node: Node):

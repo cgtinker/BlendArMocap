@@ -33,7 +33,7 @@ class FaceRotationCalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
         custom_data_arr = [CustomData(idx+n) for idx in range(0, 5)]
         self.pivot, self.chin_driver, self.left_mouth_corner, self.right_mouth_corner, *_ = custom_data_arr
 
-    def update(self, data, frame):
+    def update(self, data, frame=-1):
         """ Process the landmark detection results. """
         """ Assign the data processed data to references. """
         # remove nesting and set landmarks to custom origin
@@ -54,7 +54,6 @@ class FaceRotationCalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
         self.set_rotation_driver_data()
         if self.has_duplicated_results(self.data, "face"):
             return [[], [], []], frame
-        return [self.data, [], []], frame
         return [self.data, self.rotation_data, []], frame
 
     def get_processed_data(self):
@@ -63,7 +62,6 @@ class FaceRotationCalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
 
     def mouth_corners(self):
         """ Calculates the angle from the mouth center to the mouth corner """
-        avg_scale = cgt_math.vector_length(cgt_math.to_vector(self.data[362][1], self.data[263][1]))
         # center point of mouth corners gets projected on vector from upper to lower lip
         corner_center = cgt_math.center_point(self.data[61][1], self.data[291][1])
         projected_center = cgt_math.project_point_on_vector(corner_center, self.data[0][1], self.data[17][1])

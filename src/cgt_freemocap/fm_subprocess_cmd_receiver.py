@@ -45,7 +45,7 @@ class LoadFreemocapSession:
             self.loader = fm_session_loader.FreemocapLoader(session_path)
 
     def quickload(self):
-        self.loader.quickload()
+        self.loader.quickload_raw()
 
     def run_modal(self):
         """ Imports the data, breaks if timeout is reached or import finished. """
@@ -67,7 +67,8 @@ def import_freemocap_session(
         bind_to_rig: bool = False,
         load_synch_videos: bool = False,
         timeout: int = None,
-        load_raw: bool = False):
+        load_raw: bool = False,
+        background: bool = True):
 
     logging.debug("Called import freemocap session.")
     if "cgt_freemocap" not in bpy.context.scene:
