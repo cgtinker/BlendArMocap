@@ -19,7 +19,7 @@ import subprocess
 import bpy
 
 from ..cgt_core.cgt_interface import cgt_core_panel
-from ..cgt_mediapipe import dependencies
+from ..cgt_mediapipe import cgt_dependencies
 from .. import cgt_imports
 
 
@@ -33,17 +33,17 @@ class PREFERENCES_OT_CGT_install_dependencies_button(bpy.types.Operator):
 
     @classmethod
     def poll(self, context):
-        return not all(dependencies.dependencies_installed)
+        return not all(cgt_dependencies.dependencies_installed)
 
     def execute(self, context):
         try:
-            dependencies.ensure_pip(self)
-            for i, dependency in enumerate(dependencies.required_dependencies):
-                if dependencies.dependencies_installed[i]:
+            cgt_dependencies.ensure_pip(self)
+            for i, dependency in enumerate(cgt_dependencies.required_dependencies):
+                if cgt_dependencies.dependencies_installed[i]:
                     continue
 
-                success = dependencies.install_dependency(self, dependency)
-                dependencies.dependencies_installed[i] = success
+                success = cgt_dependencies.install_dependency(self, dependency)
+                cgt_dependencies.dependencies_installed[i] = success
 
         except (subprocess.CalledProcessError, ImportError) as err:
             self.report({"ERROR"}, str(err))
@@ -56,26 +56,31 @@ class PREFERENCES_OT_CGT_install_dependencies_button(bpy.types.Operator):
 
 class PREFERENCES_OT_CGT_uninstall_dependencies_button(bpy.types.Operator):
     bl_idname = "button.cgt_uninstall_dependencies"
-    bl_label = "Uninstall dependencies"
-    bl_description = "Uninstalls packages from Blenders site-packges"
+    bl_label = "Uninstall dependencies and shutdown"
+    bl_description = "Removes installed dependencies from site-packages" \
+                     "and deletes them on start up."
     bl_options = {"REGISTER", "INTERNAL"}
 
     @classmethod
     def poll(self, context):
-        return any(dependencies.dependencies_installed)
+        return any(cgt_dependencies.dependencies_installed)
 
     def execute(self, context):
-        for i, dependency in enumerate(dependencies.required_dependencies):
-            if not dependencies.is_installed(dependency):
+        for i, dependency in enumerate(cgt_dependencies.required_dependencies):
+            if not cgt_dependencies.is_installed(dependency):
                 continue
-            success = dependencies.uninstall_dependency(self, dependency)
-            dependencies.dependencies_installed[i] = success
-        # todo: shutdown blender
+            success = cgt_dependencies.uninstall_dependency(self, dependency)
+            cgt_dependencies.dependencies_installed[i] = success
+
+        import time
+        time.sleep(1)
+        bpy.ops.wm.quit_blender()
         return {"FINISHED"}
 
 
 def draw(self, context):
     layout = self.layout
+
     draw_dependencies(layout)
     draw_camera_settings(context, layout)
 
@@ -87,14 +92,14 @@ def draw_dependencies(layout):
         box_split = _d_box.split()
         cols = [box_split.column(align=False) for _ in range(4)]
 
-        cols[3].label(text=f"{dependencies.is_installed(dependency)}")
-        if not dependencies.is_installed(dependency):
+        cols[3].label(text=f"{cgt_dependencies.is_installed(dependency)}")
+        if not cgt_dependencies.is_installed(dependency):
             cols[0].label(text=f"{dependency.name}")
             cols[1].label(text=f"NaN")
             cols[2].label(text=f"NaN")
 
         else:
-            version, path = dependencies.get_package_info(dependency)
+            version, path = cgt_dependencies.get_package_info(dependency)
             cols[0].label(text=f"{dependency.name}")
             cols[1].label(text=f"{version}")
             cols[2].label(text=f"{path}")
@@ -111,7 +116,7 @@ def draw_dependencies(layout):
         col.label(text=name)
 
     # draw dependencies individually
-    draw_dependency(dependencies.Dependency("pip", "pip", "pip", None), dependency_box)
+    draw_dependency(cgt_dependencies.Dependency("pip", "pip", "pip", None), dependency_box)
     dependency_box.row().separator()
 
     dependency_header = dependency_box.row()
@@ -122,7 +127,7 @@ def draw_dependencies(layout):
     for name in ["Module", "Version", "Path", "Installed"]:
         col = headers.column()
         col.label(text=name)
-    for m_dependency in dependencies.required_dependencies:
+    for m_dependency in cgt_dependencies.required_dependencies:
         draw_dependency(m_dependency, dependency_box)
 
     dependency_box.row().separator()
@@ -134,7 +139,7 @@ def draw_dependencies(layout):
 
 
 def draw_camera_settings(context, layout):
-    if dependencies.dependencies_installed:
+    if cgt_dependencies.dependencies_installed:
         s_box = layout.box()
         user = context.scene.cgtinker_mediapipe  # noqa
         s_box.label(text="Camera Settings")

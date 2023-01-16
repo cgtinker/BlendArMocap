@@ -28,7 +28,7 @@ class RuntimeClass:
         return "".join(s)
 
 
-# reflect registered property groups
+# DEPRECIATED - dict to reflect registered property groups in Blender (2.9.3)
 cls_type_dict = {
     "OBJECT_PGT_CGT_TransferTarget":     RuntimeClass(),
     "OBJECT_PGT_CGT_RemapDistance":      RuntimeClass(),
@@ -38,14 +38,19 @@ cls_type_dict = {
 }
 
 
+# DEPRECIATED
 def copy_ptr_prop_cls(class_name_dict: Dict[str, RuntimeClass]) -> Dict[str, RuntimeClass]:
     """ Uses cls names to copy slots from pointer property groups to flat classes.
         Helper cls improves usage of internal registered types. """
+    import warnings
+    warnings.warn("DEPRECIATED - Function may only be used in Blender (2.9.0) - (2.9,3)")
+
     for cls_name in class_name_dict:
         """ Get all registered PropertyGroup properties. """
         cls = getattr(object_properties, cls_name, None)
         if cls is None:
             continue
+        # TODO: static props
 
         type_hints = typing.get_type_hints(cls)
         print("\n\nTYPEHINTS", type_hints)
@@ -61,7 +66,7 @@ def copy_ptr_prop_cls(class_name_dict: Dict[str, RuntimeClass]) -> Dict[str, Run
                 cls_type_name = type_hints[hint][1]['type'].__name__
                 setattr(class_name_dict[cls_name], hint, class_name_dict[cls_type_name])
 
-            else:   # mimic property type
+            else:  # mimic property type
                 default_val = type_hints[hint][1].get("default", None)
                 enum = type_hints[hint][1].get("items", None)
                 if isinstance(enum, typing.Callable):
@@ -79,8 +84,11 @@ def copy_ptr_prop_cls(class_name_dict: Dict[str, RuntimeClass]) -> Dict[str, Run
     return class_name_dict
 
 
-def get_object_attributes(cls_template, obj, cls_out):
+def get_runtime_object_attributes(cls_template, obj, cls_out):
     """ Use the runtime dict to get all properties from Object required for remapping. """
+    import warnings
+    warnings.warn("DEPRECIATED - Function may only be used in Blender (2.9.0) - (2.9,3)")
+
     for key, value in cls_template.__dict__.items():
         if value == "dynamic_enum":
             if not hasattr(obj, key):
@@ -102,8 +110,28 @@ def get_object_attributes(cls_template, obj, cls_out):
     return cls_out
 
 
+def get_object_attributes(cls_template, obj, cls_out):
+    """ Use the runtime dict to get all properties from Object required for remapping. """
+    for key, value in cls_template.__dict__.get('__annotations__', {}).items():
+        obj_value = getattr(obj, key, None)
+
+        if value in (object_properties.TransferPropertiesProto,
+                     object_properties.ValueMappingProto,
+                     object_properties.RemapDistanceProto,
+                     object_properties.TransferTargetProto):
+
+            # creating new empty cls and recv
+            setattr(cls_out, key, RuntimeClass())
+            recv_next_cls = getattr(cls_out, key, RuntimeClass())
+            get_object_attributes(value, getattr(obj, key, None), recv_next_cls)
+        else:
+            setattr(cls_out, key, obj_value)
+    return cls_out
+
+
 if __name__ == '__main__':
     ob = bpy.context.selected_objects[0]
     copy_ptr_prop_cls(cls_type_dict)
-    res = get_object_attributes(cls_type_dict["OBJECT_PGT_CGT_TransferProperties"], ob.cgt_props, RuntimeClass())
-    print("TEMPLATE:", cls_type_dict["OBJECT_PGT_CGT_TransferProperties"], "\n\nCOPY:", res)
+    res_1 = get_runtime_object_attributes(object_properties.TransferPropertiesProto, ob.cgt_props, RuntimeClass())
+    res_2 = get_runtime_object_attributes(cls_type_dict["OBJECT_PGT_CGT_TransferProperties"], ob.cgt_props, RuntimeClass())
+    print("TEMPLATE:", cls_type_dict["OBJECT_PGT_CGT_TransferProperties"], "\n\nCOPY:", res_1)

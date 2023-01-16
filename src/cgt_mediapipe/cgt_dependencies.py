@@ -1,5 +1,5 @@
 '''
-Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
+Copyright (C) Denys Hsu, cgtinker.com, hello@cgtinker.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -304,6 +304,7 @@ def is_installed(dependency: Dependency) -> bool:
 
 
 if sys.platform == 'darwin' and platform.processor() == 'arm':
+    # to be tested
     required_dependencies = (
         Dependency(module="opencv-contrib-python==4.6.0.66", name="cv2", pkg="opencv_contrib_python", args=None),
         Dependency(module="protobuf==3.20.3", name="google.protobuf", pkg="protobuf", args=None),
@@ -311,22 +312,24 @@ if sys.platform == 'darwin' and platform.processor() == 'arm':
     )
 
 else:
+    # Manual setup of mediapipes dependency tree as the package deps may contains internal conflicts.
     required_dependencies = (
         Dependency(module="absl_py", name="absl", pkg="absl-py", args=None),
         Dependency(module="attrs>=19.1.0", name="attrs", pkg="attrs", args=None),
 
         # matplotlib deps
-        Dependency(module="six>=1.5", name="six", pkg="six", args=None),
-        Dependency(module="python-dateutil>=2.7", name="dateutil", pkg="python_dateutil", args=None),
+        # Numpy is preinstalled in Blender (should not be overwritten)
+        Dependency(module="six>=1.6", name="six", pkg="six", args=None),
+        Dependency(module="python-dateutil>=2.7", name="dateutil", pkg="python_dateutil", args=["--no-deps"]),
         Dependency(module="pyparsing>=2.2.1", name="pyparsing", pkg="pyparsing", args=None),
         Dependency(module="pillow>=6.2", name="PIL", pkg="Pillow", args=['--upgrade']),
         Dependency(module="packaging>=20.0", name="packaging", pkg="packaging", args=None),
         Dependency(module="kiwisolver>=1.0.1", name="kiwisolver", pkg="kiwisolver", args=None),
         Dependency(module="fonttools>=4.22.0", name="fontTools", pkg="fonttools", args=None),
-        Dependency(module="cycler>=0.11", name="cycler", pkg="cycler", args=None),
-        Dependency(module="contourpy>=1.0.1", name="contourpy", pkg="contourpy", args=None),
+        Dependency(module="cycler>=0.10", name="cycler", pkg="cycler", args=None),
+        Dependency(module="contourpy>=1.0.1", name="contourpy", pkg="contourpy", args=["--no-deps"]),
 
-        # even more deps
+        # mediapipe deps
         Dependency(module="matplotlib", name="matplotlib", pkg="matplotlib", args=["--no-deps"]),
         Dependency(module="opencv-contrib-python==4.5.5.64", name="cv2", pkg="opencv_contrib_python", args=None),
         Dependency(module="protobuf==3.19.0", name="google.protobuf", pkg="protobuf", args=None),

@@ -181,7 +181,9 @@ def apply_constraints(target_obj: Union[bpy.types.Object, bpy.types.PoseBone], o
             continue
         target_obj.constraints.remove(c)
 
+    print(obj.constraints)
     for c in obj.constraints:
+        print(obj, c)
         constraint_name = c.type
         constraint_props = get_props.get_constraint_props(c)
         constraint = target_obj.constraints.new(constraint_name)

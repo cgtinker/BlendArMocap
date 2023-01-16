@@ -2,7 +2,7 @@ import bpy
 import logging
 from bpy.types import Panel
 
-from . import dependencies
+from . import cgt_dependencies
 from ..cgt_core.cgt_interface import cgt_core_panel
 
 
@@ -72,7 +72,7 @@ class UI_PT_Panel_Detection(cgt_core_panel.DefaultPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.mode in {'OBJECT', 'POSE'} and all(dependencies.dependencies_installed)
+        return context.mode in {'OBJECT', 'POSE'} and all(cgt_dependencies.dependencies_installed)
 
     def movie_panel(self, user):
         layout = self.layout
@@ -112,7 +112,7 @@ class UI_PT_CGT_warning_panel(cgt_core_panel.DefaultPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        return not all(dependencies.dependencies_installed)
+        return not all(cgt_dependencies.dependencies_installed)
 
     def draw(self, context):
         layout = self.layout
@@ -131,7 +131,7 @@ classes = [
     UI_MP_Properties,
 ]
 
-if all(dependencies.dependencies_installed):
+if all(cgt_dependencies.dependencies_installed):
     classes.append(UI_PT_Panel_Detection)
 else:
     classes.append(UI_PT_CGT_warning_panel)

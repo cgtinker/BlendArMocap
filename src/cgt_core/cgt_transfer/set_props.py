@@ -20,6 +20,7 @@ def update_driver_target(obj: bpy.types.Object):
 def set_constraint_props(constraint: bpy.types.Constraint, props: dict):
     # logging.debug(f"apply {constraint.name}, {props}")
     for key, value in props.items():
+        print(key, value, constraint)
         if not hasattr(constraint, key):
             continue
         setattr(constraint, key, value)

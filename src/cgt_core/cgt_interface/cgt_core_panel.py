@@ -26,20 +26,9 @@ class APT_UI_CGT_Panel(bpy.types.AddonPreferences):
 
     def draw(self, context):
         global addon_prefs
-        layout = self.layout
-        box = layout.box()
-
-        box.label(text='Lin ig.')
-
         for func in addon_prefs:
             func(self, context)
 
-
-def test(self: bpy.types.AddonPreferences, context: Any):
-    row = self.layout.row()
-    row.label(text='Hello world.')
-
-addon_prefs.append(test)
 
 classes = [
     PT_UI_CGT_Panel,

@@ -11,17 +11,17 @@ from . import (
     check_props
 )
 
-driver_prop_cls_dict = None
 
-
+# driver_prop_cls_dict = None
 def get_properties_from_object(obj: bpy.types.Object) -> object_prop_reflection.RuntimeClass():
     """ Get properties from object as Runtime Class to not modify values in Blender by accident. """
-    global driver_prop_cls_dict
-    if driver_prop_cls_dict is None:
-        driver_prop_cls_dict = object_prop_reflection.copy_ptr_prop_cls(object_prop_reflection.cls_type_dict)
+    # global driver_prop_cls_dict
+    # if driver_prop_cls_dict is None:
+    #     driver_prop_cls_dict = object_prop_reflection.copy_ptr_prop_cls(object_prop_reflection.cls_type_dict)
 
     properties = object_prop_reflection.get_object_attributes(
-        driver_prop_cls_dict["OBJECT_PGT_CGT_TransferProperties"],
+        # driver_prop_cls_dict["OBJECT_PGT_CGT_TransferProperties"],
+        object_properties.TransferPropertiesProto,
         obj.cgt_props,
         object_prop_reflection.RuntimeClass()
     )
@@ -31,7 +31,8 @@ def get_properties_from_object(obj: bpy.types.Object) -> object_prop_reflection.
 
 def get_constraint_props(c: bpy.types.Constraint):
     pool = {'target', 'type', 'subtarget', 'is_valid', 'active', 'bl_rna', 'error_location', 'error_rotation',
-            'head_tail', 'is_proxy_local', 'mute', 'rna_type', 'show_expanded', 'use_bbone_shape'}
+            'head_tail', 'is_proxy_local', 'mute', 'rna_type', 'show_expanded', 'use_bbone_shape',
+            'is_override_data'}
     props = {key: getattr(c, key, None) for key in dir(c) if key not in pool and not key.startswith('_')}
     return props
 

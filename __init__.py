@@ -18,7 +18,7 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 
 bl_info = {
     "name":        "BlendArMocap",
-    "description": "Freemocap and Mediapipe animation transfer implementation for Blender 3.0+.",
+    "description": "Mediapipe and Freemocap animation transfer implementation for Blender 3.0+.",
     "author":      "cgtinker",
     "version":     (1, 6, 0),
     "blender":     (2, 90, 0),

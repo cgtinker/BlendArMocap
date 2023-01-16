@@ -1,4 +1,3 @@
-from __future__ import annotations
 import bpy
 import logging
 
@@ -42,6 +41,16 @@ def is_armature(self, obj):
 # endregion
 
 
+class TransferTargetProto:
+    # prototype for mapping
+    obj_type: str
+    target: object
+    armature_type: str
+    object_type: str
+    target_bone: str
+    target_shape_key: str
+
+
 # region sub properties for drivers
 class OBJECT_PGT_CGT_TransferTarget(bpy.types.PropertyGroup):
     """ Target for data transfer. """
@@ -80,6 +89,16 @@ class OBJECT_PGT_CGT_TransferTarget(bpy.types.PropertyGroup):
     target_shape_key: bpy.props.EnumProperty(items=get_shape_key_enum)
 
 
+class RemapDistanceProto:
+    # prototype for mapping
+    target: object
+    target_type: str
+    target_bone: str
+    target_bone_type: str
+    other_bone: str
+    other_bone_type: str
+
+
 class OBJECT_PGT_CGT_RemapDistance(bpy.types.PropertyGroup):
     """ TODO: Remap distance has to be checked for face drivers in the future. """
     # Driver Target
@@ -115,6 +134,20 @@ class OBJECT_PGT_CGT_RemapDistance(bpy.types.PropertyGroup):
             ("LOCATION", "Location", ""),
         )
     )
+
+
+class ValueMappingProto:
+    # prototype for mapping
+    active: bool
+    remap_none: str
+    remap_default: str
+    remap_details: str
+    factor: float
+    offset: float
+    from_min: float
+    from_max: float
+    to_min: float
+    to_max: float
 
 
 class OBJECT_PGT_CGT_ValueMapping(bpy.types.PropertyGroup):
@@ -158,6 +191,33 @@ class OBJECT_PGT_CGT_ValueMapping(bpy.types.PropertyGroup):
     to_min: bpy.props.FloatProperty(name="factor", default=0.0)
     to_max: bpy.props.FloatProperty(name="offset", default=1.0)
 # endregion
+
+
+class TransferPropertiesProto:
+    # prototype for mapping
+    active: bool
+    driver_type: str
+    use_loc_x: ValueMappingProto
+    use_loc_y: ValueMappingProto
+    use_loc_z: ValueMappingProto
+    loc_details: bool
+
+    use_rot_x: ValueMappingProto
+    use_rot_y: ValueMappingProto
+    use_rot_z: ValueMappingProto
+    rot_details: bool
+
+    use_sca_x: ValueMappingProto
+    use_sca_y: ValueMappingProto
+    use_sca_z: ValueMappingProto
+    sca_details: bool
+
+    target: TransferTargetProto
+    by_obj: RemapDistanceProto
+    to_obj: object
+    from_obj: object
+    remap_from_obj: object
+    remap_to_obj: object
 
 
 class OBJECT_PGT_CGT_TransferProperties(bpy.types.PropertyGroup):

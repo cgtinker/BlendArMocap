@@ -1,5 +1,5 @@
 '''
-Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
+Copyright (C) Denys Hsu, cgtinker.com, hello@cgtinker.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,10 +19,9 @@ import importlib
 import sys
 from pathlib import Path
 
-"""
-This makes sure all modules are reloaded from new files, when the addon is removed and a new version is installed in the same session,
-or when Blender's 'Reload Scripts' operator is run manually.
-"""
+# Ensure all modules are reloaded from new files,
+# when the addon is removed and a new version is installed in the same session,
+# or when Blender's 'Reload Scripts' operator has been called.
 
 
 SUB_DIRS = ['src/cgt_blender', 'src/cgt_processing', 'src/cgt_detection',
@@ -37,18 +36,15 @@ INIT_MODULES = [
     '.src.cgt_blender.utils.dependencies',
 ]
 
-FILE = Path(__file__)
-PACKAGE_PATH = FILE.parent.parent
+PACKAGE_PATH = Path(__file__).parent.parent
 PACKAGE_NAME = PACKAGE_PATH.name
 
 
 def import_module(module):
-    # print(f"importing {PACKAGE_NAME}{module}...")
     importlib.import_module(f"{PACKAGE_NAME}{module}")
 
 
 def reload_module(module):
-    # print(f"reloading {PACKAGE_NAME}{module}...")
     importlib.reload(sys.modules[f"{PACKAGE_NAME}{module}"])
 
 

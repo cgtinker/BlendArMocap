@@ -1,5 +1,5 @@
 '''
-Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
+Copyright (C) Denys Hsu, cgtinker.com, hello@cgtinker.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ def add_custom_log(name: str = ''):
 
 def init(name: str = ''):
     add_custom_log(name)
-    add_console_log(name)
+    # add_console_log(name)
 
 
 def main():
