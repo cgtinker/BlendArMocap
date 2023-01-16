@@ -1,73 +1,13 @@
 import bpy
-import logging
-from bpy.types import Panel
 
 from . import cgt_dependencies
 from ..cgt_core.cgt_interface import cgt_core_panel
 
 
-class UI_MP_Properties(bpy.types.PropertyGroup):
-    button_start_detection: bpy.props.StringProperty(
-        name="",
-        description="Detects features and record results in stored in the cgt_driver collection.",
-        default="Start Detection"
-    )
-
-    detection_input_type: bpy.props.EnumProperty(
-        name="Type",
-        description="Select input type.",
-        items=(
-            ("stream", "Webcam", ""),
-            ("movie", "Movie", ""),
-        )
-    )
-
-    enum_detection_type: bpy.props.EnumProperty(
-        name="Target",
-        description="Select detection type tracking.",
-        items=(
-            ("HAND", "Hands", ""),
-            ("FACE", "Face", ""),
-            ("POSE", "Pose", ""),
-            ("HOLISTIC", "Holistic", ""),
-        )
-    )
-
-    mov_data_path: bpy.props.StringProperty(
-        name="File Path",
-        description="File path to .mov file.",
-        default='*.mov;*mp4',
-        options={'HIDDEN'},
-        maxlen=1024,
-        subtype='FILE_PATH'
-    )
-
-    webcam_input_device: bpy.props.IntProperty(
-        name="Webcam Device Slot",
-        description="Select Webcam device.",
-        min=0,
-        max=4,
-        default=0
-    )
-
-    key_frame_step: bpy.props.IntProperty(
-        name="Key Step",
-        description="Select keyframe step rate.",
-        min=1,
-        max=12,
-        default=4
-    )
-
-    modal_active: bpy.props.BoolProperty(
-        name="modal_active",
-        description="Check if operator is running",
-        default=False
-    )
-
-
-class UI_PT_Panel_Detection(cgt_core_panel.DefaultPanel, Panel):
+class CGT_PT_MP_Detection(cgt_core_panel.DefaultPanel, bpy.types.Panel):
     bl_label = "Mediapipe"
     bl_parent_id = "UI_PT_CGT_Panel"
+    bl_idname="UI_PT_CGT_Detection"
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
@@ -105,10 +45,33 @@ class UI_PT_Panel_Detection(cgt_core_panel.DefaultPanel, Panel):
             self.webcam_panel(user)
 
 
-class UI_PT_CGT_warning_panel(cgt_core_panel.DefaultPanel, Panel):
+class CGT_PT_MP_DetectorProperties(cgt_core_panel.DefaultPanel, bpy.types.Panel):
+    bl_label = "Advanced"
+    bl_parent_id = "UI_PT_CGT_Detection"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        user = context.scene.cgtinker_mediapipe # noqa
+        layout = self.layout
+
+        if user.enum_detection_type == 'HAND':
+            layout.row().prop(user, "hand_model_complexity")
+        elif user.enum_detection_type == 'FACE':
+            # layout.row().prop(user, "refine_face_landmarks")
+            pass
+        elif user.enum_detection_type == 'POSE':
+            layout.row().prop(user, "pose_model_complexity")
+        elif user.enum_detection_type == 'HOLISTIC':
+            layout.row().prop(user, "holistic_model_complexity")
+
+        layout.row().prop(user, "min_detection_confidence", slider=True)
+
+
+class CGT_PT_MP_Warning(cgt_core_panel.DefaultPanel, bpy.types.Panel):
     bl_label = "Mediapipe"
     bl_parent_id = "UI_PT_CGT_Panel"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_idname="UI_PT_CGT_Detection_Warning"
 
     @classmethod
     def poll(cls, context):
@@ -128,19 +91,15 @@ class UI_PT_CGT_warning_panel(cgt_core_panel.DefaultPanel, Panel):
 
 
 classes = [
-    UI_MP_Properties,
+    CGT_PT_MP_Warning,
+    CGT_PT_MP_Detection,
+    CGT_PT_MP_DetectorProperties
 ]
-
-if all(cgt_dependencies.dependencies_installed):
-    classes.append(UI_PT_Panel_Detection)
-else:
-    classes.append(UI_PT_CGT_warning_panel)
 
 
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    bpy.types.Scene.cgtinker_mediapipe = bpy.props.PointerProperty(type=UI_MP_Properties)
 
 
 def unregister():

@@ -1,20 +1,3 @@
-'''
-Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
-
 import mediapipe as mp
 from mediapipe.framework.formats import classification_pb2
 
@@ -24,16 +7,19 @@ from ...cgt_core.cgt_utils import cgt_timers
 
 
 class HandDetector(DetectorNode):
-    def __init__(self, *args, **kwargs):
-        DetectorNode.__init__(self, *args, **kwargs)
+    def __init__(self, stream, hand_model_complexity: int = 1, min_detection_confidence: float = .7):
+        DetectorNode.__init__(self, stream)
         self.solution = mp.solutions.hands
+        self.hand_model_complexity = hand_model_complexity
+        self.min_detection_confidence = min_detection_confidence
 
     # https://google.github.io/mediapipe/solutions/hands#python-solution-api
     def update(self, data, frame):
         with self.solution.Hands(
                 static_image_mode=True,
                 max_num_hands=2,
-                min_detection_confidence=0.7) as mp_lib:
+                model_complexity=self.hand_model_complexity,
+                min_detection_confidence=self.min_detection_confidence) as mp_lib:
             return self.exec_detection(mp_lib), frame
 
     @staticmethod

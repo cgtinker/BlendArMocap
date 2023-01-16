@@ -1,17 +1,3 @@
-'''
-Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
-
 import logging
 from pathlib import Path
 import numpy as np
@@ -100,7 +86,6 @@ class FreemocapLoader:
             x, y, z = obj_data[:, 0], obj_data[:, 1], obj_data[:, 2]
             helper.foreach_set('location', frames, x, y, z)
 
-    @timeit
     def quickload_processed(self):
         # deploy calculators
         calc_face = calc_face_rot.FaceRotationCalculator()
@@ -130,6 +115,8 @@ class FreemocapLoader:
             res_a = pool.map(calc_hand.update, hand_data)
             res_b = pool.map(calc_face.update, face_data)
             res_c = pool.map(calc_pose.update, pose_data)
+
+        # now think about outputting this
 
     def get_freemocap_session_data(self, frame: int):
         """ Gets data from frame. Splits to default mediapipe formatting. """

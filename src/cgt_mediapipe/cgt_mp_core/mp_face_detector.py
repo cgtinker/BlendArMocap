@@ -1,20 +1,3 @@
-'''
-Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
-
 import mediapipe as mp
 from .mp_detector_node import DetectorNode
 from typing import Mapping, Tuple
@@ -23,16 +6,18 @@ from mediapipe.python.solutions.drawing_utils import DrawingSpec
 
 
 class FaceDetector(DetectorNode):
-    def __init__(self, *args, **kwargs):
-        DetectorNode.__init__(self, *args, **kwargs)
+    def __init__(self, stream, refine_face_landmarks: bool = False, min_detection_confidence: float = 0.7):
+        DetectorNode.__init__(self, stream)
         self.solution = mp.solutions.face_mesh
+        self.refine_face_landmarks = refine_face_landmarks
+        self.min_detection_confidence = min_detection_confidence
 
     def update(self, data, frame):
         with self.solution.FaceMesh(
                 max_num_faces=1,
                 static_image_mode=False,
-                refine_landmarks=True,
-                min_detection_confidence=0.7) as mp_lib:
+                refine_landmarks=self.refine_face_landmarks,
+                min_detection_confidence=self.min_detection_confidence) as mp_lib:
             return self.exec_detection(mp_lib), frame
 
     def empty_data(self):

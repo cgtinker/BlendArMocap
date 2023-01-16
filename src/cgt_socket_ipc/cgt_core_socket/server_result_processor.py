@@ -1,13 +1,15 @@
 from .json_parser import JsonParser
-from src.cgt_core.cgt_patterns import events, observer_pattern
-from src.cgt_core.cgt_calculators_nodes import hand_processing, face_processing
-from src.cgt_core.cgt_calculators_nodes import pose_processing, processor_interface
+from src.cgt_core.cgt_patterns import observer_pattern
+from src.cgt_core.cgt_calculators_nodes import calc_face_rot as face_processing
+from src.cgt_core.cgt_calculators_nodes import calc_hand_rot as hand_processing
+from src.cgt_core.cgt_calculators_nodes import calc_pose_rot as pose_processing
+from src.cgt_core.cgt_patterns import cgt_nodes
 
 
 class ServerResultsProcessor(object):
     data_listener: observer_pattern.Subject
     data_observer: observer_pattern.Observer
-    data_processor: processor_interface.MediapipeDataProcessor
+    data_processor: cgt_nodes.Node
     json_parser: JsonParser
 
     start_frame: int = 0
@@ -30,11 +32,11 @@ class ServerResultsProcessor(object):
         if data_type == 'HOLISTIC':
             _processor = [hand_processing.HandRotationCalculator(), face_processing.FaceRotationCalculator(),
                           pose_processing.PoseRotationCalculator()]
-            _listener = events.UpdateListener()
-            _observer = events.HolisticBpyUpdateReceiver(_processor)
-            self.data_observer = _observer
-            self.data_listener = _listener
-            self.data_listener.attach(self.data_observer)
+            # _listener = events.UpdateListener()
+            # _observer = events.HolisticBpyUpdateReceiver(_processor)
+            # self.data_observer = _observer
+            # self.data_listener = _listener
+            # self.data_listener.attach(self.data_observer)
             return True
 
         processors = {
@@ -42,14 +44,14 @@ class ServerResultsProcessor(object):
             'FACE':  face_processing.FaceRotationCalculator,
             'POSE':  pose_processing.PoseRotationCalculator
         }
-
-        _processor = processors[data_type]()
-        _listener = events.UpdateListener()
-        _observer = events.BpyUpdateReceiver(_processor)
-
-        self.data_observer = _observer
-        self.data_listener = _listener
-        self.data_listener.attach(self.data_observer)
+        # TODO: FIX
+        # _processor = processors[data_type]()
+        # _listener = events.UpdateListener()
+        # _observer = events.BpyUpdateReceiver(_processor)
+        #
+        # self.data_observer = _observer
+        # self.data_listener = _listener
+        # self.data_listener.attach(self.data_observer)
         return True
 
     def update_data_listeners(self, payload, frame):

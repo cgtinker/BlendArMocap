@@ -1,31 +1,11 @@
-'''
-Copyright (C) Denys Hsu, cgtinker.com, hello@cgtinker.com
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
-
 import bpy
 import logging
 
 from pathlib import Path
-
 from ..cgt_core.cgt_patterns import cgt_nodes
-from ..cgt_core import cgt_core_chains
-from .cgt_mp_core import cv_stream, mp_hand_detector, mp_face_detector, mp_pose_detector, mp_holistic_detector
 
 
-class WM_CGT_modal_detection_operator(bpy.types.Operator):
+class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
     bl_label = "Feature Detection Operator"
     bl_idname = "wm.cgt_feature_detection_operator"
     bl_description = "Detect solution in Stream."
@@ -35,30 +15,54 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
     frame = key_step = 1
     user = None
 
-    def get_chain(self, stream: cv_stream.Stream) -> cgt_nodes.NodeChain:
-        detectors = {
-            "HAND":     mp_hand_detector.HandDetector,
-            "FACE":     mp_face_detector.FaceDetector,
-            "POSE":     mp_pose_detector.PoseDetector,
-            "HOLISTIC": mp_holistic_detector.HolisticDetector,
-        }
+    def get_chain(self, stream) -> cgt_nodes.NodeChain:
+        from ..cgt_core import cgt_core_chains
+        from .cgt_mp_core import mp_hand_detector, mp_face_detector, mp_pose_detector, mp_holistic_detector
 
-        calculators = {
-            "HAND":     cgt_core_chains.HandNodeChain,
-            "FACE":     cgt_core_chains.FaceNodeChain,
-            "POSE":     cgt_core_chains.PoseNodeChain,
-            "HOLISTIC": cgt_core_chains.HolisticNodeChainGroup,
-        }
-
+        # create new node chain
         node_chain = cgt_nodes.NodeChain()
-        input_node = detectors[self.user.enum_detection_type](stream)
+
+        input_node = None
+        chain_template = None
+
+        print(self.user.enum_detection_type)
+        if self.user.enum_detection_type == 'HAND':
+            input_node = mp_hand_detector.HandDetector(
+                stream, self.user.hand_model_complexity, self.user.min_detection_confidence
+            )
+            chain_template = cgt_core_chains.HandNodeChain()
+
+        elif self.user.enum_detection_type == 'POSE':
+            input_node = mp_pose_detector.PoseDetector(
+                stream, self.user.pose_model_complexity, self.user.min_detection_confidence
+            )
+            chain_template = cgt_core_chains.PoseNodeChain()
+
+        elif self.user.enum_detection_type == 'FACE':
+            input_node = mp_face_detector.FaceDetector(
+                stream, self.user.refine_face_landmarks, self.user.min_detection_confidence
+            )
+            chain_template = cgt_core_chains.FaceNodeChain()
+
+        elif self.user.enum_detection_type == 'HOLISTIC':
+            input_node = mp_holistic_detector.HolisticDetector(
+                stream, self.user.holistic_model_complexity,
+                self.user.min_detection_confidence, self.user.refine_face_landmarks
+            )
+            chain_template = cgt_core_chains.HolisticNodeChainGroup()
+
+        if input_node is None or chain_template is None:
+            self.report({'ERROR'}, f"Setting up nodes failed: Input: {input_node}, Chain: {chain_template}")
+            return None
+
         node_chain.append(input_node)
-        node_chain.append(calculators[self.user.enum_detection_type]())
+        node_chain.append(chain_template)
 
         logging.info(f"{node_chain}")
         return node_chain
 
     def get_stream(self):
+        from .cgt_mp_core import cv_stream
         self.frame = bpy.context.scene.frame_current
         if self.user.detection_input_type == 'movie':
             mov_path = bpy.path.abspath(self.user.mov_data_path)
@@ -73,9 +77,18 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
         else:
             camera_index = self.user.webcam_input_device
             self.key_step = self.user.key_frame_step
-            # dimensions = self.user.enum_stream_dim
-            # backend = int(self.user.enum_stream_type)
-            stream = cv_stream.Stream(capture_input=camera_index, backend=0)
+            dim = self.user.enum_stream_dim
+            dimensions = {
+                'sd': (720, 480),
+                'hd': (1240, 720),
+                'fhd': (1920, 1080)
+            }
+            backend = int(self.user.enum_stream_type)
+
+            stream = cv_stream.Stream(
+                capture_input=camera_index, backend=backend,
+                width=dimensions[dim][0], height=dimensions[dim][1],
+            )
         return stream
 
     def execute(self, context):
@@ -92,6 +105,9 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
 
         stream = self.get_stream()
         self.node_chain = self.get_chain(stream)
+        if self.node_chain is None:
+            self.user.modal_active = False
+            return {'FINISHED'}
 
         # add a timer property and start running
         wm = context.window_manager
@@ -130,8 +146,8 @@ class WM_CGT_modal_detection_operator(bpy.types.Operator):
 
 
 def register():
-    bpy.utils.register_class(WM_CGT_modal_detection_operator)
+    bpy.utils.register_class(WM_CGT_MP_modal_detection_operator)
 
 
 def unregister():
-    bpy.utils.unregister_class(WM_CGT_modal_detection_operator)
+    bpy.utils.unregister_class(WM_CGT_MP_modal_detection_operator)

@@ -1,26 +1,8 @@
-'''
-Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
-
 import subprocess
 import bpy
 
 from ..cgt_core.cgt_interface import cgt_core_panel
 from ..cgt_mediapipe import cgt_dependencies
-from .. import cgt_imports
 
 
 class PREFERENCES_OT_CGT_install_dependencies_button(bpy.types.Operator):
@@ -41,16 +23,12 @@ class PREFERENCES_OT_CGT_install_dependencies_button(bpy.types.Operator):
             for i, dependency in enumerate(cgt_dependencies.required_dependencies):
                 if cgt_dependencies.dependencies_installed[i]:
                     continue
-
                 success = cgt_dependencies.install_dependency(self, dependency)
                 cgt_dependencies.dependencies_installed[i] = success
 
         except (subprocess.CalledProcessError, ImportError) as err:
             self.report({"ERROR"}, str(err))
             return {"CANCELLED"}
-
-        # Todo: Reload =)
-        # cgt_imports.manage_imports(reload=True)
         return {"FINISHED"}
 
 
@@ -82,10 +60,20 @@ def draw(self, context):
     layout = self.layout
 
     draw_dependencies(layout)
-    draw_camera_settings(context, layout)
+    if all(cgt_dependencies.dependencies_installed):
+        draw_camera_settings(context, layout)
 
 
 def draw_dependencies(layout):
+
+    """ Dependency layout for user preferences. """
+    # dependency box
+    dependency_box = layout.box()
+    dependency_box.label(text="Mediapipe Dependencies")
+    dependency_box.row().operator(PREFERENCES_OT_CGT_install_dependencies_button.bl_idname, icon="CONSOLE")
+    dependency_box.row().operator(PREFERENCES_OT_CGT_uninstall_dependencies_button.bl_idname, icon="ERROR")
+    return
+
     def draw_dependency(dependency, dependency_box):
         """ Draws package name, version, path and if a dependency has been installed. """
         _d_box = dependency_box.box()
@@ -104,10 +92,6 @@ def draw_dependencies(layout):
             cols[1].label(text=f"{version}")
             cols[2].label(text=f"{path}")
 
-    """ Dependency layout for user preferences. """
-    # dependency box
-    dependency_box = layout.box()
-    dependency_box.label(text="Essential")
 
     # pip headers
     pip_headers = dependency_box.split()
@@ -134,7 +118,6 @@ def draw_dependencies(layout):
     dependency_box.row().label(text="Make sure to have elevated privileges.")
     # install dependencies button
     dependency_box.row().operator(PREFERENCES_OT_CGT_install_dependencies_button.bl_idname)
-
     dependency_box.row().operator(PREFERENCES_OT_CGT_uninstall_dependencies_button.bl_idname)
 
 
@@ -143,8 +126,8 @@ def draw_camera_settings(context, layout):
         s_box = layout.box()
         user = context.scene.cgtinker_mediapipe  # noqa
         s_box.label(text="Camera Settings")
-        # s_box.row().prop(user, "enum_stream_dim")
-        # s_box.row().prop(user, "enum_stream_type")
+        s_box.row().prop(user, "enum_stream_dim")
+        s_box.row().prop(user, "enum_stream_type")
 
 
 classes = [
@@ -156,7 +139,7 @@ classes = [
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    cgt_core_panel.addon_prefs.append(draw)
+    cgt_core_panel.addon_prefs.add(draw)
 
 
 def unregister():

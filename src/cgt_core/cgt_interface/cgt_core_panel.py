@@ -19,7 +19,7 @@ class PT_UI_CGT_Panel(DefaultPanel, bpy.types.Panel):
         pass
 
 
-addon_prefs = []
+addon_prefs = set()
 class APT_UI_CGT_Panel(bpy.types.AddonPreferences):
     bl_label = cgt_naming.ADDON_NAME
     bl_idname = "BlendArMocap"

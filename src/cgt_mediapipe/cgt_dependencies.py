@@ -1,20 +1,3 @@
-'''
-Copyright (C) Denys Hsu, cgtinker.com, hello@cgtinker.com
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
-
 import os
 import sys
 
@@ -53,6 +36,7 @@ def get_python_exe():
         executable = str(py_exec)
 
     logging.info(f"App Version: {bpy.app.version}.")
+    logging.info(f"Python Executable: {executable}.")
     return executable
 
 
@@ -75,6 +59,7 @@ def get_site_packages_path():
 
 def clear_user_site():
     """ Clear python site packages to avoid user site packages. """
+    # Depreciated: --target flag seems to deliver better results
     # Disallow pip from checking the user site-package
     environ_copy = dict(os.environ)
     environ_copy["PYTHONNOUSERSITE"] = "-1"
@@ -305,15 +290,15 @@ def is_installed(dependency: Dependency) -> bool:
 
 if sys.platform == 'darwin' and platform.processor() == 'arm':
     # to be tested
-    required_dependencies = (
+    required_dependencies = [
         Dependency(module="opencv-contrib-python==4.6.0.66", name="cv2", pkg="opencv_contrib_python", args=None),
         Dependency(module="protobuf==3.20.3", name="google.protobuf", pkg="protobuf", args=None),
         Dependency(module="mediapipe-silicon", name="mediapipe", pkg="mediapipe", args=None)
-    )
+    ]
 
 else:
     # Manual setup of mediapipes dependency tree as the package deps may contains internal conflicts.
-    required_dependencies = (
+    required_dependencies = [
         Dependency(module="absl_py", name="absl", pkg="absl-py", args=None),
         Dependency(module="attrs>=19.1.0", name="attrs", pkg="attrs", args=None),
 
@@ -334,7 +319,8 @@ else:
         Dependency(module="opencv-contrib-python==4.5.5.64", name="cv2", pkg="opencv_contrib_python", args=None),
         Dependency(module="protobuf==3.19.0", name="google.protobuf", pkg="protobuf", args=None),
         Dependency(module="mediapipe==0.8.10", name="mediapipe", pkg="mediapipe", args=["--no-deps"]),
-    )
+    ]
+
 
 site_packages = get_site_packages_path()
 python_binary = get_python_exe()

@@ -16,6 +16,7 @@ Copyright (C) Denys Hsu, cgtinker.com, hello@cgtinker.com
 '''
 
 import importlib
+import logging
 import sys
 from pathlib import Path
 
@@ -24,19 +25,7 @@ from pathlib import Path
 # or when Blender's 'Reload Scripts' operator has been called.
 
 
-SUB_DIRS = ['src/cgt_blender', 'src/cgt_processing', 'src/cgt_detection',
-            'src/cgt_utils', 'src/cgt_bridge', 'src/cgt_patterns', 'src/cgt_freemocap']
-
-INIT_MODULES = [
-    '.src.cgt_imports',
-    '.src.cgt_naming',
-    '.src.cgt_blender.interface.ui_properties',
-    '.src.cgt_blender.interface.ui_registration',
-    '.src.cgt_blender.interface',
-    '.src.cgt_blender.utils.dependencies',
-]
-
-PACKAGE_PATH = Path(__file__).parent.parent
+PACKAGE_PATH = Path(__file__).parent.parent.parent
 PACKAGE_NAME = PACKAGE_PATH.name
 
 
@@ -52,7 +41,7 @@ def get_reload_list(sub_dirs):
     reload_list = []
 
     for sub_dir in sub_dirs:
-        files = [p for p in sub_dir.rglob("*.py") if p.stem != '__init__']
+        files = [p for p in sub_dir.rglob("*.py") if not p.stem.startswith('_')]
         for file in files:
             parents = get_parents(file, [])
             imp_path = ""
@@ -70,41 +59,22 @@ def get_parents(file: Path, parents: list):
     return parents
 
 
-def manage_imports(reload: bool = False, force: bool = False):
-    return
-    # from .cgt_blender.interface import ui_registration
-    # ui_registration.unregister()
-    for module in INIT_MODULES:
-        import_module(module)
+def manage_imports(dirs: list = None):
+    print("Reloading")
+    if dirs is None:
+        s = [PACKAGE_PATH / 'src']
+    else:
+        s = [PACKAGE_PATH / d for d in dirs]
 
-    from src.cgt_mediapipe import dependencies
-    # if reload:
-    reload_module('.src.cgt_blender.utils.dependencies')
-    print(f"{PACKAGE_NAME} - Dependencies installed: {dependencies.dependencies_installed}")
-
-    # if dependencies.dependencies_installed is True or force is True:
-    print(f"{PACKAGE_NAME} - Attempt to reload...")
-    sub_dirs = [PACKAGE_PATH / sub_dir for sub_dir in SUB_DIRS]
-    reload_list = get_reload_list(sub_dirs)
-
+    reload_list = get_reload_list(s)
     for module in reload_list:
-        if reload is True:
+        reload = True
+        try:
             import_module(module)
+        except (ModuleNotFoundError, ImportError) as e:
+            reload = False
+            logging.error(f"Import {module} failed: {e}")
+
+        if reload:
             reload_module(module)
-        else:
-            import_module(module)
-    print(f"{PACKAGE_NAME} - Reload successful!")
 
-
-if __name__ == '__main__':
-    addons_folder = str(PACKAGE_PATH)
-    sys.path.append(addons_folder)
-
-    # reload modules besides bpy
-    sub_dirs = [PACKAGE_PATH / sub_dir for sub_dir in SUB_DIRS[1:]]
-    print(sub_dirs)
-    reload_list = get_reload_list(sub_dirs)
-    print(reload_list)
-    for module in reload_list:
-        print(f"importing {module}...")
-        import_module(module)

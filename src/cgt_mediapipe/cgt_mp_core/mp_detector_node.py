@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from ...cgt_core.cgt_patterns import cgt_nodes
 from mediapipe import solutions
+from abc import abstractmethod
+
 from . import cv_stream
-from ...cgt_core.cgt_patterns.observer_pattern import *
+from ...cgt_core.cgt_patterns import cgt_nodes
 
 
 class DetectorNode(cgt_nodes.InputNode):

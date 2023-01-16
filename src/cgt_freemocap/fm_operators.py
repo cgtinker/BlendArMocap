@@ -1,25 +1,41 @@
-'''
-Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
-
 import bpy
 import logging
 import addon_utils
 from pathlib import Path
 from . import fm_utils, fm_session_loader
+
+
+class OT_Freemocap_Quickload_Operator(bpy.types.Operator):
+    bl_label = "Load Freemocap Session"
+    bl_idname = "wm.cgt_quickload_freemocap_operator"
+    bl_description = "Load Freemocap Session data from directory."
+
+    user = freemocap_session_path = _timer = session_loader = None
+
+    def execute(self, context):
+        """ Loads Freemocap data from session directory. """
+        self.user = context.scene.cgtinker_freemocap
+
+        # check if modal is already running
+        if self.user.modal_active:
+            self.user.modal_active = False
+            return {'CANCELLED'}
+
+        # validate session directory
+        if not fm_utils.is_valid_session_directory(self.user.freemocap_session_path):
+            self.user.modal_active = False
+            return {'FINISHED'}
+
+        # init loader
+        self.user.modal_active = True
+        self.session_loader = fm_session_loader.FreemocapLoader(self.user.freemocap_session_path)
+
+        if self.user.load_raw:
+            self.session_loader.quickload_raw()
+        else:
+            self.session_loader.quickload_processed()
+        self.user.modal_active = False
+        return {'FINISHED'}
 
 
 class WM_Load_Freemocap_Operator(bpy.types.Operator):
@@ -31,7 +47,7 @@ class WM_Load_Freemocap_Operator(bpy.types.Operator):
 
     def execute(self, context):
         """ Loads Freemocap data from session directory. """
-        self.user = context.scene.cgt_freemocap
+        self.user = context.scene.cgtinker_freemocap
 
         # check if modal is already running
         if self.user.modal_active:
@@ -116,7 +132,7 @@ class WM_FMC_load_synchronized_videos(bpy.types.Operator):
     user = None
 
     def execute(self, context):
-        self.user = context.scene.cgt_freemocap  # noqa
+        self.user = context.scene.cgtinker_freemocap  # noqa
         freemocap_session_path = Path(self.user.freemocap_session_path)
 
         addon_utils.enable("io_import_images_as_planes")
@@ -163,6 +179,7 @@ class WM_FMC_load_synchronized_videos(bpy.types.Operator):
 
 
 classes = [
+    OT_Freemocap_Quickload_Operator,
     WM_FMC_load_synchronized_videos,
     WM_FMC_bind_freemocap_data_to_skeleton,
     WM_Load_Freemocap_Operator
