@@ -1,8 +1,13 @@
-from . import cgt_mp_interface
+from . import interface, preferences, dependencies
 
 classes = [
-    cgt_mp_interface
+    interface,
+    preferences
 ]
+
+if all(dependencies.dependencies_installed):
+    from . import detection_operator
+    classes.append(detection_operator)
 
 
 def register():

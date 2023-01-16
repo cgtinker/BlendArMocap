@@ -48,10 +48,12 @@ def copy_ptr_prop_cls(class_name_dict: Dict[str, RuntimeClass]) -> Dict[str, Run
             continue
 
         type_hints = typing.get_type_hints(cls)
+        print("\n\nTYPEHINTS", type_hints)
         id_data = getattr(cls, "id_data", None)
         setattr(class_name_dict[cls_name], 'id_data', id_data)
 
         for hint in type_hints:
+            print(hint, type_hints[hint])
             property_type = type_hints[hint][0].__name__
 
             # if prop is pointing to sub_cls

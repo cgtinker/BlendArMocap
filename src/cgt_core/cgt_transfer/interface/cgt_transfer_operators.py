@@ -21,8 +21,6 @@ from math import degrees
 from pathlib import Path
 import numpy as np
 
-from ...cgt_bpy import cgt_collection
-from ...cgt_naming import COLLECTIONS
 from ...cgt_utils import cgt_math
 from .. import transfer_management, save_props, load_props
 

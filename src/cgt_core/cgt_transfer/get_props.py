@@ -12,12 +12,14 @@ from . import (
 )
 
 driver_prop_cls_dict = None
-if driver_prop_cls_dict is None:
-    driver_prop_cls_dict = object_prop_reflection.copy_ptr_prop_cls(object_prop_reflection.cls_type_dict)
 
 
 def get_properties_from_object(obj: bpy.types.Object) -> object_prop_reflection.RuntimeClass():
     """ Get properties from object as Runtime Class to not modify values in Blender by accident. """
+    global driver_prop_cls_dict
+    if driver_prop_cls_dict is None:
+        driver_prop_cls_dict = object_prop_reflection.copy_ptr_prop_cls(object_prop_reflection.cls_type_dict)
+
     properties = object_prop_reflection.get_object_attributes(
         driver_prop_cls_dict["OBJECT_PGT_CGT_TransferProperties"],
         obj.cgt_props,
