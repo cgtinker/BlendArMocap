@@ -7,6 +7,9 @@ import bpy
 from typing import Union
 
 
+# Get and set custom properties in Blender.
+# While it's been tested for Objects and bones it may be used with any property in blender.
+
 def get_custom_property(target_obj: Union[bpy.types.Object, bpy.types.PoseBone], prop_name: str) -> Optional[Any]:
     """ Returns the custom property by name or None. """
     return target_obj.get(prop_name)

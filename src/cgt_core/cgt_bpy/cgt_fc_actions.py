@@ -4,6 +4,7 @@ from typing import List
 
 class FCurveHelper:
     def __init__(self):
+        """ Helper class to easily set and insert data to an objects f-curves. """
         self.location, self.scale, self.rotation_euler = [None, None, None], [None, None, None], [None, None, None]
         self.rotation_quaternion = [None]*4
 

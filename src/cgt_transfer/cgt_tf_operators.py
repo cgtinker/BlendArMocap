@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 
 from .core_transfer import tf_save_object_properties, tf_load_object_properties, tf_transfer_management
-from ..cgt_core.cgt_utils import cgt_math
+from ..cgt_core.cgt_calculators_nodes import cgt_math
 
 
 # region TRANSFER

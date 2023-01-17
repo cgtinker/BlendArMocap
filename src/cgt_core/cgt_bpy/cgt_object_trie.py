@@ -6,6 +6,16 @@ from mathutils import Vector, Quaternion, Euler
 from src.cgt_core.cgt_bpy import cgt_bpy_utils
 from collections import namedtuple
 
+
+# Targeting following concept:
+# - Create a dict trie structure from .json
+# - Create objects parented based on trie
+# - Create Armature based on objects parenting layout
+# - Link Armature bones to objects
+# - Animate objects which may keep a static offset to drive rig
+# - Create Mesh based on object layout
+
+
 d = {
     'Cube.001': {
         'Cube.002': {

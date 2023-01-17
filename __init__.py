@@ -33,7 +33,6 @@ bl_info = {
 def reload_modules():
     from .src import cgt_imports
     cgt_imports.manage_imports()
-    print("reload")
 
 
 def register():

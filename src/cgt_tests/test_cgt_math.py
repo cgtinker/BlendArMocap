@@ -1,4 +1,4 @@
-from src.cgt_core.cgt_utils.cgt_math import *
+from ..cgt_core.cgt_calculators_nodes.cgt_math import *
 import unittest
 import math
 

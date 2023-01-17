@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import logging
 from typing import Tuple, Any, Optional, List
 import bpy
 import numpy as np
-from ...cgt_core.cgt_utils import cgt_math
+from ...cgt_core.cgt_calculators_nodes import cgt_math
 from .. import cgt_tf_object_properties
 from . import tf_check_object_properties, tf_reflect_object_properties
 
