@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List, Any
 import numpy as np
 from ..cgt_core.cgt_core_chains import HolisticNodeChainGroup
-from ..cgt_core.cgt_bpy import fc_actions, cgt_bpy_utils
+from ..cgt_core.cgt_bpy import cgt_fc_actions, cgt_bpy_utils
 from ..cgt_core.cgt_calculators_nodes import calc_face_rot, calc_pose_rot, calc_hand_rot
 from ..cgt_core.cgt_utils.cgt_timers import timeit
 from ..cgt_core.cgt_utils.cgt_json import JsonData
@@ -88,7 +88,7 @@ class FreemocapLoader:
         frames = list(range(self.number_of_frames))
         for i in range(self.mediapipe3d_frames_trackedPoints_xyz.shape[1]):
             ob = objs[i]
-            helper = fc_actions.create_actions([ob])[0]
+            helper = cgt_fc_actions.create_actions([ob])[0]
             obj_data = self.mediapipe3d_frames_trackedPoints_xyz[:, i]
             x, y, z = obj_data[:, 0], obj_data[:, 1], obj_data[:, 2]
             helper.foreach_set('location', frames, x, y, z)
@@ -175,9 +175,9 @@ class FreemocapLoader:
 
                 # overwrite action by default
                 if data_path == "rotation_euler":
-                    helper = fc_actions.create_actions([ob], overwrite=False)[0]
+                    helper = cgt_fc_actions.create_actions([ob], overwrite=False)[0]
                 else:
-                    helper = fc_actions.create_actions([ob])[0]
+                    helper = cgt_fc_actions.create_actions([ob])[0]
 
                 helper.foreach_set(data_path, frames, x, y, z)
 

@@ -33,7 +33,7 @@ class CgtRigifyTransferProperties(bpy.types.PropertyGroup):
         poll=is_armature)
 
     def json_files(self, context):
-        path = Path(__file__).parent.parent / 'data'
+        path = Path(__file__).parent / 'data'
 
         files = [x for x in path.glob('**/*') if x.is_file()]
         if len(files) == 0:
