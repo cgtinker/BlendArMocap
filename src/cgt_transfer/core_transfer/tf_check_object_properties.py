@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from typing import List
 
-from . import object_properties
+from .. import cgt_tf_object_properties
 import logging
 
 
-def check_value_mapping_generic_props(props: List[object_properties.OBJECT_PGT_CGT_ValueMapping]) -> List[
-    object_properties.OBJECT_PGT_CGT_ValueMapping]:
+def check_value_mapping_generic_props(props: List[cgt_tf_object_properties.OBJECT_PGT_CGT_ValueMapping]) -> List[
+    cgt_tf_object_properties.OBJECT_PGT_CGT_ValueMapping]:
     """ Copy values from first container and set axis explicit. """
     main_prop = props[0]
     if main_prop.remap_default == 'DEFAULT':
@@ -27,8 +27,8 @@ def check_value_mapping_generic_props(props: List[object_properties.OBJECT_PGT_C
     return props
 
 
-def check_value_mapping_detail_props(props: List[object_properties.OBJECT_PGT_CGT_ValueMapping]) -> List[
-    object_properties.OBJECT_PGT_CGT_ValueMapping]:
+def check_value_mapping_detail_props(props: List[cgt_tf_object_properties.OBJECT_PGT_CGT_ValueMapping]) -> List[
+    cgt_tf_object_properties.OBJECT_PGT_CGT_ValueMapping]:
     """ Sets explicit axis names and checks for overlaps. """
     axis_d = {0: 'X', 1: 'Y', 2: 'Z'}
 
@@ -46,7 +46,7 @@ def check_value_mapping_detail_props(props: List[object_properties.OBJECT_PGT_CG
     return props
 
 
-def check_distance_mapping_object_props(props: object_properties.OBJECT_PGT_CGT_TransferProperties) -> object_properties.OBJECT_PGT_CGT_TransferProperties:
+def check_distance_mapping_object_props(props: cgt_tf_object_properties.OBJECT_PGT_CGT_TransferProperties) -> cgt_tf_object_properties.OBJECT_PGT_CGT_TransferProperties:
     """ Checks if required objects assigned and updates mapping props. """
     objects = [
         # props.by_obj,

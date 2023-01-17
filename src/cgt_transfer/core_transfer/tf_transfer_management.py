@@ -3,8 +3,8 @@ import bpy
 import logging
 from typing import Optional, Union, List, Dict
 
-from . import get_props, set_props
-from ..cgt_core.cgt_bpy import cgt_drivers, cgt_bpy_utils, cgt_collection
+from . import tf_get_object_properties, tf_set_object_properties
+from ...cgt_core.cgt_bpy import cgt_drivers, cgt_bpy_utils, cgt_collection
 
 from collections import namedtuple
 
@@ -30,8 +30,8 @@ def main(objects: List[bpy.types.Object]):
 def manage_object_transfer(obj: bpy.types.Object):
     """ Stores chain links in global list and applies drivers which are based on single objects. """
     logging.debug(f"GET PROPS {obj.name}.")
-    properties = get_props.get_properties_from_object(obj)
-    target_obj, sub_target, target_type = get_props.get_target(properties.target)
+    properties = tf_get_object_properties.get_properties_from_object(obj)
+    target_obj, sub_target, target_type = tf_get_object_properties.get_target(properties.target)
 
     if target_type == 'ABORT':
         logging.debug(f"ABORT {obj.name}.")
@@ -56,19 +56,19 @@ def manage_object_transfer(obj: bpy.types.Object):
 
 def remap_by_object_distance(obj, target_obj, sub_target, target_type, properties):
     # get mapping properties
-    dist = get_props.get_distance(properties)
+    dist = tf_get_object_properties.get_distance(properties)
     if dist is None:
         dist = 1
 
-    props = get_props.get_value_by_distance_properties(properties)
-    remapping_props = get_props.get_remapping_properties(properties)
+    props = tf_get_object_properties.get_value_by_distance_properties(properties)
+    remapping_props = tf_get_object_properties.get_remapping_properties(properties)
 
     # create driver object
     driver_target = get_driver_target(obj)
     factory = cgt_drivers.DriverFactory(driver_target)
 
     # apply drivers
-    set_props.set_distance_remapping_drivers(factory, props, remapping_props, obj, dist)
+    tf_set_object_properties.set_distance_remapping_drivers(factory, props, remapping_props, obj, dist)
     factory.execute()
 
     if target_type in ['OBJECT', 'ARMATURE']:
@@ -80,17 +80,17 @@ def remap_by_object_distance(obj, target_obj, sub_target, target_type, propertie
 def remap_object_properties(obj, target_obj, sub_target, target_type, properties):
     """ Default remap properties (from(min/max), to(min/max), factor...) """
     # get props
-    dist = get_props.get_distance(properties)
+    dist = tf_get_object_properties.get_distance(properties)
     if dist is None:
         dist = 1
-    remapping_properties = get_props.get_remapping_properties(properties)
+    remapping_properties = tf_get_object_properties.get_remapping_properties(properties)
 
     # create driver object
     driver_target = get_driver_target(obj)
     factory = cgt_drivers.DriverFactory(driver_target)
 
     # apply drivers
-    set_props.set_object_remapping_drivers(factory, obj, remapping_properties, dist)
+    tf_set_object_properties.set_object_remapping_drivers(factory, obj, remapping_properties, dist)
     factory.execute()
 
     # apply constraints
@@ -121,20 +121,19 @@ def find_chain_links(chain_items: List[ChainLink]) -> Dict[bpy.types.Object, dic
 def link_object_chain(chains_dict: Dict[bpy.types.Object, dict]):
     """ Apply chain links recursively based on obj trie structure with cgt_props. """
     def apply_chain_link(chain_link_dict, previous_obj, previous_driver):
-        logging.debug(f"RECV CHAIN ELEMENT: {chain_link_dict}")
         for current_obj in chain_link_dict.keys():
             # get properties for chain link
-            properties = get_props.get_properties_from_object(current_obj)
-            target_obj, sub_target, target_type = get_props.get_target(properties.target)
-            tar_dist = get_props.get_distance(properties)
+            properties = tf_get_object_properties.get_properties_from_object(current_obj)
+            target_obj, sub_target, target_type = tf_get_object_properties.get_target(properties.target)
+            tar_dist = tf_get_object_properties.get_distance(properties)
             if not tar_dist:
                 tar_dist = 1
 
             # apply driver
             driver_target = get_driver_target(current_obj)
             factory = cgt_drivers.DriverFactory(driver_target)
-            set_props.set_chain_driver(previous_obj, current_obj, previous_driver, factory, tar_dist)
-            set_props.set_copy_rotation_driver(current_obj, factory, 'WORLD_SPACE')
+            tf_set_object_properties.set_chain_driver(previous_obj, current_obj, previous_driver, factory, tar_dist)
+            tf_set_object_properties.set_copy_rotation_driver(current_obj, factory, 'WORLD_SPACE')
 
             # apply constraints
             if target_type in ['OBJECT', 'ARMATURE']:
@@ -146,16 +145,16 @@ def link_object_chain(chains_dict: Dict[bpy.types.Object, dict]):
             apply_chain_link(chain_link_dict[current_obj], current_obj, driver_target)
 
     for chain_obj in chains_dict.keys():
-        logging.debug(f"CURRENT CHAIN START: {chain_obj}")
+        logging.debug(f"RECV CHAIN ELEMENT: {chain_obj.name}")
         # get props for chain start
-        properties = get_props.get_properties_from_object(chain_obj)
-        target_obj, sub_target, target_type = get_props.get_target(properties.target)
+        properties = tf_get_object_properties.get_properties_from_object(chain_obj)
+        target_obj, sub_target, target_type = tf_get_object_properties.get_target(properties.target)
 
         # set driver for chain start
         driver_target = get_driver_target(chain_obj)
         factory = cgt_drivers.DriverFactory(driver_target)
-        set_props.set_copy_location_driver(sub_target, factory, 'WORLD_SPACE')
-        set_props.set_copy_rotation_driver(sub_target, factory, 'WORLD_SPACE')
+        tf_set_object_properties.set_copy_location_driver(sub_target, factory, 'WORLD_SPACE')
+        tf_set_object_properties.set_copy_rotation_driver(sub_target, factory, 'WORLD_SPACE')
 
         # recv chain links
         apply_chain_link(chains_dict[chain_obj], chain_obj, driver_target)
@@ -181,14 +180,12 @@ def apply_constraints(target_obj: Union[bpy.types.Object, bpy.types.PoseBone], o
             continue
         target_obj.constraints.remove(c)
 
-    print(obj.constraints)
     for c in obj.constraints:
-        print(obj, c)
         constraint_name = c.type
-        constraint_props = get_props.get_constraint_props(c)
+        constraint_props = tf_get_object_properties.get_constraint_props(c)
         constraint = target_obj.constraints.new(constraint_name)
         constraint_props['target'] = driver_target
-        set_props.set_constraint_props(constraint, constraint_props)
+        tf_set_object_properties.set_constraint_props(constraint, constraint_props)
 # endregion
 
 

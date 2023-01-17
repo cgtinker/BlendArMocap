@@ -4,8 +4,8 @@ from math import degrees
 from pathlib import Path
 import numpy as np
 
-from ...cgt_core.cgt_utils import cgt_math
-from .. import transfer_management, save_props, load_props
+from .core_transfer import tf_save_object_properties, tf_load_object_properties, tf_transfer_management
+from ..cgt_core.cgt_utils import cgt_math
 
 
 # region TRANSFER
@@ -203,7 +203,7 @@ class OT_CGT_TransferObjectProperties(bpy.types.Operator):
         return context.mode in {'OBJECT'}
 
     def execute(self, context):
-        transfer_management.main(context.selected_objects)
+        tf_transfer_management.main(context.selected_objects)
         self.report({'INFO'}, f"Transferred from {len(context.selected_objects)} selected objects.")
         return {'FINISHED'}
 
@@ -243,7 +243,7 @@ class OT_CGT_SaveObjectProperties(bpy.types.Operator):
 
         s += '.json'
         path = Path(__file__).parent.parent / "data" / s
-        json_data = save_props.save([ob for ob in bpy.data.objects if ob.get("cgt_id") is not None])
+        json_data = tf_save_object_properties.save([ob for ob in bpy.data.objects if ob.get("cgt_id") is not None])
         json_data.save(str(path))
 
         user.save_object_properties_bool = False
@@ -273,7 +273,7 @@ class OT_CGT_LoadObjectProperties(bpy.types.Operator):
         config += '.json'
         path = Path(__file__).parent.parent / "data" / config
 
-        load_props.load(context.scene.objects, str(path), armature)
+        tf_load_object_properties.load(context.scene.objects, str(path), armature)
         self.report({'INFO'}, f"Loaded properties from {str(path)}.")
         return {'FINISHED'}
 
@@ -332,7 +332,7 @@ class OT_CGT_ApplyObjectProperties(bpy.types.Operator):
                 get_objects(sub)
 
         get_objects(col)
-        transfer_management.main(objects)
+        tf_transfer_management.main(objects)
         context.view_layer.update()
         self.report({'INFO'}, f"Transferred objects from {col.name}.")
         return {'FINISHED'}

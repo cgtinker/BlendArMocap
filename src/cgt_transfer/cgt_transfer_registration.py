@@ -1,18 +1,15 @@
-# TODO: Transfer will be part of core
 from . import (
-    object_properties
-)
-from .interface import (
-    cgt_transfer_panel,
-    cgt_transfer_operators,
-    cgt_driver_prop_panel
+    cgt_tf_object_properties,
+    cgt_tf_3dview_panel,
+    cgt_tf_operators,
+    cgt_tf_properties_panel
 )
 
 modules = [
-    object_properties,
-    cgt_driver_prop_panel,
-    cgt_transfer_operators,
-    cgt_transfer_panel,
+    cgt_tf_object_properties,
+    cgt_tf_3dview_panel,
+    cgt_tf_operators,
+    cgt_tf_properties_panel,
 ]
 
 

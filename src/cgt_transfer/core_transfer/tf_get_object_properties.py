@@ -4,26 +4,23 @@ import logging
 from typing import Tuple, Any, Optional, List
 import bpy
 import numpy as np
-from ..cgt_core.cgt_utils import cgt_math
-from . import (
-    object_prop_reflection,
-    object_properties,
-    check_props
-)
+from ...cgt_core.cgt_utils import cgt_math
+from .. import cgt_tf_object_properties
+from . import tf_check_object_properties, tf_reflect_object_properties
 
 
 # driver_prop_cls_dict = None
-def get_properties_from_object(obj: bpy.types.Object) -> object_prop_reflection.RuntimeClass():
+def get_properties_from_object(obj: bpy.types.Object) -> tf_reflect_object_properties.RuntimeClass():
     """ Get properties from object as Runtime Class to not modify values in Blender by accident. """
     # global driver_prop_cls_dict
     # if driver_prop_cls_dict is None:
     #     driver_prop_cls_dict = object_prop_reflection.copy_ptr_prop_cls(object_prop_reflection.cls_type_dict)
 
-    properties = object_prop_reflection.get_object_attributes(
+    properties = tf_reflect_object_properties.get_object_attributes(
         # driver_prop_cls_dict["OBJECT_PGT_CGT_TransferProperties"],
-        object_properties.TransferPropertiesProto,
+        cgt_tf_object_properties.TransferPropertiesProto,
         obj.cgt_props,
-        object_prop_reflection.RuntimeClass()
+        tf_reflect_object_properties.RuntimeClass()
     )
 
     return properties
@@ -37,7 +34,7 @@ def get_constraint_props(c: bpy.types.Constraint):
     return props
 
 
-def get_target(tar_props: object_properties.OBJECT_PGT_CGT_TransferTarget) -> Tuple[Optional[bpy.types.Object], Optional[Any], str]:
+def get_target(tar_props: cgt_tf_object_properties.OBJECT_PGT_CGT_TransferTarget) -> Tuple[Optional[bpy.types.Object], Optional[Any], str]:
     """ Get target property and set appropriate Pointers. """
     if tar_props.target is None:
         return None, None, 'ABORT'
@@ -66,14 +63,14 @@ def get_target(tar_props: object_properties.OBJECT_PGT_CGT_TransferTarget) -> Tu
     assert RuntimeError, f'Type not defined. \n{tar_props}'
 
 
-def get_value_by_distance_properties(cgt_props: object_properties.OBJECT_PGT_CGT_TransferProperties):
+def get_value_by_distance_properties(cgt_props: cgt_tf_object_properties.OBJECT_PGT_CGT_TransferProperties):
     # todo: unpacking? improve check (less harsh one?)
-    cgt_props = check_props.check_distance_mapping_object_props(cgt_props)
+    cgt_props = tf_check_object_properties.check_distance_mapping_object_props(cgt_props)
     return cgt_props
 
 
-def get_remapping_properties(cgt_props: object_properties.OBJECT_PGT_CGT_TransferProperties) -> List[List[
-    object_properties.OBJECT_PGT_CGT_ValueMapping]]:
+def get_remapping_properties(cgt_props: cgt_tf_object_properties.OBJECT_PGT_CGT_TransferProperties) -> List[List[
+    cgt_tf_object_properties.OBJECT_PGT_CGT_ValueMapping]]:
     """ Validates, updates and returns remapping properties. """
     loc_xyz = [cgt_props.loc_details, [cgt_props.use_loc_x, cgt_props.use_loc_y, cgt_props.use_loc_z]]
     rot_xyz = [cgt_props.rot_details, [cgt_props.use_rot_x, cgt_props.use_rot_y, cgt_props.use_rot_z]]
@@ -82,9 +79,9 @@ def get_remapping_properties(cgt_props: object_properties.OBJECT_PGT_CGT_Transfe
     updated_props = []
     for details, props in [loc_xyz, rot_xyz, sca_xyz]:
         if details:
-            props = check_props.check_value_mapping_detail_props(props)
+            props = tf_check_object_properties.check_value_mapping_detail_props(props)
         else:
-            props = check_props.check_value_mapping_generic_props(props)
+            props = tf_check_object_properties.check_value_mapping_generic_props(props)
         updated_props.append(props)
 
     return updated_props
@@ -118,8 +115,6 @@ def get_distance(cur_props):
         elif cur_props.by_obj.other_bone_type == 'LOCATION':
             v2 = armature.pose.bones[cur_props.by_obj.other_bone].location
 
-        # todo: not sure if that works... is that actually wrong? =)
-        logging.debug(f"{v1}, {v2}")
         m_dist = cgt_math.get_vector_distance(np.array(v1), np.array(v2))
     return m_dist
 

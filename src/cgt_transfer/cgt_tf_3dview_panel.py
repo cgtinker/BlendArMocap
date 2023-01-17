@@ -1,7 +1,7 @@
 import bpy
 from pathlib import Path
 from bpy.types import Panel
-from ...cgt_core.cgt_interface import cgt_core_panel
+from ..cgt_core.cgt_interface import cgt_core_panel
 
 from bpy.props import PointerProperty
 

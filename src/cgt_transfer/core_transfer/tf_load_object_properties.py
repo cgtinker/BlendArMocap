@@ -1,9 +1,9 @@
 from __future__ import annotations
 import bpy
-from typing import Union, Any, List
+from typing import Union, Any
 import logging
-from ..cgt_core.cgt_utils import cgt_json
-from ..cgt_core.cgt_bpy import cgt_bpy_utils, cgt_object_prop, cgt_collection
+from ...cgt_core.cgt_utils import cgt_json
+from ...cgt_core.cgt_bpy import cgt_bpy_utils, cgt_object_prop, cgt_collection
 
 
 def idle_object_props(props):

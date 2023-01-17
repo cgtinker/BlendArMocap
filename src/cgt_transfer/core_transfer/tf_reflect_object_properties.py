@@ -1,6 +1,6 @@
 import typing
 from typing import Dict
-from . import object_properties
+from .. import cgt_tf_object_properties
 import bpy
 
 
@@ -46,18 +46,16 @@ def copy_ptr_prop_cls(class_name_dict: Dict[str, RuntimeClass]) -> Dict[str, Run
 
     for cls_name in class_name_dict:
         """ Get all registered PropertyGroup properties. """
-        cls = getattr(object_properties, cls_name, None)
+        cls = getattr(cgt_tf_object_properties, cls_name, None)
         if cls is None:
             continue
         # TODO: static props
 
         type_hints = typing.get_type_hints(cls)
-        print("\n\nTYPEHINTS", type_hints)
         id_data = getattr(cls, "id_data", None)
         setattr(class_name_dict[cls_name], 'id_data', id_data)
 
         for hint in type_hints:
-            print(hint, type_hints[hint])
             property_type = type_hints[hint][0].__name__
 
             # if prop is pointing to sub_cls
@@ -114,10 +112,10 @@ def get_object_attributes(cls_template, obj, cls_out):
     for key, value in cls_template.__dict__.get('__annotations__', {}).items():
         obj_value = getattr(obj, key, None)
 
-        if value in (object_properties.TransferPropertiesProto,
-                     object_properties.ValueMappingProto,
-                     object_properties.RemapDistanceProto,
-                     object_properties.TransferTargetProto):
+        if value in (cgt_tf_object_properties.TransferPropertiesProto,
+                     cgt_tf_object_properties.ValueMappingProto,
+                     cgt_tf_object_properties.RemapDistanceProto,
+                     cgt_tf_object_properties.TransferTargetProto):
 
             # creating new empty cls and recv
             setattr(cls_out, key, RuntimeClass())
@@ -131,6 +129,6 @@ def get_object_attributes(cls_template, obj, cls_out):
 if __name__ == '__main__':
     ob = bpy.context.selected_objects[0]
     copy_ptr_prop_cls(cls_type_dict)
-    res_1 = get_runtime_object_attributes(object_properties.TransferPropertiesProto, ob.cgt_props, RuntimeClass())
+    res_1 = get_runtime_object_attributes(cgt_tf_object_properties.TransferPropertiesProto, ob.cgt_props, RuntimeClass())
     res_2 = get_runtime_object_attributes(cls_type_dict["OBJECT_PGT_CGT_TransferProperties"], ob.cgt_props, RuntimeClass())
     print("TEMPLATE:", cls_type_dict["OBJECT_PGT_CGT_TransferProperties"], "\n\nCOPY:", res_1)

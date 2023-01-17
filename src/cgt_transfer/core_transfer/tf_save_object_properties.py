@@ -2,9 +2,8 @@ from __future__ import annotations
 from typing import List
 import bpy
 import logging
-from . import get_props
-from . import object_prop_reflection
-from ..cgt_core.cgt_utils import cgt_json
+from . import tf_get_object_properties, tf_reflect_object_properties
+from ...cgt_core.cgt_utils import cgt_json
 
 armature_name = None
 
@@ -12,7 +11,7 @@ armature_name = None
 def convert_object_ptrs2str(cls) -> None:
     """ Pointers to objects to strs (inplace). """
     for key, value in cls.__dict__.items():
-        if isinstance(value, object_prop_reflection.RuntimeClass):
+        if isinstance(value, tf_reflect_object_properties.RuntimeClass):
             convert_object_ptrs2str(value)
         elif isinstance(value, bpy.types.Object):
 
@@ -34,7 +33,7 @@ def convert_object_ptrs2str(cls) -> None:
 def convert_cls2dict(cls, d: dict) -> None:
     """ Convert cls and subcls to dict """
     for key, value in cls.__dict__.items():
-        if isinstance(value, object_prop_reflection.RuntimeClass):
+        if isinstance(value, tf_reflect_object_properties.RuntimeClass):
             d[key] = {}
             convert_cls2dict(value, d[key])
         else:
@@ -46,7 +45,7 @@ def delete_typeof_none(cls) -> None:
     removable_attrs = []
 
     for key, value in cls.__dict__.items():
-        if isinstance(value, object_prop_reflection.RuntimeClass):
+        if isinstance(value, tf_reflect_object_properties.RuntimeClass):
             delete_typeof_none(value)
         elif value is None:
             removable_attrs.append((cls, key))
@@ -64,7 +63,7 @@ def delete_id_data(cls) -> None:
     for key, value in cls.__dict__.items():
         if key == 'id_data':
             removable_attrs.append((cls, key))
-        if isinstance(value, object_prop_reflection.RuntimeClass):
+        if isinstance(value, tf_reflect_object_properties.RuntimeClass):
             delete_id_data(value)
         else:
             pass
@@ -85,7 +84,7 @@ def save(objs: List[bpy.types.Object]) -> cgt_json.JsonData:
         if obj.get('cgt_id') != '11b1fb41-1349-4465-b3aa-78db80e8c761':
             continue
 
-        props = get_props.get_properties_from_object(obj)
+        props = tf_get_object_properties.get_properties_from_object(obj)
 
         if props.target.target is None:
             continue
@@ -156,7 +155,7 @@ def save(objs: List[bpy.types.Object]) -> cgt_json.JsonData:
         convert_cls2dict(props, cls_dict)
 
         # get constraints
-        constraints = [(c.type, get_props.get_constraint_props(c)) for c in obj.constraints]
+        constraints = [(c.type, tf_get_object_properties.get_constraint_props(c)) for c in obj.constraints]
 
         # id_name contains 'object name' and 'object type', get in first lvl depth for easier loading
         properties[id_name[0]] = {}
