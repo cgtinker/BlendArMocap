@@ -26,14 +26,20 @@ class OT_Freemocap_Quickload_Operator(bpy.types.Operator):
             self.user.modal_active = False
             return {'FINISHED'}
 
-        # init loader
+        # load data
         self.user.modal_active = True
-        self.session_loader = fm_session_loader.FreemocapLoader(self.user.freemocap_session_path)
+        if self.user.load_raw and self.user.quickload:
+            loader = fm_session_loader.FreemocapLoader(
+                self.user.freemocap_session_path, modal_operation=False, raw=True
+            )
+            loader.quickload_raw()
 
-        if self.user.load_raw:
-            self.session_loader.quickload_raw()
-        else:
-            self.session_loader.quickload_processed()
+        elif self.user.quickload:
+            loader = fm_session_loader.FreemocapLoader(
+                self.user.freemocap_session_path, modal_operation=False, raw=False
+            )
+            loader.quickload_processed()
+
         self.user.modal_active = False
         return {'FINISHED'}
 
@@ -60,7 +66,8 @@ class WM_Load_Freemocap_Operator(bpy.types.Operator):
             return {'FINISHED'}
 
         # init loader
-        self.session_loader = fm_session_loader.FreemocapLoader(self.user.freemocap_session_path)
+        self.session_loader = fm_session_loader.FreemocapLoader(
+            self.user.freemocap_session_path, modal_operation=True)
         self.user.modal_active = True
 
         # quickload raw data

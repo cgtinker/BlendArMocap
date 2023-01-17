@@ -1,6 +1,5 @@
 import bpy
 from .. import cgt_naming
-from typing import Any
 
 
 class DefaultPanel:

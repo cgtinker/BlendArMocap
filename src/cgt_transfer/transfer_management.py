@@ -4,7 +4,7 @@ import logging
 from typing import Optional, Union, List, Dict
 
 from . import get_props, set_props
-from ..cgt_bpy import cgt_drivers, cgt_bpy_utils, cgt_collection
+from ..cgt_core.cgt_bpy import cgt_drivers, cgt_bpy_utils, cgt_collection
 
 from collections import namedtuple
 

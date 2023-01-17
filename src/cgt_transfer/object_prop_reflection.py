@@ -2,7 +2,6 @@ import typing
 from typing import Dict
 from . import object_properties
 import bpy
-import logging
 
 
 class RuntimeClass:

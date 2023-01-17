@@ -1,8 +1,13 @@
 import bpy
 
-# target names + .R // .L
+
 RIGNAME = 'rig'
 
+################################################################
+###################### TARGET-BONES ############################
+################################################################
+
+# expecting .L / .R suffixes for left and right hand
 refs = {
     "thumb_cmc":         "thumb.01",
     "thumb_mcp":         "thumb.02",
@@ -26,6 +31,10 @@ refs = {
 
     "wrist":             "hand_ik",
 }
+
+##################################################################
+####################### MAPPING VALUES ###########################
+##################################################################
 
 # x angles overcast when the hand is rotated, limits help to mitigate the issue
 constraint_x_limits = [
@@ -53,7 +62,7 @@ x_outputs = [
     [-.80, 1.32], [-.50, 1.58], [-.30, 1.94],  # pinky
 ]
 
-# z angles determine the spreading range and only effected MCPs
+# z angles determine the spreading range and only effect MCPs
 z_inputs = [
     [0.349, 1.047],  # thumb
     [-0.43, 1.047],  # index
@@ -70,6 +79,10 @@ z_outputs = [
     [0.3490, -0.523],  # pinky
 ]
 
+
+############################################################
+###################### TRANSFER ############################
+############################################################
 
 def set_hand_properties(rig: bpy.types.Armature, prefix: str = '.L'):
     def set_remap_properties(remap_prop, from_min, from_max, to_min, to_max, factor, offset):
@@ -159,6 +172,12 @@ def set_hand_properties(rig: bpy.types.Armature, prefix: str = '.L'):
 
 def main():
     rig = bpy.data.objects.get(RIGNAME, None)
+    if rig is None:
+        objs = bpy.context.selected_objects
+        assert len(objs) > 0
+        assert objs[0].type == 'ARMATURE'
+        rig = objs[0]
+
     assert rig is not None
 
     set_hand_properties(rig, '.L')

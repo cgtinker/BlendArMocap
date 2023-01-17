@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import logging
 from typing import List
 
 import bpy
 
-from ..cgt_bpy import cgt_drivers, cgt_bpy_utils
+from ..cgt_core.cgt_bpy import cgt_drivers, cgt_bpy_utils
 from . import object_prop_reflection
 
 

@@ -21,7 +21,7 @@ Copyright (C) Denys Hsu, cgtinker.com, hello@cgtinker.com
 
 from .cgt_core.cgt_interface import cgt_core_registration
 from .cgt_mediapipe import cgt_mp_registration
-from .cgt_core.cgt_transfer import cgt_transfer_registration
+from .cgt_transfer import cgt_transfer_registration
 from .cgt_freemocap import fm_registration
 
 

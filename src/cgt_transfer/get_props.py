@@ -4,7 +4,7 @@ import logging
 from typing import Tuple, Any, Optional, List
 import bpy
 import numpy as np
-from ..cgt_utils import cgt_math
+from ..cgt_core.cgt_utils import cgt_math
 from . import (
     object_prop_reflection,
     object_properties,
@@ -72,7 +72,8 @@ def get_value_by_distance_properties(cgt_props: object_properties.OBJECT_PGT_CGT
     return cgt_props
 
 
-def get_remapping_properties(cgt_props: object_properties.OBJECT_PGT_CGT_TransferProperties) -> List[List[object_properties.OBJECT_PGT_CGT_ValueMapping]]:
+def get_remapping_properties(cgt_props: object_properties.OBJECT_PGT_CGT_TransferProperties) -> List[List[
+    object_properties.OBJECT_PGT_CGT_ValueMapping]]:
     """ Validates, updates and returns remapping properties. """
     loc_xyz = [cgt_props.loc_details, [cgt_props.use_loc_x, cgt_props.use_loc_y, cgt_props.use_loc_z]]
     rot_xyz = [cgt_props.rot_details, [cgt_props.use_rot_x, cgt_props.use_rot_y, cgt_props.use_rot_z]]

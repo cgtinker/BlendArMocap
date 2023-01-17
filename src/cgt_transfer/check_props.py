@@ -6,7 +6,8 @@ from . import object_properties
 import logging
 
 
-def check_value_mapping_generic_props(props: List[object_properties.OBJECT_PGT_CGT_ValueMapping]) -> List[object_properties.OBJECT_PGT_CGT_ValueMapping]:
+def check_value_mapping_generic_props(props: List[object_properties.OBJECT_PGT_CGT_ValueMapping]) -> List[
+    object_properties.OBJECT_PGT_CGT_ValueMapping]:
     """ Copy values from first container and set axis explicit. """
     main_prop = props[0]
     if main_prop.remap_default == 'DEFAULT':
@@ -26,7 +27,8 @@ def check_value_mapping_generic_props(props: List[object_properties.OBJECT_PGT_C
     return props
 
 
-def check_value_mapping_detail_props(props: List[object_properties.OBJECT_PGT_CGT_ValueMapping]) -> List[object_properties.OBJECT_PGT_CGT_ValueMapping]:
+def check_value_mapping_detail_props(props: List[object_properties.OBJECT_PGT_CGT_ValueMapping]) -> List[
+    object_properties.OBJECT_PGT_CGT_ValueMapping]:
     """ Sets explicit axis names and checks for overlaps. """
     axis_d = {0: 'X', 1: 'Y', 2: 'Z'}
 

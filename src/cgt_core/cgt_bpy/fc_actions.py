@@ -4,8 +4,8 @@ from typing import List
 
 class FCurveHelper:
     def __init__(self):
-        self.location, self.scale, self.rotation_euler = [None, None, None], [None, None, None], [None, None, None]
-        self.rotation_quaternion = [None, None, None, None]
+        self.location, self.scale, self.rotation_euler = [[None]*3]*3
+        self.rotation_quaternion = [None]*4
 
     def get_f_curves(self, data_path) -> List[bpy.types.FCurve]:
         if not hasattr(self, data_path):
@@ -25,7 +25,9 @@ class FCurveHelper:
             frames: flat list of int
             args: flat lists of float """
         f_curves = self.get_f_curves(data_path)
+
         for samples, fc in zip(args, f_curves):
+            fc.keyframe_points.clear()
             fc.keyframe_points.add(count=len(frames))
             fc.keyframe_points.foreach_set("co", [x for co in zip(frames, samples) for x in co])
             fc.update()
@@ -45,7 +47,7 @@ class FCurveHelper:
         return s
 
 
-def create_actions(objects):
+def create_actions(objects, overwrite: bool = True):
     actions = []
 
     # get or create actions for objs
@@ -53,10 +55,15 @@ def create_actions(objects):
         action_name = ob.name
         ad = ob.animation_data_create()
 
-        # remove old action from objects animation data
+        # remove old action from objects animation data (default)
         action_data = bpy.data.actions
         if action_name in action_data:
-            action_data.remove(action_data[action_name])
+            if overwrite is True:
+                action_data.remove(action_data[action_name])
+            else:
+                actions.append(action_data[action_name])
+                ad.action = action_data[action_name]
+                continue
 
         # create new action
         new_action = bpy.data.actions.new(action_name)

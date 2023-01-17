@@ -33,19 +33,16 @@ bl_info = {
 def reload_modules():
     from .src import cgt_imports
     cgt_imports.manage_imports()
-
-
-if "bl_info" in locals():
-    reload_modules()
-
-from .src import cgt_registration
+    print("reload")
 
 
 def register():
+    from .src import cgt_registration
     cgt_registration.register()
 
 
 def unregister():
+    from .src import cgt_registration
     cgt_registration.unregister()
 
 

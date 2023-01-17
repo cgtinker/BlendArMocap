@@ -4,7 +4,7 @@ import bpy
 import logging
 from . import get_props
 from . import object_prop_reflection
-from ..cgt_utils import cgt_json
+from ..cgt_core.cgt_utils import cgt_json
 
 armature_name = None
 
