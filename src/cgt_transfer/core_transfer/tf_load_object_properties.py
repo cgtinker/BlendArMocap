@@ -73,7 +73,7 @@ def apply_props2obj(props: dict, obj: Union[bpy.types.Object, bpy.types.Constrai
         else:
             try:
                 setattr(obj, key, value)
-            except AttributeError as err:
+            except (AttributeError, TypeError) as err:
                 logging.warning(err)
 
 
@@ -118,13 +118,9 @@ def load(objects: Any, path: str = None, target_armature: bpy.types.Object = Non
             obj = cgt_bpy_utils.add_empty(0.01, key)
 
         if cgt_object_prop.get_custom_property(obj, 'cgt_id') is None:
-            logging.debug(f'\nAdded obj {obj.name}')
             cgt_object_prop.set_custom_property(obj, 'cgt_id', key)
             cgt_collection.add_object_to_collection(d['collection'], obj)
 
         # apply data
-        logging.debug(f'\nApply props to {obj}')
         apply_props2obj(d['cgt_props'], obj.cgt_props, target_armature)
-
-        logging.debug(f'\nApply constraints to {obj}')
         apply_constraints(d['constraints'], obj, target_armature)

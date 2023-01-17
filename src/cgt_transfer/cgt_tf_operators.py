@@ -235,14 +235,14 @@ class OT_CGT_SaveObjectProperties(bpy.types.Operator):
             self.report({'ERROR'}, "Type name may not contain special characters.")
             return {'CANCELLED'}
 
-        path = Path(__file__).parent.parent / 'data'
+        path = Path(__file__).parent / 'data'
         files = [x for x in path.glob('**/*') if x.is_file()]
         if s in [(str(x.name)[:-5], str(x.name)[:-5], "") for x in files]:
             self.report({'ERROR'}, "Type name already exists.")
             return {'CANCELLED'}
 
         s += '.json'
-        path = Path(__file__).parent.parent / "data" / s
+        path = Path(__file__).parent / "data" / s
         json_data = tf_save_object_properties.save([ob for ob in bpy.data.objects if ob.get("cgt_id") is not None])
         json_data.save(str(path))
 
@@ -271,7 +271,7 @@ class OT_CGT_LoadObjectProperties(bpy.types.Operator):
             return {'CANCELLED'}
 
         config += '.json'
-        path = Path(__file__).parent.parent / "data" / config
+        path = Path(__file__).parent / "data" / config
 
         tf_load_object_properties.load(context.scene.objects, str(path), armature)
         self.report({'INFO'}, f"Loaded properties from {str(path)}.")
@@ -297,7 +297,7 @@ class OT_CGT_DeleteObjectProperties(bpy.types.Operator):
             return {'CANCELLED'}
 
         config += '.json'
-        path = Path(__file__).parent.parent / "data" / config
+        path = Path(__file__).parent / "data" / config
         path.unlink()
 
         user.delete_object_properties_bool = False

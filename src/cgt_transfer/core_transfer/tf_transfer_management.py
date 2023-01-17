@@ -29,28 +29,23 @@ def main(objects: List[bpy.types.Object]):
 
 def manage_object_transfer(obj: bpy.types.Object):
     """ Stores chain links in global list and applies drivers which are based on single objects. """
-    logging.debug(f"GET PROPS {obj.name}.")
     properties = tf_get_object_properties.get_properties_from_object(obj)
     target_obj, sub_target, target_type = tf_get_object_properties.get_target(properties.target)
 
     if target_type == 'ABORT':
-        logging.debug(f"ABORT {obj.name}.")
+        logging.warning(f"Target for {obj} not valid.")
         return
 
     if properties.driver_type == 'NONE':
-        logging.debug(f"NONE {obj.name}.")
         return
 
     elif properties.driver_type == 'REMAP':
-        logging.debug(f"REMAP {obj.name}.")
         remap_object_properties(obj, target_obj, sub_target, target_type, properties)
 
     elif properties.driver_type == 'CHAIN':
-        logging.debug(f"CHAIN {obj.name}.")
         chain_link_items.append(ChainLink(obj, properties.to_obj))
 
     elif properties.driver_type == 'REMAP_DIST':
-        logging.debug(f"DIST {obj.name}.")
         remap_by_object_distance(obj, target_obj, sub_target, target_type, properties)
 
 
@@ -145,7 +140,6 @@ def link_object_chain(chains_dict: Dict[bpy.types.Object, dict]):
             apply_chain_link(chain_link_dict[current_obj], current_obj, driver_target)
 
     for chain_obj in chains_dict.keys():
-        logging.debug(f"RECV CHAIN ELEMENT: {chain_obj.name}")
         # get props for chain start
         properties = tf_get_object_properties.get_properties_from_object(chain_obj)
         target_obj, sub_target, target_type = tf_get_object_properties.get_target(properties.target)

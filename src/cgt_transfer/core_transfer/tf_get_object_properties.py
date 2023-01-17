@@ -89,7 +89,7 @@ def get_remapping_properties(cgt_props: cgt_tf_object_properties.OBJECT_PGT_CGT_
 
 def get_distance(cur_props):
     """ Returns 'remap by' dist either from bones or the bone len... """
-    if cur_props.by_obj.target is None:
+    if cur_props.by_obj.target is None or cur_props.by_obj.target_bone in ["NONE", None]:
         return None
 
     armature = cur_props.by_obj.target

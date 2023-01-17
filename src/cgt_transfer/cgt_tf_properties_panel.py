@@ -5,7 +5,7 @@ import bpy
 class OBJECT_PT_BlendArMocapTransfer(bpy.types.Panel):
     # Transfer panel in object constraint space
     bl_label = "BlendArMocap"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HEADER_LAYOUT_EXPAND'}
     bl_idname = "OBJECT_PT_CGT_Transfer_Opts"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -31,7 +31,7 @@ class OBJECT_PT_BlendArMocapTransferTarget(bpy.types.Panel):
 
     bl_label = "Target"
     bl_parent_id = "OBJECT_PT_CGT_Transfer_Opts"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HEADER_LAYOUT_EXPAND'}
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
 
@@ -71,7 +71,7 @@ class OBJECT_PT_CGT_DriverProperties(bpy.types.Panel):
     bl_label = "Drivers"
     bl_parent_id = "OBJECT_PT_CGT_Transfer_Opts"
     bl_idname = "OBJECT_PT_CGT_DriverProperties"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HEADER_LAYOUT_EXPAND'}
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
 

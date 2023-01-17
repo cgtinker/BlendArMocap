@@ -195,6 +195,7 @@ class OBJECT_PGT_CGT_ValueMapping(bpy.types.PropertyGroup):
 
 class TransferPropertiesProto:
     # prototype for mapping
+    id_data: object
     active: bool
     driver_type: str
     use_loc_x: ValueMappingProto
