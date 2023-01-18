@@ -132,6 +132,6 @@ dmypy.json
 .pyre/
 /src/visualize/
 
-#/idea/
-#.idea/
+/idea/
+.idea/
 /src/cgt_tests/data/
