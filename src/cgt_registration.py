@@ -23,3 +23,4 @@ def register():
 def unregister():
     for module in modules:
         module.unregister()
+    

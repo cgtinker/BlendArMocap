@@ -40,7 +40,7 @@ class OT_CGT_Import_Transfer_Config(bpy.types.Operator):
 
         to_path = Path(__file__).parent / "data" / name
         shutil.copy(str(from_path), str(to_path))
-        logging.debug(f"Import Configuration from {self.filepath} to {str(to_path)}")
+        self.report({'INFO'}, f"Import Configuration from {self.filepath} to {str(to_path)}")
         return {'FINISHED'}
 
 
@@ -74,7 +74,7 @@ class OT_CGT_Export_Transfer_Config(bpy.types.Operator):
         to_path = Path(self.directory) / config
 
         shutil.copy(str(from_path), str(to_path))
-        logging.debug(f"Exported Configuration {str(from_path)} to {str(to_path)}")
+        self.report({'INFO'}, f"Exported Configuration {str(from_path)} to {str(to_path)}")
         return {'FINISHED'}
 
 

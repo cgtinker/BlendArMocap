@@ -22,6 +22,7 @@ class OT_UI_CGT_smooth_empties(bpy.types.Operator):
     def execute(self, context):
         objs = context.selected_objects
         if len(objs) == 0:
+            logging.error("No objects selected when pressing smooth empties button.")
             return {"CANCELED"}
 
         # safe current area, switching to graph editor area
@@ -93,6 +94,7 @@ class OT_CGT_RegenerateMetarig(bpy.types.Operator):
 
         bpy.ops.object.mode_set(mode='OBJECT')
         return {'FINISHED'}
+
 
 class OT_CGT_ObjectMinMax(bpy.types.Operator):
     bl_label = "Object MinMax-fCurve"
@@ -268,6 +270,7 @@ class OT_CGT_LoadObjectProperties(bpy.types.Operator):
         armature = user.selected_rig
 
         if config in ['None', None] or armature is None:
+            self.report({'ERROR'}, f"No configuration file or no armature selected.")
             return {'CANCELLED'}
 
         config += '.json'
@@ -319,6 +322,7 @@ class OT_CGT_ApplyObjectProperties(bpy.types.Operator):
         user = context.scene.cgtinker_transfer # noqa
         col = user.selected_driver_collection
         if col is None:
+            self.report({'ERROR'}, f"No driver collection selected.")
             return {'CANCELLED'}
 
         bpy.ops.button.cgt_object_load_properties() # noqa

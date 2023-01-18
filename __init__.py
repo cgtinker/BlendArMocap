@@ -48,5 +48,5 @@ def unregister():
 if __name__ == '__main__':
     from src.cgt_core.cgt_utils import cgt_logging
 
-    cgt_logging.init('')
+    # cgt_logging.init('')
     register()

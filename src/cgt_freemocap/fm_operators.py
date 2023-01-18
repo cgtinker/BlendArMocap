@@ -24,6 +24,7 @@ class OT_Freemocap_Quickload_Operator(bpy.types.Operator):
         # validate session directory
         if not fm_utils.is_valid_session_directory(self.user.freemocap_session_path):
             self.user.modal_active = False
+            self.report({'ERROR'}, f"Session directory not valid. {self.user.freemocap_session_path}")
             return {'FINISHED'}
 
         # load data
@@ -41,6 +42,7 @@ class OT_Freemocap_Quickload_Operator(bpy.types.Operator):
             loader.quickload_processed()
 
         self.user.modal_active = False
+        self.report({'INFO'}, "Finished importing")
         return {'FINISHED'}
 
 
@@ -63,6 +65,7 @@ class WM_Load_Freemocap_Operator(bpy.types.Operator):
         # validate session directory
         if not fm_utils.is_valid_session_directory(self.user.freemocap_session_path):
             self.user.modal_active = False
+            self.report({'ERROR'}, f"Session directory not valid. {self.user.freemocap_session_path}")
             return {'FINISHED'}
 
         # init loader
@@ -70,17 +73,11 @@ class WM_Load_Freemocap_Operator(bpy.types.Operator):
             self.user.freemocap_session_path, modal_operation=True)
         self.user.modal_active = True
 
-        # quickload raw data
-        if self.user.load_raw:
-            self.session_loader.quickload_raw()
-            self.user.modal_active = False
-            return {'FINISHED'}
-
         # init modal
         wm = context.window_manager
         self._timer = wm.event_timer_add(0.1, window=context.window)
         context.window_manager.modal_handler_add(self)
-        logging.debug(f'Start running modal operator {self.__class__.__name__}')
+        self.report({'INFO'}, f'Start running modal operator {self.__class__.__name__}')
         return {'RUNNING_MODAL'}
 
     @classmethod
@@ -144,6 +141,7 @@ class WM_FMC_load_synchronized_videos(bpy.types.Operator):
 
         addon_utils.enable("io_import_images_as_planes")
         if not fm_utils.is_valid_session_directory(str(freemocap_session_path)):
+            self.report({'ERROR'}, f"Session directory not valid. {self.user.freemocap_session_path}")
             return {'CANCELLED'}
 
         try:
@@ -179,9 +177,9 @@ class WM_FMC_load_synchronized_videos(bpy.types.Operator):
                 # create a light
                 # bpy.ops.object.light_add(type='POINT', radius=1, align='WORLD')
         except Exception as e:
-            logging.error(f'Failed to load videos to Blender scene. {e}')
+            self.report({'ERROR'}, f'Failed to load videos to Blender scene. {e}')
             return {'CANCELLED'}
-
+        self.report({'INFO'}, f"Imported session videos as planes.")
         return {'FINISHED'}
 
 

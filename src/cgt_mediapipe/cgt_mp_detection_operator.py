@@ -98,7 +98,7 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
         # don't activate if modal is running
         if self.user.modal_active is True:
             self.user.modal_active = False
-            logging.info("Stopped detection as modal has been active.")
+            self.report({'INFO'}, "Stopped detection.")
             return {'FINISHED'}
         else:
             self.user.modal_active = True
@@ -114,7 +114,7 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
         self._timer = wm.event_timer_add(0.1, window=context.window)
         context.window_manager.modal_handler_add(self)
 
-        logging.info(f"RUNNING {self.user.enum_detection_type} DETECTION AS MODAL")
+        self.report({'INFO'}, f"Running {self.user.enum_detection_type} as modal.")
         return {'RUNNING_MODAL'}
 
     @classmethod
