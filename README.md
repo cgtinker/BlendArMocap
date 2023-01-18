@@ -228,7 +228,10 @@ Run Blenders internal smooth f-Curves for selected objects.
 **Log Object Info**<br>
 Log min, max values and infos about the selected object to the `info panel`.
 
+## I/O Transfer Configuration (Topbar Import/ Export)
 
+Transfer configurations can be imported and exported. 
+If you create a new configuration and want to share it with the community let me know via hello@cgtinker.com =)
 
 
 # License
