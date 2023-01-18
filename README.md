@@ -1,13 +1,11 @@
 # BlendArMocap <br>
 
-## Capabilities<br>
 
 - Detection of [Mediapipe](https://google.github.io/mediapipe/) detection results in stream or video
 - Import of [Freemocap](https://freemocap.org) mediapipe session data
 - Calculation of rotations for mediapipe data
 - Transfer detected data and generate new transfer configurations
   - currently, officially supports transfer to generated [rifigy rigs](https://docs.blender.org/manual/en/latest/addons/rigging/rigify/index.html)
-  - contributions are welcome write me at hello@cgtinker.com
 
 
 # Mediapipe Detection
