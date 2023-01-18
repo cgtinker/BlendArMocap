@@ -49,8 +49,8 @@ def add_custom_log(name: str = ''):
 
 
 def init(name: str = ''):
-    add_custom_log(name)
-    # add_console_log(name)
+    # add_custom_log(name)
+    add_console_log(name)
 
 
 def main():
