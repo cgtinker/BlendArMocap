@@ -28,8 +28,10 @@ class FCurveHelper:
         f_curves = self.get_f_curves(data_path)
 
         for samples, fc in zip(args, f_curves):
-            # print(len(fc.keyframe_points), len(frames))
-            fc.keyframe_points.clear()
+            # new feature
+            if hasattr(fc.keyframe_points, 'clear'):
+                fc.keyframe_points.clear()
+
             fc.keyframe_points.add(count=len(frames))
             fc.keyframe_points.foreach_set("co", [x for co in zip(frames, samples) for x in co])
             fc.update()
