@@ -26,7 +26,7 @@ class RuntimeClass:
         s.append("\n}")
         return "".join(s)
 
-
+# region DEPRECIATED
 # DEPRECIATED - dict to reflect registered property groups in Blender (2.9.3)
 cls_type_dict = {
     "OBJECT_PGT_CGT_TransferTarget":     RuntimeClass(),
@@ -79,6 +79,7 @@ def copy_ptr_prop_cls(class_name_dict: Dict[str, RuntimeClass]) -> Dict[str, Run
                     # default val (int / float etc)
                     setattr(class_name_dict[cls_name], hint, type(default_val))
     return class_name_dict
+# endregion
 
 
 def get_runtime_object_attributes(cls_template, obj, cls_out):

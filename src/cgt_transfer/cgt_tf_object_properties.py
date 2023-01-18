@@ -1,6 +1,12 @@
 import bpy
 import logging
 
+"""
+While it's possible to reflect the registered classes in `Blender 2.93`  
+using core_transfer.tf_reflect_object_properties it doesn't seem to work in `Blender 3.0+`.
+That's proto classes for every Property Group are required to gather values from objects.
+"""
+
 
 # region pools and dynamic enums
 def pool_transfer_target(self, obj):

@@ -4,7 +4,7 @@ from typing import List, Any
 import numpy as np
 from ..cgt_core.cgt_core_chains import HolisticNodeChainGroup
 from ..cgt_core.cgt_bpy import cgt_fc_actions, cgt_bpy_utils
-from ..cgt_core.cgt_calculators_nodes import calc_face_rot, calc_pose_rot, calc_hand_rot
+from ..cgt_core.cgt_calculators_nodes import mp_calc_face_rot, mp_calc_pose_rot, mp_calc_hand_rot
 from ..cgt_core.cgt_utils.cgt_timers import timeit
 from ..cgt_core.cgt_utils.cgt_json import JsonData
 from ..cgt_core.cgt_output_nodes import mp_hand_out, mp_face_out, mp_pose_out
@@ -98,9 +98,9 @@ class FreemocapLoader:
         """ Quickload data and calculate rotation data. Data may be applied to rigs. """
         logging.info("Started quickload process.")
         # deploy calculators
-        calc_face = calc_face_rot.FaceRotationCalculator()
-        calc_pose = calc_pose_rot.PoseRotationCalculator()
-        calc_hand = calc_hand_rot.HandRotationCalculator()
+        calc_face = mp_calc_face_rot.FaceRotationCalculator()
+        calc_pose = mp_calc_pose_rot.PoseRotationCalculator()
+        calc_hand = mp_calc_hand_rot.HandRotationCalculator()
 
         # prepare tracking data
         frames = list(range(self.number_of_frames))

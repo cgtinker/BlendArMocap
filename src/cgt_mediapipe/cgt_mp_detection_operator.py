@@ -25,7 +25,7 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
         input_node = None
         chain_template = None
 
-        print(self.user.enum_detection_type)
+        logging.debug(f"{self.user.enum_detection_type}")
         if self.user.enum_detection_type == 'HAND':
             input_node = mp_hand_detector.HandDetector(
                 stream, self.user.hand_model_complexity, self.user.min_detection_confidence

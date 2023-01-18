@@ -1,8 +1,8 @@
 from .json_parser import JsonParser
 from src.cgt_core.cgt_patterns import observer_pattern
-from src.cgt_core.cgt_calculators_nodes import calc_face_rot as face_processing
-from src.cgt_core.cgt_calculators_nodes import calc_hand_rot as hand_processing
-from src.cgt_core.cgt_calculators_nodes import calc_pose_rot as pose_processing
+from src.cgt_core.cgt_calculators_nodes import mp_calc_face_rot as face_processing
+from src.cgt_core.cgt_calculators_nodes import mp_calc_hand_rot as hand_processing
+from src.cgt_core.cgt_calculators_nodes import mp_calc_pose_rot as pose_processing
 from src.cgt_core.cgt_patterns import cgt_nodes
 
 
