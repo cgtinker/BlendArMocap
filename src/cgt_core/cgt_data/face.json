@@ -1,0 +1,27 @@
+{
+    "face":{
+        "0":"head",
+        "1":"chin",
+        "2":"mouth",
+        "3":"mouth_corners",
+        "4":"left_eye",
+        "5":"right_eye",
+        "6":"right_eyebrow",
+        "7":"left_eyebrow",
+        "8":"right_eye_t",
+        "9":"right_eye_b",
+        "10":"left_eye_t",
+        "11":"left_eye_b",
+        "12":"mouth_t",
+        "13":"mouth_b",
+        "14":"mouth_r",
+        "15":"mouth_l",
+        "16":"eyebrow_in_l",
+        "17":"eyebrow_mid_l",
+        "18":"eyebrow_out_l",
+        "19":"eyebrow_in_r",
+        "20":"eyebrow_mid_r",
+        "21":"eyebrow_out_r"
+    },
+    "default":"face_vertex"
+}

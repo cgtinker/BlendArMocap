@@ -10,10 +10,6 @@ __pycache__/
 # C extensions
 *.so
 
-# Default ignored files
-shelf/
-/workspace.xml
-
 # Distribution / packaging
 .Python
 build/
@@ -136,5 +132,6 @@ dmypy.json
 .pyre/
 /src/visualize/
 
-/.idea/
+/idea/
 .idea/
+/src/cgt_tests/data/
