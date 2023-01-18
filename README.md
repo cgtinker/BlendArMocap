@@ -20,8 +20,9 @@ Internet connection is required to install the required packages. It's recommend
 Blender may has to be restarted during the installation process. <br>
 
 **Apple User**<br>
-Blender has to be started using the terminal when on `mac os` as blenders plist doesn't contain a camera permissions request. 
-To access the webcam feed blender usually has to be started via the terminal when on mac os.<br>
+Blender has to be started using the terminal when on mac os as blenders plist doesn't contain a camera permissions request. 
+To access the webcam feed blender usually has to be started via the terminal when on mac os.
+Silicone mac users may need to download the intel version of blender.
 
 
 ### Detection<br>
