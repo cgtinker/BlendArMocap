@@ -35,8 +35,7 @@ def get_python_exe():
         py_exec = next(py_path.glob("python*"))  # first file that starts with "python" in "bin" dir
         executable = str(py_exec)
 
-    print(f"App Version: {bpy.app.version}.")
-    print(f"Python Executable: {executable}.")
+    print(f"{bpy.app.version} Python Executable: {executable}.")
     return executable
 
 
@@ -296,18 +295,19 @@ def is_installed(dependency: Dependency) -> bool:
 
 if sys.platform == 'darwin' and platform.processor() == 'arm':
     required_dependencies = [
+        Dependency(module="protobuf==3.20.2", name="google.protobuf", pkg="protobuf", args=None),
         Dependency(module="mediapipe-silicon", name="mediapipe", pkg="mediapipe", args=None)
     ]
 
 elif sys.platform == 'win32':
     required_dependencies = [
-        Dependency(module="protobuf==3.20.3", name="google.protobuf", pkg="protobuf", args=None),
+        Dependency(module="protobuf==3.20.2", name="google.protobuf", pkg="protobuf", args=None),
         Dependency(module="mediapipe==0.9.0.1", name="mediapipe", pkg="mediapipe", args=None)
     ]
 
 elif sys.platform == 'linux':
     required_dependencies = [
-        Dependency(module="protobuf==3.20.3", name="google.protobuf", pkg="protobuf", args=None),
+        Dependency(module="protobuf==3.20.2", name="google.protobuf", pkg="protobuf", args=None),
         Dependency(module="mediapipe==0.9.0.1", name="mediapipe", pkg="mediapipe", args=None)
     ]
 
@@ -316,7 +316,7 @@ elif sys.platform == 'darwin':
     # Manual setup of mediapipes dependency tree as the package deps may contains internal conflicts.
     required_dependencies = [
         Dependency(module="absl_py", name="absl", pkg="absl-py", args=None),
-        Dependency(module="attrs>=19.1.0", name="attrs", pkg="attrs", args=None),
+        Dependency(module="attrs==22.2.0", name="attrs", pkg="attrs", args=None),
 
         # matplotlib deps
         # Numpy is preinstalled in Blender (should not be overwritten)
@@ -333,7 +333,7 @@ elif sys.platform == 'darwin':
         # mediapipe deps
         Dependency(module="matplotlib", name="matplotlib", pkg="matplotlib", args=["--no-deps"]),
         Dependency(module="opencv-contrib-python==4.5.5.64", name="cv2", pkg="opencv_contrib_python", args=None),
-        Dependency(module="protobuf==3.19.0", name="google.protobuf", pkg="protobuf", args=None),
+        Dependency(module="protobuf==3.20.2", name="google.protobuf", pkg="protobuf", args=None),
         Dependency(module="mediapipe==0.8.10", name="mediapipe", pkg="mediapipe", args=["--no-deps"]),
     ]
 
