@@ -17,7 +17,7 @@ Calculate rotation data based on the detection results to drive rigs.
 ### Setup Instructions<br>
 To run mediapipe, you need to install the required dependencies [_opencv_](https://opencv.org) and [_mediapipe_](https://google.github.io/mediapipe/) via the add-ons preferences. 
 Internet connection is required to install the required packages. It's recommended to disable VPN's during the installation processes. 
-Blender may has to be restarted during the installation process. <br>
+Blender may to started with elevated privileges during the installation process. <br>
 
 **Apple User**<br>
 Blender has to be started using the terminal if you plan to use the webcam on mac os as blenders plist doesn't contain a camera permissions request. 
@@ -65,8 +65,7 @@ To finish the recording press 'Q' or the "Stop Detection" button.
 
 ### Starting Blender with elevated permissions<br>
 
-In some niche cases it might be required to run blender as admin b.e. to install the add-ons external dependencies to run mediapipe.
-It shouldn't be required anymore, but if so, here how to do so:
+Installing dependencies may requires elevated privileges.
 
 **Windows**<br>
 Right-click the blender application and choose: "Run as administrator"<br>

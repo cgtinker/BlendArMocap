@@ -35,23 +35,28 @@ def get_python_exe():
         py_exec = next(py_path.glob("python*"))  # first file that starts with "python" in "bin" dir
         executable = str(py_exec)
 
-    logging.info(f"App Version: {bpy.app.version}.")
-    logging.info(f"Python Executable: {executable}.")
+    print(f"App Version: {bpy.app.version}.")
+    print(f"Python Executable: {executable}.")
     return executable
 
 
 def get_site_packages_path():
     """ Get path of blender internal site packages. """
     # get path to site packages using site
-    if len(site.getsitepackages()) >= 1:
-        return site.getsitepackages()[0]
+    site_package_path = site.getsitepackages()
+    if isinstance(site_package_path, str):
+        if Path(site_package_path).is_dir():
+            return site_package_path
+    elif isinstance(site_package_path, list):
+        if len(site_package_path) >= 1 and (Path(site_package_path[0]).is_dir()):
+            return site.getsitepackages()[0]
 
     # recv search for site packages
     if bpy.app.version >= (3, 0, 0):
         python_directory = Path(bpy.utils.system_resource('PYTHON'))
-        site_packages = [path for path in python_directory.rglob('site-packages')]
-        if len(site_packages) >= 1:
-            return site_packages[0]
+        site_package_path = [path for path in python_directory.rglob('site-packages')]
+        if len(site_package_path) >= 1:
+            return str(site_package_path[0])
 
     # return script path and hope for the best
     return bpy.utils.script_paths()
@@ -72,6 +77,7 @@ def run_command(*args: str, module: str) -> bool:
     """ Run command. Return True on successful execution. """
     cmds = [cmd for cmd in args if cmd is not None]
     cmd = [python_binary, "-m", module, *cmds]
+    print(*cmd, sep=' ')
     # environ_copy = clear_user_site()
     return subprocess.call(cmd) == 0  # , env=environ_copy) == 0
 
@@ -289,14 +295,24 @@ def is_installed(dependency: Dependency) -> bool:
 
 
 if sys.platform == 'darwin' and platform.processor() == 'arm':
-    # to be tested
     required_dependencies = [
-        Dependency(module="opencv-contrib-python==4.6.0.66", name="cv2", pkg="opencv_contrib_python", args=None),
-        Dependency(module="protobuf==3.20.3", name="google.protobuf", pkg="protobuf", args=None),
         Dependency(module="mediapipe-silicon", name="mediapipe", pkg="mediapipe", args=None)
     ]
 
-else:
+elif sys.platform == 'win32':
+    required_dependencies = [
+        Dependency(module="protobuf==3.20.3", name="google.protobuf", pkg="protobuf", args=None),
+        Dependency(module="mediapipe==0.9.0.1", name="mediapipe", pkg="mediapipe", args=None)
+    ]
+
+elif sys.platform == 'linux':
+    required_dependencies = [
+        Dependency(module="protobuf==3.20.3", name="google.protobuf", pkg="protobuf", args=None),
+        Dependency(module="mediapipe==0.9.0.1", name="mediapipe", pkg="mediapipe", args=None)
+    ]
+
+# legacy mac
+elif sys.platform == 'darwin':
     # Manual setup of mediapipes dependency tree as the package deps may contains internal conflicts.
     required_dependencies = [
         Dependency(module="absl_py", name="absl", pkg="absl-py", args=None),

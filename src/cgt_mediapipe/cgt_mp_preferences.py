@@ -70,9 +70,6 @@ def draw_dependencies(layout):
     # dependency box
     dependency_box = layout.box()
     dependency_box.label(text="Mediapipe Dependencies")
-    dependency_box.row().operator(PREFERENCES_OT_CGT_install_dependencies_button.bl_idname, icon="CONSOLE")
-    dependency_box.row().operator(PREFERENCES_OT_CGT_uninstall_dependencies_button.bl_idname, icon="ERROR")
-    return
 
     def draw_dependency(dependency, dependency_box):
         """ Draws package name, version, path and if a dependency has been installed. """
@@ -117,8 +114,8 @@ def draw_dependencies(layout):
     dependency_box.row().separator()
     dependency_box.row().label(text="Make sure to have elevated privileges.")
     # install dependencies button
-    dependency_box.row().operator(PREFERENCES_OT_CGT_install_dependencies_button.bl_idname)
-    dependency_box.row().operator(PREFERENCES_OT_CGT_uninstall_dependencies_button.bl_idname)
+    dependency_box.row().operator(PREFERENCES_OT_CGT_install_dependencies_button.bl_idname, icon="CONSOLE")
+    dependency_box.row().operator(PREFERENCES_OT_CGT_uninstall_dependencies_button.bl_idname, icon="ERROR")
 
 
 def draw_camera_settings(context, layout):
