@@ -1,5 +1,6 @@
 import bpy
 from typing import List
+from collections import namedtuple
 
 
 class FCurveHelper:
@@ -28,10 +29,8 @@ class FCurveHelper:
         f_curves = self.get_f_curves(data_path)
 
         for samples, fc in zip(args, f_curves):
-            # new feature
             if hasattr(fc.keyframe_points, 'clear'):
                 fc.keyframe_points.clear()
-
             fc.keyframe_points.add(count=len(frames))
             fc.keyframe_points.foreach_set("co", [x for co in zip(frames, samples) for x in co])
             fc.update()
@@ -81,8 +80,11 @@ def create_actions(objects, overwrite: bool = True):
         # add existing data_paths to helper obj
         helper = FCurveHelper()
         offset, last = 0, None
+
+        fc_data_paths = set()
         for i, fc in action.fcurves.items():
             if fc.group.name != last:
+                fc_data_paths.add(fc.group.name)
                 last = fc.group.name
                 offset = i
             m_data_path = getattr(helper, fc.group.name)
@@ -90,6 +92,9 @@ def create_actions(objects, overwrite: bool = True):
 
         # add new fcurve
         for data_path, indexes in [('location', 3), ('rotation_euler', 3), ('scale', 3), ('rotation_quaternion', 4)]:
+            if data_path in fc_data_paths:
+                continue
+
             for i in range(0, indexes):
                 try:
                     fc = action.fcurves.new(
@@ -101,6 +106,7 @@ def create_actions(objects, overwrite: bool = True):
                     m_data_path[i] = fc
                 except RuntimeError:
                     pass
+
         fc_helpers.append(helper)
     return fc_helpers
 
