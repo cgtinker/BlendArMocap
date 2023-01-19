@@ -33,7 +33,6 @@ def manage_object_transfer(obj: bpy.types.Object):
     target_obj, sub_target, target_type = tf_get_object_properties.get_target(properties.target)
 
     if target_type == 'ABORT':
-        logging.warning(f"Target for {obj} not valid.")
         return
 
     if properties.driver_type == 'NONE':

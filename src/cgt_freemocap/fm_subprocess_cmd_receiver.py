@@ -10,7 +10,7 @@ class LoadFreemocapSession:
     user = freemocap_session_path = timeout = processing_manager = None
     log_step = 25
 
-    def __init__(self, session_path: str, timeout: int = None, load_raw: bool = False):
+    def __init__(self, session_path: str, timeout: int = None):
         """ Loads Freemocap data from session directory.
             Attention: May not use the WM_Load_Freemocap_Operator.
             Modal operations deliver unexpected results when blender is in background. """
@@ -23,27 +23,31 @@ class LoadFreemocapSession:
         # set session path
         self.user = bpy.context.scene.cgtinker_freemocap
         self.user.freemocap_session_path = session_path
-        self.user.load_raw = load_raw
 
     def quickload(self):
-        loader = fm_session_loader.FreemocapLoader(self.user.freemocap_session_path, modal_operation=False)
-        loader.quickload_raw()
+        self.user.quickload = True
+        self.user.load_raw = True
+        bpy.ops.wm.cgt_quickload_freemocap_operator()
 
     def quickload_processed(self):
-        loader = fm_session_loader.FreemocapLoader(self.user.freemocap_session_path, modal_operation=False)
-        loader.quickload_processed()
+        self.user.quickload = True
+        self.user.load_raw = False
+        bpy.ops.wm.cgt_quickload_freemocap_operator()
 
     def run_modal(self):
         """ Imports the data, breaks if timeout is reached or import finished. """
-        loader = fm_session_loader.FreemocapLoader(self.user.freemocap_session_path, modal_operation=True)
+        self.user.load_raw = False
+        self.user.modal_active = False
+        self.user.quickload = False
+
+        print("Start running modal")
+        bpy.ops.wm.cgt_load_freemocap_operator()
+
         start = time.time()
-        while time.time() - start <= self.timeout:
-            if loader.frame % self.log_step == 0:
-                self.log_step *= 2
-                logging.info(f"{loader.frame}/{loader.number_of_frames}")
-            running = loader.update()
-            if not running:
-                break
+        while time.time() - start <= self.timeout and self.user.modal_active:
+            pass
+
+        self.user.modal_active = False
         logging.info("Stopped importing data.")
 
 
@@ -59,11 +63,11 @@ def import_freemocap_session(
 
     if not hasattr(bpy.context.scene, 'cgtinker_freemocap'):
         logging.error("Aborted, BlendArMocap Add-On might not be registered.")
-        return -1
+        return 0
 
     if not fm_utils.is_valid_session_directory(session_directory):
         logging.error("Aborted, session path not valid.")
-        return -1
+        return 0
 
     # import data
     importer = LoadFreemocapSession(session_directory, timeout)
