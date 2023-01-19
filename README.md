@@ -4,8 +4,8 @@
 - Detection of [Mediapipe](https://google.github.io/mediapipe/) detection results in stream or video
 - Import of [Freemocap](https://freemocap.org) mediapipe session data
 - Calculation of rotations for mediapipe data
-- Transfer detected data and generate new transfer configurations
-  - currently, officially supports transfer to generated [rifigy rigs](https://docs.blender.org/manual/en/latest/addons/rigging/rigify/index.html)
+- Transfer of detected data and generation of new transfer configurations
+  - currently, officially supports the transfer to generated [rifigy rigs](https://docs.blender.org/manual/en/latest/addons/rigging/rigify/index.html)
 
 
 # Mediapipe Detection
@@ -20,8 +20,7 @@ Internet connection is required to install the required packages. It's recommend
 Blender may has to be restarted during the installation process. <br>
 
 **Apple User**<br>
-Blender has to be started using the terminal when on mac os as blenders plist doesn't contain a camera permissions request. 
-To access the webcam feed blender usually has to be started via the terminal when on mac os.
+Blender has to be started using the terminal if you plan to use the webcam on mac os as blenders plist doesn't contain a camera permissions request. 
 Silicone mac users may need to download the intel version of blender.
 
 
@@ -96,7 +95,7 @@ There are several import options:<br>
 Import and process data while updating blender by default.<br>
 
 **Quickload Toggle** <br>
-Imports the data in one call, faster but blender gets frozen.
+Imports the data in one call - faster but blender gets frozen.
 
 **Raw Toggle** <br>
 Load raw data - only available if `Quickload` has been toggled.
@@ -109,16 +108,16 @@ Imports session videos as image planes.<br>
 # Transfer
 
 ### Concept
-Mapping instructions are getting stored as object properties and can be modified in the `objects constraints` panel.
+Mapping instructions are stored as object properties and can be modified in the `objects constraints` panel.
 _Only valid for objects containing a specific cgt_id property._
 
 ## Transfer Motion (3D View Panel)
 **Armature**<br>
-Select target armature (b.e. a generated rigify rig for the default config).<br>
+Select the target armature (b.e. a generated rigify rig for the default config).<br>
 
 **Driver Collection**<br>
 Select a collection containing driver objects - `cgt_Drivers` to transfer all.
-In some cases you might want to just transfer pose, hands or face - in this case select a specific collection to do so.<br>
+In some cases you might want to just transfer pose, hands or face results - in this case select a specific collection to do so.<br>
 
 **Transfer Type**<br>
 Select a transfer type - current support default type is:
@@ -128,7 +127,7 @@ Select a transfer type - current support default type is:
 Loads the currently selected type to the transfer objects.
 
 **Save Config**<br>
-Save a new config based on the objects in the cgt_Drivers collection.
+Save a new config based on the objects in the _cgt_Drivers_ collection.
 
 **Transfer Animation**<br>
 Load currently selected config for objects in selected collection and transfer the data.
@@ -137,8 +136,8 @@ Load currently selected config for objects in selected collection and transfer t
 
 The setup process is quite unique, so lets break it down in steps. 
 Objects which have been generated during detection contain an ID to display some additional properties in the `object properties panel`.
-Those can be modified to either change current mapping properties or even create completely new configs.<br>
-Of course, you can just modify an existing config to improve mapping results!
+Those can be modified to either change current mapping properties or even create completely new configurations!<br>
+Of course, you can just modify an existing config to improve mapping results ;)
 
 **Concept**<br>
 ````
@@ -149,19 +148,19 @@ target_object: copies values from driver_object via constraints
 
 ### Target
 Target bone or object which should be driven by constraints.
-- Target Type `[Armature, Mesh, Any]`: Apply constraints to target which target driver.
+- Target Type `[Armature, Mesh, Any]`: Apply constraints to target (copies constraints from this object)
 - Sub Target `[Object, Bone]`: Target may be a Bone.
 
 ### Drivers
-There are three core concepts to set up a mapping. In a nutshell `[Remap Drivers, IK Chain Driver, Remap by Distance Drivers]`.<br>
+There are three core concepts to set up drivers. In a nutshell `[Remap Drivers, IK Chain Driver, Remap by Distance Drivers]`.<br>
 
 
 **Remap Drivers**<br>
 Object values (especially rotations) may get remapped using a remap driver.
 To do so, navigate to `Value Mapping` and select the properties you want to remap - for example `rotation x, y, z`.<br>
-`From min, from max, to min, to max` is used to define slopes, similar to the `map range convertor node` in the shader editor.
-Therefore, input the min and max values from the selected object and the to min and max values you want to have as result.
-If necessary, you can also use the `factor` and `offset` however, slope can deliver better control one you got the hang of them.<br>
+`From min, from max, to min, to max` is used to define slopes, those are similar to the `map range convertor node` in the shader editor.
+Therefore, input the min and max values in radians from the selected object and the to min and max values in radians you want to have as result. (pi = 180°)
+If necessary, you can also use the `factor` and `offset` however, slopes can deliver better control once you got the hang of them.<br>
 You can do so for all axis separately if necessary, press the `+` icon to do so.<br>
 To get some information about the current select object, navigate to `Tools` and press the `Log Object Info` Button, you'll find min and max values from the object in the info panel.<br>
 
@@ -178,9 +177,9 @@ f(x) = (slope * property_value + offset) * factor + offset
 ``````
 
 **IK Chain Drivers**<br>
-The idea of ik chain drivers is to construct an ik chain in reverse order.<br>
-The end of the ik chain neither has a parent and nor gets remapped.
-The next chain link has the chain end as parent, and gets remapped by the bone length separating the targets.
+The idea of ik chain drivers basically is to construct an ik chain in reverse order.<br>
+The end of the ik chain neither has a parent and nor gets remapped - it's mainly a reference.
+The next chain link has the chain end as parent, and gets remapped by the bone length which separates itself from the parent.
 Repeat this till you are at the ik start. As Example:<br>
 `````
 objects: shoulder_obj -> elbow_obj -> hand_obj
@@ -199,9 +198,9 @@ Checkout the rigify rig implementation of the arms as example setup.<br>
 
 **Remap Drivers by Distance**<br>
 When using remap drivers by distance, we aren't using any of the object values.
-In this case, a distance between two objects gets used as driver value, which then gets remapped similar to a remap driver.
+In this case, the distance between two objects gets used as driver value, which then gets remapped similar to the remap driver.
 The single difference is that the offset gets multiplied by the remapping value, which allows to basically offset in % (which usually isn't wanted for rotations).
-However, this time it makes a lot of scene to remap the value by a bone of the target armature as we are working with position and not rotation data - this makes remapping the values a lot easier.
+However, this time it makes a lot of sense to remap the value by a bone of the target armature as we are working with position and not rotation data - this makes remapping the values a lot easier.
 Again, to get some information about the current select object, navigate to `Tools` and press the `Log Object Info` Button, you'll find min and max values from the object in the info panel.<br>
 ``````
 slope = (to_max * remapping_value - to_min * remapping_value) / (from_max - from_min)
@@ -214,7 +213,7 @@ f(x) = (slope * property_value + offset) * factor + offset * remapping_value
 Finally, add constraints to the object - the constraints will get applied to the target when transferring.
 As mentioned in the beginning, the target objects copies values from the driver using constraints.
 You may use any constraint to do so and modify the constraint properties to your likings to adjust transfer results.
-
+Wow, you got though - congratulations! Hope you'll make some awesome transfers! :)
 
 ### Tools
 
@@ -225,12 +224,12 @@ Run transfer only for selected objects. When transferring chains the entire chai
 Run Blenders internal smooth f-Curves for selected objects.
 
 **Log Object Info**<br>
-Log min, max values and infos about the selected object to the `info panel`.
+Log min, max values and information about the selected object to the `info panel`.
 
 ## I/O Transfer Configuration (Topbar Import/ Export)
 
 Transfer configurations can be imported and exported. 
-If you create a new configuration and want to share it with the community let me know via hello@cgtinker.com =)
+If you create a new configuration and want to share it with the community let me know via hello@cgtinker.com <3
 
 
 # License
