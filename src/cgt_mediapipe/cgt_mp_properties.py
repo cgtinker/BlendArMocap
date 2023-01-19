@@ -83,8 +83,8 @@ class MP_PG_Properties(bpy.types.PropertyGroup):
         name="Type",
         description="Select input type.",
         items=(
-            ("stream", "Webcam", ""),
             ("movie", "Movie", ""),
+            ("stream", "Webcam", ""),
         )
     )
 

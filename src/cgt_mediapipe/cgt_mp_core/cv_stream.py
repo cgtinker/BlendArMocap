@@ -18,11 +18,7 @@ class Stream:
     def __init__(self, capture_input: Union[str, int], title: str = "Stream Detection",
                  width: int = 640, height: int = 480, backend: int = 0):
         """ Generates a video stream for webcam or opens a movie file using cv2 """
-        # improved backend for windows
-        if isinstance(capture_input, int):
-            # subprocess.run(['tccutil', 'reset', 'Camera'])
-            self.set_capture(capture_input, backend)
-
+        self.set_capture(capture_input, backend)
 
         time.sleep(.25)
         if not self.capture.isOpened():

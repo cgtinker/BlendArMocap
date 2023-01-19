@@ -63,6 +63,8 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
 
     def get_stream(self):
         from .cgt_mp_core import cv_stream
+        self.key_step = self.user.key_frame_step
+
         self.frame = bpy.context.scene.frame_current
         if self.user.detection_input_type == 'movie':
             mov_path = bpy.path.abspath(self.user.mov_data_path)
@@ -76,7 +78,6 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
 
         else:
             camera_index = self.user.webcam_input_device
-            self.key_step = self.user.key_frame_step
             dim = self.user.enum_stream_dim
             dimensions = {
                 'sd': (720, 480),
@@ -124,8 +125,20 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
     def modal(self, context, event):
         """ Run detection as modal operation, finish with 'Q', 'ESC' or 'RIGHT MOUSE'. """
         if event.type == "TIMER":
-            data, _ = self.node_chain.update([], self.frame)
-            self.frame += self.key_step
+            # use key step also for movie detection (can be used as smoothing / faster processing)
+            if self.user.detection_input_type == 'movie':
+                if self.frame % self.key_step == 0:
+                    print("use frame", self.frame)
+                    data, _ = self.node_chain.update([], self.frame)
+                else:
+                    print("skip frame", self.frame)
+                    # skip frame for smoothing if key step != 1
+                    data, _ = self.node_chain.nodes[0].update([], self.frame)
+                self.frame += 1
+            else:
+                data, _ = self.node_chain.update([], self.frame)
+                self.frame += self.key_step
+
             if data is None:
                 logging.debug("Data is None, finish detection.")
                 return self.cancel(context)

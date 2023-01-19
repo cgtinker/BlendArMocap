@@ -17,6 +17,7 @@ class CGT_PT_MP_Detection(cgt_core_panel.DefaultPanel, bpy.types.Panel):
     def movie_panel(self, user):
         layout = self.layout
         layout.row().prop(user, "mov_data_path")
+        layout.row().prop(user, "key_frame_step")
         layout.row().prop(user, "enum_detection_type")
         if user.modal_active:
             layout.row().operator("wm.cgt_feature_detection_operator", text="Stop Detection", icon='CANCEL')
