@@ -75,6 +75,10 @@ Start Blender as admin by using the terminal:<br>
 Navigate to Blender: `cd /Applications/Blender/Contents/MacOS`<br>
 Run Blender as admin: `sudo ./Blender`<br>
 
+The Terminal request may be blocked even with elevated privileges, if that happens navigate to `System Settings > Privacy and Security > Full Disk Access` then activate your Terminal.
+After doing `sudo` shouldn't be required anymore.
+Run Blender: `./Blender`<br>
+
 **Linux**<br>
 Start Blender as admin using the terminal:<br>
 Navigate to Blender: `cd /usr/bin`<br>
