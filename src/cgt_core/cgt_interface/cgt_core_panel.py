@@ -1,5 +1,12 @@
 import bpy
 from .. import cgt_naming
+from pathlib import Path
+
+
+addon_dir_name = None
+if addon_dir_name is None:
+    f = __file__
+    addon_dir_name = Path(f).parent.parent.parent.parent.stem
 
 
 class DefaultPanel:
@@ -21,7 +28,7 @@ class PT_UI_CGT_Panel(DefaultPanel, bpy.types.Panel):
 addon_prefs = set()
 class APT_UI_CGT_Panel(bpy.types.AddonPreferences):
     bl_label = cgt_naming.ADDON_NAME
-    bl_idname = "BlendArMocap"
+    bl_idname = addon_dir_name
 
     def draw(self, context):
         global addon_prefs

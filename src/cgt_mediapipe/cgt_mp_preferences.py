@@ -115,7 +115,7 @@ def draw_dependencies(layout):
     dependency_box.row().label(text="Make sure to have elevated privileges.")
     # install dependencies button
     dependency_box.row().operator(PREFERENCES_OT_CGT_install_dependencies_button.bl_idname, icon="CONSOLE")
-    dependency_box.row().operator(PREFERENCES_OT_CGT_uninstall_dependencies_button.bl_idname, icon="ERROR")
+    # dependency_box.row().operator(PREFERENCES_OT_CGT_uninstall_dependencies_button.bl_idname, icon="ERROR")
 
 
 def draw_camera_settings(context, layout):
