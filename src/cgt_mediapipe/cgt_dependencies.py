@@ -17,10 +17,6 @@ from pathlib import Path
 
 
 Dependency = namedtuple("Dependency", ["module", "name", "pkg", "args"])
-user_site = site.getusersitepackages()
-if user_site not in sys.path:
-    sys.path.append(user_site)
-    print("Added user site packages to path.")
 
 
 # region get internal python paths
@@ -319,6 +315,7 @@ elif sys.platform == 'win32':
 
 elif sys.platform == 'linux':
     required_dependencies = [
+        Dependency(module="opencv-contrib-python==4.5.5.64", name="cv2", pkg="opencv_contrib_python", args=None),
         Dependency(module="protobuf==3.20.3", name="google.protobuf", pkg="protobuf", args=None),
         Dependency(module="mediapipe==0.9.0.1", name="mediapipe", pkg="mediapipe", args=None)
     ]
@@ -349,6 +346,12 @@ elif sys.platform == 'darwin':
         Dependency(module="mediapipe==0.8.10", name="mediapipe", pkg="mediapipe", args=["--no-deps"]),
     ]
 
+
+# do I really want that by default?
+user_site = site.getusersitepackages()
+if user_site not in sys.path:
+    sys.path.append(user_site)
+    print("Added user site packages to path.")
 
 site_packages = get_site_packages_path()
 python_binary = get_python_exe()

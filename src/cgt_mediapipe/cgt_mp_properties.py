@@ -112,8 +112,8 @@ class MP_PG_Properties(bpy.types.PropertyGroup):
     )
 
     local_user: bpy.props.BoolProperty(
-        name="Install to local user",
-        description="Install dependencies in local user site packages",
+        name="Local user",
+        description="Install to local user and not to blenders python site packages.",
         default=False,
     )
 
