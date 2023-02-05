@@ -111,6 +111,12 @@ class MP_PG_Properties(bpy.types.PropertyGroup):
         default=False
     )
 
+    local_user: bpy.props.BoolProperty(
+        name="Install to local user",
+        description="Install dependencies in local user site packages",
+        default=False,
+    )
+
 
 classes = [
     MP_PG_Properties,

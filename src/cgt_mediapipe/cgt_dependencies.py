@@ -17,6 +17,10 @@ from pathlib import Path
 
 
 Dependency = namedtuple("Dependency", ["module", "name", "pkg", "args"])
+user_site = site.getusersitepackages()
+if user_site not in sys.path:
+    sys.path.append(user_site)
+    print("Added user site packages to path.")
 
 
 # region get internal python paths
@@ -81,7 +85,7 @@ def run_command(*args: str, module: str) -> bool:
     return subprocess.call(cmd) == 0  # , env=environ_copy) == 0
 
 
-def install_dependency(self: bpy.types.Operator, dependency: Dependency) -> bool:
+def install_dependency(self: bpy.types.Operator, dependency: Dependency, local_user: bool) -> bool:
     """ Install a dependency using pip. """
     import socket
 
@@ -91,15 +95,21 @@ def install_dependency(self: bpy.types.Operator, dependency: Dependency) -> bool
         if dependency.args is not None:
             sub_cmds = [cmd for cmd in dependency.args if isinstance(cmd, str)]
 
-        if run_command('install', dependency.module, '--target', site_packages, *sub_cmds, module='pip'):
+        if local_user:
+            successfully_installed = run_command('install', dependency.module, '--user', *sub_cmds, module='pip')
+        else:
+            successfully_installed = run_command('install', dependency.module, '--target', site_packages, *sub_cmds, module='pip')
+
+        if successfully_installed:
             import_module(dependency)
             return True
+        else:
+            self.report({'ERROR'}, f"Installation of {dependency.pkg} failed. Check system console output.")
+            return False
+
     except socket.timeout:
         self.report({'ERROR'}, "Ensure you are connected to the internet and no VPN is running.")
         return False
-
-    self.report({'ERROR'}, f"Installation of {dependency.pkg} failed. Check system console output.")
-    return False
 # endregion
 
 

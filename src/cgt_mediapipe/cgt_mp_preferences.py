@@ -23,7 +23,8 @@ class PREFERENCES_OT_CGT_install_dependencies_button(bpy.types.Operator):
             for i, dependency in enumerate(cgt_dependencies.required_dependencies):
                 if cgt_dependencies.dependencies_installed[i]:
                     continue
-                success = cgt_dependencies.install_dependency(self, dependency)
+                user = context.scene.cgtinker_mediapipe  # noqa
+                success = cgt_dependencies.install_dependency(self, dependency, user.local_user)
                 cgt_dependencies.dependencies_installed[i] = success
 
         except (subprocess.CalledProcessError, ImportError) as err:
@@ -58,13 +59,13 @@ class PREFERENCES_OT_CGT_uninstall_dependencies_button(bpy.types.Operator):
 
 def draw(self, context):
     layout = self.layout
-
-    draw_dependencies(layout)
+    user = context.scene.cgtinker_mediapipe  # noqa
+    draw_dependencies(layout, user)
     if all(cgt_dependencies.dependencies_installed):
-        draw_camera_settings(context, layout)
+        draw_camera_settings(context, layout, user)
 
 
-def draw_dependencies(layout):
+def draw_dependencies(layout, user):
 
     """ Dependency layout for user preferences. """
     # dependency box
@@ -114,14 +115,14 @@ def draw_dependencies(layout):
     dependency_box.row().separator()
     dependency_box.row().label(text="Make sure to have elevated privileges.")
     # install dependencies button
+    dependency_box.row(align=True).prop(user, "local_user")
     dependency_box.row().operator(PREFERENCES_OT_CGT_install_dependencies_button.bl_idname, icon="CONSOLE")
     # dependency_box.row().operator(PREFERENCES_OT_CGT_uninstall_dependencies_button.bl_idname, icon="ERROR")
 
 
-def draw_camera_settings(context, layout):
+def draw_camera_settings(context, layout, user):
     if cgt_dependencies.dependencies_installed:
         s_box = layout.box()
-        user = context.scene.cgtinker_mediapipe  # noqa
         s_box.label(text="Camera Settings")
         s_box.row().prop(user, "enum_stream_dim")
         s_box.row().prop(user, "enum_stream_type")
