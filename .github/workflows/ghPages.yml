@@ -1,0 +1,39 @@
+# https://github.com/marketplace/actions/deploy-to-github-pages
+name: Build and Deploy
+
+on:
+  [push]
+  # push:
+  #   branches:
+  #     - main
+  #   release:
+  #     types:
+  #       - published
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    concurrency: ci-${{ github.ref }}
+    steps:
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          architecture: x64
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install and Build
+        run: |
+          cd docs
+          mkdir build
+          pip install -r requirements.txt
+          make html
+          touch build/html/.nojekyll
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs/build/html
+          clean: true
