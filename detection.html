@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mediapipe Detection &mdash; BlendArMocap 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Transfer" href="transfer/index.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BlendArMocap
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Mediapipe Detection</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#advanced">Advanced</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="transfer/index.html">Transfer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="freemocap.html">Freemocap</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BlendArMocap</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Mediapipe Detection</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/detection.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mediapipe-detection">
+<h1>Mediapipe Detection<a class="headerlink" href="#mediapipe-detection" title="Permalink to this heading"></a></h1>
+<p><cite>Google’s Mediapipe&lt;https://google.github.io/mediapipe&gt;_</cite> is used to detect features withing a stream or a video file.
+The detection options are location in the <cite>3D Viewport &gt; BlendAr &gt; Mediapipe</cite>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Running Mediapipe within Blender requires external dependencies.
+More about the setup here … -&gt;</p>
+</div>
+<dl>
+<dt>Type</dt><dd><dl class="simple">
+<dt>Movie</dt><dd><p>Import movie files, preferably of type .mov.
+Reducing the dimensions before detecting may improves preformance.</p>
+</dd>
+<dt>File Path</dt><dd><p>Set the filepath to the movie which should be imported.</p>
+</dd>
+<dt>Webcam</dt><dd><p>Use the Webcam buildin or connected to your computer</p>
+</dd>
+<dt>Webcam Device Slot</dt><dd><p>Defaults to 0. If you have multiple cameras connected you might have to change the slot.</p>
+</dd>
+</dl>
+</dd>
+<dt>Key Step</dt><dd><p>The <em>Key Step</em> determines in which frequency keyframes are getting set.
+This has slightly different effects depending on the used input type.</p>
+<dl class="simple">
+<dt>Movie</dt><dd><p>As every frame can get calculated, you can use a <em>Key Step</em> of 1.
+Setting the <em>Key Step</em> to 4 by example means you are skipping 3 frames before setting another keyframe while recording.
+This can be useful to reduce jitter and faster preformance.</p>
+</dd>
+<dt>Webcam</dt><dd><p>While the Webcam is running, frames are getting grabed on which the detection is preformed.
+Therefore the keystep determines the rate of which keyframes are getting set for every grabed frame.
+For starting out, I recommend trying a <em>Key Step</em> of 3 for Hand, Face and Pose detection.
+As Holistic detection is more preformance heavy I recommend a Key Step of 7.
+The Key Step which suits your system the most, highly depends on your computers hardware.</p>
+</dd>
+</dl>
+</dd>
+<dt>Target</dt><dd><dl class="simple">
+<dt>Hands</dt><dd><p>Preform Hand detection.</p>
+</dd>
+<dt>Face</dt><dd><p>Preform Face detection.</p>
+</dd>
+<dt>Pose</dt><dd><p>Preform Pose detection.</p>
+</dd>
+<dt>Holistic</dt><dd><p>Preform Hand, Face and Pose detection.</p>
+</dd>
+</dl>
+</dd>
+<dt>Start Detection</dt><dd><p>Button to start the detection. When using movie files as input, it may be called <cite>Detect Movie</cite>.
+While when using stream detection it may be called <cite>Start Detection</cite>.</p>
+</dd>
+<dt>Stop Detection</dt><dd><p>Once the detection has been started, you can stop the detection
+by either pressing the Button again or pressing <kbd class="kbd docutils literal notranslate">Q</kbd>.</p>
+</dd>
+</dl>
+<section id="advanced">
+<h2>Advanced<a class="headerlink" href="#advanced" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>Model Complexity</dt><dd><p>You can choose between a model complexity of [0, 1].
+The lower the complexity, the faster the detection.
+The higher the complexity, the better the detection results.</p>
+</dd>
+<dt>Min Detection Confidence</dt><dd><p>Minimum confidence value ([0.0, 1.0]) from the detection model
+for the detection to be considered successful. Default to 0.5.</p>
+</dd>
+</dl>
+<p>For more informations check <cite>Googles Mediapipe&lt;https://google.github.io/mediapipe&gt;_</cite>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="transfer/index.html" class="btn btn-neutral float-right" title="Transfer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, cgtinker.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
