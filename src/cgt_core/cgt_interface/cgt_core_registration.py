@@ -8,7 +8,6 @@ classes = [
 def register():
     from ..cgt_utils import cgt_logging
     cgt_logging.init()
-
     for cls in classes:
         cls.register()
 

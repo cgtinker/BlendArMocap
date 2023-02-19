@@ -28,13 +28,13 @@ MP_ATTRS = {
 
 
 @bpy.app.handlers.persistent
-def save_mediapipe_preferences(*args):
+def save_preferences(*args):
     user = bpy.context.scene.cgtinker_mediapipe  # noqa
-    cgt_user_prefs.set_prefs(**{key: user.attr for key in MP_ATTRS.keys()})
+    cgt_user_prefs.set_prefs(**{attr: getattr(user, attr, default) for attr, default in MP_ATTRS.items()})
 
 
 @bpy.app.handlers.persistent
-def load_mediapipe_preferences(*args):
+def load_preferences(*args):
     stored_preferences = cgt_user_prefs.get_prefs(**MP_ATTRS)
     user = bpy.context.scene.cgtinker_mediapipe # noqa
     for property_name, value in stored_preferences.items():
@@ -49,8 +49,8 @@ def register():
             continue
         cls.register()
 
-    bpy.app.handlers.save_pre.append(save_mediapipe_preferences)
-    bpy.app.handlers.load_post.append(load_mediapipe_preferences)
+    bpy.app.handlers.save_pre.append(save_preferences)
+    bpy.app.handlers.load_post.append(load_preferences)
 
 
 def unregister():

@@ -1,4 +1,3 @@
-import os
 from . import cgt_json
 from pathlib import Path
 from typing import Any
@@ -33,11 +32,10 @@ def set_nested_attr(cls: Any, attr_path: str, value: Any) -> None:
     setattr(cls, props[0], value)
 
 
-
 # Set path to preference, create file if it doesn't exist.
 PREFERENCES_PATH = None
 if PREFERENCES_PATH is None:
-    PREFERENCES_PATH = Path(os.getcwd()) / "prefs.json"
+    PREFERENCES_PATH = Path(__file__).parent / "prefs.json"
     if not PREFERENCES_PATH.is_file():
         with open(PREFERENCES_PATH, 'a') as f:
             f.write('{}')

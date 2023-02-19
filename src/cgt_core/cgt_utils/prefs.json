@@ -1,0 +1,16 @@
+{
+    "local_user":true,
+    "key_frame_step":4,
+    "webcam_input_device":0,
+    "detection_input_type":"movie",
+    "enum_detection_type":"HAND",
+    "enum_stream_dim":"sd",
+    "enum_stream_type":"0",
+    "min_detection_confidence":0.5,
+    "hand_model_complexity":1,
+    "pose_model_complexity":1,
+    "holistic_model_complexity":1,
+    "refine_face_landmarks":false,
+    "load_raw":false,
+    "quickload":false
+}
