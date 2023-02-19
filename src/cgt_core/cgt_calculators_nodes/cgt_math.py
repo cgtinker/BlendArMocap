@@ -601,3 +601,9 @@ def matrix3x3_to_euler(matrix: np.ndarray) -> np.ndarray:
 
 # endregion
 # endregion
+
+
+def remap_slope(value, min_in, max_in, min_out, max_out):
+    slope = (max_out - min_out) / (max_in - min_in)
+    offset = min_out - slope * min_in
+    return slope * value + offset
