@@ -1,7 +1,9 @@
 Freemocap
 =========
 
-The Free Motion Capture Project `Freemocap<https://freemocap.org>_` aims to provide research-grade 
+The Free Motion Capture Project `Freemocap
+<https://freemocap.org>`_
+aims to provide research-grade
 markerless motion capture software to everyone for free. 
 
 It features multicam detection using Mediapipe and is currently in alpha.
@@ -24,6 +26,3 @@ Quickload
     Raw
         Import the raw data which may not be used to transfer.
         Mainly for scientific purposes.
-
-
-For more informations check out `Freemocap<https://freemocap.org>_`.

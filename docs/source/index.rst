@@ -11,7 +11,7 @@ Contents
 --------
 
 .. toctree::
-   installation
+   installation/index
    detection
    transfer/index
    freemocap

@@ -8,7 +8,7 @@ Mapping instructions are stored as object properties and can be modified in the 
 Transfer Motion
 ---------------
 
-The transfer options are location in the `3D Viewport > BlendAr > Mediapipe`.
+The transfer options are location in the ``3D Viewport > BlendAr > Mediapipe``.
 
 Armature
     Select the target armature (b.e. a generated rigify rig for Rigify_Humanoid_DefaultFace_v0.6.1).

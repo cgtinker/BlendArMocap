@@ -1,12 +1,22 @@
 Mediapipe Detection
 ===================
 
-`Google's Mediapipe<https://google.github.io/mediapipe>_` is used to detect features withing a stream or a video file.
-The detection options are location in the `3D Viewport > BlendAr > Mediapipe`.
+`Google's Mediapipe
+<https://google.github.io/mediapipe>`_
+is used to detect features withing a stream or a video file.
+The detection options are location in the ``3D Viewport > BlendAr > Mediapipe``.
 
 .. warning::
    Running Mediapipe within Blender requires external dependencies.
-   More about the setup here ... ->
+   More about the :ref:`installation-label` of dependencies.
+
+Apple User
+    Blender has to be started using the terminal if you
+    plan to use the webcam on mac os as blenders plist
+    doesn't contain a camera permissions request.
+
+Settings
+--------
 
 Type
     Movie
@@ -67,6 +77,3 @@ Model Complexity
 Min Detection Confidence
     Minimum confidence value ([0.0, 1.0]) from the detection model 
     for the detection to be considered successful. Default to 0.5.
-
-
-For more informations check `Googles Mediapipe<https://google.github.io/mediapipe>_`.
