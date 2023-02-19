@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Transfer" href="transfer/index.html" />
-    <link rel="prev" title="Installation" href="installation.html" /> 
+    <link rel="prev" title="Manual Installation" href="installation/manual_dependency_installation.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,8 +44,9 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation/index.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Mediapipe Detection</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#settings">Settings</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#advanced">Advanced</a></li>
 </ul>
 </li>
@@ -79,13 +80,22 @@
              
   <section id="mediapipe-detection">
 <h1>Mediapipe Detection<a class="headerlink" href="#mediapipe-detection" title="Permalink to this heading"></a></h1>
-<p><cite>Google’s Mediapipe&lt;https://google.github.io/mediapipe&gt;_</cite> is used to detect features withing a stream or a video file.
-The detection options are location in the <cite>3D Viewport &gt; BlendAr &gt; Mediapipe</cite>.</p>
+<p><a class="reference external" href="https://google.github.io/mediapipe">Google’s Mediapipe</a>
+is used to detect features withing a stream or a video file.
+The detection options are location in the <code class="docutils literal notranslate"><span class="pre">3D</span> <span class="pre">Viewport</span> <span class="pre">&gt;</span> <span class="pre">BlendAr</span> <span class="pre">&gt;</span> <span class="pre">Mediapipe</span></code>.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Running Mediapipe within Blender requires external dependencies.
-More about the setup here … -&gt;</p>
+More about the <a class="reference internal" href="installation/installation.html#installation-label"><span class="std std-ref">Installation</span></a> of dependencies.</p>
 </div>
+<dl class="simple">
+<dt>Apple User</dt><dd><p>Blender has to be started using the terminal if you
+plan to use the webcam on mac os as blenders plist
+doesn’t contain a camera permissions request.</p>
+</dd>
+</dl>
+<section id="settings">
+<h2>Settings<a class="headerlink" href="#settings" title="Permalink to this heading"></a></h2>
 <dl>
 <dt>Type</dt><dd><dl class="simple">
 <dt>Movie</dt><dd><p>Import movie files, preferably of type .mov.
@@ -132,6 +142,7 @@ While when using stream detection it may be called <cite>Start Detection</cite>.
 by either pressing the Button again or pressing <kbd class="kbd docutils literal notranslate">Q</kbd>.</p>
 </dd>
 </dl>
+</section>
 <section id="advanced">
 <h2>Advanced<a class="headerlink" href="#advanced" title="Permalink to this heading"></a></h2>
 <dl class="simple">
@@ -143,7 +154,6 @@ The higher the complexity, the better the detection results.</p>
 for the detection to be considered successful. Default to 0.5.</p>
 </dd>
 </dl>
-<p>For more informations check <cite>Googles Mediapipe&lt;https://google.github.io/mediapipe&gt;_</cite>.</p>
 </section>
 </section>
 
@@ -151,7 +161,7 @@ for the detection to be considered successful. Default to 0.5.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="installation/manual_dependency_installation.html" class="btn btn-neutral float-left" title="Manual Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="transfer/index.html" class="btn btn-neutral float-right" title="Transfer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

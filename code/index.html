@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Basics &mdash; BlendArMocap 0.0.1 documentation</title>
+  <title>&lt;no title&gt; &mdash; BlendArMocap 0.0.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -19,9 +19,7 @@
         <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Create and customize Configurations" href="create_config.html" />
-    <link rel="prev" title="Transfer" href="index.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -43,17 +41,10 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../detection.html">Mediapipe Detection</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">Transfer</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Basics</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#transfer-motion">Transfer Motion</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="create_config.html">Create and customize Configurations</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../transfer/index.html">Transfer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../freemocap.html">Freemocap</a></li>
 </ul>
 
@@ -71,10 +62,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="index.html">Transfer</a></li>
-      <li class="breadcrumb-item active">Basics</li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/transfer/transfer.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/code/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -82,38 +72,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="basics">
-<h1>Basics<a class="headerlink" href="#basics" title="Permalink to this heading"></a></h1>
-<p>Mapping instructions are stored as object properties and can be modified in the <cite>objects constraints</cite> panel.
-<em>Only valid for objects containing a specific cgt_id property.</em></p>
-<section id="transfer-motion">
-<h2>Transfer Motion<a class="headerlink" href="#transfer-motion" title="Permalink to this heading"></a></h2>
-<p>The transfer options are location in the <code class="docutils literal notranslate"><span class="pre">3D</span> <span class="pre">Viewport</span> <span class="pre">&gt;</span> <span class="pre">BlendAr</span> <span class="pre">&gt;</span> <span class="pre">Mediapipe</span></code>.</p>
-<dl class="simple">
-<dt>Armature</dt><dd><p>Select the target armature (b.e. a generated rigify rig for Rigify_Humanoid_DefaultFace_v0.6.1).</p>
-</dd>
-<dt>Driver Collection</dt><dd><p>Select a collection containing driver objects - <em>cgt_Drivers</em> to transfer all.
-In some cases you might want to just transfer pose, hands or face results - in this case select a specific collection to do so.</p>
-</dd>
-<dt>Transfer Type</dt><dd><p>Select a transfer configuration.</p>
-</dd>
-<dt>Load</dt><dd><p>Loads the currently selected type to the transfer objects.</p>
-</dd>
-<dt>Save Config</dt><dd><p>Save a new config based on the objects in the <em>cgt_Drivers</em> collection.</p>
-</dd>
-<dt>Transfer Animation</dt><dd><p>Load currently selected config for objects in selected collection and transfer the data.</p>
-</dd>
-</dl>
-</section>
-</section>
-
+  
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Transfer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="create_config.html" class="btn btn-neutral float-right" title="Create and customize Configurations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

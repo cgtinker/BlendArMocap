@@ -9,7 +9,7 @@ Objects which have been generated during detection contain an ID to display some
 Those can be modified to either change current mapping properties or even create completely new configurations!
 Of course, you can just modify an existing config to improve mapping results.
 
-The setup options are location in the `Object constraint properties > BlendArMocap`.
+The setup options are location in the ``Object constraint properties > BlendArMocap``.
 
 .. note::
     - **mapping object** - an object with instructions and constraints
