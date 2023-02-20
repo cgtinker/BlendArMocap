@@ -1,5 +1,10 @@
 # BlendArMocap <br>
 
+BlendArMocap is a tool preform markerless tracking within Blender using Google’s [Mediapipe](https://google.github.io/mediapipe/). The main goal of the add-on is to efficiently transfer the generated detection results to rigs.<br>
+
+For more information, please refer to the [documentation](https://cgtinker.github.io/BlendArMocap/).
+
+
 ### Features
 - Detection of [Mediapipe](https://google.github.io/mediapipe/) detection results in stream or video
     - Calculation of rotations for mediapipe data
@@ -7,12 +12,12 @@
 - Transfer tracking data to rigs and generate new transfer configurations
   - currently, officially supports the transfer to generated [rifigy rigs](https://docs.blender.org/manual/en/latest/addons/rigging/rigify/index.html)
 
-For more information, please refer to the [documentation](https://cgtinker.github.io/BlendArMocap/).
 
 ### Mediapipe Detection
 
 Run Mediapipe within Blender to detect pose, hand, face or holistic features.
 BlendArMocap calculates rotation data based on the detection results at runtime to drive rigs.<br>
+
 **Caution:** Requires external dependencies which can be installed via the add-on preferences with elevated privileges.
 
 
@@ -39,7 +44,6 @@ target_object: copies values from driver_object via constraints
 ````
 
 If you happen to create a configuration to support another rig, feel free to send it to me for sharing via hello@cgtinker.com.<br>
-For more information, please refer to the [documentation](https://cgtinker.github.io/BlendArMocap/).
 
 
 # License
