@@ -90,9 +90,10 @@
 <section id="setup-new-configs">
 <h2>Setup New Configs<a class="headerlink" href="#setup-new-configs" title="Permalink to this heading"></a></h2>
 <p>The setup process is quite unique, so lets break it down in steps.
-Objects which have been generated during detection contain an ID to display some additional properties in the <em>object properties panel</em>.
-Those can be modified to either change current mapping properties or even create completely new configurations!
-Of course, you can just modify an existing config to improve mapping results.</p>
+Objects which have been generated during detection contain an ID to display
+additional properties in the <em>object properties panel</em>.
+Those object properties can be modified to either change the current
+mapping configuration or even create completely new configurations!</p>
 <p>The setup options are location in the <code class="docutils literal notranslate"><span class="pre">Object</span> <span class="pre">constraint</span> <span class="pre">properties</span> <span class="pre">&gt;</span> <span class="pre">BlendArMocap</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -120,7 +121,7 @@ In a nutshell <em>[Remap Drivers, IK Chain Driver, Remap by Distance Drivers]</e
 <dt>Remap Drivers</dt><dd><p>Object values (especially rotations) may get remapped using a remap driver.
 To do so, navigate to <em>Value Mapping</em> and select the properties you want to remap - for example <em>rotation x, y, z</em>.
 <em>From min, from max, to min, to max</em> is used to define slopes, those are similar to the <em>map range convertor node</em> in the shader editor.
-Therefore, input the min and max values in radians from the selected object and the to min and max values in radians you want to have as result. (pi = 180°)
+Therefore, input the min and max values <em>in radians</em> from the selected object and the to min and max values <em>in radians</em> you want to have as result. (pi = 180°)
 If necessary, you can also use the <em>factor</em> and <em>offset</em> however, slopes can deliver better control once you got the hang of them.
 You can do so for all axis separately if necessary, press the <em>+</em> icon to do so.
 To get some information about the current select object, navigate to <em>Tools</em> and press the <em>Log Object Info</em> Button, you’ll find min and max values from the object in the info panel.</p>
@@ -141,10 +142,10 @@ f(x) = (slope * property_value + offset) * factor + offset</p>
 </dl>
 </div>
 <dl class="simple">
-<dt>IK Chain Drivers</dt><dd><p>The idea of ik chain drivers basically is to construct an ik chain in reverse order.&lt;br&gt;
+<dt>IK Chain Drivers</dt><dd><p>The idea of ik chain drivers basically is to construct an ik chain in reverse order.
 The end of the ik chain neither has a parent and nor gets remapped - it’s mainly a reference.
 The next chain link has the chain end as parent, and gets remapped by the bone length which separates itself from the parent.
-Repeat this till you are at the ik start. As Example:&lt;br&gt;</p>
+Repeat this till you are at the ik start. As Example:</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -176,8 +177,7 @@ f(x) = (slope * property_value + offset) * factor + offset * remapping_value</p>
 <dl class="simple">
 <dt>Constraints</dt><dd><p>Finally, add constraints to the object - the constraints will get applied to the target when transferring.
 As mentioned in the beginning, the target objects copies values from the driver using constraints.
-You may use any constraint to do so and modify the constraint properties to your likings to adjust transfer results.
-Wow, you got though - congratulations! Hope you’ll make some awesome transfers!</p>
+You may use any constraint to do so and modify the constraint properties to your likings to adjust transfer results.</p>
 </dd>
 </dl>
 </section>
@@ -195,7 +195,7 @@ Wow, you got though - congratulations! Hope you’ll make some awesome transfers
 <section id="i-o-transfer-configuration">
 <h2>I/O Transfer Configuration<a class="headerlink" href="#i-o-transfer-configuration" title="Permalink to this heading"></a></h2>
 <p>Transfer configurations can be imported and exported.
-If you create a new configuration and want to share it with the community let me know via <a class="reference external" href="mailto:hello&#37;&#52;&#48;cgtinker&#46;com">hello<span>&#64;</span>cgtinker<span>&#46;</span>com</a> &lt;3</p>
+If you create a new configuration and want to share it with the community let me know via <a class="reference external" href="mailto:hello&#37;&#52;&#48;cgtinker&#46;com">hello<span>&#64;</span>cgtinker<span>&#46;</span>com</a>.</p>
 </section>
 </section>
 
