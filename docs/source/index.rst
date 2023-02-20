@@ -6,6 +6,8 @@ The main goal of the add-on is to efficiently transfer the generated detection r
 
 While rigify rigs are supported by default, BlendArMocap allows to create custom configurations to support various rigs.
 
+.. node:
+   The documentation is currently in development.
 
 Contents
 --------

@@ -5,9 +5,10 @@ Setup New Configs
 -----------------
 
 The setup process is quite unique, so lets break it down in steps. 
-Objects which have been generated during detection contain an ID to display some additional properties in the *object properties panel*.
-Those can be modified to either change current mapping properties or even create completely new configurations!
-Of course, you can just modify an existing config to improve mapping results.
+Objects which have been generated during detection contain an ID to display 
+additional properties in the *object properties panel*.
+Those object properties can be modified to either change the current 
+mapping configuration or even create completely new configurations!
 
 The setup options are location in the ``Object constraint properties > BlendArMocap``.
 
@@ -35,7 +36,7 @@ Remap Drivers
     Object values (especially rotations) may get remapped using a remap driver.
     To do so, navigate to *Value Mapping* and select the properties you want to remap - for example *rotation x, y, z*.
     *From min, from max, to min, to max* is used to define slopes, those are similar to the *map range convertor node* in the shader editor.
-    Therefore, input the min and max values in radians from the selected object and the to min and max values in radians you want to have as result. (pi = 180°)
+    Therefore, input the min and max values *in radians* from the selected object and the to min and max values *in radians* you want to have as result. (pi = 180°)
     If necessary, you can also use the *factor* and *offset* however, slopes can deliver better control once you got the hang of them.
     You can do so for all axis separately if necessary, press the *+* icon to do so.
     To get some information about the current select object, navigate to *Tools* and press the *Log Object Info* Button, you'll find min and max values from the object in the info panel.
@@ -54,10 +55,10 @@ Remap Drivers
         f(x) = (slope * property_value + offset) * factor + offset
 
 IK Chain Drivers
-    The idea of ik chain drivers basically is to construct an ik chain in reverse order.<br>
+    The idea of ik chain drivers basically is to construct an ik chain in reverse order.
     The end of the ik chain neither has a parent and nor gets remapped - it's mainly a reference.
     The next chain link has the chain end as parent, and gets remapped by the bone length which separates itself from the parent.
-    Repeat this till you are at the ik start. As Example:<br>
+    Repeat this till you are at the ik start. As Example:
 
 .. note::
     objects: shoulder_obj -> elbow_obj -> hand_obj
@@ -90,8 +91,6 @@ Constraints
     Finally, add constraints to the object - the constraints will get applied to the target when transferring.
     As mentioned in the beginning, the target objects copies values from the driver using constraints.
     You may use any constraint to do so and modify the constraint properties to your likings to adjust transfer results.
-    Wow, you got though - congratulations! Hope you'll make some awesome transfers!
-
 
 
 Tools
@@ -112,5 +111,5 @@ I/O Transfer Configuration
 --------------------------
 
 Transfer configurations can be imported and exported. 
-If you create a new configuration and want to share it with the community let me know via hello@cgtinker.com <3
+If you create a new configuration and want to share it with the community let me know via hello@cgtinker.com.
 
