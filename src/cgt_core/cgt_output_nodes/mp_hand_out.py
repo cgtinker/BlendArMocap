@@ -19,9 +19,9 @@ class CgtMPHandOutNode(mp_out_utils.BpyOutputNode):
         for ob in self.left_hand+self.right_hand:
             cgt_object_prop.set_custom_property(ob, "cgt_id", data.identifier)
 
-        cgt_collection.create_collection(self.col_name, self.parent_col)
-        cgt_collection.create_collection(self.col_name+".L", self.col_name)
-        cgt_collection.create_collection(self.col_name+".R", self.col_name)
+        cgt_collection.create_collection(self.col_name+"S", self.parent_col)
+        cgt_collection.create_collection(self.col_name+".L", self.col_name+"S")
+        cgt_collection.create_collection(self.col_name+".R", self.col_name+"S")
         cgt_collection.add_list_to_collection(self.col_name+".L", self.left_hand, self.parent_col)
         cgt_collection.add_list_to_collection(self.col_name+".R", self.right_hand, self.parent_col)
 
