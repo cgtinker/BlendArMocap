@@ -36,15 +36,16 @@ Key Step
     
     Movie
         As every frame can get calculated, you can use a *Key Step* of 1.
-        Setting the *Key Step* to 4 by example means you are skipping 3 frames before setting another keyframe while recording.
-        This can be useful to reduce jitter and faster preformance.
+        Using a *Key Step* of one means, there is no smoothing at all.
+        The higher the *Key Step* the more smoothing gets applied.
+
     
     Webcam
-        While the Webcam is running, frames are getting grabed on which the detection is preformed.
-        Therefore the keystep determines the rate of which keyframes are getting set for every grabed frame.
-        For starting out, I recommend trying a *Key Step* of 3 for Hand, Face and Pose detection.
-        As Holistic detection is more preformance heavy I recommend a Key Step of 7.
-        The Key Step which suits your system the most, highly depends on your computers hardware.
+        While the Webcam is running, frames are getting grabbed at runtime on which the detection is preformed.
+        In this case, the *Key Step* determines the rate of which detected frames are getting keyframed.
+        For starting out, I recommend trying a *Key Step* of 2-4 for Hand, Face and Pose detection.
+        As Holistic detection is more performance heavy I recommend a *Key Step* of 6-8.
+        The *Key Step* which suits your system the most, highly depends on your hardware.
     
 Target
     Hands
