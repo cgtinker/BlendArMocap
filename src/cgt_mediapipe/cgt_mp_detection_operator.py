@@ -1,6 +1,5 @@
 import bpy
 import logging
-import numpy as np
 
 from pathlib import Path
 from ..cgt_core.cgt_patterns import cgt_nodes
