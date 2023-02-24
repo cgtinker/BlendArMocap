@@ -165,13 +165,15 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
 
     def modal(self, context, event):
         """ Run detection as modal operation, finish with 'Q', 'ESC' or 'RIGHT MOUSE'. """
-        if event.type == "TIMER":
+        if event.type == "TIMER" and self.user.modal_active:
             if self.user.detection_input_type == 'movie':
-                # gather and smooth data
+                # get data
                 data, _frame = self.node_chain.nodes[0].update([], self.frame)
-                self.simple_smoothing(self.memo, data)
+                if data is None:
+                    return self.cancel(context)
 
-                # apply smoothed data to pipeline
+                # smooth gathered data
+                self.simple_smoothing(self.memo, data)
                 if self.frame % self.key_step == 0:
                     for node in self.node_chain.nodes[1:]:
                         node.update(self.memo, self.frame)
@@ -180,11 +182,9 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
                 self.frame += 1
             else:
                 data, _ = self.node_chain.update([], self.frame)
+                if data is None:
+                    return self.cancel(context)
                 self.frame += self.key_step
-
-            if data is None:
-                logging.debug("Data is None, finish detection.")
-                return self.cancel(context)
 
         if event.type in {'Q', 'ESC', 'RIGHT_MOUSE'} or self.user.modal_active is False:
             return self.cancel(context)
@@ -195,7 +195,6 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
         """ Upon finishing detection clear the handlers. """
         self.user.modal_active = False  # noqa
         del self.node_chain
-        self.memo = None
         wm = context.window_manager
         wm.event_timer_remove(self._timer)
         logging.debug("FINISHED DETECTION")
