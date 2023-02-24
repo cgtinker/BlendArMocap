@@ -1,0 +1,534 @@
+:py:mod:`BlendArMocap.src.cgt_transfer.cgt_tf_object_properties`
+================================================================
+
+.. py:module:: BlendArMocap.src.cgt_transfer.cgt_tf_object_properties
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.TransferTargetProto
+   BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.OBJECT_PGT_CGT_TransferTarget
+   BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.RemapDistanceProto
+   BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.OBJECT_PGT_CGT_RemapDistance
+   BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.ValueMappingProto
+   BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.OBJECT_PGT_CGT_ValueMapping
+   BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.TransferPropertiesProto
+   BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.OBJECT_PGT_CGT_TransferProperties
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.pool_transfer_target
+   BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.get_shape_key_enum
+   BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.get_bones_enum
+   BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.is_armature
+   BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.register
+   BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.unregister
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.classes
+
+
+.. py:function:: pool_transfer_target(self, obj)
+
+
+.. py:function:: get_shape_key_enum(self, context)
+
+
+.. py:function:: get_bones_enum(self, context)
+
+
+.. py:function:: is_armature(self, obj)
+
+
+.. py:class:: TransferTargetProto
+
+   .. py:attribute:: obj_type
+      :type: str
+
+      
+
+   .. py:attribute:: target
+      :type: object
+
+      
+
+   .. py:attribute:: armature_type
+      :type: str
+
+      
+
+   .. py:attribute:: object_type
+      :type: str
+
+      
+
+   .. py:attribute:: target_bone
+      :type: str
+
+      
+
+   .. py:attribute:: target_shape_key
+      :type: str
+
+      
+
+
+.. py:class:: OBJECT_PGT_CGT_TransferTarget
+
+   Bases: :py:obj:`bpy.types.PropertyGroup`
+
+   Target for data transfer. 
+
+   .. py:attribute:: obj_type
+      :type: bpy.props.EnumProperty(name='Object Type', items=(('ARMATURE', 'Armature', ''), ('MESH', 'Mesh', ''), ('ANY', 'Any', '')))
+
+      
+
+   .. py:attribute:: target
+      :type: bpy.props.PointerProperty(type=bpy.types.Object, poll=pool_transfer_target, description='Select an object for animation transfer.')
+
+      
+
+   .. py:attribute:: armature_type
+      :type: bpy.props.EnumProperty(name='Target Type', items=(('ARMATURE', 'Object', ''), ('BONE', 'Bone', '')))
+
+      
+
+   .. py:attribute:: object_type
+      :type: bpy.props.EnumProperty(name='Target Type', items=(('OBJECT', 'Object', ''), ))
+
+      
+
+   .. py:attribute:: target_bone
+      :type: bpy.props.EnumProperty(items=get_bones_enum, name='Bone', default=None)
+
+      
+
+   .. py:attribute:: target_shape_key
+      :type: bpy.props.EnumProperty(items=get_shape_key_enum)
+
+      
+
+
+.. py:class:: RemapDistanceProto
+
+   .. py:attribute:: target
+      :type: object
+
+      
+
+   .. py:attribute:: target_type
+      :type: str
+
+      
+
+   .. py:attribute:: target_bone
+      :type: str
+
+      
+
+   .. py:attribute:: target_bone_type
+      :type: str
+
+      
+
+   .. py:attribute:: other_bone
+      :type: str
+
+      
+
+   .. py:attribute:: other_bone_type
+      :type: str
+
+      
+
+
+.. py:class:: OBJECT_PGT_CGT_RemapDistance
+
+   Bases: :py:obj:`bpy.types.PropertyGroup`
+
+   TODO: Remap distance has to be checked for face drivers in the future. 
+
+   .. py:attribute:: target
+      :type: bpy.props.PointerProperty(type=bpy.types.Object, poll=is_armature, description='Select an armature for animation transfer.')
+
+      
+
+   .. py:attribute:: target_type
+      :type: bpy.props.EnumProperty(name='Target', items=(('NONE', 'None', ''), ('BONE_LEN', 'Bone Length', ''), ('BONE_DIST', 'Bone Distance', '')))
+
+      
+
+   .. py:attribute:: target_bone
+      :type: bpy.props.EnumProperty(items=get_bones_enum, name='Bone', default=None)
+
+      
+
+   .. py:attribute:: target_bone_type
+      :type: bpy.props.EnumProperty(name='Bone Type', items=(('HEAD', 'Head', ''), ('TAIL', 'Tail', ''), ('LOCATION', 'Location', '')))
+
+      
+
+   .. py:attribute:: other_bone
+      :type: bpy.props.EnumProperty(items=get_bones_enum, name='Bone', default=None)
+
+      
+
+   .. py:attribute:: other_bone_type
+      :type: bpy.props.EnumProperty(name='Bone Type', items=(('HEAD', 'Head', ''), ('TAIL', 'Tail', ''), ('LOCATION', 'Location', '')))
+
+      
+
+
+.. py:class:: ValueMappingProto
+
+   .. py:attribute:: active
+      :type: bool
+
+      
+
+   .. py:attribute:: remap_none
+      :type: str
+
+      
+
+   .. py:attribute:: remap_default
+      :type: str
+
+      
+
+   .. py:attribute:: remap_details
+      :type: str
+
+      
+
+   .. py:attribute:: factor
+      :type: float
+
+      
+
+   .. py:attribute:: offset
+      :type: float
+
+      
+
+   .. py:attribute:: from_min
+      :type: float
+
+      
+
+   .. py:attribute:: from_max
+      :type: float
+
+      
+
+   .. py:attribute:: to_min
+      :type: float
+
+      
+
+   .. py:attribute:: to_max
+      :type: float
+
+      
+
+
+.. py:class:: OBJECT_PGT_CGT_ValueMapping
+
+   Bases: :py:obj:`bpy.types.PropertyGroup`
+
+   Default value remapping. 
+
+   .. py:attribute:: active
+      :type: bpy.props.BoolProperty(name='active', default=False)
+
+      
+
+   .. py:attribute:: remap_none
+      :type: bpy.props.EnumProperty(items=(('DEFAULT', 'DEFAULT', ''), ), name='Remap Axis')
+
+      
+
+   .. py:attribute:: remap_default
+      :type: bpy.props.EnumProperty(items=(('DEFAULT', 'DEFAULT', ''), ('XYZ', 'XYZ', ''), ('XZY', 'XZY', ''), ('YXZ', 'YXZ', ''), ('YZX', 'YZX', ''), ('ZXY', 'ZXY', ''), ('ZYX', 'ZYX', '')), name='Remap Axis')
+
+      
+
+   .. py:attribute:: remap_details
+      :type: bpy.props.EnumProperty(items=(('DEFAULT', 'DEFAULT', ''), ('X', 'X', ''), ('Y', 'Y', ''), ('Z', 'Z', '')), name='Remap Axis')
+
+      
+
+   .. py:attribute:: factor
+      :type: bpy.props.FloatProperty(name='multiply', default=1.0)
+
+      
+
+   .. py:attribute:: offset
+      :type: bpy.props.FloatProperty(name='offset', default=0.0)
+
+      
+
+   .. py:attribute:: from_min
+      :type: bpy.props.FloatProperty(name='factor', default=0.0)
+
+      
+
+   .. py:attribute:: from_max
+      :type: bpy.props.FloatProperty(name='offset', default=1.0)
+
+      
+
+   .. py:attribute:: to_min
+      :type: bpy.props.FloatProperty(name='factor', default=0.0)
+
+      
+
+   .. py:attribute:: to_max
+      :type: bpy.props.FloatProperty(name='offset', default=1.0)
+
+      
+
+
+.. py:class:: TransferPropertiesProto
+
+   .. py:attribute:: id_data
+      :type: object
+
+      
+
+   .. py:attribute:: active
+      :type: bool
+
+      
+
+   .. py:attribute:: driver_type
+      :type: str
+
+      
+
+   .. py:attribute:: use_loc_x
+      :type: ValueMappingProto
+
+      
+
+   .. py:attribute:: use_loc_y
+      :type: ValueMappingProto
+
+      
+
+   .. py:attribute:: use_loc_z
+      :type: ValueMappingProto
+
+      
+
+   .. py:attribute:: loc_details
+      :type: bool
+
+      
+
+   .. py:attribute:: use_rot_x
+      :type: ValueMappingProto
+
+      
+
+   .. py:attribute:: use_rot_y
+      :type: ValueMappingProto
+
+      
+
+   .. py:attribute:: use_rot_z
+      :type: ValueMappingProto
+
+      
+
+   .. py:attribute:: rot_details
+      :type: bool
+
+      
+
+   .. py:attribute:: use_sca_x
+      :type: ValueMappingProto
+
+      
+
+   .. py:attribute:: use_sca_y
+      :type: ValueMappingProto
+
+      
+
+   .. py:attribute:: use_sca_z
+      :type: ValueMappingProto
+
+      
+
+   .. py:attribute:: sca_details
+      :type: bool
+
+      
+
+   .. py:attribute:: target
+      :type: TransferTargetProto
+
+      
+
+   .. py:attribute:: by_obj
+      :type: RemapDistanceProto
+
+      
+
+   .. py:attribute:: to_obj
+      :type: object
+
+      
+
+   .. py:attribute:: from_obj
+      :type: object
+
+      
+
+   .. py:attribute:: remap_from_obj
+      :type: object
+
+      
+
+   .. py:attribute:: remap_to_obj
+      :type: object
+
+      
+
+
+.. py:class:: OBJECT_PGT_CGT_TransferProperties
+
+   Bases: :py:obj:`bpy.types.PropertyGroup`
+
+   Custom remapping properties for objects
+
+   .. py:attribute:: active
+      :type: bpy.props.BoolProperty(default=False)
+
+      
+
+   .. py:attribute:: driver_type
+      :type: bpy.props.EnumProperty(name='driver_type', items=(('NONE', 'None', ''), ('REMAP', 'Remap Value', ''), ('CHAIN', 'IK Chain', ''), ('REMAP_DIST', 'Value by Distance', '')))
+
+      
+
+   .. py:attribute:: use_loc_x
+      :type: bpy.props.PointerProperty(type=OBJECT_PGT_CGT_ValueMapping)
+
+      
+
+   .. py:attribute:: use_loc_y
+      :type: bpy.props.PointerProperty(type=OBJECT_PGT_CGT_ValueMapping)
+
+      
+
+   .. py:attribute:: use_loc_z
+      :type: bpy.props.PointerProperty(type=OBJECT_PGT_CGT_ValueMapping)
+
+      
+
+   .. py:attribute:: loc_details
+      :type: bpy.props.BoolProperty(default=False)
+
+      
+
+   .. py:attribute:: use_rot_x
+      :type: bpy.props.PointerProperty(type=OBJECT_PGT_CGT_ValueMapping)
+
+      
+
+   .. py:attribute:: use_rot_y
+      :type: bpy.props.PointerProperty(type=OBJECT_PGT_CGT_ValueMapping)
+
+      
+
+   .. py:attribute:: use_rot_z
+      :type: bpy.props.PointerProperty(type=OBJECT_PGT_CGT_ValueMapping)
+
+      
+
+   .. py:attribute:: rot_details
+      :type: bpy.props.BoolProperty(default=False)
+
+      
+
+   .. py:attribute:: use_sca_x
+      :type: bpy.props.PointerProperty(type=OBJECT_PGT_CGT_ValueMapping)
+
+      
+
+   .. py:attribute:: use_sca_y
+      :type: bpy.props.PointerProperty(type=OBJECT_PGT_CGT_ValueMapping)
+
+      
+
+   .. py:attribute:: use_sca_z
+      :type: bpy.props.PointerProperty(type=OBJECT_PGT_CGT_ValueMapping)
+
+      
+
+   .. py:attribute:: sca_details
+      :type: bpy.props.BoolProperty(default=False)
+
+      
+
+   .. py:attribute:: target
+      :type: bpy.props.PointerProperty(type=OBJECT_PGT_CGT_TransferTarget)
+
+      
+
+   .. py:attribute:: by_obj
+      :type: bpy.props.PointerProperty(type=OBJECT_PGT_CGT_RemapDistance)
+
+      
+
+   .. py:attribute:: to_obj
+      :type: bpy.props.PointerProperty(type=bpy.types.Object)
+
+      
+
+   .. py:attribute:: from_obj
+      :type: bpy.props.PointerProperty(type=bpy.types.Object)
+
+      
+
+   .. py:attribute:: remap_from_obj
+      :type: bpy.props.PointerProperty(type=bpy.types.Object)
+
+      
+
+   .. py:attribute:: remap_to_obj
+      :type: bpy.props.PointerProperty(type=bpy.types.Object)
+
+      
+
+
+.. py:data:: classes
+
+   
+
+.. py:function:: register()
+
+
+.. py:function:: unregister()
+
+

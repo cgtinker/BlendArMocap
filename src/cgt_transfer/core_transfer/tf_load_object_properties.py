@@ -118,7 +118,8 @@ def load(objects: Any, path: str = None, target_armature: bpy.types.Object = Non
             obj = cgt_bpy_utils.add_empty(0.01, key)
 
         if cgt_object_prop.get_custom_property(obj, 'cgt_id') is None:
-            cgt_object_prop.set_custom_property(obj, 'cgt_id', key)
+            # TODO: cgt id shouldn't be that long tag - maybe switch to key in the future and just check if any id
+            cgt_object_prop.set_custom_property(obj, 'cgt_id', '11b1fb41-1349-4465-b3aa-78db80e8c761')
             cgt_collection.add_object_to_collection(d['collection'], obj)
 
         # apply data

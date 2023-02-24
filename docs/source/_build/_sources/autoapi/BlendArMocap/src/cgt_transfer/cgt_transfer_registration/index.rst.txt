@@ -1,0 +1,38 @@
+:py:mod:`BlendArMocap.src.cgt_transfer.cgt_transfer_registration`
+=================================================================
+
+.. py:module:: BlendArMocap.src.cgt_transfer.cgt_transfer_registration
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.cgt_transfer_registration.register
+   BlendArMocap.src.cgt_transfer.cgt_transfer_registration.unregister
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.cgt_transfer_registration.modules
+
+
+.. py:data:: modules
+
+   
+
+.. py:function:: register()
+
+
+.. py:function:: unregister()
+
+

@@ -1,0 +1,16 @@
+:py:mod:`BlendArMocap.src.cgt_core.cgt_interface`
+=================================================
+
+.. py:module:: BlendArMocap.src.cgt_core.cgt_interface
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   cgt_core_panel/index.rst
+   cgt_core_registration/index.rst
+
+

@@ -1,0 +1,74 @@
+:py:mod:`BlendArMocap.src.cgt_transfer.setup_helper.tf_hand_mapping_helper`
+===========================================================================
+
+.. py:module:: BlendArMocap.src.cgt_transfer.setup_helper.tf_hand_mapping_helper
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_hand_mapping_helper.set_hand_properties
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_hand_mapping_helper.main
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_hand_mapping_helper.RIGNAME
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_hand_mapping_helper.refs
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_hand_mapping_helper.constraint_x_limits
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_hand_mapping_helper.x_inputs
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_hand_mapping_helper.x_outputs
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_hand_mapping_helper.z_inputs
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_hand_mapping_helper.z_outputs
+
+
+.. py:data:: RIGNAME
+   :value: 'rig'
+
+   
+
+.. py:data:: refs
+
+   
+
+.. py:data:: constraint_x_limits
+   :value: [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+
+   
+
+.. py:data:: x_inputs
+   :value: [[0.011, 0.63], [0.01, 0.536], [0.008, 1.035], [0.105, 1.331], [0.014, 1.858], [0.34, 1.523],...
+
+   
+
+.. py:data:: x_outputs
+   :value: [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+
+   
+
+.. py:data:: z_inputs
+   :value: [[0.349, 1.047], None, None, None, None]
+
+   
+
+.. py:data:: z_outputs
+   :value: [None, None, None, None, None]
+
+   
+
+.. py:function:: set_hand_properties(rig: bpy.types.Armature, prefix: str = '.L')
+
+
+.. py:function:: main()
+
+

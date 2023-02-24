@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlendArMocap.src.cgt_transfer.cgt_tf_operators &mdash; BlendArMocap 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            BlendArMocap
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation/index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../detection.html">Mediapipe Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../transfer/index.html">Transfer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../freemocap.html">Freemocap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">BlendArMocap</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BlendArMocap.src.cgt_transfer.cgt_tf_operators</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/autoapi/BlendArMocap/src/cgt_transfer/cgt_tf_operators/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlendArMocap.src.cgt_transfer.cgt_tf_operators">
+<span id="blendarmocap-src-cgt-transfer-cgt-tf-operators"></span><h1><a class="reference internal" href="#module-BlendArMocap.src.cgt_transfer.cgt_tf_operators" title="BlendArMocap.src.cgt_transfer.cgt_tf_operators"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BlendArMocap.src.cgt_transfer.cgt_tf_operators</span></code></a><a class="headerlink" href="#module-BlendArMocap.src.cgt_transfer.cgt_tf_operators" title="Permalink to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_UI_CGT_smooth_empties" title="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_UI_CGT_smooth_empties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OT_UI_CGT_smooth_empties</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_RegenerateMetarig" title="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_RegenerateMetarig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OT_CGT_RegenerateMetarig</span></code></a></p></td>
+<td><p>TODO: Implement regen</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax" title="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OT_CGT_ObjectMinMax</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_TransferObjectProperties" title="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_TransferObjectProperties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OT_CGT_TransferObjectProperties</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_SaveObjectProperties" title="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_SaveObjectProperties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OT_CGT_SaveObjectProperties</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_LoadObjectProperties" title="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_LoadObjectProperties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OT_CGT_LoadObjectProperties</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_DeleteObjectProperties" title="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_DeleteObjectProperties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OT_CGT_DeleteObjectProperties</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ApplyObjectProperties" title="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ApplyObjectProperties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OT_CGT_ApplyObjectProperties</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.register" title="BlendArMocap.src.cgt_transfer.cgt_tf_operators.register"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.unregister" title="BlendArMocap.src.cgt_transfer.cgt_tf_operators.unregister"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unregister</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.classes" title="BlendArMocap.src.cgt_transfer.cgt_tf_operators.classes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">classes</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_UI_CGT_smooth_empties">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.cgt_tf_operators.</span></span><span class="sig-name descname"><span class="pre">OT_UI_CGT_smooth_empties</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_UI_CGT_smooth_empties" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bpy.types.Operator</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_UI_CGT_smooth_empties.bl_label">
+<span class="sig-name descname"><span class="pre">bl_label</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Smooth'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_UI_CGT_smooth_empties.bl_label" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_UI_CGT_smooth_empties.bl_idname">
+<span class="sig-name descname"><span class="pre">bl_idname</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'button.smooth_selected_empties'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_UI_CGT_smooth_empties.bl_idname" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_UI_CGT_smooth_empties.bl_description">
+<span class="sig-name descname"><span class="pre">bl_description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Smooth</span> <span class="pre">animation</span> <span class="pre">data</span> <span class="pre">of</span> <span class="pre">selected</span> <span class="pre">objects.'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_UI_CGT_smooth_empties.bl_description" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_UI_CGT_smooth_empties.bl_options">
+<span class="sig-name descname"><span class="pre">bl_options</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_UI_CGT_smooth_empties.bl_options" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_UI_CGT_smooth_empties.poll">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">poll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_UI_CGT_smooth_empties.poll" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_UI_CGT_smooth_empties.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_UI_CGT_smooth_empties.execute" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_RegenerateMetarig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.cgt_tf_operators.</span></span><span class="sig-name descname"><span class="pre">OT_CGT_RegenerateMetarig</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_RegenerateMetarig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bpy.types.Operator</span></code></p>
+<p>TODO: Implement regen</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_RegenerateMetarig.bl_label">
+<span class="sig-name descname"><span class="pre">bl_label</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Regenerate</span> <span class="pre">Metarig'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_RegenerateMetarig.bl_label" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_RegenerateMetarig.bl_idname">
+<span class="sig-name descname"><span class="pre">bl_idname</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'button.cgt_regenerate_metarig'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_RegenerateMetarig.bl_idname" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_RegenerateMetarig.bl_description">
+<span class="sig-name descname"><span class="pre">bl_description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Regenerates</span> <span class="pre">the</span> <span class="pre">metarig</span> <span class="pre">from</span> <span class="pre">a</span> <span class="pre">rigify</span> <span class="pre">rig.'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_RegenerateMetarig.bl_description" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_RegenerateMetarig.poll">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">poll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_RegenerateMetarig.poll" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_RegenerateMetarig.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bpy.context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_RegenerateMetarig.execute" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.cgt_tf_operators.</span></span><span class="sig-name descname"><span class="pre">OT_CGT_ObjectMinMax</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bpy.types.Operator</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax.bl_label">
+<span class="sig-name descname"><span class="pre">bl_label</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Object</span> <span class="pre">MinMax-fCurve'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax.bl_label" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax.bl_idname">
+<span class="sig-name descname"><span class="pre">bl_idname</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'button.cgt_object_fcurve_min_max'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax.bl_idname" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax.bl_description">
+<span class="sig-name descname"><span class="pre">bl_description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Get</span> <span class="pre">minimum</span> <span class="pre">and</span> <span class="pre">maximum</span> <span class="pre">values</span> <span class="pre">from</span> <span class="pre">objects</span> <span class="pre">fCurves.'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax.bl_description" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax.bl_options">
+<span class="sig-name descname"><span class="pre">bl_options</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax.bl_options" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax.poll">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">poll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax.poll" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax.get_minmax_dist">
+<span class="sig-name descname"><span class="pre">get_minmax_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax.get_minmax_dist" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax.get_minmax_transforms">
+<span class="sig-name descname"><span class="pre">get_minmax_transforms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ob</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_rot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sca</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax.get_minmax_transforms" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bpy.context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ObjectMinMax.execute" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_TransferObjectProperties">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.cgt_tf_operators.</span></span><span class="sig-name descname"><span class="pre">OT_CGT_TransferObjectProperties</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_TransferObjectProperties" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bpy.types.Operator</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_TransferObjectProperties.bl_label">
+<span class="sig-name descname"><span class="pre">bl_label</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Transfer</span> <span class="pre">from</span> <span class="pre">selected'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_TransferObjectProperties.bl_label" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_TransferObjectProperties.bl_idname">
+<span class="sig-name descname"><span class="pre">bl_idname</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'button.cgt_object_transfer_selection'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_TransferObjectProperties.bl_idname" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_TransferObjectProperties.bl_description">
+<span class="sig-name descname"><span class="pre">bl_description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Transfer</span> <span class="pre">properties</span> <span class="pre">from</span> <span class="pre">selected</span> <span class="pre">objects</span> <span class="pre">by</span> <span class="pre">generating</span> <span class="pre">drivers</span> <span class="pre">and</span> <span class="pre">populating</span> <span class="pre">constraints.'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_TransferObjectProperties.bl_description" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_TransferObjectProperties.bl_options">
+<span class="sig-name descname"><span class="pre">bl_options</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_TransferObjectProperties.bl_options" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_TransferObjectProperties.poll">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">poll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_TransferObjectProperties.poll" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_TransferObjectProperties.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_TransferObjectProperties.execute" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_SaveObjectProperties">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.cgt_tf_operators.</span></span><span class="sig-name descname"><span class="pre">OT_CGT_SaveObjectProperties</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_SaveObjectProperties" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bpy.types.Operator</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_SaveObjectProperties.bl_label">
+<span class="sig-name descname"><span class="pre">bl_label</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Save</span> <span class="pre">Transfer</span> <span class="pre">Properties'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_SaveObjectProperties.bl_label" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_SaveObjectProperties.bl_idname">
+<span class="sig-name descname"><span class="pre">bl_idname</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'button.cgt_object_save_properties'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_SaveObjectProperties.bl_idname" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_SaveObjectProperties.bl_description">
+<span class="sig-name descname"><span class="pre">bl_description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Saves</span> <span class="pre">transfer</span> <span class="pre">properties</span> <span class="pre">from</span> <span class="pre">available</span> <span class="pre">objects</span> <span class="pre">to</span> <span class="pre">file.'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_SaveObjectProperties.bl_description" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_SaveObjectProperties.bl_options">
+<span class="sig-name descname"><span class="pre">bl_options</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_SaveObjectProperties.bl_options" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_SaveObjectProperties.poll">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">poll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_SaveObjectProperties.poll" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_SaveObjectProperties.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_SaveObjectProperties.execute" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_LoadObjectProperties">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.cgt_tf_operators.</span></span><span class="sig-name descname"><span class="pre">OT_CGT_LoadObjectProperties</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_LoadObjectProperties" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bpy.types.Operator</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_LoadObjectProperties.bl_label">
+<span class="sig-name descname"><span class="pre">bl_label</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Load</span> <span class="pre">Transfer</span> <span class="pre">Properties'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_LoadObjectProperties.bl_label" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_LoadObjectProperties.bl_idname">
+<span class="sig-name descname"><span class="pre">bl_idname</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'button.cgt_object_load_properties'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_LoadObjectProperties.bl_idname" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_LoadObjectProperties.bl_description">
+<span class="sig-name descname"><span class="pre">bl_description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Load</span> <span class="pre">transfer</span> <span class="pre">properties</span> <span class="pre">to</span> <span class="pre">objects.'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_LoadObjectProperties.bl_description" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_LoadObjectProperties.bl_options">
+<span class="sig-name descname"><span class="pre">bl_options</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_LoadObjectProperties.bl_options" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_LoadObjectProperties.poll">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">poll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_LoadObjectProperties.poll" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_LoadObjectProperties.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_LoadObjectProperties.execute" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_DeleteObjectProperties">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.cgt_tf_operators.</span></span><span class="sig-name descname"><span class="pre">OT_CGT_DeleteObjectProperties</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_DeleteObjectProperties" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bpy.types.Operator</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_DeleteObjectProperties.bl_label">
+<span class="sig-name descname"><span class="pre">bl_label</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Delete</span> <span class="pre">Transfer</span> <span class="pre">Properties'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_DeleteObjectProperties.bl_label" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_DeleteObjectProperties.bl_idname">
+<span class="sig-name descname"><span class="pre">bl_idname</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'button.cgt_object_delete_properties'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_DeleteObjectProperties.bl_idname" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_DeleteObjectProperties.bl_description">
+<span class="sig-name descname"><span class="pre">bl_description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Delete</span> <span class="pre">transfer</span> <span class="pre">properties</span> <span class="pre">file.'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_DeleteObjectProperties.bl_description" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_DeleteObjectProperties.bl_options">
+<span class="sig-name descname"><span class="pre">bl_options</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_DeleteObjectProperties.bl_options" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_DeleteObjectProperties.poll">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">poll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_DeleteObjectProperties.poll" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_DeleteObjectProperties.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_DeleteObjectProperties.execute" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ApplyObjectProperties">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.cgt_tf_operators.</span></span><span class="sig-name descname"><span class="pre">OT_CGT_ApplyObjectProperties</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ApplyObjectProperties" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bpy.types.Operator</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ApplyObjectProperties.bl_label">
+<span class="sig-name descname"><span class="pre">bl_label</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Apply</span> <span class="pre">Transfer</span> <span class="pre">Properties'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ApplyObjectProperties.bl_label" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ApplyObjectProperties.bl_idname">
+<span class="sig-name descname"><span class="pre">bl_idname</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'button.cgt_object_apply_properties'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ApplyObjectProperties.bl_idname" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ApplyObjectProperties.bl_description">
+<span class="sig-name descname"><span class="pre">bl_description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Apply</span> <span class="pre">transfer</span> <span class="pre">properties</span> <span class="pre">from</span> <span class="pre">available</span> <span class="pre">objects.'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ApplyObjectProperties.bl_description" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ApplyObjectProperties.bl_options">
+<span class="sig-name descname"><span class="pre">bl_options</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ApplyObjectProperties.bl_options" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ApplyObjectProperties.poll">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">poll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ApplyObjectProperties.poll" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ApplyObjectProperties.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.OT_CGT_ApplyObjectProperties.execute" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.classes">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.cgt_tf_operators.</span></span><span class="sig-name descname"><span class="pre">classes</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.classes" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.register">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.cgt_tf_operators.</span></span><span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.register" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.cgt_tf_operators.unregister">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.cgt_tf_operators.</span></span><span class="sig-name descname"><span class="pre">unregister</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.cgt_tf_operators.unregister" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, cgtinker.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

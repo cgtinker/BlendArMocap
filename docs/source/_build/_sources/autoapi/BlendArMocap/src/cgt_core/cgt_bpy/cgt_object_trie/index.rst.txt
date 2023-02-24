@@ -1,0 +1,148 @@
+:py:mod:`BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie`
+===========================================================
+
+.. py:module:: BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.TrieObject
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.repr_dict
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.gen_flatten
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.gen_leafs
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.gen_parents
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.inline_converter
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.inline_string2object
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.inline_calculate_distances
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.global2local
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.objects2armature
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.objects2trie
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.set_constraints
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.armature_from_default_dict
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.armature_from_selection
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.object_data_from_selection
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.gen_flatten_trie_object_dict
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.gen_flatten_trie_objects
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.parse_object_data_dict
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.main
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.d
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_trie.d2
+
+
+.. py:data:: d
+
+   
+
+.. py:data:: d2
+
+   
+
+.. py:function:: repr_dict(d: Dict[Any], trie_objects=True) -> str
+
+
+.. py:function:: gen_flatten(d: Dict[Any])
+
+   Generator to flatten dictonary. 
+
+
+.. py:function:: gen_leafs(d: Dict[Any])
+
+   Generator to get dictonary leafs. 
+
+
+.. py:function:: gen_parents(d: Dict[Any], parent: Any = None)
+
+   Generator to get child and parent of dictonary. 
+
+
+.. py:function:: inline_converter(d: Dict[Any], copy: Dict[Any], method: Callable, parent: Any = None)
+
+   Attach a method which gets called during recv call to generate
+   other dicts based on the input dict.
+   method(copy: Dict[Any], object_name: str, _) -> Dict[Any] 
+
+
+.. py:function:: inline_string2object(copy: Dict[Any], object_name: str, _) -> Dict[Any]
+
+   Get objects using the inline generator. 
+
+
+.. py:function:: inline_calculate_distances(copy: Dict[Any], cur, parent=None)
+
+   Calculate distances of objects using the inline generator. 
+
+
+.. py:function:: global2local(from_objects: List[bpy.types.Object], to_objects: List[bpy.types.Object], distances: List[float] = None)
+
+   Generator for calculating global to local space based on parented object trie. 
+
+
+.. py:function:: objects2armature(trie: dict[bpy.types.Object, dict]) -> bpy.types.Object
+
+   Creates an armature based on a parented object trie. 
+
+
+.. py:function:: objects2trie(objects: List[bpy.types.Objects]) -> Dict[bpy.types.Object, dict]
+
+   Construct trie structure from object parents. 
+
+
+.. py:function:: set_constraints(armature: bpy.types.Object, trie: dict[bpy.types.Object, dict])
+
+
+.. py:class:: TrieObject(name)
+
+   .. py:method:: __str__()
+
+      Return str(self).
+
+
+   .. py:method:: __repr__()
+
+      Return repr(self).
+
+
+
+.. py:function:: armature_from_default_dict()
+
+
+.. py:function:: armature_from_selection()
+
+
+.. py:function:: object_data_from_selection()
+
+
+.. py:function:: gen_flatten_trie_object_dict(d)
+
+
+.. py:function:: gen_flatten_trie_objects(d)
+
+
+.. py:function:: parse_object_data_dict()
+
+
+.. py:function:: main()
+
+

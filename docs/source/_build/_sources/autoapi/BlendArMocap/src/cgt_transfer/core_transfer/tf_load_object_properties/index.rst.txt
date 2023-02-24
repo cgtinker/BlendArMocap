@@ -1,0 +1,42 @@
+:py:mod:`BlendArMocap.src.cgt_transfer.core_transfer.tf_load_object_properties`
+===============================================================================
+
+.. py:module:: BlendArMocap.src.cgt_transfer.core_transfer.tf_load_object_properties
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_load_object_properties.idle_object_props
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_load_object_properties.apply_props2obj
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_load_object_properties.apply_constraints
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_load_object_properties.load
+
+
+
+.. py:function:: idle_object_props(props)
+
+   Set CGT_Object_Properties to Idle State. 
+
+
+.. py:function:: apply_props2obj(props: dict, obj: Union[bpy.types.Object, bpy.types.Constraint], target_armature: bpy.types.Object = None)
+
+   Apply CGT_Object_Properties stored state. 
+
+
+.. py:function:: apply_constraints(constraints: list, obj: bpy.types.Object, target_armature: bpy.types.Object)
+
+   Add stored constraints to objects. 
+
+
+.. py:function:: load(objects: Any, path: str = None, target_armature: bpy.types.Object = None)
+
+   Load CGT_Object_Properties and Constraints from json and apply the data. 
+
+

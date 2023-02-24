@@ -1,0 +1,83 @@
+:py:mod:`BlendArMocap.src.cgt_core.cgt_bpy.cgt_collection`
+==========================================================
+
+.. py:module:: BlendArMocap.src.cgt_core.cgt_bpy.cgt_collection
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_collection.set_viewport_visibility
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_collection.collection_exists
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_collection.get_collection
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_collection.create_collection
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_collection.remove_collection
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_collection.add_list_to_collection
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_collection.add_object_to_collection
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_collection._obj_to_collection
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_collection.get_child_collections
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_collection.get_objects_from_collection
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_collection.move_list_to_collection
+
+
+
+.. py:function:: set_viewport_visibility(collection_name: str, active: bool) -> None
+
+   Sets the visibility of a collection. 
+
+
+.. py:function:: collection_exists(collection_name: str) -> bool
+
+   Returns if the collection exists. 
+
+
+.. py:function:: get_collection(collection_name: str) -> bpy.types.Collection
+
+
+.. py:function:: create_collection(collection_name: str, parent_collection: Optional[str], link: bool = True) -> bool
+
+   Creates a collection which may is child of a parent. 
+
+
+.. py:function:: remove_collection(collection_name: str, remove_objects: bool = True) -> None
+
+   Removes a collection and the objects it contains. 
+
+
+.. py:function:: add_list_to_collection(collection_name: str, objects: List[bpy.types.Object], parent_collection: Optional[str] = None, link: bool = True) -> None
+
+   Adds a list of objects to a collection.
+   Creates a new collection if it doesn't exist. 
+
+
+.. py:function:: add_object_to_collection(collection_name: str, obj: bpy.types.Object, parent_collection=None, link=True) -> bool
+
+   Adds an Object to a collection, creates a new collection if it doesn't exist. 
+
+
+.. py:function:: _obj_to_collection(collection_name: str, obj: bpy.types.Object, from_collection=None) -> bool
+
+   Internal: Links object to target collection. 
+
+
+.. py:function:: get_child_collections(col_name: str)
+
+   Returns array of child collection names or parent name if no children found. 
+
+
+.. py:function:: get_objects_from_collection(col_name)
+
+   Returns objects from collection. 
+
+
+.. py:function:: move_list_to_collection(to_collection: str, objects: List[bpy.types.Object], from_collection: str = None) -> None
+
+   Move list of elements from, to a collection. 
+
+

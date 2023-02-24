@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper &mdash; BlendArMocap 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../../" id="documentation_options" src="../../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../../_static/jquery.js"></script>
+        <script src="../../../../../../_static/underscore.js"></script>
+        <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../../_static/doctools.js"></script>
+        <script src="../../../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            BlendArMocap
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../installation/index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../detection.html">Mediapipe Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../transfer/index.html">Transfer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../freemocap.html">Freemocap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">BlendArMocap</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../../_sources/autoapi/BlendArMocap/src/cgt_transfer/setup_helper/tf_pose_mapping_helper/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper">
+<span id="blendarmocap-src-cgt-transfer-setup-helper-tf-pose-mapping-helper"></span><h1><a class="reference internal" href="#module-BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper" title="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper</span></code></a><a class="headerlink" href="#module-BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper" title="Permalink to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.get_arm_chain" title="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.get_arm_chain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_arm_chain</span></code></a>([prefix])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.get_leg_chain" title="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.get_leg_chain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_leg_chain</span></code></a>([prefix])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.set_idle_props" title="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.set_idle_props"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_idle_props</span></code></a>(props)</p></td>
+<td><p>Set CGT_Object_Properties to Idle State.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.recv_props" title="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.recv_props"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recv_props</span></code></a>(data_path, d[, arm])</p></td>
+<td><p>Recursivly apply properites based on dict entries.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.set_remapping_objects" title="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.set_remapping_objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_remapping_objects</span></code></a>(obj_name, constrained_obj, rig)</p></td>
+<td><p>apply default remapping objects.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.set_limb_chain" title="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.set_limb_chain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_limb_chain</span></code></a>(chain, rig[, reset])</p></td>
+<td><p>apply ik limb chains.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.main" title="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.RIG_NAME" title="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.RIG_NAME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RIG_NAME</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.USE_IK" title="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.USE_IK"><code class="xref py py-obj docutils literal notranslate"><span class="pre">USE_IK</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.USE_FK" title="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.USE_FK"><code class="xref py py-obj docutils literal notranslate"><span class="pre">USE_FK</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.ConstrainedObject" title="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.ConstrainedObject"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstrainedObject</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.default_constraints" title="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.default_constraints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">default_constraints</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.constrained_objects" title="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.constrained_objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constrained_objects</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.fk_chains" title="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.fk_chains"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fk_chains</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.ChainElement" title="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.ChainElement"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ChainElement</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.RIG_NAME">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.</span></span><span class="sig-name descname"><span class="pre">RIG_NAME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rig'</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.RIG_NAME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.USE_IK">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.</span></span><span class="sig-name descname"><span class="pre">USE_IK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.USE_IK" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.USE_FK">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.</span></span><span class="sig-name descname"><span class="pre">USE_FK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.USE_FK" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.ConstrainedObject">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.</span></span><span class="sig-name descname"><span class="pre">ConstrainedObject</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.ConstrainedObject" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.default_constraints">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.</span></span><span class="sig-name descname"><span class="pre">default_constraints</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.default_constraints" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.constrained_objects">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.</span></span><span class="sig-name descname"><span class="pre">constrained_objects</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.constrained_objects" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.fk_chains">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.</span></span><span class="sig-name descname"><span class="pre">fk_chains</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.fk_chains" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.ChainElement">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.</span></span><span class="sig-name descname"><span class="pre">ChainElement</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.ChainElement" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.get_arm_chain">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.</span></span><span class="sig-name descname"><span class="pre">get_arm_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.L'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.get_arm_chain" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.get_leg_chain">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.</span></span><span class="sig-name descname"><span class="pre">get_leg_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.L'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.get_leg_chain" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.set_idle_props">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.</span></span><span class="sig-name descname"><span class="pre">set_idle_props</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">props</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.set_idle_props" title="Permalink to this definition"></a></dt>
+<dd><p>Set CGT_Object_Properties to Idle State.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.recv_props">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.</span></span><span class="sig-name descname"><span class="pre">recv_props</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.recv_props" title="Permalink to this definition"></a></dt>
+<dd><p>Recursivly apply properites based on dict entries.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.set_remapping_objects">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.</span></span><span class="sig-name descname"><span class="pre">set_remapping_objects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constrained_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.set_remapping_objects" title="Permalink to this definition"></a></dt>
+<dd><p>apply default remapping objects.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.set_limb_chain">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.</span></span><span class="sig-name descname"><span class="pre">set_limb_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.set_limb_chain" title="Permalink to this definition"></a></dt>
+<dd><p>apply ik limb chains.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.main">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.main" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, cgtinker.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+:py:mod:`BlendArMocap.src.cgt_core.cgt_output_nodes.mp_face_out`
+================================================================
+
+.. py:module:: BlendArMocap.src.cgt_core.cgt_output_nodes.mp_face_out
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_output_nodes.mp_face_out.MPFaceOutputNode
+
+
+
+
+.. py:class:: MPFaceOutputNode
+
+   Bases: :py:obj:`BlendArMocap.src.cgt_core.cgt_output_nodes.mp_out_utils.BpyOutputNode`
+
+   .. py:attribute:: face
+      :value: []
+
+      
+
+   .. py:attribute:: col_name
+
+      
+
+   .. py:attribute:: parent_col
+
+      
+
+   .. py:method:: update(data, frame)
+
+
+

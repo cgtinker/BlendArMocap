@@ -1,0 +1,64 @@
+:py:mod:`BlendArMocap.src.cgt_transfer.core_transfer.tf_save_object_properties`
+===============================================================================
+
+.. py:module:: BlendArMocap.src.cgt_transfer.core_transfer.tf_save_object_properties
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_save_object_properties.convert_object_ptrs2str
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_save_object_properties.convert_cls2dict
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_save_object_properties.delete_typeof_none
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_save_object_properties.delete_id_data
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_save_object_properties.save
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_save_object_properties.test
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_save_object_properties.armature_name
+
+
+.. py:data:: armature_name
+
+   
+
+.. py:function:: convert_object_ptrs2str(cls) -> None
+
+   Pointers to objects to strs (inplace). 
+
+
+.. py:function:: convert_cls2dict(cls, d: dict) -> None
+
+   Convert cls and subcls to dict 
+
+
+.. py:function:: delete_typeof_none(cls) -> None
+
+   Remove ptrs to None (inplace) 
+
+
+.. py:function:: delete_id_data(cls) -> None
+
+   Remove id_data props (internal bpy data used for proper prints) 
+
+
+.. py:function:: save(objs: List[bpy.types.Object]) -> BlendArMocap.src.cgt_core.cgt_utils.cgt_json.JsonData
+
+   Saves all available remapping objects, boils down transfer properties to the required minimum. 
+
+
+.. py:function:: test()
+
+

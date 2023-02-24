@@ -1,0 +1,36 @@
+:py:mod:`BlendArMocap.src.cgt_transfer.core_transfer.tf_check_object_properties`
+================================================================================
+
+.. py:module:: BlendArMocap.src.cgt_transfer.core_transfer.tf_check_object_properties
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_check_object_properties.check_value_mapping_generic_props
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_check_object_properties.check_value_mapping_detail_props
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_check_object_properties.check_distance_mapping_object_props
+
+
+
+.. py:function:: check_value_mapping_generic_props(props: List[BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.OBJECT_PGT_CGT_ValueMapping]) -> List[BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.OBJECT_PGT_CGT_ValueMapping]
+
+   Copy values from first container and set axis explicit. 
+
+
+.. py:function:: check_value_mapping_detail_props(props: List[BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.OBJECT_PGT_CGT_ValueMapping]) -> List[BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.OBJECT_PGT_CGT_ValueMapping]
+
+   Sets explicit axis names and checks for overlaps. 
+
+
+.. py:function:: check_distance_mapping_object_props(props: BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.OBJECT_PGT_CGT_TransferProperties) -> BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.OBJECT_PGT_CGT_TransferProperties
+
+   Checks if required objects assigned and updates mapping props. 
+
+

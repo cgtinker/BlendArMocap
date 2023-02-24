@@ -1,0 +1,83 @@
+:py:mod:`BlendArMocap.src.cgt_core.cgt_calculators_nodes.calc_utils`
+====================================================================
+
+.. py:module:: BlendArMocap.src.cgt_core.cgt_calculators_nodes.calc_utils
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.calc_utils.CustomData
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.calc_utils.ProcessorUtils
+
+
+
+
+.. py:class:: CustomData(idx)
+
+   .. py:attribute:: idx
+
+      
+
+   .. py:attribute:: loc
+
+      
+
+   .. py:attribute:: rot
+
+      
+
+   .. py:attribute:: sca
+
+      
+
+
+.. py:class:: ProcessorUtils
+
+   .. py:attribute:: data
+
+      
+
+   .. py:attribute:: frame
+      :value: 0
+
+      
+
+   .. py:attribute:: prev_rotation
+
+      
+
+   .. py:attribute:: prev_sum
+      :value: [0.0, 0.0]
+
+      
+
+   .. py:method:: has_duplicated_results(data=None, detector_type=None, idx=0)
+
+      Sums data array values and compares them each frame to avoid duplicated values
+      in the timeline. This fixes duplicated frame issue mainly occurring on Windows. 
+
+
+   .. py:method:: quart_to_euler_combat(quart, idx, idx_offset=0, axis='XYZ')
+
+      Converts quart to euler rotation while comparing with previous rotation. 
+
+
+   .. py:method:: offset_euler(euler, offset: list = None)
+      :staticmethod:
+
+      Offsets an euler rotation using euler radians *pi. 
+
+
+   .. py:method:: try_get_euler(quart_rotation, offset: list = None, prev_rot_idx: int = None)
+
+      Gets an euler rotation from quaternion with using the previously
+      created rotation as combat to avoid discontinuity. 
+
+
+

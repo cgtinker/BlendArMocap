@@ -1,0 +1,56 @@
+:py:mod:`BlendArMocap.src.cgt_mediapipe.cgt_mp_core.test`
+=========================================================
+
+.. py:module:: BlendArMocap.src.cgt_mediapipe.cgt_mp_core.test
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_core.test.cvt2array
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_core.test.mp_drawing
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_core.test.mp_drawing_styles
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_core.test.mp_holistic
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_core.test.cap
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_core.test.image
+
+
+.. py:data:: mp_drawing
+
+   
+
+.. py:data:: mp_drawing_styles
+
+   
+
+.. py:data:: mp_holistic
+
+   
+
+.. py:function:: cvt2array(landmark_list)
+
+   converts landmark list to list. 
+
+
+.. py:data:: cap
+
+   
+
+.. py:data:: image
+
+   
+

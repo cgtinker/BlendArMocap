@@ -1,0 +1,66 @@
+:py:mod:`BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_prop`
+===========================================================
+
+.. py:module:: BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_prop
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_prop.CustomProps
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_prop.get_custom_property
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_object_prop.set_custom_property
+
+
+
+.. py:function:: get_custom_property(target_obj: Union[bpy.types.Object, bpy.types.PoseBone], prop_name: str) -> Optional[Any]
+
+   Returns the custom property by name or None. 
+
+
+.. py:function:: set_custom_property(obj: Union[bpy.types.Object, bpy.types.PoseBone], prop_name: str, value: Any, v_min: Optional[float] = None, v_max: Optional[float] = None, use_soft: bool = False, overwrite: bool = False) -> bool
+
+
+.. py:class:: CustomProps(name, value, v_min=None, v_max=None, use_soft=False)
+
+   Custom property data for Blender Objects. 
+
+   .. py:attribute:: name
+      :type: str
+
+      
+
+   .. py:attribute:: value
+      :type: float
+
+      
+
+   .. py:attribute:: v_min
+      :type: float
+
+      
+
+   .. py:attribute:: v_max
+      :type: float
+
+      
+
+   .. py:attribute:: use_soft
+      :type: bool
+
+      
+
+

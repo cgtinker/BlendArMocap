@@ -1,0 +1,150 @@
+:py:mod:`BlendArMocap.src.cgt_transfer.cgt_tf_io_config`
+========================================================
+
+.. py:module:: BlendArMocap.src.cgt_transfer.cgt_tf_io_config
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.cgt_tf_io_config.OT_CGT_Import_Transfer_Config
+   BlendArMocap.src.cgt_transfer.cgt_tf_io_config.OT_CGT_Export_Transfer_Config
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.cgt_tf_io_config.import_config_button
+   BlendArMocap.src.cgt_transfer.cgt_tf_io_config.export_config_button
+   BlendArMocap.src.cgt_transfer.cgt_tf_io_config.register
+   BlendArMocap.src.cgt_transfer.cgt_tf_io_config.unregister
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.cgt_tf_io_config.classes
+
+
+.. py:class:: OT_CGT_Import_Transfer_Config
+
+   Bases: :py:obj:`bpy.types.Operator`
+
+   Imports transfer configuration file.
+
+   .. py:attribute:: bl_idname
+      :value: 'wm.import_rig_transfer_config'
+
+      
+
+   .. py:attribute:: bl_label
+      :value: 'Import BlendArMocap Transfer Configuration'
+
+      
+
+   .. py:attribute:: bl_options
+
+      
+
+   .. py:attribute:: filename_ext
+      :value: '.json'
+
+      
+
+   .. py:attribute:: filter_glob
+      :type: bpy.props.StringProperty(default='*.json;', options={'HIDDEN'})
+
+      
+
+   .. py:attribute:: filepath
+      :type: bpy.props.StringProperty(maxlen=1024, subtype='FILE_PATH', default='*.json;', options={'HIDDEN', 'SKIP_SAVE'})
+
+      
+
+   .. py:method:: draw(context)
+
+
+   .. py:method:: invoke(context, event)
+
+
+   .. py:method:: execute(context)
+
+
+
+.. py:class:: OT_CGT_Export_Transfer_Config
+
+   Bases: :py:obj:`bpy.types.Operator`
+
+   Export transfer configuration file. 
+
+   .. py:attribute:: bl_idname
+      :value: 'wm.export_rig_transfer_config'
+
+      
+
+   .. py:attribute:: bl_label
+      :value: 'Export BlendArMocap Transfer Configuration'
+
+      
+
+   .. py:attribute:: bl_options
+
+      
+
+   .. py:attribute:: filename_ext
+      :value: '.json'
+
+      
+
+   .. py:attribute:: filter_glob
+      :type: bpy.props.StringProperty(default='*.json;', options={'HIDDEN'})
+
+      
+
+   .. py:attribute:: filepath
+      :type: bpy.props.StringProperty(maxlen=1024, subtype='DIR_PATH', options={'HIDDEN', 'SKIP_SAVE'})
+
+      
+
+   .. py:attribute:: directory
+      :type: bpy.props.StringProperty(maxlen=1024, subtype='DIR_PATH', options={'HIDDEN', 'SKIP_SAVE'})
+
+      
+
+   .. py:method:: draw(context)
+
+
+   .. py:method:: invoke(context, event)
+
+
+   .. py:method:: execute(context)
+
+
+
+.. py:function:: import_config_button(self, context)
+
+
+.. py:function:: export_config_button(self, context)
+
+
+.. py:data:: classes
+
+   
+
+.. py:function:: register()
+
+
+.. py:function:: unregister()
+
+

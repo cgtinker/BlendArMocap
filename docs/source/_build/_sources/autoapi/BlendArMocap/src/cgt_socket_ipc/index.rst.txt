@@ -1,0 +1,26 @@
+:py:mod:`BlendArMocap.src.cgt_socket_ipc`
+=========================================
+
+.. py:module:: BlendArMocap.src.cgt_socket_ipc
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   cgt_core_socket/index.rst
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   cgt_socket_interface/index.rst
+   cgt_socket_operators/index.rst
+   cgt_socket_registration/index.rst
+
+

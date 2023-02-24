@@ -1,0 +1,151 @@
+:py:mod:`BlendArMocap.src.cgt_transfer.cgt_tf_3dview_panel`
+===========================================================
+
+.. py:module:: BlendArMocap.src.cgt_transfer.cgt_tf_3dview_panel
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.cgt_tf_3dview_panel.CgtRigifyTransferProperties
+   BlendArMocap.src.cgt_transfer.cgt_tf_3dview_panel.PT_CGT_Main_Transfer
+   BlendArMocap.src.cgt_transfer.cgt_tf_3dview_panel.PT_CGT_Advanced_Transfer
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.cgt_tf_3dview_panel.register
+   BlendArMocap.src.cgt_transfer.cgt_tf_3dview_panel.unregister
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.cgt_tf_3dview_panel.classes
+
+
+.. py:class:: CgtRigifyTransferProperties
+
+   Bases: :py:obj:`bpy.types.PropertyGroup`
+
+   .. py:attribute:: advanced_features
+      :type: bpy.props.BoolProperty(default=True)
+
+      
+
+   .. py:attribute:: save_object_properties_bool
+      :type: bpy.props.BoolProperty(default=False, description='Save data for transferring animation data (located in the object constraint properties) toggle.')
+
+      
+
+   .. py:attribute:: delete_object_properties_bool
+      :type: bpy.props.BoolProperty(default=False, description='Delete a configuration file toggle.')
+
+      
+
+   .. py:attribute:: save_object_properties_name
+      :type: bpy.props.StringProperty(default='', description='Insert name for the new mocap transfer configuration file.')
+
+      
+
+   .. py:attribute:: selected_rig
+      :type: bpy.props.PointerProperty(type=bpy.types.Object, description='Select an armature for animation transfer.', name='Armature', poll=is_armature)
+
+      
+
+   .. py:attribute:: transfer_types
+      :type: bpy.props.EnumProperty(name='Target Type', items=json_files)
+
+      
+
+   .. py:attribute:: selected_driver_collection
+      :type: bpy.props.PointerProperty(name='', type=bpy.types.Collection, description='Select a collection of Divers.', poll=cgt_collection_poll)
+
+      
+
+   .. py:method:: is_armature(object)
+
+
+   .. py:method:: json_files(context)
+
+
+   .. py:method:: cgt_collection_poll(col)
+
+
+
+.. py:class:: PT_CGT_Main_Transfer
+
+   Bases: :py:obj:`BlendArMocap.src.cgt_core.cgt_interface.cgt_core_panel.DefaultPanel`, :py:obj:`bpy.types.Panel`
+
+   .. py:attribute:: bl_label
+      :value: 'Transfer'
+
+      
+
+   .. py:attribute:: bl_parent_id
+      :value: 'UI_PT_CGT_Panel'
+
+      
+
+   .. py:attribute:: bl_idname
+      :value: 'UI_PT_Transfer_Panel'
+
+      
+
+   .. py:attribute:: bl_options
+
+      
+
+   .. py:method:: poll(context)
+      :classmethod:
+
+
+   .. py:method:: draw(context)
+
+
+
+.. py:class:: PT_CGT_Advanced_Transfer
+
+   Bases: :py:obj:`BlendArMocap.src.cgt_core.cgt_interface.cgt_core_panel.DefaultPanel`, :py:obj:`bpy.types.Panel`
+
+   .. py:attribute:: bl_label
+      :value: 'Advanced'
+
+      
+
+   .. py:attribute:: bl_parent_id
+      :value: 'UI_PT_Transfer_Panel'
+
+      
+
+   .. py:attribute:: bl_idname
+      :value: 'UI_PT_CGT_Transfer_Tools'
+
+      
+
+   .. py:method:: draw(context)
+
+
+
+.. py:data:: classes
+
+   
+
+.. py:function:: register()
+
+
+.. py:function:: unregister()
+
+

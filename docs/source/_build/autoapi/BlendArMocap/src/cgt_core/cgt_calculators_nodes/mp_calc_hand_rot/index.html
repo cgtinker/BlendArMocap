@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot &mdash; BlendArMocap 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../../" id="documentation_options" src="../../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../../_static/jquery.js"></script>
+        <script src="../../../../../../_static/underscore.js"></script>
+        <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../../_static/doctools.js"></script>
+        <script src="../../../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            BlendArMocap
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../installation/index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../detection.html">Mediapipe Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../transfer/index.html">Transfer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../freemocap.html">Freemocap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">BlendArMocap</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../../_sources/autoapi/BlendArMocap/src/cgt_core/cgt_calculators_nodes/mp_calc_hand_rot/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot">
+<span id="blendarmocap-src-cgt-core-cgt-calculators-nodes-mp-calc-hand-rot"></span><h1><a class="reference internal" href="#module-BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot</span></code></a><a class="headerlink" href="#module-BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot" title="Permalink to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HandRotationCalculator</span></code></a></p></td>
+<td><p>Calculate new data and changes the input shape.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.</span></span><span class="sig-name descname"><span class="pre">HandRotationCalculator</span></span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../cgt_patterns/cgt_nodes/index.html#BlendArMocap.src.cgt_core.cgt_patterns.cgt_nodes.CalculatorNode" title="BlendArMocap.src.cgt_core.cgt_patterns.cgt_nodes.CalculatorNode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BlendArMocap.src.cgt_core.cgt_patterns.cgt_nodes.CalculatorNode</span></code></a>, <a class="reference internal" href="../calc_utils/index.html#BlendArMocap.src.cgt_core.cgt_calculators_nodes.calc_utils.ProcessorUtils" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.calc_utils.ProcessorUtils"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.calc_utils.ProcessorUtils</span></code></a></p>
+<p>Calculate new data and changes the input shape.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.fingers">
+<span class="sig-name descname"><span class="pre">fingers</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[[1,</span> <span class="pre">5],</span> <span class="pre">[5,</span> <span class="pre">9],</span> <span class="pre">[9,</span> <span class="pre">13],</span> <span class="pre">[13,</span> <span class="pre">17],</span> <span class="pre">[17,</span> <span class="pre">21]]</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.fingers" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.data">
+<span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.data" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.left_hand_data">
+<span class="sig-name descname"><span class="pre">left_hand_data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.left_hand_data" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.right_hand_data">
+<span class="sig-name descname"><span class="pre">right_hand_data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.right_hand_data" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.left_angles">
+<span class="sig-name descname"><span class="pre">left_angles</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.left_angles" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.right_angles">
+<span class="sig-name descname"><span class="pre">right_angles</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.right_angles" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.left_scale">
+<span class="sig-name descname"><span class="pre">left_scale</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.left_scale" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.right_scale">
+<span class="sig-name descname"><span class="pre">right_scale</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.right_scale" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.init_data">
+<span class="sig-name descname"><span class="pre">init_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.init_data" title="Permalink to this definition"></a></dt>
+<dd><p>Process and map received data from mediapipe before key-framing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.update" title="Permalink to this definition"></a></dt>
+<dd><p>Returns processing results or empty lists.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.finger_angles">
+<span class="sig-name descname"><span class="pre">finger_angles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hand</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.finger_angles" title="Permalink to this definition"></a></dt>
+<dd><p>Get finger x-angles from landmarks.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.get_z_angles">
+<span class="sig-name descname"><span class="pre">get_z_angles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hand</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.get_z_angles" title="Permalink to this definition"></a></dt>
+<dd><p>Project finger mcps on a vector between index and pinky mcp.
+Create circles around the mcps circles facing in the direction of vectors depending on the palm.
+Searching for the closest point on the circle to the fingers dip and calculate the angle.
+Thumb gets projected on a plane between thumb mcp, index mcp and wrist to calculate the z-angle.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.get_x_angles">
+<span class="sig-name descname"><span class="pre">get_x_angles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hand</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.get_x_angles" title="Permalink to this definition"></a></dt>
+<dd><p>Get finger x angle by calculating the angle between each finger joint</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.global_hand_rotation">
+<span class="sig-name descname"><span class="pre">global_hand_rotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combat_idx_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'R'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.global_hand_rotation" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates approximate hand rotation by generating
+a matrix using the palm as approximate triangle.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.landmarks_to_hands">
+<span class="sig-name descname"><span class="pre">landmarks_to_hands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left_hand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_hand</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.landmarks_to_hands" title="Permalink to this definition"></a></dt>
+<dd><p>Determines to which hand the landmark data belongs</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.set_global_origin">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_global_origin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator.set_global_origin" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the wrist to (0, 0, 0) while the wrist is the origin of the fingers.
+Changes the x-y-z order to match blenders coordinate system.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, cgtinker.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

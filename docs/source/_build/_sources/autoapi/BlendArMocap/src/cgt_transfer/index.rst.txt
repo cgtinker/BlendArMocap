@@ -1,0 +1,30 @@
+:py:mod:`BlendArMocap.src.cgt_transfer`
+=======================================
+
+.. py:module:: BlendArMocap.src.cgt_transfer
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   core_transfer/index.rst
+   setup_helper/index.rst
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   cgt_tf_3dview_panel/index.rst
+   cgt_tf_io_config/index.rst
+   cgt_tf_object_properties/index.rst
+   cgt_tf_operators/index.rst
+   cgt_tf_properties_panel/index.rst
+   cgt_transfer_registration/index.rst
+
+

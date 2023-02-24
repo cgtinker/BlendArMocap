@@ -1,0 +1,50 @@
+:py:mod:`BlendArMocap.src.cgt_transfer.core_transfer.tf_get_object_properties`
+==============================================================================
+
+.. py:module:: BlendArMocap.src.cgt_transfer.core_transfer.tf_get_object_properties
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_get_object_properties.get_properties_from_object
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_get_object_properties.get_constraint_props
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_get_object_properties.get_target
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_get_object_properties.get_value_by_distance_properties
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_get_object_properties.get_remapping_properties
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_get_object_properties.get_distance
+
+
+
+.. py:function:: get_properties_from_object(obj: bpy.types.Object) -> tf_reflect_object_properties.RuntimeClass()
+
+   Get properties from object as Runtime Class to not modify values in Blender by accident. 
+
+
+.. py:function:: get_constraint_props(c: bpy.types.Constraint)
+
+
+.. py:function:: get_target(tar_props: BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.OBJECT_PGT_CGT_TransferTarget) -> Tuple[Optional[bpy.types.Object], Optional[Any], str]
+
+   Get target property and set appropriate Pointers. 
+
+
+.. py:function:: get_value_by_distance_properties(cgt_props: BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.OBJECT_PGT_CGT_TransferProperties)
+
+
+.. py:function:: get_remapping_properties(cgt_props: BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.OBJECT_PGT_CGT_TransferProperties) -> List[List[BlendArMocap.src.cgt_transfer.cgt_tf_object_properties.OBJECT_PGT_CGT_ValueMapping]]
+
+   Validates, updates and returns remapping properties. 
+
+
+.. py:function:: get_distance(cur_props)
+
+   Returns 'remap by' dist either from bones or the bone len... 
+
+

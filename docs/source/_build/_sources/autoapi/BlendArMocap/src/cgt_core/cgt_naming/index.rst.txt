@@ -1,0 +1,812 @@
+:py:mod:`BlendArMocap.src.cgt_core.cgt_naming`
+==============================================
+
+.. py:module:: BlendArMocap.src.cgt_core.cgt_naming
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_naming.CGTDefaultsJson
+   BlendArMocap.src.cgt_core.cgt_naming.COLLECTIONS
+   BlendArMocap.src.cgt_core.cgt_naming.POSE
+   BlendArMocap.src.cgt_core.cgt_naming.HAND
+   BlendArMocap.src.cgt_core.cgt_naming.FACE
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_naming.PACKAGE
+   BlendArMocap.src.cgt_core.cgt_naming.ADDON_NAME
+   BlendArMocap.src.cgt_core.cgt_naming.cgt_defaults
+
+
+.. py:data:: PACKAGE
+
+   
+
+.. py:data:: ADDON_NAME
+   :value: 'BlendArMocap'
+
+   
+
+.. py:class:: CGTDefaultsJson
+
+   Bases: :py:obj:`BlendArMocap.src.cgt_core.cgt_utils.cgt_json.JsonData`
+
+   .. py:attribute:: pose
+      :type: dict
+
+      
+
+   .. py:attribute:: face
+      :type: dict
+
+      
+
+   .. py:attribute:: hand
+      :type: dict
+
+      
+
+   .. py:attribute:: identifier
+      :type: str
+
+      
+
+
+.. py:data:: cgt_defaults
+
+   
+
+.. py:class:: COLLECTIONS
+
+   TODO: Store all dataclasses as json in dicts - positions matter therefore this setup aint practical
+   todo: !!!
+
+   .. py:attribute:: drivers
+      :type: str
+      :value: 'cgt_DRIVERS'
+
+      
+
+   .. py:attribute:: hands
+      :type: str
+      :value: 'cgt_HAND'
+
+      
+
+   .. py:attribute:: face
+      :type: str
+      :value: 'cgt_FACE'
+
+      
+
+   .. py:attribute:: pose
+      :type: str
+      :value: 'cgt_POSE'
+
+      
+
+
+.. py:class:: POSE
+
+   .. py:attribute:: nose
+      :type: str
+      :value: 'cgt_nose'
+
+      
+
+   .. py:attribute:: left_eye_inner
+      :type: str
+      :value: 'cgt_eye_inner.L'
+
+      
+
+   .. py:attribute:: left_eye
+      :type: str
+      :value: 'cgt_eye.L'
+
+      
+
+   .. py:attribute:: left_eye_outer
+      :type: str
+      :value: 'cgt_eye_outer.L'
+
+      
+
+   .. py:attribute:: right_eye_inner
+      :type: str
+      :value: 'cgt_eye_inner.R'
+
+      
+
+   .. py:attribute:: right_eye
+      :type: str
+      :value: 'cgt_eye.R'
+
+      
+
+   .. py:attribute:: right_eye_outer
+      :type: str
+      :value: 'cgt_eye_outer.R'
+
+      
+
+   .. py:attribute:: left_ear
+      :type: str
+      :value: 'cgt_ear.L'
+
+      
+
+   .. py:attribute:: right_ear
+      :type: str
+      :value: 'cgt_ear.R'
+
+      
+
+   .. py:attribute:: mouth_left
+      :type: str
+      :value: 'cgt_left.L'
+
+      
+
+   .. py:attribute:: mouth_right
+      :type: str
+      :value: 'cgt_mouth.R'
+
+      
+
+   .. py:attribute:: left_shoulder
+      :type: str
+      :value: 'cgt_shoulder.L'
+
+      
+
+   .. py:attribute:: right_shoulder
+      :type: str
+      :value: 'cgt_shoulder.R'
+
+      
+
+   .. py:attribute:: left_elbow
+      :type: str
+      :value: 'cgt_elbow.L'
+
+      
+
+   .. py:attribute:: right_elbow
+      :type: str
+      :value: 'cgt_elbow.R'
+
+      
+
+   .. py:attribute:: left_wrist
+      :type: str
+      :value: 'cgt_pose_wrist.L'
+
+      
+
+   .. py:attribute:: right_wrist
+      :type: str
+      :value: 'cgt_pose_wrist.R'
+
+      
+
+   .. py:attribute:: left_pinky
+      :type: str
+      :value: 'cgt_pinky.L'
+
+      
+
+   .. py:attribute:: right_pinky
+      :type: str
+      :value: 'cgt_pinky.R'
+
+      
+
+   .. py:attribute:: left_index
+      :type: str
+      :value: 'cgt_index.L'
+
+      
+
+   .. py:attribute:: right_index
+      :type: str
+      :value: 'cgt_index.R'
+
+      
+
+   .. py:attribute:: left_thumb
+      :type: str
+      :value: 'cgt_thumb.L'
+
+      
+
+   .. py:attribute:: right_thumb
+      :type: str
+      :value: 'cgt_thumb.R'
+
+      
+
+   .. py:attribute:: left_hip
+      :type: str
+      :value: 'cgt_hip.L'
+
+      
+
+   .. py:attribute:: right_hip
+      :type: str
+      :value: 'cgt_hip.R'
+
+      
+
+   .. py:attribute:: left_knee
+      :type: str
+      :value: 'cgt_knee.L'
+
+      
+
+   .. py:attribute:: right_knee
+      :type: str
+      :value: 'cgt_knee.R'
+
+      
+
+   .. py:attribute:: left_ankle
+      :type: str
+      :value: 'cgt_ankle.L'
+
+      
+
+   .. py:attribute:: right_ankle
+      :type: str
+      :value: 'cgt_ankle.R'
+
+      
+
+   .. py:attribute:: left_heel
+      :type: str
+      :value: 'cgt_heel.L'
+
+      
+
+   .. py:attribute:: right_heel
+      :type: str
+      :value: 'cgt_heel.R'
+
+      
+
+   .. py:attribute:: left_foot_index
+      :type: str
+      :value: 'cgt_foot_index.L'
+
+      
+
+   .. py:attribute:: right_foot_index
+      :type: str
+      :value: 'cgt_foot_index.R'
+
+      
+
+   .. py:attribute:: hip_center
+      :type: str
+      :value: 'cgt_hip_center'
+
+      
+
+   .. py:attribute:: shoulder_center
+      :type: str
+      :value: 'cgt_shoulder_center'
+
+      
+
+   .. py:attribute:: shoulder_center_ik
+      :type: str
+      :value: 'cgt_shoulder_center_driver'
+
+      
+
+   .. py:attribute:: left_shoulder_ik
+      :type: str
+      :value: 'cgt_shoulder_driver.L'
+
+      
+
+   .. py:attribute:: right_shoulder_ik
+      :type: str
+      :value: 'cgt_shoulder_driver.R'
+
+      
+
+   .. py:attribute:: left_forearm_ik
+      :type: str
+      :value: 'cgt_forearm_driver.L'
+
+      
+
+   .. py:attribute:: right_forearm_ik
+      :type: str
+      :value: 'cgt_forearm_driver.R'
+
+      
+
+   .. py:attribute:: left_hand_ik
+      :type: str
+      :value: 'cgt_hand_driver.L'
+
+      
+
+   .. py:attribute:: right_hand_ik
+      :type: str
+      :value: 'cgt_hand_driver.R'
+
+      
+
+   .. py:attribute:: left_index_ik
+      :type: str
+      :value: 'cgt_index_driver.L'
+
+      
+
+   .. py:attribute:: right_index_ik
+      :type: str
+      :value: 'cgt_index_driver.R'
+
+      
+
+   .. py:attribute:: hip_center_ik
+      :type: str
+      :value: 'cgt_hip_center_driver'
+
+      
+
+   .. py:attribute:: left_hip_ik
+      :type: str
+      :value: 'cgt_hip_driver.L'
+
+      
+
+   .. py:attribute:: right_hip_ik
+      :type: str
+      :value: 'cgt_hip_driver.R'
+
+      
+
+   .. py:attribute:: left_shin_ik
+      :type: str
+      :value: 'cgt_shin_driver.L'
+
+      
+
+   .. py:attribute:: right_shin_ik
+      :type: str
+      :value: 'cgt_shin_driver.R'
+
+      
+
+   .. py:attribute:: left_foot_ik
+      :type: str
+      :value: 'cgt_foot_driver.L'
+
+      
+
+   .. py:attribute:: right_foot_ik
+      :type: str
+      :value: 'cgt_foot_driver.R'
+
+      
+
+   .. py:attribute:: left_foot_index_ik
+      :type: str
+      :value: 'cgt_foot_index_driver.L'
+
+      
+
+   .. py:attribute:: right_foot_index_ik
+      :type: str
+      :value: 'cgt_foot_index_driver.R'
+
+      
+
+
+.. py:class:: HAND
+
+   .. py:attribute:: wrist
+      :type: str
+      :value: 'cgt_wrist'
+
+      
+
+   .. py:attribute:: thumb_cmc
+      :type: str
+      :value: 'cgt_thumb_cmc'
+
+      
+
+   .. py:attribute:: thumb_mcp
+      :type: str
+      :value: 'cgt_thumb_mcp'
+
+      
+
+   .. py:attribute:: thumb_ip
+      :type: str
+      :value: 'cgt_thump_ip'
+
+      
+
+   .. py:attribute:: thumb_tip
+      :type: str
+      :value: 'cgt_thumb_tip'
+
+      
+
+   .. py:attribute:: index_finger_mcp
+      :type: str
+      :value: 'cgt_index_mcp'
+
+      
+
+   .. py:attribute:: index_finger_pip
+      :type: str
+      :value: 'cgt_index_pip'
+
+      
+
+   .. py:attribute:: index_finger_dip
+      :type: str
+      :value: 'cgt_index_dip'
+
+      
+
+   .. py:attribute:: index_finger_tip
+      :type: str
+      :value: 'cgt_index_tip'
+
+      
+
+   .. py:attribute:: middle_finger_mcp
+      :type: str
+      :value: 'cgt_middle_mcp'
+
+      
+
+   .. py:attribute:: middle_finger_pip
+      :type: str
+      :value: 'cgt_middle_pip'
+
+      
+
+   .. py:attribute:: middle_finger_dip
+      :type: str
+      :value: 'cgt_middle_dip'
+
+      
+
+   .. py:attribute:: middle_finger_tip
+      :type: str
+      :value: 'cgt_middle_tip'
+
+      
+
+   .. py:attribute:: ring_finger_mcp
+      :type: str
+      :value: 'cgt_ring_mcp'
+
+      
+
+   .. py:attribute:: ring_finger_pip
+      :type: str
+      :value: 'cgt_ring_pip'
+
+      
+
+   .. py:attribute:: ring_finger_dip
+      :type: str
+      :value: 'cgt_ring_dip'
+
+      
+
+   .. py:attribute:: ring_finger_tip
+      :type: str
+      :value: 'cgt_ring_tip'
+
+      
+
+   .. py:attribute:: pinky_mcp
+      :type: str
+      :value: 'cgt_pinky_mcp'
+
+      
+
+   .. py:attribute:: pinky_pip
+      :type: str
+      :value: 'cgt_pinky_pip'
+
+      
+
+   .. py:attribute:: pinky_dip
+      :type: str
+      :value: 'cgt_pinky_dip'
+
+      
+
+   .. py:attribute:: pinky_tip
+      :type: str
+      :value: 'cgt_pinky_tip'
+
+      
+
+   .. py:attribute:: driver_thumb_cmc
+      :type: str
+      :value: 'cgt_thumb_cmc_driver'
+
+      
+
+   .. py:attribute:: driver_thumb_mcp
+      :type: str
+      :value: 'cgt_thumb_mcp_driver'
+
+      
+
+   .. py:attribute:: driver_thumb_ip
+      :type: str
+      :value: 'cgt_thump_ip_driver'
+
+      
+
+   .. py:attribute:: driver_thumb_tip
+      :type: str
+      :value: 'cgt_thumb_tip_driver'
+
+      
+
+   .. py:attribute:: driver_index_finger_mcp
+      :type: str
+      :value: 'cgt_index_mcp_driver'
+
+      
+
+   .. py:attribute:: driver_index_finger_pip
+      :type: str
+      :value: 'cgt_index_pip_driver'
+
+      
+
+   .. py:attribute:: driver_index_finger_dip
+      :type: str
+      :value: 'cgt_index_dip_driver'
+
+      
+
+   .. py:attribute:: driver_index_finger_tip
+      :type: str
+      :value: 'cgt_index_tip_driver'
+
+      
+
+   .. py:attribute:: driver_middle_finger_mcp
+      :type: str
+      :value: 'cgt_middle_mcp_driver'
+
+      
+
+   .. py:attribute:: driver_middle_finger_pip
+      :type: str
+      :value: 'cgt_middle_pip_driver'
+
+      
+
+   .. py:attribute:: driver_middle_finger_dip
+      :type: str
+      :value: 'cgt_middle_dip_driver'
+
+      
+
+   .. py:attribute:: driver_middle_finger_tip
+      :type: str
+      :value: 'cgt_middle_tip_driver'
+
+      
+
+   .. py:attribute:: driver_ring_finger_mcp
+      :type: str
+      :value: 'cgt_ring_mcp_driver'
+
+      
+
+   .. py:attribute:: driver_ring_finger_pip
+      :type: str
+      :value: 'cgt_ring_pip_driver'
+
+      
+
+   .. py:attribute:: driver_ring_finger_dip
+      :type: str
+      :value: 'cgt_ring_dip_driver'
+
+      
+
+   .. py:attribute:: driver_ring_finger_tip
+      :type: str
+      :value: 'cgt_ring_tip_driver'
+
+      
+
+   .. py:attribute:: driver_pinky_mcp
+      :type: str
+      :value: 'cgt_pinky_mcp_driver'
+
+      
+
+   .. py:attribute:: driver_pinky_pip
+      :type: str
+      :value: 'cgt_pinky_pip_driver'
+
+      
+
+   .. py:attribute:: driver_pinky_dip
+      :type: str
+      :value: 'cgt_pinky_dip_driver'
+
+      
+
+   .. py:attribute:: driver_pinky_tip
+      :type: str
+      :value: 'cgt_pinky_tip_driver'
+
+      
+
+
+.. py:class:: FACE
+
+   .. py:attribute:: face
+      :type: str
+      :value: 'cgt_face_vertex_'
+
+      
+
+   .. py:attribute:: head
+      :type: str
+      :value: 'cgt_face_rotation'
+
+      
+
+   .. py:attribute:: chin
+      :type: str
+      :value: 'cgt_chin_rotation'
+
+      
+
+   .. py:attribute:: mouth
+      :type: str
+      :value: 'cgt_mouth_driver'
+
+      
+
+   .. py:attribute:: mouth_corners
+      :type: str
+      :value: 'cgt_mouth_corner_driver'
+
+      
+
+   .. py:attribute:: left_eye
+      :type: str
+      :value: 'cgt_eye_driver.L'
+
+      
+
+   .. py:attribute:: right_eye
+      :type: str
+      :value: 'cgt_eye_driver.R'
+
+      
+
+   .. py:attribute:: right_eyebrow
+      :type: str
+      :value: 'cgt_eyebrow_driver.R'
+
+      
+
+   .. py:attribute:: left_eyebrow
+      :type: str
+      :value: 'cgt_eyebrow_driver.L'
+
+      
+
+   .. py:attribute:: right_eye_t
+      :type: str
+      :value: 'cgt_eye_driver.T.R'
+
+      
+
+   .. py:attribute:: right_eye_b
+      :type: str
+      :value: 'cgt_eye_driver.B.R'
+
+      
+
+   .. py:attribute:: left_eye_t
+      :type: str
+      :value: 'cgt_eye_driver.T.L'
+
+      
+
+   .. py:attribute:: left_eye_b
+      :type: str
+      :value: 'cgt_eye_driver.B.L'
+
+      
+
+   .. py:attribute:: mouth_t
+      :type: str
+      :value: 'cgt_mouth_driver.T'
+
+      
+
+   .. py:attribute:: mouth_b
+      :type: str
+      :value: 'cgt_mouth_driver.B'
+
+      
+
+   .. py:attribute:: mouth_r
+      :type: str
+      :value: 'cgt_mouth_driver.R'
+
+      
+
+   .. py:attribute:: mouth_l
+      :type: str
+      :value: 'cgt_mouth_driver.L'
+
+      
+
+   .. py:attribute:: eyebrow_in_l
+      :type: str
+      :value: 'cgt_eyebrow.I.L'
+
+      
+
+   .. py:attribute:: eyebrow_mid_l
+      :type: str
+      :value: 'cgt_eyebrow.M.L'
+
+      
+
+   .. py:attribute:: eyebrow_out_l
+      :type: str
+      :value: 'cgt_eyebrow.O.L'
+
+      
+
+   .. py:attribute:: eyebrow_in_r
+      :type: str
+      :value: 'cgt_eyebrow.I.R'
+
+      
+
+   .. py:attribute:: eyebrow_mid_r
+      :type: str
+      :value: 'cgt_eyebrow.M.R'
+
+      
+
+   .. py:attribute:: eyebrow_out_r
+      :type: str
+      :value: 'cgt_eyebrow.O.R'
+
+      
+
+

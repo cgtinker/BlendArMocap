@@ -1,0 +1,51 @@
+:py:mod:`BlendArMocap.src.cgt_mediapipe.cgt_mp_registration`
+============================================================
+
+.. py:module:: BlendArMocap.src.cgt_mediapipe.cgt_mp_registration
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_registration.save_preferences
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_registration.load_preferences
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_registration.register
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_registration.unregister
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_registration.classes
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_registration.MP_ATTRS
+
+
+.. py:data:: classes
+
+   
+
+.. py:data:: MP_ATTRS
+
+   
+
+.. py:function:: save_preferences(*args)
+
+
+.. py:function:: load_preferences(*args)
+
+
+.. py:function:: register()
+
+
+.. py:function:: unregister()
+
+

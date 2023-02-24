@@ -1,0 +1,93 @@
+:py:mod:`BlendArMocap.src.cgt_freemocap.fm_session_loader`
+==========================================================
+
+.. py:module:: BlendArMocap.src.cgt_freemocap.fm_session_loader
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_freemocap.fm_session_loader.FreemocapLoader
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_freemocap.fm_session_loader.main
+
+
+
+.. py:class:: FreemocapLoader(session_path: str, modal_operation=True, raw=False)
+
+   .. py:attribute:: mediapipe3d_frames_trackedPoints_xyz
+      :type: numpy.array
+
+      
+
+   .. py:attribute:: number_of_frames
+      :type: int
+
+      
+
+   .. py:attribute:: number_of_tracked_points
+      :type: int
+
+      
+
+   .. py:attribute:: first_body_point
+      :type: int
+      :value: 0
+
+      
+
+   .. py:attribute:: first_left_hand_point
+      :type: int
+      :value: 33
+
+      
+
+   .. py:attribute:: first_right_hand_point
+      :type: int
+      :value: 54
+
+      
+
+   .. py:attribute:: first_face_point
+      :type: int
+      :value: 75
+
+      
+
+   .. py:method:: update()
+
+      Provides holistic data for each (prerecorded) frame.
+      Gets called on modal operation whenever blenders window manager updates. 
+
+
+   .. py:method:: quickload_raw()
+
+      Quickload raw data to f-curvers. Data may not be applied to rigs. 
+
+
+   .. py:method:: quickload_processed()
+
+      Quickload data and calculate rotation data. Data may be applied to rigs. 
+
+
+   .. py:method:: get_freemocap_session_data(frame: int)
+
+      Gets data from frame. Splits to default mediapipe formatting. 
+
+
+
+.. py:function:: main()
+
+

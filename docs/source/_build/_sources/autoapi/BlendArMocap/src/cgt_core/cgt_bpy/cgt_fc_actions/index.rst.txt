@@ -1,0 +1,61 @@
+:py:mod:`BlendArMocap.src.cgt_core.cgt_bpy.cgt_fc_actions`
+==========================================================
+
+.. py:module:: BlendArMocap.src.cgt_core.cgt_bpy.cgt_fc_actions
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_fc_actions.FCurveHelper
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_fc_actions.create_actions
+   BlendArMocap.src.cgt_core.cgt_bpy.cgt_fc_actions.main
+
+
+
+.. py:class:: FCurveHelper
+
+   .. py:method:: get_f_curves(data_path) -> List[bpy.types.FCurve]
+
+
+   .. py:method:: insert(data_path: str, frame: int, *args: float)
+
+      data_path: String Enum [location, scale, rotation_euler, rotation_quaternion] 
+
+
+   .. py:method:: foreach_set(data_path: str, frames: List[int], *args: List[float])
+
+      Set multiple keyframes at once.
+      data_path: String Enum [location, scale, rotation_euler, rotation_quaternion]
+      frames: flat list of int
+      args: flat lists of float 
+
+
+   .. py:method:: update(data_path: str)
+
+
+   .. py:method:: __str__()
+
+      Return str(self).
+
+
+
+.. py:function:: create_actions(objects, overwrite: bool = True)
+
+
+.. py:function:: main()
+
+

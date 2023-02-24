@@ -1,0 +1,286 @@
+:py:mod:`BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math`
+==================================================================
+
+.. py:module:: BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.vector_length
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.to_vector
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.normalize
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.vector_length_2d
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.get_vector_distance
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.remove_axis
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.null_axis
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_vec_on_vec
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_point_on_vector
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_vec_on_plane
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_vec_from_normal
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.angle_between
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_towards
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.m_rotate_towards
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.joint_angles
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.joint_angle
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.center_point
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.get_closest_idx
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.intersection_2d_vectors
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_seg
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.seg_intersect
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.create_angled_circle
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.circle_along_UV
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.create_circle_around_vector
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_point_euler
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_point
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.distance_from_plane
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.normal_from_plane
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.create_normal_array
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.generate_matrix
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.decompose_matrix
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.to_euler
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.quart_to_euler_combat
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.offset_euler
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.try_get_euler
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math._generate_matrix
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math._decompose_matrix
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.euler_to_quaternion
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.quaternion_to_euler
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.matrix3x3_to_quaternion
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.matrix3x3_to_euler
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.remap_slope
+
+
+
+.. py:function:: vector_length(vector: numpy.array)
+
+   returns the length of a given vector. 
+
+
+.. py:function:: to_vector(origin: numpy.array, destination: numpy.array)
+
+   returns vector from origin to destination. 
+
+
+.. py:function:: normalize(vector: numpy.array)
+
+   returns the unit vector of the vector.
+   normalized_v = v / np.sqrt(np.sum(v**2))
+   return normalized_v
+
+
+.. py:function:: vector_length_2d(v1, v2, del_axis: str = '')
+
+   returns the magnitude between two vectors. 
+
+
+.. py:function:: get_vector_distance(v1, v2)
+
+   return distance between two points. 
+
+
+.. py:function:: remove_axis(vectors, *args)
+
+   delete one axis to calculate 2d intersection point 
+
+
+.. py:function:: null_axis(vectors, *args)
+
+   delete one axis to calculate 2d intersection point 
+
+
+.. py:function:: project_vec_on_vec(target, destination)
+
+
+.. py:function:: project_point_on_vector(proj_point, a, b)
+
+
+.. py:function:: project_vec_on_plane(triangle: numpy.array, faces: numpy.array, vec: numpy.array)
+
+   project a vector on input plane
+   :param triangle - [[0, 0, 0], [1, 0, 1] [1, 3, 1]] vertex triplet
+   :param faces - [[0, 1, 2]] vertex connection order
+   :param vec - vector to project
+   return projection vector
+
+
+.. py:function:: project_vec_from_normal(normal, vector)
+
+   The projection of a vector v
+   onto a plane is calculated by subtracting the component of u
+   which is orthogonal to the plane from u
+
+
+.. py:function:: angle_between(v1: numpy.array, v2: numpy.array)
+
+   Returns the angle in radians between vectors. 
+
+
+.. py:function:: rotate_towards(origin, destination, track='Z', up='Y')
+
+   returns rotation from an origin to a destination. 
+
+
+.. py:function:: m_rotate_towards(eye: numpy.array, target: numpy.array)
+
+   manual implementation of rotate towards (Z = up, X= forward)
+
+
+.. py:function:: joint_angles(vertices, joints)
+
+   get multiple angles. 
+
+
+.. py:function:: joint_angle(vertices, joint)
+
+   returns angles between joints. 
+
+
+.. py:function:: center_point(p1: numpy.array, p2: numpy.array)
+
+   return center point from two given points. 
+
+
+.. py:function:: get_closest_idx(target, points)
+
+   returns the closet point to the target of an input array. 
+
+
+.. py:function:: intersection_2d_vectors(origin_p1: numpy.array, target_p1: numpy.array, origin_p2: numpy.array, target_p2: numpy.array, del_axis: str)
+
+   returns intersection point tuple
+   intersect 2d vector from origin to destination
+   with targeted 2d vector.
+   requires to ignore an axis.
+
+
+.. py:function:: rotate_seg(a)
+
+   rotate by 90° 
+
+
+.. py:function:: seg_intersect(a1, a2, b1, b2)
+
+   line segment a given by endpoints a1, a2
+   line segment b given by endpoints b1, b2 
+
+
+.. py:function:: create_angled_circle(center, radius, angle=90, points=10)
+
+   circle in x direction at an angle using x- points.
+   returns the points of the circle. 
+
+
+.. py:function:: circle_along_UV(center=np.array([0, 0, 0]), U=np.array([0, 1, 0]), V=np.array([0, 0, 1]), r=0.025, points=21)
+
+   create an circle around u/v as axis. 
+
+
+.. py:function:: create_circle_around_vector(vector, center, radius, points, normal=None)
+
+   creates a circle around a vector 
+
+
+.. py:function:: rotate_point_euler(point: numpy.array = None, euler: list = None, origin: numpy.array = np.array([0, 0, 0]))
+
+   Returns the location of a point rotated counterclockwise around an origin. 
+
+
+.. py:function:: rotate_point(point, axis, angle)
+
+   Return the point location associated with counterclockwise rotation about
+   the given axis by theta radians.
+
+
+.. py:function:: distance_from_plane(point, normal, plane_point)
+
+   returns the distance of a point to a plane using the normal
+   of the plane and a random point from the plane 
+
+
+.. py:function:: normal_from_plane(plane)
+
+   get the normal from a plane 
+
+
+.. py:function:: create_normal_array(vertices: numpy.array, faces: numpy.array)
+
+   return array of normals per triangle. each vertex triplet
+   requires a face triplet
+   vertices = [[[1, 1, 0],[0,1,0],[0,0,0]], []...] faces = [[0, 1, 2], []...]
+
+
+.. py:function:: generate_matrix(tangent: numpy.array, normal: numpy.array, binormal: numpy.array)
+
+   returns matrix
+   -> tangent = towards left and right [+X]
+   -> normal = origin towards front [+Y]
+   -> binormal = cross product of tanget and normal if +z1 [+Z] 
+
+
+.. py:function:: decompose_matrix(matrix: mathutils.Matrix) -> (mathutils.Vector, mathutils.Quaternion, mathutils.Vector)
+
+   returns loc, quaternion, scale 
+
+
+.. py:function:: to_euler(quart, combat=Euler(), space='XYZ') -> mathutils.Euler
+
+   quaternion to euler using mathutils 
+
+
+.. py:function:: quart_to_euler_combat(quart, idx, idx_offset=0, axis='XYZ', prev_rotation=None) -> mathutils.Euler
+
+   Converts quart to euler rotation while comparing with previous rotation. 
+
+
+.. py:function:: offset_euler(euler, offset: []) -> mathutils.Euler
+
+   Offsets an euler rotation using euler radians *pi. 
+
+
+.. py:function:: try_get_euler(quart_rotation, offset: [], prev_rot_idx: int = -1, prev_rotation=None)
+
+   Gets an euler rotation from quaternion with using the previously
+   created rotation as combat to avoid discontinuity. 
+
+
+.. py:function:: _generate_matrix(tangent: numpy.array, normal: numpy.array, binormal: numpy.array)
+
+   generate a numpy matrix at loc [0, 0, 0]. 
+
+
+.. py:function:: _decompose_matrix(matrix: numpy.matrix)
+
+   manual decompose a matrix (still in development) 
+
+
+.. py:function:: euler_to_quaternion(yaw, pitch, roll)
+
+   manual to euler conversion using np 
+
+
+.. py:function:: quaternion_to_euler(q: numpy.array) -> numpy.array
+
+   Manual quaternion q (w, x, y, z) to euler conversion
+   https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+
+
+.. py:function:: matrix3x3_to_quaternion(m: numpy.matrix)
+
+   Returns quaternion from 3x3 matrix. 
+
+
+.. py:function:: matrix3x3_to_euler(matrix: numpy.ndarray) -> numpy.ndarray
+
+   Returns euler x, y, z angles from 3x3 rotation matrix 
+
+
+.. py:function:: remap_slope(value, min_in, max_in, min_out, max_out)
+
+

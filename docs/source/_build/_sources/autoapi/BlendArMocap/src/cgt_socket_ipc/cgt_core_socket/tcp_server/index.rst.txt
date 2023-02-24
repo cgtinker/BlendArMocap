@@ -1,0 +1,91 @@
+:py:mod:`BlendArMocap.src.cgt_socket_ipc.cgt_core_socket.tcp_server`
+====================================================================
+
+.. py:module:: BlendArMocap.src.cgt_socket_ipc.cgt_core_socket.tcp_server
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_socket_ipc.cgt_core_socket.tcp_server.Server
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_socket_ipc.cgt_core_socket.tcp_server.queue
+
+
+.. py:class:: Server(_queue: multiprocessing.Queue)
+
+   Bases: :py:obj:`object`
+
+   .. py:attribute:: PORT
+      :value: 31597
+
+      
+
+   .. py:attribute:: HOST
+      :value: '127.0.0.1'
+
+      
+
+   .. py:attribute:: sock
+      :type: socket.socket
+
+      
+
+   .. py:attribute:: conn
+      :type: socket.socket
+
+      
+
+   .. py:attribute:: parser
+      :type: BlendArMocap.src.cgt_socket_ipc.cgt_core_socket.chunk_parser.ChunkParser
+
+      
+
+   .. py:attribute:: queue
+      :type: multiprocessing.Queue
+
+      
+
+   .. py:attribute:: process
+      :type: multiprocessing.Process
+
+      
+
+   .. py:attribute:: buffer
+      :type: int
+      :value: 4096
+
+      
+
+   .. py:attribute:: resp
+      :type: bytes
+
+      
+
+   .. py:method:: exec()
+
+
+   .. py:method:: handle()
+
+
+   .. py:method:: shutdown()
+
+
+
+.. py:data:: queue
+
+   
+

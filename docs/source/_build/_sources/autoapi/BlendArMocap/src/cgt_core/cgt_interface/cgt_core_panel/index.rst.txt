@@ -1,0 +1,118 @@
+:py:mod:`BlendArMocap.src.cgt_core.cgt_interface.cgt_core_panel`
+================================================================
+
+.. py:module:: BlendArMocap.src.cgt_core.cgt_interface.cgt_core_panel
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_interface.cgt_core_panel.DefaultPanel
+   BlendArMocap.src.cgt_core.cgt_interface.cgt_core_panel.PT_UI_CGT_Panel
+   BlendArMocap.src.cgt_core.cgt_interface.cgt_core_panel.APT_UI_CGT_Panel
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_interface.cgt_core_panel.register
+   BlendArMocap.src.cgt_core.cgt_interface.cgt_core_panel.unregister
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_interface.cgt_core_panel.addon_dir_name
+   BlendArMocap.src.cgt_core.cgt_interface.cgt_core_panel.f
+   BlendArMocap.src.cgt_core.cgt_interface.cgt_core_panel.addon_prefs
+   BlendArMocap.src.cgt_core.cgt_interface.cgt_core_panel.classes
+
+
+.. py:data:: addon_dir_name
+
+   
+
+.. py:data:: f
+
+   
+
+.. py:class:: DefaultPanel
+
+   .. py:attribute:: bl_space_type
+      :value: 'VIEW_3D'
+
+      
+
+   .. py:attribute:: bl_region_type
+      :value: 'UI'
+
+      
+
+   .. py:attribute:: bl_category
+      :value: 'BlendAR'
+
+      
+
+   .. py:attribute:: bl_options
+
+      
+
+
+.. py:class:: PT_UI_CGT_Panel
+
+   Bases: :py:obj:`DefaultPanel`, :py:obj:`bpy.types.Panel`
+
+   .. py:attribute:: bl_label
+
+      
+
+   .. py:attribute:: bl_idname
+      :value: 'UI_PT_CGT_Panel'
+
+      
+
+   .. py:method:: draw(context)
+
+
+
+.. py:data:: addon_prefs
+
+   
+
+.. py:class:: APT_UI_CGT_Panel
+
+   Bases: :py:obj:`bpy.types.AddonPreferences`
+
+   .. py:attribute:: bl_label
+
+      
+
+   .. py:attribute:: bl_idname
+
+      
+
+   .. py:method:: draw(context)
+
+
+
+.. py:data:: classes
+
+   
+
+.. py:function:: register()
+
+
+.. py:function:: unregister()
+
+

@@ -1,0 +1,73 @@
+:py:mod:`BlendArMocap.src.cgt_transfer.core_transfer.tf_reflect_object_properties`
+==================================================================================
+
+.. py:module:: BlendArMocap.src.cgt_transfer.core_transfer.tf_reflect_object_properties
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_reflect_object_properties.RuntimeClass
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_reflect_object_properties.copy_ptr_prop_cls
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_reflect_object_properties.get_runtime_object_attributes
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_reflect_object_properties.get_object_attributes
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_reflect_object_properties.cls_type_dict
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_reflect_object_properties.ob
+
+
+.. py:class:: RuntimeClass
+
+   Class for copying internal registered properties.
+   Pointer Properties to other classes has to be set at generation.
+
+   .. py:method:: __str__()
+
+      Return str(self).
+
+
+
+.. py:data:: cls_type_dict
+
+   
+
+.. py:function:: copy_ptr_prop_cls(class_name_dict: Dict[str, RuntimeClass]) -> Dict[str, RuntimeClass]
+
+   Uses cls names to copy slots from pointer property groups to flat classes.
+   Helper cls improves usage of internal registered types. 
+
+
+.. py:function:: get_runtime_object_attributes(cls_template, obj, cls_out)
+
+   Use the runtime dict to get all properties from Object required for remapping. 
+
+
+.. py:function:: get_object_attributes(cls_template, obj, cls_out)
+
+   Use the runtime dict to get all properties from Object required for remapping. 
+
+
+.. py:data:: ob
+
+   
+

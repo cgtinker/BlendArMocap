@@ -1,0 +1,93 @@
+:py:mod:`BlendArMocap.src.cgt_mediapipe.cgt_mp_detection_operator`
+==================================================================
+
+.. py:module:: BlendArMocap.src.cgt_mediapipe.cgt_mp_detection_operator
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_detection_operator.WM_CGT_MP_modal_detection_operator
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_detection_operator.register
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_detection_operator.unregister
+
+
+
+.. py:class:: WM_CGT_MP_modal_detection_operator
+
+   Bases: :py:obj:`bpy.types.Operator`
+
+   .. py:attribute:: bl_label
+      :value: 'Feature Detection Operator'
+
+      
+
+   .. py:attribute:: bl_idname
+      :value: 'wm.cgt_feature_detection_operator'
+
+      
+
+   .. py:attribute:: bl_description
+      :value: 'Detect solution in Stream.'
+
+      
+
+   .. py:attribute:: _timer
+      :type: bpy.types.Timer
+
+      
+
+   .. py:attribute:: node_chain
+      :type: BlendArMocap.src.cgt_core.cgt_patterns.cgt_nodes.NodeChain
+
+      
+
+   .. py:attribute:: user
+
+      
+
+   .. py:method:: get_chain(stream) -> BlendArMocap.src.cgt_core.cgt_patterns.cgt_nodes.NodeChain
+
+
+   .. py:method:: get_stream()
+
+
+   .. py:method:: execute(context)
+
+      Runs movie or stream detection depending on user input. 
+
+
+   .. py:method:: poll(context)
+      :classmethod:
+
+
+   .. py:method:: modal(context, event)
+
+      Run detection as modal operation, finish with 'Q', 'ESC' or 'RIGHT MOUSE'. 
+
+
+   .. py:method:: cancel(context)
+
+      Upon finishing detection clear the handlers. 
+
+
+
+.. py:function:: register()
+
+
+.. py:function:: unregister()
+
+

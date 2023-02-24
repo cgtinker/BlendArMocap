@@ -1,0 +1,60 @@
+:py:mod:`BlendArMocap.src.cgt_socket_ipc.cgt_core_socket.chunk_parser`
+======================================================================
+
+.. py:module:: BlendArMocap.src.cgt_socket_ipc.cgt_core_socket.chunk_parser
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_socket_ipc.cgt_core_socket.chunk_parser.ChunkParser
+
+
+
+
+.. py:class:: ChunkParser(queue)
+
+   Bases: :py:obj:`object`
+
+   TCP server receives messages in chunks of 4096 bytes,
+   the chunk parser reconstructs the original message.
+   Every message contains a descriptor: [message_length]|
+   Which is used to reconstruct the input data.
+
+   .. py:attribute:: stored_chunk
+      :type: str
+
+      
+
+   .. py:attribute:: result
+      :type: str
+
+      
+
+   .. py:attribute:: remaining
+      :type: int
+
+      
+
+   .. py:attribute:: found_descriptor
+      :type: bool
+
+      
+
+   .. py:attribute:: queue
+      :type: multiprocessing.Queue
+
+      
+
+   .. py:method:: get_descriptor()
+
+
+   .. py:method:: exec(chunk)
+
+
+

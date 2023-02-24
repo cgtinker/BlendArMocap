@@ -1,0 +1,19 @@
+:py:mod:`BlendArMocap.src.cgt_core.cgt_calculators_nodes`
+=========================================================
+
+.. py:module:: BlendArMocap.src.cgt_core.cgt_calculators_nodes
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   calc_utils/index.rst
+   cgt_math/index.rst
+   mp_calc_face_rot/index.rst
+   mp_calc_hand_rot/index.rst
+   mp_calc_pose_rot/index.rst
+
+

@@ -1,0 +1,6 @@
+:py:mod:`BlendArMocap.src.cgt_socket_ipc.cgt_socket_interface`
+==============================================================
+
+.. py:module:: BlendArMocap.src.cgt_socket_ipc.cgt_socket_interface
+
+

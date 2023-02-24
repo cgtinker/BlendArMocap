@@ -1,0 +1,49 @@
+:py:mod:`BlendArMocap.src.cgt_freemocap.fm_subprocess_cmd_receiver`
+===================================================================
+
+.. py:module:: BlendArMocap.src.cgt_freemocap.fm_subprocess_cmd_receiver
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_freemocap.fm_subprocess_cmd_receiver.LoadFreemocapSession
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_freemocap.fm_subprocess_cmd_receiver.import_freemocap_session
+
+
+
+.. py:class:: LoadFreemocapSession(session_path: str, timeout: int = None)
+
+   .. py:attribute:: log_step
+      :value: 25
+
+      
+
+   .. py:method:: quickload()
+
+
+   .. py:method:: quickload_processed()
+
+
+   .. py:method:: run_modal()
+
+      Imports the data, breaks if timeout is reached or import finished. 
+
+
+
+.. py:function:: import_freemocap_session(session_directory: str, bind_to_rig: bool = False, load_synch_videos: bool = False, timeout: int = None, load_raw: bool = False, load_quick: bool = False)
+
+

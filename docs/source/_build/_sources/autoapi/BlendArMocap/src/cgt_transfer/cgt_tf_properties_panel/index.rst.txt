@@ -1,0 +1,249 @@
+:py:mod:`BlendArMocap.src.cgt_transfer.cgt_tf_properties_panel`
+===============================================================
+
+.. py:module:: BlendArMocap.src.cgt_transfer.cgt_tf_properties_panel
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.cgt_tf_properties_panel.OBJECT_PT_BlendArMocapTransfer
+   BlendArMocap.src.cgt_transfer.cgt_tf_properties_panel.OBJECT_PT_BlendArMocapTransferTarget
+   BlendArMocap.src.cgt_transfer.cgt_tf_properties_panel.OBJECT_PT_CGT_DriverProperties
+   BlendArMocap.src.cgt_transfer.cgt_tf_properties_panel.OBJECT_PT_CGT_DriverPropertyDetails
+   BlendArMocap.src.cgt_transfer.cgt_tf_properties_panel.OBJECT_PT_CGT_DriverTools
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.cgt_tf_properties_panel.register
+   BlendArMocap.src.cgt_transfer.cgt_tf_properties_panel.unregister
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.cgt_tf_properties_panel.classes
+
+
+.. py:class:: OBJECT_PT_BlendArMocapTransfer
+
+   Bases: :py:obj:`bpy.types.Panel`
+
+   .. py:attribute:: bl_label
+      :value: 'BlendArMocap'
+
+      
+
+   .. py:attribute:: bl_options
+
+      
+
+   .. py:attribute:: bl_idname
+      :value: 'OBJECT_PT_CGT_Transfer_Opts'
+
+      
+
+   .. py:attribute:: bl_space_type
+      :value: 'PROPERTIES'
+
+      
+
+   .. py:attribute:: bl_region_type
+      :value: 'WINDOW'
+
+      
+
+   .. py:attribute:: bl_context
+      :value: 'constraint'
+
+      
+
+   .. py:attribute:: obj_prop
+      :type: bpy.props.PointerProperty(type=bpy.types.Object)
+
+      
+
+   .. py:method:: poll(context)
+      :classmethod:
+
+
+   .. py:method:: draw(context)
+
+
+
+.. py:class:: OBJECT_PT_BlendArMocapTransferTarget
+
+   Bases: :py:obj:`bpy.types.Panel`
+
+   Transfer targets may be type of Object, Bone, Shape Key.
+   These copy values from drivers preferably using constraints.
+   Shape Keys may be driven by the drivers directly. 
+
+   .. py:attribute:: bl_label
+      :value: 'Target'
+
+      
+
+   .. py:attribute:: bl_parent_id
+      :value: 'OBJECT_PT_CGT_Transfer_Opts'
+
+      
+
+   .. py:attribute:: bl_options
+
+      
+
+   .. py:attribute:: bl_space_type
+      :value: 'PROPERTIES'
+
+      
+
+   .. py:attribute:: bl_region_type
+      :value: 'WINDOW'
+
+      
+
+   .. py:method:: draw(context)
+
+
+
+.. py:class:: OBJECT_PT_CGT_DriverProperties
+
+   Bases: :py:obj:`bpy.types.Panel`
+
+   Driver Properties Panel - allows user to setup drivers for mocap transfer.
+   Some different types of drivers are selectable. 
+
+   .. py:attribute:: bl_label
+      :value: 'Drivers'
+
+      
+
+   .. py:attribute:: bl_parent_id
+      :value: 'OBJECT_PT_CGT_Transfer_Opts'
+
+      
+
+   .. py:attribute:: bl_idname
+      :value: 'OBJECT_PT_CGT_DriverProperties'
+
+      
+
+   .. py:attribute:: bl_options
+
+      
+
+   .. py:attribute:: bl_space_type
+      :value: 'PROPERTIES'
+
+      
+
+   .. py:attribute:: bl_region_type
+      :value: 'WINDOW'
+
+      
+
+   .. py:method:: draw(context)
+
+
+
+.. py:class:: OBJECT_PT_CGT_DriverPropertyDetails
+
+   Bases: :py:obj:`bpy.types.Panel`
+
+   Driver remap property details. 
+
+   .. py:attribute:: bl_label
+      :value: 'Value Mapping'
+
+      
+
+   .. py:attribute:: bl_parent_id
+      :value: 'OBJECT_PT_CGT_DriverProperties'
+
+      
+
+   .. py:attribute:: bl_options
+
+      
+
+   .. py:attribute:: bl_space_type
+      :value: 'PROPERTIES'
+
+      
+
+   .. py:attribute:: bl_region_type
+      :value: 'WINDOW'
+
+      
+
+   .. py:method:: poll(context)
+      :classmethod:
+
+
+   .. py:method:: draw(context)
+
+
+
+.. py:class:: OBJECT_PT_CGT_DriverTools
+
+   Bases: :py:obj:`bpy.types.Panel`
+
+   Spy for easier mapping and transfer button
+
+   .. py:attribute:: bl_label
+      :value: 'Tools'
+
+      
+
+   .. py:attribute:: bl_parent_id
+      :value: 'OBJECT_PT_CGT_Transfer_Opts'
+
+      
+
+   .. py:attribute:: bl_idname
+      :value: 'OBJECT_PT_CGT_DriverTools'
+
+      
+
+   .. py:attribute:: bl_options
+
+      
+
+   .. py:attribute:: bl_space_type
+      :value: 'PROPERTIES'
+
+      
+
+   .. py:attribute:: bl_region_type
+      :value: 'WINDOW'
+
+      
+
+   .. py:method:: draw(context)
+
+
+
+.. py:data:: classes
+
+   
+
+.. py:function:: register()
+
+
+.. py:function:: unregister()
+
+

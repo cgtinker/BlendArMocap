@@ -1,0 +1,79 @@
+:py:mod:`BlendArMocap.src.cgt_socket_ipc.cgt_core_socket.server_result_processor`
+=================================================================================
+
+.. py:module:: BlendArMocap.src.cgt_socket_ipc.cgt_core_socket.server_result_processor
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_socket_ipc.cgt_core_socket.server_result_processor.ServerResultsProcessor
+
+
+
+
+.. py:class:: ServerResultsProcessor
+
+   Bases: :py:obj:`object`
+
+   .. py:attribute:: data_listener
+      :type: src.cgt_core.cgt_patterns.observer_pattern.Subject
+
+      
+
+   .. py:attribute:: data_observer
+      :type: src.cgt_core.cgt_patterns.observer_pattern.Observer
+
+      
+
+   .. py:attribute:: data_processor
+      :type: src.cgt_core.cgt_patterns.cgt_nodes.Node
+
+      
+
+   .. py:attribute:: json_parser
+      :type: BlendArMocap.src.cgt_socket_ipc.cgt_core_socket.json_parser.JsonParser
+
+      
+
+   .. py:attribute:: start_frame
+      :type: int
+      :value: 0
+
+      
+
+   .. py:attribute:: user
+
+      
+
+   .. py:attribute:: bridge_initialized
+      :type: bool
+
+      
+
+   .. py:method:: exec(payload: str)
+
+      Push server results in the processing bridge 
+
+
+   .. py:method:: init_bridge(data_type: str)
+
+      Initializes bridge to blender 
+
+
+   .. py:method:: update_data_listeners(payload, frame)
+
+      Update listeners 
+
+
+   .. py:method:: __del__()
+
+      Upon finish processing. 
+
+
+

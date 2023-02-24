@@ -1,0 +1,112 @@
+:py:mod:`BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot`
+==========================================================================
+
+.. py:module:: BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_hand_rot.HandRotationCalculator
+
+
+
+
+.. py:class:: HandRotationCalculator
+
+   Bases: :py:obj:`BlendArMocap.src.cgt_core.cgt_patterns.cgt_nodes.CalculatorNode`, :py:obj:`BlendArMocap.src.cgt_core.cgt_calculators_nodes.calc_utils.ProcessorUtils`
+
+   Calculate new data and changes the input shape. 
+
+   .. py:attribute:: fingers
+      :value: [[1, 5], [5, 9], [9, 13], [13, 17], [17, 21]]
+
+      
+
+   .. py:attribute:: data
+      :type: numpy.ndarray
+
+      
+
+   .. py:attribute:: left_hand_data
+      :type: numpy.ndarray
+
+      
+
+   .. py:attribute:: right_hand_data
+      :type: numpy.ndarray
+
+      
+
+   .. py:attribute:: left_angles
+      :type: list
+
+      
+
+   .. py:attribute:: right_angles
+      :type: list
+
+      
+
+   .. py:attribute:: left_scale
+      :type: numpy.ndarray
+
+      
+
+   .. py:attribute:: right_scale
+      :type: numpy.ndarray
+
+      
+
+   .. py:method:: init_data()
+
+      Process and map received data from mediapipe before key-framing. 
+
+
+   .. py:method:: update(data, frame=-1)
+
+      Returns processing results or empty lists. 
+
+
+   .. py:method:: finger_angles(hand)
+
+      Get finger x-angles from landmarks. 
+
+
+   .. py:method:: get_z_angles(hand)
+
+      Project finger mcps on a vector between index and pinky mcp.
+      Create circles around the mcps circles facing in the direction of vectors depending on the palm.
+      Searching for the closest point on the circle to the fingers dip and calculate the angle.
+      Thumb gets projected on a plane between thumb mcp, index mcp and wrist to calculate the z-angle.
+
+
+   .. py:method:: get_x_angles(hand)
+
+      Get finger x angle by calculating the angle between each finger joint 
+
+
+   .. py:method:: global_hand_rotation(hand, combat_idx_offset: int = 0, orientation: str = 'R')
+
+      Calculates approximate hand rotation by generating
+      a matrix using the palm as approximate triangle. 
+
+
+   .. py:method:: landmarks_to_hands(left_hand, right_hand)
+
+      Determines to which hand the landmark data belongs 
+
+
+   .. py:method:: set_global_origin(data)
+      :staticmethod:
+
+      Sets the wrist to (0, 0, 0) while the wrist is the origin of the fingers.
+      Changes the x-y-z order to match blenders coordinate system. 
+
+
+

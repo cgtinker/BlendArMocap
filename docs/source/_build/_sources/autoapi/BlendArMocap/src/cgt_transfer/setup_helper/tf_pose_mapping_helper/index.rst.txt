@@ -1,0 +1,104 @@
+:py:mod:`BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper`
+===========================================================================
+
+.. py:module:: BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.get_arm_chain
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.get_leg_chain
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.set_idle_props
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.recv_props
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.set_remapping_objects
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.set_limb_chain
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.main
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.RIG_NAME
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.USE_IK
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.USE_FK
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.ConstrainedObject
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.default_constraints
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.constrained_objects
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.fk_chains
+   BlendArMocap.src.cgt_transfer.setup_helper.tf_pose_mapping_helper.ChainElement
+
+
+.. py:data:: RIG_NAME
+   :value: 'rig'
+
+   
+
+.. py:data:: USE_IK
+   :value: True
+
+   
+
+.. py:data:: USE_FK
+   :value: False
+
+   
+
+.. py:data:: ConstrainedObject
+
+   
+
+.. py:data:: default_constraints
+
+   
+
+.. py:data:: constrained_objects
+
+   
+
+.. py:data:: fk_chains
+
+   
+
+.. py:data:: ChainElement
+
+   
+
+.. py:function:: get_arm_chain(prefix='.L')
+
+
+.. py:function:: get_leg_chain(prefix='.L')
+
+
+.. py:function:: set_idle_props(props)
+
+   Set CGT_Object_Properties to Idle State. 
+
+
+.. py:function:: recv_props(data_path, d, arm=None)
+
+   Recursivly apply properites based on dict entries. 
+
+
+.. py:function:: set_remapping_objects(obj_name, constrained_obj, rig, rest=True)
+
+   apply default remapping objects. 
+
+
+.. py:function:: set_limb_chain(chain, rig, reset=True)
+
+   apply ik limb chains. 
+
+
+.. py:function:: main()
+
+

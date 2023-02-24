@@ -1,0 +1,16 @@
+:py:mod:`BlendArMocap.src.cgt_core.cgt_patterns`
+================================================
+
+.. py:module:: BlendArMocap.src.cgt_core.cgt_patterns
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   cgt_nodes/index.rst
+   observer_pattern/index.rst
+
+

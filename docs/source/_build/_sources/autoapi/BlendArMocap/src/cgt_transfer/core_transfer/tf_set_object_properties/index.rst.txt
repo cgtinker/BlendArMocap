@@ -1,0 +1,86 @@
+:py:mod:`BlendArMocap.src.cgt_transfer.core_transfer.tf_set_object_properties`
+==============================================================================
+
+.. py:module:: BlendArMocap.src.cgt_transfer.core_transfer.tf_set_object_properties
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_set_object_properties.update_driver_target
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_set_object_properties.set_constraint_props
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_set_object_properties.set_object_remapping_drivers
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_set_object_properties._set_remapping_properties
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_set_object_properties.set_remapping_expansion_driver
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_set_object_properties.set_default_remapping_driver
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_set_object_properties._get_remapping_data_paths
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_set_object_properties.set_distance_remapping_drivers
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_set_object_properties.set_chain_driver
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_set_object_properties.set_copy_location_driver
+   BlendArMocap.src.cgt_transfer.core_transfer.tf_set_object_properties.set_copy_rotation_driver
+
+
+
+.. py:function:: update_driver_target(obj: bpy.types.Object)
+
+   Returns an object which may be used as driver target.
+   Deletes object of the same name if it exists. 
+
+
+.. py:function:: set_constraint_props(constraint: bpy.types.Constraint, props: dict)
+
+
+.. py:function:: set_object_remapping_drivers(factory: BlendArMocap.src.cgt_core.cgt_bpy.cgt_drivers.DriverFactory, provider: bpy.types.Object, remapping_props: List[List[BlendArMocap.src.cgt_transfer.core_transfer.tf_reflect_object_properties.OBJECT_PGT_CGT_ValueMapping]], dist: float = 1.0)
+
+   Set object remapping drivers. 
+
+
+.. py:function:: _set_remapping_properties(factory: BlendArMocap.src.cgt_core.cgt_bpy.cgt_drivers.DriverFactory, provider: bpy.types.Object, data_path: str, idx: int, id_path: str)
+
+   Adds remapping properties to driver factory. 
+
+
+.. py:function:: set_remapping_expansion_driver(factory: BlendArMocap.src.cgt_core.cgt_bpy.cgt_drivers.DriverFactory, provider: bpy.types.Object, data_path: str, idx: int, id_path: str, multiplier: float = 1.0)
+
+   Set remapping expansion variables and expression. May not be used to redirect values.
+   :param factory: Any Driver Factory.
+   :param provider: Objects yielding properties.
+   :param data_path: Data path to map [location, scale, ...]
+   :param idx: idx of the data path (None or -1 the data path doesn't point to an array)
+   :param id_path: Path to properties (b.e. cgt_props.use_loc_x)
+   :param multiplier: multiply by bone dist value
+
+
+.. py:function:: set_default_remapping_driver(factory: BlendArMocap.src.cgt_core.cgt_bpy.cgt_drivers.DriverFactory, provider: bpy.types.Object, data_path: str, idx: int, id_path: str, from_idx: int, multiplier: float = 1.0)
+
+   Set remapping variables and expression.
+   :param factory: Any Driver Factory.
+   :param provider: Objects yielding properties.
+   :param data_path: Data path to map [location, scale, ...]
+   :param idx: idx of the data path (None or -1 the data path doesn't point to an array)
+   :param id_path: Path to properties (b.e. cgt_props.use_loc_x)
+   :param from_idx: Data path id from provider
+   :param multiplier: multiply by bone dist value
+
+
+.. py:function:: _get_remapping_data_paths(provider: bpy.types.Object)
+
+
+.. py:function:: set_distance_remapping_drivers(factory: BlendArMocap.src.cgt_core.cgt_bpy.cgt_drivers.DriverFactory, cgt_props: BlendArMocap.src.cgt_transfer.core_transfer.tf_reflect_object_properties.OBJECT_PGT_CGT_TransferProperties, remapping_props: List[List[BlendArMocap.src.cgt_transfer.core_transfer.tf_reflect_object_properties.OBJECT_PGT_CGT_ValueMapping]], provider: bpy.types.Object, distance: float)
+
+
+.. py:function:: set_chain_driver(prev_obj: bpy.types.Object, obj: bpy.types.Object, previous_driver: bpy.types.Object, factory: BlendArMocap.src.cgt_core.cgt_bpy.cgt_drivers.DriverFactory, distance: float)
+
+
+.. py:function:: set_copy_location_driver(target, factory: BlendArMocap.src.cgt_core.cgt_bpy.cgt_drivers.DriverFactory, space: str = 'WORLD_SPACE')
+
+
+.. py:function:: set_copy_rotation_driver(target, factory: BlendArMocap.src.cgt_core.cgt_bpy.cgt_drivers.DriverFactory, space: str = 'WORLD_SPACE')
+
+

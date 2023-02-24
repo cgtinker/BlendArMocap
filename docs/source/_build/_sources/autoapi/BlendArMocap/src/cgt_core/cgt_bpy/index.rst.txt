@@ -1,0 +1,21 @@
+:py:mod:`BlendArMocap.src.cgt_core.cgt_bpy`
+===========================================
+
+.. py:module:: BlendArMocap.src.cgt_core.cgt_bpy
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   cgt_bpy_utils/index.rst
+   cgt_collection/index.rst
+   cgt_constraints/index.rst
+   cgt_drivers/index.rst
+   cgt_fc_actions/index.rst
+   cgt_object_prop/index.rst
+   cgt_object_trie/index.rst
+
+

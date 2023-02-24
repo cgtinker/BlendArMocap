@@ -1,0 +1,43 @@
+:py:mod:`BlendArMocap.src.cgt_core.cgt_utils.cgt_json`
+======================================================
+
+.. py:module:: BlendArMocap.src.cgt_core.cgt_utils.cgt_json
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_utils.cgt_json.JsonData
+
+
+
+
+.. py:class:: JsonData(path: str = None, **data)
+
+   Bases: :py:obj:`object`
+
+   Import json data, preferably as dict.
+   Can load lists, will store them as dict with "data" as key. 
+
+   .. py:attribute:: data
+      :type: dict
+
+      
+
+   .. py:method:: save(path: str = None)
+
+
+   .. py:method:: __str__()
+
+      Return str(self).
+
+
+   .. py:method:: __call__()
+
+
+

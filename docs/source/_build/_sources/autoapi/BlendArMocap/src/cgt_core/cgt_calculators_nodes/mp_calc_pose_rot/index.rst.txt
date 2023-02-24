@@ -1,0 +1,89 @@
+:py:mod:`BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_pose_rot`
+==========================================================================
+
+.. py:module:: BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_pose_rot
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_calculators_nodes.mp_calc_pose_rot.PoseRotationCalculator
+
+
+
+
+.. py:class:: PoseRotationCalculator
+
+   Bases: :py:obj:`BlendArMocap.src.cgt_core.cgt_patterns.cgt_nodes.CalculatorNode`, :py:obj:`BlendArMocap.src.cgt_core.cgt_calculators_nodes.calc_utils.ProcessorUtils`
+
+   Calculate new data and changes the input shape. 
+
+   .. py:attribute:: shoulder_center
+
+      
+
+   .. py:attribute:: hip_center
+
+      
+
+   .. py:attribute:: rotation_data
+      :value: []
+
+      
+
+   .. py:attribute:: scale_data
+      :value: []
+
+      
+
+   .. py:method:: update(data: List, frame: int = -1)
+
+      Apply the processed data to references. 
+
+
+   .. py:method:: calculate_rotations()
+
+      Creates custom rotation data for driving the cgt_rig. 
+
+
+   .. py:method:: limb_rotations()
+
+      Calculate ik chain rotations. 
+
+
+   .. py:method:: foot_rotation()
+
+      Calculate foot rotations. 
+
+
+   .. py:method:: torso_rotation()
+
+      Calculating the torso rotation based on a plane which
+      forms a triangle connecting hips and the shoulder center. 
+
+
+   .. py:method:: shoulder_rotation()
+
+      getting shoulder and hip rotation by rotating
+      the center points to left / right shoulder and hip. 
+
+
+   .. py:method:: shoulder_hip_location()
+
+      Appending custom location data for driving the cgt_rig. 
+
+
+   .. py:method:: prepare_landmarks()
+
+      Prepare landmark orientation. 
+
+
+   .. py:method:: set_hip_as_origin()
+
+
+

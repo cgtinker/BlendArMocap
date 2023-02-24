@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math &mdash; BlendArMocap 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../../" id="documentation_options" src="../../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../../_static/jquery.js"></script>
+        <script src="../../../../../../_static/underscore.js"></script>
+        <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../../_static/doctools.js"></script>
+        <script src="../../../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            BlendArMocap
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../installation/index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../detection.html">Mediapipe Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../transfer/index.html">Transfer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../freemocap.html">Freemocap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">BlendArMocap</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../../_sources/autoapi/BlendArMocap/src/cgt_core/cgt_calculators_nodes/cgt_math/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math">
+<span id="blendarmocap-src-cgt-core-cgt-calculators-nodes-cgt-math"></span><h1><a class="reference internal" href="#module-BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math</span></code></a><a class="headerlink" href="#module-BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math" title="Permalink to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.vector_length" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.vector_length"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vector_length</span></code></a>(vector)</p></td>
+<td><p>returns the length of a given vector.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.to_vector" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.to_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_vector</span></code></a>(origin, destination)</p></td>
+<td><p>returns vector from origin to destination.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.normalize" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.normalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize</span></code></a>(vector)</p></td>
+<td><p>returns the unit vector of the vector.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.vector_length_2d" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.vector_length_2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vector_length_2d</span></code></a>(v1, v2[, del_axis])</p></td>
+<td><p>returns the magnitude between two vectors.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.get_vector_distance" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.get_vector_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_vector_distance</span></code></a>(v1, v2)</p></td>
+<td><p>return distance between two points.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.remove_axis" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.remove_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_axis</span></code></a>(vectors, *args)</p></td>
+<td><p>delete one axis to calculate 2d intersection point</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.null_axis" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.null_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">null_axis</span></code></a>(vectors, *args)</p></td>
+<td><p>delete one axis to calculate 2d intersection point</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_vec_on_vec" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_vec_on_vec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">project_vec_on_vec</span></code></a>(target, destination)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_point_on_vector" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_point_on_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">project_point_on_vector</span></code></a>(proj_point, a, b)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_vec_on_plane" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_vec_on_plane"><code class="xref py py-obj docutils literal notranslate"><span class="pre">project_vec_on_plane</span></code></a>(triangle, faces, vec)</p></td>
+<td><p>project a vector on input plane</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_vec_from_normal" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_vec_from_normal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">project_vec_from_normal</span></code></a>(normal, vector)</p></td>
+<td><p>The projection of a vector v</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.angle_between" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.angle_between"><code class="xref py py-obj docutils literal notranslate"><span class="pre">angle_between</span></code></a>(v1, v2)</p></td>
+<td><p>Returns the angle in radians between vectors.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_towards" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_towards"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotate_towards</span></code></a>(origin, destination[, track, up])</p></td>
+<td><p>returns rotation from an origin to a destination.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.m_rotate_towards" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.m_rotate_towards"><code class="xref py py-obj docutils literal notranslate"><span class="pre">m_rotate_towards</span></code></a>(eye, target)</p></td>
+<td><p>manual implementation of rotate towards (Z = up, X= forward)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.joint_angles" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.joint_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">joint_angles</span></code></a>(vertices, joints)</p></td>
+<td><p>get multiple angles.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.joint_angle" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.joint_angle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">joint_angle</span></code></a>(vertices, joint)</p></td>
+<td><p>returns angles between joints.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.center_point" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.center_point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">center_point</span></code></a>(p1, p2)</p></td>
+<td><p>return center point from two given points.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.get_closest_idx" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.get_closest_idx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_closest_idx</span></code></a>(target, points)</p></td>
+<td><p>returns the closet point to the target of an input array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.intersection_2d_vectors" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.intersection_2d_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">intersection_2d_vectors</span></code></a>(origin_p1, target_p1, ...)</p></td>
+<td><p>returns intersection point tuple</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_seg" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_seg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotate_seg</span></code></a>(a)</p></td>
+<td><p>rotate by 90°</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.seg_intersect" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.seg_intersect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seg_intersect</span></code></a>(a1, a2, b1, b2)</p></td>
+<td><p>line segment a given by endpoints a1, a2</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.create_angled_circle" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.create_angled_circle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_angled_circle</span></code></a>(center, radius[, angle, points])</p></td>
+<td><p>circle in x direction at an angle using x- points.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.circle_along_UV" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.circle_along_UV"><code class="xref py py-obj docutils literal notranslate"><span class="pre">circle_along_UV</span></code></a>([center, U, V, r, points])</p></td>
+<td><p>create an circle around u/v as axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.create_circle_around_vector" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.create_circle_around_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_circle_around_vector</span></code></a>(vector, center, radius, points)</p></td>
+<td><p>creates a circle around a vector</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_point_euler" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_point_euler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotate_point_euler</span></code></a>([point, euler, origin])</p></td>
+<td><p>Returns the location of a point rotated counterclockwise around an origin.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_point" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotate_point</span></code></a>(point, axis, angle)</p></td>
+<td><p>Return the point location associated with counterclockwise rotation about</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.distance_from_plane" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.distance_from_plane"><code class="xref py py-obj docutils literal notranslate"><span class="pre">distance_from_plane</span></code></a>(point, normal, plane_point)</p></td>
+<td><p>returns the distance of a point to a plane using the normal</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.normal_from_plane" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.normal_from_plane"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normal_from_plane</span></code></a>(plane)</p></td>
+<td><p>get the normal from a plane</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.create_normal_array" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.create_normal_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_normal_array</span></code></a>(vertices, faces)</p></td>
+<td><p>return array of normals per triangle. each vertex triplet</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.generate_matrix" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.generate_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_matrix</span></code></a>(tangent, normal, binormal)</p></td>
+<td><p>returns matrix</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.decompose_matrix" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.decompose_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decompose_matrix</span></code></a>(matrix, mathutils.Quaternion, ...)</p></td>
+<td><p>returns loc, quaternion, scale</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.to_euler" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.to_euler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_euler</span></code></a>([space])</p></td>
+<td><p>quaternion to euler using mathutils</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.quart_to_euler_combat" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.quart_to_euler_combat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quart_to_euler_combat</span></code></a>(→ mathutils.Euler)</p></td>
+<td><p>Converts quart to euler rotation while comparing with previous rotation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.offset_euler" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.offset_euler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">offset_euler</span></code></a>(→ mathutils.Euler)</p></td>
+<td><p>Offsets an euler rotation using euler radians <a href="#id1"><span class="problematic" id="id2">*</span></a>pi.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.try_get_euler" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.try_get_euler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">try_get_euler</span></code></a>(quart_rotation, offset[, prev_rot_idx, ...])</p></td>
+<td><p>Gets an euler rotation from quaternion with using the previously</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math._generate_matrix" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math._generate_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_generate_matrix</span></code></a>(tangent, normal, binormal)</p></td>
+<td><p>generate a numpy matrix at loc [0, 0, 0].</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math._decompose_matrix" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math._decompose_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_decompose_matrix</span></code></a>(matrix)</p></td>
+<td><p>manual decompose a matrix (still in development)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.euler_to_quaternion" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.euler_to_quaternion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">euler_to_quaternion</span></code></a>(yaw, pitch, roll)</p></td>
+<td><p>manual to euler conversion using np</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.quaternion_to_euler" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.quaternion_to_euler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quaternion_to_euler</span></code></a>(→ numpy.array)</p></td>
+<td><p>Manual quaternion q (w, x, y, z) to euler conversion</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.matrix3x3_to_quaternion" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.matrix3x3_to_quaternion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matrix3x3_to_quaternion</span></code></a>(m)</p></td>
+<td><p>Returns quaternion from 3x3 matrix.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.matrix3x3_to_euler" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.matrix3x3_to_euler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matrix3x3_to_euler</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Returns euler x, y, z angles from 3x3 rotation matrix</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.remap_slope" title="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.remap_slope"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remap_slope</span></code></a>(value, min_in, max_in, min_out, max_out)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.vector_length">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">vector_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.vector_length" title="Permalink to this definition"></a></dt>
+<dd><p>returns the length of a given vector.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.to_vector">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">to_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.to_vector" title="Permalink to this definition"></a></dt>
+<dd><p>returns vector from origin to destination.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.normalize">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.normalize" title="Permalink to this definition"></a></dt>
+<dd><p>returns the unit vector of the vector.
+normalized_v = v / np.sqrt(np.sum(v**2))
+return normalized_v</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.vector_length_2d">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">vector_length_2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">del_axis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.vector_length_2d" title="Permalink to this definition"></a></dt>
+<dd><p>returns the magnitude between two vectors.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.get_vector_distance">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">get_vector_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.get_vector_distance" title="Permalink to this definition"></a></dt>
+<dd><p>return distance between two points.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.remove_axis">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">remove_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vectors</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.remove_axis" title="Permalink to this definition"></a></dt>
+<dd><p>delete one axis to calculate 2d intersection point</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.null_axis">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">null_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vectors</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.null_axis" title="Permalink to this definition"></a></dt>
+<dd><p>delete one axis to calculate 2d intersection point</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_vec_on_vec">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">project_vec_on_vec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_vec_on_vec" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_point_on_vector">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">project_point_on_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proj_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_point_on_vector" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_vec_on_plane">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">project_vec_on_plane</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triangle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">faces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_vec_on_plane" title="Permalink to this definition"></a></dt>
+<dd><p>project a vector on input plane
+:param triangle - [[0, 0, 0], [1, 0, 1] [1, 3, 1]] vertex triplet
+:param faces - [[0, 1, 2]] vertex connection order
+:param vec - vector to project
+return projection vector</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_vec_from_normal">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">project_vec_from_normal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.project_vec_from_normal" title="Permalink to this definition"></a></dt>
+<dd><p>The projection of a vector v
+onto a plane is calculated by subtracting the component of u
+which is orthogonal to the plane from u</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.angle_between">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">angle_between</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.angle_between" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the angle in radians between vectors.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_towards">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">rotate_towards</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">origin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Z'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">up</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Y'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_towards" title="Permalink to this definition"></a></dt>
+<dd><p>returns rotation from an origin to a destination.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.m_rotate_towards">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">m_rotate_towards</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eye</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.m_rotate_towards" title="Permalink to this definition"></a></dt>
+<dd><p>manual implementation of rotate towards (Z = up, X= forward)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.joint_angles">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">joint_angles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">joints</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.joint_angles" title="Permalink to this definition"></a></dt>
+<dd><p>get multiple angles.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.joint_angle">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">joint_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">joint</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.joint_angle" title="Permalink to this definition"></a></dt>
+<dd><p>returns angles between joints.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.center_point">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">center_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.center_point" title="Permalink to this definition"></a></dt>
+<dd><p>return center point from two given points.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.get_closest_idx">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">get_closest_idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.get_closest_idx" title="Permalink to this definition"></a></dt>
+<dd><p>returns the closet point to the target of an input array.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.intersection_2d_vectors">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">intersection_2d_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">origin_p1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_p1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin_p2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_p2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">del_axis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.intersection_2d_vectors" title="Permalink to this definition"></a></dt>
+<dd><p>returns intersection point tuple
+intersect 2d vector from origin to destination
+with targeted 2d vector.
+requires to ignore an axis.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_seg">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">rotate_seg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_seg" title="Permalink to this definition"></a></dt>
+<dd><p>rotate by 90°</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.seg_intersect">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">seg_intersect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.seg_intersect" title="Permalink to this definition"></a></dt>
+<dd><p>line segment a given by endpoints a1, a2
+line segment b given by endpoints b1, b2</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.create_angled_circle">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">create_angled_circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">90</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.create_angled_circle" title="Permalink to this definition"></a></dt>
+<dd><p>circle in x direction at an angle using x- points.
+returns the points of the circle.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.circle_along_UV">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">circle_along_UV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">np.array([0,</span> <span class="pre">0,</span> <span class="pre">0])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">np.array([0,</span> <span class="pre">1,</span> <span class="pre">0])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">np.array([0,</span> <span class="pre">0,</span> <span class="pre">1])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.025</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">21</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.circle_along_UV" title="Permalink to this definition"></a></dt>
+<dd><p>create an circle around u/v as axis.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.create_circle_around_vector">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">create_circle_around_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.create_circle_around_vector" title="Permalink to this definition"></a></dt>
+<dd><p>creates a circle around a vector</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_point_euler">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">rotate_point_euler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">euler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">np.array([0,</span> <span class="pre">0,</span> <span class="pre">0])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_point_euler" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the location of a point rotated counterclockwise around an origin.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_point">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">rotate_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.rotate_point" title="Permalink to this definition"></a></dt>
+<dd><p>Return the point location associated with counterclockwise rotation about
+the given axis by theta radians.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.distance_from_plane">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">distance_from_plane</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plane_point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.distance_from_plane" title="Permalink to this definition"></a></dt>
+<dd><p>returns the distance of a point to a plane using the normal
+of the plane and a random point from the plane</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.normal_from_plane">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">normal_from_plane</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plane</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.normal_from_plane" title="Permalink to this definition"></a></dt>
+<dd><p>get the normal from a plane</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.create_normal_array">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">create_normal_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">faces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.create_normal_array" title="Permalink to this definition"></a></dt>
+<dd><p>return array of normals per triangle. each vertex triplet
+requires a face triplet
+vertices = [[[1, 1, 0],[0,1,0],[0,0,0]], []…] faces = [[0, 1, 2], []…]</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.generate_matrix">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">generate_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tangent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binormal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.generate_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>returns matrix
+-&gt; tangent = towards left and right [+X]
+-&gt; normal = origin towards front [+Y]
+-&gt; binormal = cross product of tanget and normal if +z1 [+Z]</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.decompose_matrix">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">decompose_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">mathutils.Matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.decompose_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>returns loc, quaternion, scale</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.to_euler">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">to_euler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quart</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Euler()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'XYZ'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">mathutils.Euler</span></span></span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.to_euler" title="Permalink to this definition"></a></dt>
+<dd><p>quaternion to euler using mathutils</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.quart_to_euler_combat">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">quart_to_euler_combat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quart</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'XYZ'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">mathutils.Euler</span></span></span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.quart_to_euler_combat" title="Permalink to this definition"></a></dt>
+<dd><p>Converts quart to euler rotation while comparing with previous rotation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.offset_euler">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">offset_euler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">euler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">mathutils.Euler</span></span></span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.offset_euler" title="Permalink to this definition"></a></dt>
+<dd><p>Offsets an euler rotation using euler radians <a href="#id3"><span class="problematic" id="id4">*</span></a>pi.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.try_get_euler">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">try_get_euler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quart_rotation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_rot_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.try_get_euler" title="Permalink to this definition"></a></dt>
+<dd><p>Gets an euler rotation from quaternion with using the previously
+created rotation as combat to avoid discontinuity.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math._generate_matrix">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">_generate_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tangent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binormal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math._generate_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>generate a numpy matrix at loc [0, 0, 0].</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math._decompose_matrix">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">_decompose_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math._decompose_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>manual decompose a matrix (still in development)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.euler_to_quaternion">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">euler_to_quaternion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roll</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.euler_to_quaternion" title="Permalink to this definition"></a></dt>
+<dd><p>manual to euler conversion using np</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.quaternion_to_euler">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">quaternion_to_euler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.array</span></span></span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.quaternion_to_euler" title="Permalink to this definition"></a></dt>
+<dd><p>Manual quaternion q (w, x, y, z) to euler conversion
+<a class="reference external" href="https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles">https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.matrix3x3_to_quaternion">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">matrix3x3_to_quaternion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.matrix3x3_to_quaternion" title="Permalink to this definition"></a></dt>
+<dd><p>Returns quaternion from 3x3 matrix.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.matrix3x3_to_euler">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">matrix3x3_to_euler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.matrix3x3_to_euler" title="Permalink to this definition"></a></dt>
+<dd><p>Returns euler x, y, z angles from 3x3 rotation matrix</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.remap_slope">
+<span class="sig-prename descclassname"><span class="pre">BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.</span></span><span class="sig-name descname"><span class="pre">remap_slope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_out</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BlendArMocap.src.cgt_core.cgt_calculators_nodes.cgt_math.remap_slope" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, cgtinker.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

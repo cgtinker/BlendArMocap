@@ -1,0 +1,138 @@
+:py:mod:`BlendArMocap.src.cgt_mediapipe.cgt_mp_interface`
+=========================================================
+
+.. py:module:: BlendArMocap.src.cgt_mediapipe.cgt_mp_interface
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_interface.CGT_PT_MP_Detection
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_interface.CGT_PT_MP_DetectorProperties
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_interface.CGT_PT_MP_Warning
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_interface.register
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_interface.unregister
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_interface.classes
+
+
+.. py:class:: CGT_PT_MP_Detection
+
+   Bases: :py:obj:`BlendArMocap.src.cgt_core.cgt_interface.cgt_core_panel.DefaultPanel`, :py:obj:`bpy.types.Panel`
+
+   .. py:attribute:: bl_label
+      :value: 'Mediapipe'
+
+      
+
+   .. py:attribute:: bl_parent_id
+      :value: 'UI_PT_CGT_Panel'
+
+      
+
+   .. py:attribute:: bl_idname
+      :value: 'UI_PT_CGT_Detection'
+
+      
+
+   .. py:attribute:: bl_options
+
+      
+
+   .. py:method:: poll(context)
+      :classmethod:
+
+
+   .. py:method:: movie_panel(user)
+
+
+   .. py:method:: webcam_panel(user)
+
+
+   .. py:method:: draw(context)
+
+
+
+.. py:class:: CGT_PT_MP_DetectorProperties
+
+   Bases: :py:obj:`BlendArMocap.src.cgt_core.cgt_interface.cgt_core_panel.DefaultPanel`, :py:obj:`bpy.types.Panel`
+
+   .. py:attribute:: bl_label
+      :value: 'Advanced'
+
+      
+
+   .. py:attribute:: bl_parent_id
+      :value: 'UI_PT_CGT_Detection'
+
+      
+
+   .. py:attribute:: bl_options
+
+      
+
+   .. py:method:: draw(context)
+
+
+
+.. py:class:: CGT_PT_MP_Warning
+
+   Bases: :py:obj:`BlendArMocap.src.cgt_core.cgt_interface.cgt_core_panel.DefaultPanel`, :py:obj:`bpy.types.Panel`
+
+   .. py:attribute:: bl_label
+      :value: 'Mediapipe'
+
+      
+
+   .. py:attribute:: bl_parent_id
+      :value: 'UI_PT_CGT_Panel'
+
+      
+
+   .. py:attribute:: bl_options
+
+      
+
+   .. py:attribute:: bl_idname
+      :value: 'UI_PT_CGT_Detection_Warning'
+
+      
+
+   .. py:method:: poll(context)
+      :classmethod:
+
+
+   .. py:method:: draw(context)
+
+
+
+.. py:data:: classes
+
+   
+
+.. py:function:: register()
+
+
+.. py:function:: unregister()
+
+

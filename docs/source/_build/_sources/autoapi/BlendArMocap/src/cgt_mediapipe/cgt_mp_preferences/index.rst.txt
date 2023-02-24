@@ -1,0 +1,123 @@
+:py:mod:`BlendArMocap.src.cgt_mediapipe.cgt_mp_preferences`
+===========================================================
+
+.. py:module:: BlendArMocap.src.cgt_mediapipe.cgt_mp_preferences
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_preferences.PREFERENCES_OT_CGT_install_dependencies_button
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_preferences.PREFERENCES_OT_CGT_uninstall_dependencies_button
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_preferences.draw
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_preferences.draw_dependencies
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_preferences.draw_camera_settings
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_preferences.register
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_preferences.unregister
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_preferences.classes
+
+
+.. py:class:: PREFERENCES_OT_CGT_install_dependencies_button
+
+   Bases: :py:obj:`bpy.types.Operator`
+
+   .. py:attribute:: bl_idname
+      :value: 'button.cgt_install_dependencies'
+
+      
+
+   .. py:attribute:: bl_label
+      :value: 'Install dependencies'
+
+      
+
+   .. py:attribute:: bl_description
+      :value: 'Downloads and installs the required python packages for this add-on. Internet connection is...'
+
+      
+
+   .. py:attribute:: bl_options
+
+      
+
+   .. py:method:: poll(context)
+      :classmethod:
+
+
+   .. py:method:: execute(context)
+
+
+
+.. py:class:: PREFERENCES_OT_CGT_uninstall_dependencies_button
+
+   Bases: :py:obj:`bpy.types.Operator`
+
+   .. py:attribute:: bl_idname
+      :value: 'button.cgt_uninstall_dependencies'
+
+      
+
+   .. py:attribute:: bl_label
+      :value: 'Uninstall dependencies and shutdown'
+
+      
+
+   .. py:attribute:: bl_description
+      :value: 'Removes installed dependencies from site-packagesand deletes them on start up.'
+
+      
+
+   .. py:attribute:: bl_options
+
+      
+
+   .. py:method:: poll(context)
+      :classmethod:
+
+
+   .. py:method:: execute(context)
+
+
+
+.. py:function:: draw(self, context)
+
+
+.. py:function:: draw_dependencies(layout, user)
+
+   Dependency layout for user preferences. 
+
+
+.. py:function:: draw_camera_settings(context, layout, user)
+
+
+.. py:data:: classes
+
+   
+
+.. py:function:: register()
+
+
+.. py:function:: unregister()
+
+

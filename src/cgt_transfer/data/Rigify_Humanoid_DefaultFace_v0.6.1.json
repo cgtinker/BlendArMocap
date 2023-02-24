@@ -683,7 +683,89 @@
                 "EMPTY"
             ]
         },
-        "constraints":[],
+        "constraints":[
+            [
+                "COPY_LOCATION",
+                {
+                    "influence":1.0,
+                    "invert_x":false,
+                    "invert_y":false,
+                    "invert_z":false,
+                    "name":"Copy Location",
+                    "owner_space":"WORLD",
+                    "target_space":"WORLD",
+                    "use_offset":false,
+                    "use_x":true,
+                    "use_y":true,
+                    "use_z":true
+                }
+            ]
+        ],
+        "collection":"cgt_POSE"
+    },
+    "cgt_left_foot_index":{
+        "cgt_props":{
+            "active":false,
+            "driver_type":"CHAIN",
+            "use_loc_x":{
+                "active":false,
+                "remap_none":"DEFAULT",
+                "remap_default":"DEFAULT",
+                "remap_details":"DEFAULT"
+            },
+            "use_rot_x":{
+                "active":false,
+                "remap_none":"DEFAULT",
+                "remap_default":"DEFAULT",
+                "remap_details":"DEFAULT"
+            },
+            "use_sca_x":{
+                "active":false,
+                "remap_none":"DEFAULT",
+                "remap_default":"DEFAULT",
+                "remap_details":"DEFAULT"
+            },
+            "target":{
+                "obj_type":"ARMATURE",
+                "target":[
+                    "rig",
+                    "ARMATURE"
+                ],
+                "armature_type":"BONE",
+                "object_type":"OBJECT",
+                "target_bone":"foot_spin_ik.R",
+                "target_shape_key":"NONE"
+            },
+            "by_obj":{
+                "target":[
+                    "rig",
+                    "ARMATURE"
+                ],
+                "target_type":"BONE_LEN",
+                "target_bone":"DEF-shin.L",
+                "target_bone_type":"HEAD",
+                "other_bone":"NONE",
+                "other_bone_type":"HEAD"
+            },
+            "to_obj":[
+                "cgt_left_ankle",
+                "EMPTY"
+            ]
+        },
+        "constraints":[
+            [
+                "TRACK_TO",
+                {
+                    "influence":1.0,
+                    "name":"Track To",
+                    "owner_space":"WORLD",
+                    "target_space":"WORLD",
+                    "track_axis":"TRACK_NEGATIVE_Y",
+                    "up_axis":"UP_Z",
+                    "use_target_z":false
+                }
+            ]
+        ],
         "collection":"cgt_POSE"
     },
     "cgt_left_hip":{
@@ -772,7 +854,24 @@
                 "EMPTY"
             ]
         },
-        "constraints":[],
+        "constraints":[
+            [
+                "COPY_LOCATION",
+                {
+                    "influence":1.0,
+                    "invert_x":false,
+                    "invert_y":false,
+                    "invert_z":false,
+                    "name":"Copy Location",
+                    "owner_space":"WORLD",
+                    "target_space":"WORLD",
+                    "use_offset":false,
+                    "use_x":true,
+                    "use_y":true,
+                    "use_z":true
+                }
+            ]
+        ],
         "collection":"cgt_POSE"
     },
     "cgt_left_shoulder":{
@@ -1867,8 +1966,7 @@
                 "active":true,
                 "remap_none":"DEFAULT",
                 "remap_default":"DEFAULT",
-                "remap_details":"DEFAULT",
-                "factor":1.0
+                "remap_details":"DEFAULT"
             },
             "use_loc_y":{
                 "active":true,
@@ -1917,7 +2015,7 @@
                     "name":"Copy Location",
                     "owner_space":"WORLD",
                     "target_space":"WORLD",
-                    "use_offset":false,
+                    "use_offset":true,
                     "use_x":true,
                     "use_y":true,
                     "use_z":true
@@ -2062,7 +2160,89 @@
                 "EMPTY"
             ]
         },
-        "constraints":[],
+        "constraints":[
+            [
+                "COPY_LOCATION",
+                {
+                    "influence":1.0,
+                    "invert_x":false,
+                    "invert_y":false,
+                    "invert_z":false,
+                    "name":"Copy Location",
+                    "owner_space":"WORLD",
+                    "target_space":"WORLD",
+                    "use_offset":false,
+                    "use_x":true,
+                    "use_y":true,
+                    "use_z":true
+                }
+            ]
+        ],
+        "collection":"cgt_POSE"
+    },
+    "cgt_right_foot_index":{
+        "cgt_props":{
+            "active":false,
+            "driver_type":"CHAIN",
+            "use_loc_x":{
+                "active":false,
+                "remap_none":"DEFAULT",
+                "remap_default":"DEFAULT",
+                "remap_details":"DEFAULT"
+            },
+            "use_rot_x":{
+                "active":false,
+                "remap_none":"DEFAULT",
+                "remap_default":"DEFAULT",
+                "remap_details":"DEFAULT"
+            },
+            "use_sca_x":{
+                "active":false,
+                "remap_none":"DEFAULT",
+                "remap_default":"DEFAULT",
+                "remap_details":"DEFAULT"
+            },
+            "target":{
+                "obj_type":"ARMATURE",
+                "target":[
+                    "rig",
+                    "ARMATURE"
+                ],
+                "armature_type":"BONE",
+                "object_type":"OBJECT",
+                "target_bone":"foot_spin_ik.L",
+                "target_shape_key":"NONE"
+            },
+            "by_obj":{
+                "target":[
+                    "rig",
+                    "ARMATURE"
+                ],
+                "target_type":"BONE_LEN",
+                "target_bone":"DEF-shin.L",
+                "target_bone_type":"HEAD",
+                "other_bone":"NONE",
+                "other_bone_type":"HEAD"
+            },
+            "to_obj":[
+                "cgt_right_ankle",
+                "EMPTY"
+            ]
+        },
+        "constraints":[
+            [
+                "TRACK_TO",
+                {
+                    "influence":1.0,
+                    "name":"Track To",
+                    "owner_space":"WORLD",
+                    "target_space":"WORLD",
+                    "track_axis":"TRACK_NEGATIVE_Y",
+                    "up_axis":"UP_Z",
+                    "use_target_z":false
+                }
+            ]
+        ],
         "collection":"cgt_POSE"
     },
     "cgt_right_hip":{
@@ -2151,7 +2331,24 @@
                 "EMPTY"
             ]
         },
-        "constraints":[],
+        "constraints":[
+            [
+                "COPY_LOCATION",
+                {
+                    "influence":1.0,
+                    "invert_x":false,
+                    "invert_y":false,
+                    "invert_z":false,
+                    "name":"Copy Location",
+                    "owner_space":"WORLD",
+                    "target_space":"WORLD",
+                    "use_offset":false,
+                    "use_x":true,
+                    "use_y":true,
+                    "use_z":true
+                }
+            ]
+        ],
         "collection":"cgt_POSE"
     },
     "cgt_right_shoulder":{
@@ -2813,11 +3010,11 @@
                     "invert_x":false,
                     "invert_y":false,
                     "invert_z":false,
-                    "mix_mode":"REPLACE",
+                    "mix_mode":"ADD",
                     "name":"Copy Rotation",
                     "owner_space":"WORLD",
                     "target_space":"WORLD",
-                    "use_offset":false,
+                    "use_offset":true,
                     "use_x":true,
                     "use_y":true,
                     "use_z":true

@@ -1,0 +1,59 @@
+:py:mod:`BlendArMocap.src.cgt_core.cgt_output_nodes.mp_out_utils`
+=================================================================
+
+.. py:module:: BlendArMocap.src.cgt_core.cgt_output_nodes.mp_out_utils
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_core.cgt_output_nodes.mp_out_utils.BpyOutputNode
+
+
+
+
+.. py:class:: BpyOutputNode
+
+   Bases: :py:obj:`BlendArMocap.src.cgt_core.cgt_patterns.cgt_nodes.OutputNode`
+
+   Outputs and returns the data without changing values nor shape. 
+
+   .. py:attribute:: parent_col
+
+      
+
+   .. py:attribute:: prev_rotation
+
+      
+
+   .. py:method:: update(data, frame)
+      :abstractmethod:
+
+
+   .. py:method:: translate(target: List[bpy.types.Object], data, frame: int)
+      :staticmethod:
+
+      Translates and keyframes bpy empty objects. 
+
+
+   .. py:method:: scale(target, data, frame)
+      :staticmethod:
+
+
+   .. py:method:: quaternion_rotate(target, data, frame)
+      :staticmethod:
+
+      Translates and keyframes bpy empty objects. 
+
+
+   .. py:method:: euler_rotate(target, data, frame, idx_offset=0)
+
+      Translates and keyframes bpy empty objects. 
+
+
+

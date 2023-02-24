@@ -1,0 +1,82 @@
+:py:mod:`BlendArMocap.src.cgt_socket_ipc.cgt_core_socket.json_parser`
+=====================================================================
+
+.. py:module:: BlendArMocap.src.cgt_socket_ipc.cgt_core_socket.json_parser
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_socket_ipc.cgt_core_socket.json_parser.JsonParser
+
+
+
+
+.. py:class:: JsonParser
+
+   Bases: :py:obj:`object`
+
+   Parses json mediapipe detection data, the data has to be stored
+   with descriptors. Sample:
+   {'POSE':
+       {   '0': {'x': 0.745145, 'y': 0.562732, 'z': -1.13462},
+           '1': {'x': 0.784312, 'y': 0.494899, 'z': -1.06639},
+           ...
+       }
+   }
+   {'HAND':
+       {
+           "0":
+           {
+               '0': {'x': 0.745145, 'y': 0.562732, 'z': -1.13462},
+               '1': {'x': 0.784312, 'y': 0.494899, 'z': -1.06639},
+               ...
+           },
+           "1":
+           {
+               ...
+           }
+       }
+   }
+
+   .. py:attribute:: detection_type
+      :type: str
+
+      
+
+   .. py:attribute:: detection_types
+      :type: list
+      :value: ['FACE', 'HANDS', 'POSE', 'HOLISTIC']
+
+      
+
+   .. py:attribute:: detection_contents
+      :type: dict
+
+      
+
+   .. py:method:: exec(data)
+
+
+   .. py:method:: construct_array(data)
+
+
+   .. py:method:: weird_hands(left_hand, right_hand)
+
+
+   .. py:method:: array_from_list(data, descriptor)
+
+
+   .. py:method:: array_from_int(data, length)
+      :staticmethod:
+
+
+   .. py:method:: get_detection_type(data)
+
+
+

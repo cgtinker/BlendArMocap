@@ -1,0 +1,121 @@
+:py:mod:`BlendArMocap.src.cgt_mediapipe.cgt_mp_properties`
+==========================================================
+
+.. py:module:: BlendArMocap.src.cgt_mediapipe.cgt_mp_properties
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_properties.MP_PG_Properties
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_properties.register
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_properties.unregister
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BlendArMocap.src.cgt_mediapipe.cgt_mp_properties.classes
+
+
+.. py:class:: MP_PG_Properties
+
+   Bases: :py:obj:`bpy.types.PropertyGroup`
+
+   .. py:attribute:: enum_detection_type
+      :type: bpy.props.EnumProperty(name='Target', description='Select detection type tracking.', items=(('HAND', 'Hands', ''), ('FACE', 'Face', ''), ('POSE', 'Pose', ''), ('HOLISTIC', 'Holistic', '')))
+
+      
+
+   .. py:attribute:: refine_face_landmarks
+      :type: bpy.props.BoolProperty(name='Refine Face Landmarks', default=False, description='Whether to further refine the landmark coordinates around the eyes and lips, and output additional landmarks around the irises by applying the Attention Mesh Model. Default to false.')
+
+      
+
+   .. py:attribute:: holistic_model_complexity
+      :type: bpy.props.IntProperty(name='Model Complexity', default=1, min=0, max=1, description='Complexity of the pose landmark model: 0, 1 or 1. Landmark accuracy as well as inference latency generally go up with the model complexity. Default to 1.')
+
+      
+
+   .. py:attribute:: pose_model_complexity
+      :type: bpy.props.IntProperty(name='Model Complexity', default=1, min=0, max=1, description='Complexity of the pose landmark model: 0, 1 or 1. Landmark accuracy as well as inference latency generally go up with the model complexity. Default to 1.')
+
+      
+
+   .. py:attribute:: hand_model_complexity
+      :type: bpy.props.IntProperty(name='Model Complexity', default=1, min=0, max=1, description='Complexity of the hand landmark model: 0 or 1. Landmark accuracy as well as inference latency generally go up with the model complexity. Default to 1.')
+
+      
+
+   .. py:attribute:: min_detection_confidence
+      :type: bpy.props.FloatProperty(name='Min Tracking Confidence', default=0.5, min=0.0, max=1.0, description='Minimum confidence value ([0.0, 1.0]) from the detection model for the detection to be considered successful. Default to 0.5.')
+
+      
+
+   .. py:attribute:: mov_data_path
+      :type: bpy.props.StringProperty(name='File Path', description='File path to .mov file.', default='*.mov;*mp4', options={'HIDDEN'}, maxlen=1024, subtype='FILE_PATH')
+
+      
+
+   .. py:attribute:: enum_stream_type
+      :type: bpy.props.EnumProperty(name='Stream Backend', description='Sets Stream backend.', items=(('0', 'default', ''), ('1', 'capdshow', '')))
+
+      
+
+   .. py:attribute:: enum_stream_dim
+      :type: bpy.props.EnumProperty(name='Stream Dimensions', description='Dimensions for video Stream input.', items=(('sd', '720x480 - recommended', ''), ('hd', '1240x720 - experimental', ''), ('fhd', '1920x1080 - experimental', '')))
+
+      
+
+   .. py:attribute:: detection_input_type
+      :type: bpy.props.EnumProperty(name='Type', description='Select input type.', items=(('movie', 'Movie', ''), ('stream', 'Webcam', '')))
+
+      
+
+   .. py:attribute:: webcam_input_device
+      :type: bpy.props.IntProperty(name='Webcam Device Slot', description='Select Webcam device.', min=0, max=4, default=0)
+
+      
+
+   .. py:attribute:: key_frame_step
+      :type: bpy.props.IntProperty(name='Key Step', description='Select keyframe step rate.', min=1, max=12, default=4)
+
+      
+
+   .. py:attribute:: modal_active
+      :type: bpy.props.BoolProperty(name='modal_active', description='Check if operator is running', default=False)
+
+      
+
+   .. py:attribute:: local_user
+      :type: bpy.props.BoolProperty(name='Local user', description='Install to local user and not to blenders python site packages.', default=False)
+
+      
+
+
+.. py:data:: classes
+
+   
+
+.. py:function:: register()
+
+
+.. py:function:: unregister()
+
+
