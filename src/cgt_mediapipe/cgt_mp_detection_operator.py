@@ -1,5 +1,6 @@
 import bpy
 import logging
+import numpy as np
 
 from pathlib import Path
 from ..cgt_core.cgt_patterns import cgt_nodes
@@ -13,6 +14,7 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
     _timer: bpy.types.Timer = None
     node_chain: cgt_nodes.NodeChain = None
     frame = key_step = 1
+    memo = None
     user = None
 
     def get_chain(self, stream) -> cgt_nodes.NodeChain:
@@ -104,6 +106,7 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
         else:
             self.user.modal_active = True
 
+        # init stream and chain
         stream = self.get_stream()
         self.node_chain = self.get_chain(stream)
         if self.node_chain is None:
@@ -115,6 +118,8 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
         self._timer = wm.event_timer_add(0.1, window=context.window)
         context.window_manager.modal_handler_add(self)
 
+        # memo skipped frames
+        self.memo = []
         self.report({'INFO'}, f"Running {self.user.enum_detection_type} as modal.")
         return {'RUNNING_MODAL'}
 
@@ -122,18 +127,57 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
     def poll(cls, context):
         return context.mode in {'OBJECT', 'POSE'}
 
+    @staticmethod
+    def simple_smoothing(memo, cur):
+        """ Expects list with sub-lists containing [int, [float, float, float]].
+        Smooths the float part of the sub-lists. """
+        def smooth_by_add_divide(x, y):
+            for i, *_ in enumerate(zip(x, y)):
+                x[i] += y[i]
+                x[i] /= 2
+
+        def addable(x, y):
+            # check if [int, [float, float float]]
+            if not len(x) == 2 or not len(y) == 2:
+                return False
+
+            if not len(x[1]) == 3 or not len(y[1]) == 3:
+                return False
+
+            smooth_by_add_divide(x[1], y[1])
+            return True
+
+        def smooth_memo_contents(x, y):
+            # checks if addable contents, else splits into sub-arrays
+            # and retries. y may get added to x, if x is empty.
+            if not isinstance(y, list):
+                return
+            if not isinstance(x, list):
+                x = y
+            if len(x) == 0 and len(y) != 0:
+                x += y
+
+            for l1, l2 in zip(x, y):
+                if not addable(l1, l2):
+                    smooth_memo_contents(l1, l2)
+
+        smooth_memo_contents(memo, cur)
+        return memo
+
     def modal(self, context, event):
         """ Run detection as modal operation, finish with 'Q', 'ESC' or 'RIGHT MOUSE'. """
         if event.type == "TIMER":
-            # use key step also for movie detection (can be used as smoothing / faster processing)
             if self.user.detection_input_type == 'movie':
+                # gather and smooth data
+                data, _frame = self.node_chain.nodes[0].update([], self.frame)
+                self.simple_smoothing(self.memo, data)
+
+                # apply smoothed data to pipeline
                 if self.frame % self.key_step == 0:
-                    print("use frame", self.frame)
-                    data, _ = self.node_chain.update([], self.frame)
-                else:
-                    print("skip frame", self.frame)
-                    # skip frame for smoothing if key step != 1
-                    data, _ = self.node_chain.nodes[0].update([], self.frame)
+                    for node in self.node_chain.nodes[1:]:
+                        node.update(self.memo, self.frame)
+                    self.memo.clear()
+
                 self.frame += 1
             else:
                 data, _ = self.node_chain.update([], self.frame)
@@ -152,6 +196,7 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
         """ Upon finishing detection clear the handlers. """
         self.user.modal_active = False  # noqa
         del self.node_chain
+        self.memo = None
         wm = context.window_manager
         wm.event_timer_remove(self._timer)
         logging.debug("FINISHED DETECTION")
