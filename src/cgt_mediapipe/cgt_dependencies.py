@@ -347,13 +347,18 @@ elif sys.platform == 'darwin':
     ]
 
 
-# do I really want that by default?
-user_site = site.getusersitepackages()
-if user_site not in sys.path:
-    sys.path.append(user_site)
-    print("Added user site packages to path.")
+from ..cgt_core.cgt_utils import cgt_user_prefs
+stored_prefs = cgt_user_prefs.get_prefs(local_user=False)
 
+user_site = site.getusersitepackages()
+if user_site not in sys.path and stored_prefs.get("local_user", False):
+    logging.info("Adding user site packages.")
+    sys.path.append(user_site)
 site_packages = get_site_packages_path()
 python_binary = get_python_exe()
-remove_dependency_remains()
+# remove_dependency_remains()
+
+for dep in required_dependencies:
+    info = get_package_info(dep)
+    logging.debug(str(info))
 dependencies_installed = [is_installed(dependency) for dependency in required_dependencies]

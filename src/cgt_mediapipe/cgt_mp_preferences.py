@@ -3,6 +3,7 @@ import bpy
 
 from ..cgt_core.cgt_interface import cgt_core_panel
 from ..cgt_mediapipe import cgt_dependencies
+from ..cgt_core.cgt_utils import cgt_user_prefs
 
 
 class PREFERENCES_OT_CGT_install_dependencies_button(bpy.types.Operator):
@@ -57,17 +58,26 @@ class PREFERENCES_OT_CGT_uninstall_dependencies_button(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class PREFERENCES_OT_CGT_save_preferences(bpy.types.Operator):
+    bl_idname = "button.cgt_save_preferences"
+    bl_label = "Save Preferences"
+    bl_description = "Save BlendArMocaps User Preferences"
+    bl_options = {"REGISTER", "INTERNAL"}
+
+    def execute(self, context):
+        from .cgt_mp_registration import MP_ATTRS
+        user = bpy.context.scene.cgtinker_mediapipe  # noqa
+        cgt_user_prefs.set_prefs(**{attr: getattr(user, attr, default) for attr, default in MP_ATTRS.items()})
+        self.report({'INFO'}, "Saved user preferences.")
+        return {"FINISHED"}
+
+
 def draw(self, context):
-    layout = self.layout
-    user = context.scene.cgtinker_mediapipe  # noqa
-    draw_dependencies(layout, user)
-    if all(cgt_dependencies.dependencies_installed):
-        draw_camera_settings(context, layout, user)
-
-
-def draw_dependencies(layout, user):
 
     """ Dependency layout for user preferences. """
+    layout = self.layout
+    user = context.scene.cgtinker_mediapipe  # noqa
+
     # dependency box
     dependency_box = layout.box()
     dependency_box.label(text="Mediapipe Dependencies")
@@ -77,7 +87,6 @@ def draw_dependencies(layout, user):
         _d_box = dependency_box.box()
         box_split = _d_box.split()
         cols = [box_split.column(align=False) for _ in range(4)]
-
         cols[3].label(text=f"{cgt_dependencies.is_installed(dependency)}")
         if not cgt_dependencies.is_installed(dependency):
             cols[0].label(text=f"{dependency.name}")
@@ -89,7 +98,6 @@ def draw_dependencies(layout, user):
             cols[0].label(text=f"{dependency.name}")
             cols[1].label(text=f"{version}")
             cols[2].label(text=f"{path}")
-
 
     # pip headers
     pip_headers = dependency_box.split()
@@ -112,23 +120,28 @@ def draw_dependencies(layout, user):
     for m_dependency in cgt_dependencies.required_dependencies:
         draw_dependency(m_dependency, dependency_box)
 
+    # user settings
     dependency_box.row().separator()
-    dependency_box.row().label(text="Make sure to have elevated privileges.")
-    # install dependencies button
-    dependency_box.row(align=True).prop(user, "local_user")
-    dependency_box.row().operator(PREFERENCES_OT_CGT_install_dependencies_button.bl_idname, icon="CONSOLE")
-    # dependency_box.row().operator(PREFERENCES_OT_CGT_uninstall_dependencies_button.bl_idname, icon="ERROR")
-
-
-def draw_camera_settings(context, layout, user):
-    if cgt_dependencies.dependencies_installed:
-        s_box = layout.box()
-        s_box.label(text="Camera Settings")
-        s_box.row().prop(user, "enum_stream_dim")
-        s_box.row().prop(user, "enum_stream_type")
+    settings_box = layout.box()
+    if all(cgt_dependencies.dependencies_installed):
+        # cam settings
+        settings_box.label(text="Camera Settings")
+        settings_box.row().prop(user, "enum_stream_dim")
+        settings_box.row().prop(user, "enum_stream_type")
+        settings_box.row().separator()
+        settings_box.label(text="Dependency Settings")
+    else:
+        # install dependencies button
+        settings_box.label(text="Dependency Settings")
+        settings_box.row().label(text="Make sure to have elevated privileges.")
+        settings_box.row().operator(PREFERENCES_OT_CGT_install_dependencies_button.bl_idname, icon="CONSOLE")
+    deps_col = settings_box.row()
+    deps_col.row(align=True).prop(user, "local_user")
+    deps_col.row().operator(PREFERENCES_OT_CGT_save_preferences.bl_idname)
 
 
 classes = [
+    PREFERENCES_OT_CGT_save_preferences,
     PREFERENCES_OT_CGT_install_dependencies_button,
     PREFERENCES_OT_CGT_uninstall_dependencies_button
 ]
