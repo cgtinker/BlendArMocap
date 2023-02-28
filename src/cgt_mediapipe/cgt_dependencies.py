@@ -356,6 +356,7 @@ if user_site not in sys.path and stored_prefs.get("local_user", False):
     sys.path.append(user_site)
 site_packages = get_site_packages_path()
 python_binary = get_python_exe()
+print(site_packages, python_binary)
 # remove_dependency_remains()
 
 for dep in required_dependencies:

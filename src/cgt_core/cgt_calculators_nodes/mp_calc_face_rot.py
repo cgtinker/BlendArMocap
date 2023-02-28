@@ -24,7 +24,7 @@ class FaceRotationCalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
             if len(data[0][0]) == 0:
                 return [[], [], []], frame
         except IndexError:
-            logging.error("Index Error occurred: {data}, {frame} - check face nodes")
+            logging.error(f"Index Error occurred: {data}, {frame} - check face nodes")
             return [[], [], []], frame
 
         self.data = data[0]
