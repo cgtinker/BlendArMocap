@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Union
+from typing import Union, Tuple
 import time
 import cv2
 import logging
@@ -14,11 +14,16 @@ class Stream:
         'rgb': cv2.COLOR_BGR2RGB,
         'bgr': cv2.COLOR_RGB2BGR
     }
+    dim: Tuple(int, int)
+    is_movie: bool = False
 
     def __init__(self, capture_input: Union[str, int], title: str = "Stream Detection",
                  width: int = 640, height: int = 480, backend: int = 0):
         """ Generates a video stream for webcam or opens a movie file using cv2 """
         self.set_capture(capture_input, backend)
+        self.dim = (width, height)
+        if isinstance(capture_input, str):
+            self.is_movie=True
 
         time.sleep(.25)
         if not self.capture.isOpened():
@@ -39,6 +44,8 @@ class Stream:
         self.frame = cv2.cvtColor(self.frame, self.color_spaces[space])
 
     def draw(self):
+        if self.is_movie:
+            cv2.resize(self.frame, self.dim, interpolation=cv2.INTER_AREA)
         cv2.imshow(self.title, self.frame)
 
     def exit_stream(self):
