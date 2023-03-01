@@ -137,6 +137,10 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
 
         def addable(x, y):
             # check if [int, [float, float float]]
+            if not isinstance(x, list) or not isinstance(y, list):
+                print("CATCHED NOT LIST ERR")
+                return False
+
             if not len(x) == 2 or not len(y) == 2:
                 return False
 

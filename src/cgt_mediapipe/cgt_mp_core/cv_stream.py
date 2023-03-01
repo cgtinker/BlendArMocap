@@ -14,16 +14,20 @@ class Stream:
         'rgb': cv2.COLOR_BGR2RGB,
         'bgr': cv2.COLOR_RGB2BGR
     }
-    dim: Tuple(int, int)
+    dim: Tuple[int, int]
     is_movie: bool = False
+    frame_configured: bool = False
 
     def __init__(self, capture_input: Union[str, int], title: str = "Stream Detection",
                  width: int = 640, height: int = 480, backend: int = 0):
         """ Generates a video stream for webcam or opens a movie file using cv2 """
         self.set_capture(capture_input, backend)
+
         self.dim = (width, height)
+        self.frame_configured = False
         if isinstance(capture_input, str):
-            self.is_movie=True
+            self.is_movie = True
+        self.set_capture_props(width, height)
 
         time.sleep(.25)
         if not self.capture.isOpened():
@@ -33,7 +37,6 @@ class Stream:
 
             if not self.capture.isOpened():
                 raise IOError("Cannot open webcam")
-        self.set_capture_props(width, height)
         self.title = title
 
     def update(self):
@@ -43,10 +46,29 @@ class Stream:
     def set_color_space(self, space):
         self.frame = cv2.cvtColor(self.frame, self.color_spaces[space])
 
+    def resize_movie_frame(self):
+        if not self.frame_configured:
+            (h, w) = self.frame.shape[:2]
+            (tar_w, tar_h) = self.dim
+
+            if h < w:   # landscape
+                aspect = tar_w / float(w)
+                self.dim = (tar_w, int(h*aspect))
+            elif h > w:     # portrait
+                aspect = tar_h / float(h)
+                self.dim = (int(w*aspect), tar_h)
+            else:
+                self.dim = (tar_w, tar_w)
+
+            self.frame_configured = True
+
+        return cv2.resize(self.frame, self.dim, interpolation=cv2.INTER_AREA)
+
     def draw(self):
+        f = self.frame
         if self.is_movie:
-            cv2.resize(self.frame, self.dim, interpolation=cv2.INTER_AREA)
-        cv2.imshow(self.title, self.frame)
+            f = self.resize_movie_frame()
+        cv2.imshow(self.title, f)
 
     def exit_stream(self):
         if cv2.waitKey(1) & 0xFF == ord('q'):
