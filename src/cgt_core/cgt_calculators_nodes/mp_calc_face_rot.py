@@ -28,6 +28,9 @@ class FaceRotationCalculator(cgt_nodes.CalculatorNode, ProcessorUtils):
             return [[], [], []], frame
 
         self.data = data[0]
+        if len(self.data) < 468:
+            return [[], [], []], frame
+
         # increase the data size to hold custom data (check __init__)
         for i in range(4):
             self.data.append([468+i, [0., 0., 0.]])

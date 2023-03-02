@@ -136,6 +136,8 @@ class OT_CGT_ObjectMinMax(bpy.types.Operator):
         fcurves = ob.animation_data.action.fcurves
         for i, fc in enumerate(fcurves):
             vals = [c.co[1] for c in fc.keyframe_points]
+            if not vals:
+                continue
 
             if fc.data_path == 'location' and use_loc:
                 loc[0][i % 3] = min(vals)

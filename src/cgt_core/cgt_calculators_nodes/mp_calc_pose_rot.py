@@ -19,7 +19,7 @@ class PoseRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
 
     def update(self, data: List, frame: int=-1):
         """ Apply the processed data to references. """
-        if not data:
+        if not data or len(data) < 33:
             return [[], [], []], frame
         self.data = data
 

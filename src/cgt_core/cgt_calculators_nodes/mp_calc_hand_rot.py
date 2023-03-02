@@ -61,7 +61,7 @@ class HandRotationCalculator(cgt_nodes.CalculatorNode, calc_utils.ProcessorUtils
 
     def finger_angles(self, hand):
         """ Get finger x-angles from landmarks. """
-        if not hand:
+        if not hand or len(hand) < 20:
             return []
 
         x_angles = self.get_x_angles(hand)
