@@ -136,3 +136,4 @@ dmypy.json
 .idea/
 /src/cgt_tests/data/
 /src/test.py
+/BlendArMocap_release_160.zip

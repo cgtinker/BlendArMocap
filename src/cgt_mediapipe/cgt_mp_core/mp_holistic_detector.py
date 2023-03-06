@@ -38,7 +38,8 @@ class HolisticDetector(mp_detector_node.DetectorNode):
             l_hand = [self.cvt2landmark_array(mp_res.left_hand_landmarks)]
         if mp_res.right_hand_landmarks:
             r_hand = [self.cvt2landmark_array(mp_res.right_hand_landmarks)]
-        return [[l_hand, r_hand], [face], pose]
+        # TODO: recheck every update, mp hands are flipped while detecting holistic.
+        return [[r_hand, l_hand], [face], pose]
 
     def contains_features(self, mp_res):
         if not mp_res.pose_landmarks:
