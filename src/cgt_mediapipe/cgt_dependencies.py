@@ -125,9 +125,11 @@ def uninstall_dependency(self: bpy.types.Operator, dependency: Dependency) -> bo
         return value
 
     # find package dist
-    import pkg_resources
     try:
+        import pkg_resources
         dist_info = pkg_resources.get_distribution(dependency.pkg)
+    except ModuleNotFoundError:
+        return False
     except pkg_resources.DistributionNotFound:
         return False
 
@@ -270,14 +272,17 @@ def import_module(dependency: Dependency) -> bool:
 
 def get_package_info(dependency: Dependency) -> Tuple[str, str]:
     """ Get info of installed package in Blender. """
-    import pkg_resources
     try:
+        import pkg_resources
         # get version and path of the package
         dist_info = pkg_resources.get_distribution(dependency.pkg)
         version = dist_info.version
 
         path = Path(dist_info.location) / dist_info.project_name
         path = str(path)
+
+    except ModuleNotFoundError:
+        return False
 
     except pkg_resources.DistributionNotFound as e:
         logging.warning(e)
