@@ -11,7 +11,7 @@ from ..cgt_core.cgt_calculators_nodes import cgt_math
 # region TRANSFER
 class OT_UI_CGT_smooth_empties(bpy.types.Operator):
     bl_label = "Smooth"
-    bl_idname = "button.smooth_selected_empties"
+    bl_idname = "button.cgt_smooth_selected_empties"
     bl_description = "Smooth animation data of selected objects."
     bl_options = {"REGISTER", "UNDO"}
 
@@ -366,4 +366,5 @@ def register():
 
 def unregister():
     for cls in reversed(classes):
+        print(cls)
         bpy.utils.unregister_class(cls)

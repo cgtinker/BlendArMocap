@@ -280,7 +280,7 @@ class OBJECT_PT_CGT_DriverTools(bpy.types.Panel):
 
         col.row().operator("button.cgt_object_transfer_selection", text="Transfer Selection")
         col.separator()
-        col.row().operator("button.smooth_selected_empties", text="Smooth Animation Data of Selection")
+        col.row().operator("button.cgt_smooth_selected_empties", text="Smooth Animation Data of Selection")
         col.separator()
         col.row().operator("button.cgt_object_fcurve_min_max", text="Log Object Info")
 
