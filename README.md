@@ -11,6 +11,22 @@ For more information, please refer to the [documentation](https://cgtinker.githu
 - Import of [Freemocap](https://freemocap.org) mediapipe session data
 - Transfer tracking data to rigs and generate new transfer configurations
   - currently, officially supports the transfer to generated [rifigy rigs](https://docs.blender.org/manual/en/latest/addons/rigging/rigify/index.html)
+  
+## Quick Start
+
+1. Download this repository as a .zip file
+2. Open Blender > Edit > Prefrences > Add-ons > Install > Point to the zip file of this repository
+3. Install it and also install the dependencies, note the dependencies 'Installed' column should say 'True' for all dependencies and finally Click 'Save Prefrences'
+4. Open 'BlenderAR' Panel, select 'WebCam' from the drop down and click 'Start Detection'. Make sure whatever is in the 'Target' is visible to the camera and a new window should open that will show the skeleton tracker.
+5. Click 'Stop Detection' to stop the webcam anytime.
+
+### For Mac Users:
+
+If Blender is crashing at any point during 'Quick Start', mostly likely it is becuase Blender App doesn't have the 'Camera' permissions so Apple Security system is preventing it from starting. To work around that just do:
+
+- Make sure in your "Security & Privacy" settings > Camera > Terminal.app is checked on (terminal should have access to camera).
+- Open Terminal and start Blender by typing it's path. e.g /Applications/Blender.app/Contents/MacOS/Blender
+- Open the BlenderAR Panel and Click 'Start Detection'
 
 
 ### Mediapipe Detection
