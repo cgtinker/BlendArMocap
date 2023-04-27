@@ -22,7 +22,7 @@ For more information, please refer to the [documentation](https://cgtinker.githu
 
 ### For Mac Users:
 
-If Blender is crashing at any point during 'Quick Start', mostly likely it is becuase Blender App doesn't have the 'Camera' permissions so Apple Security system is preventing it from starting. To work around that just do:
+If Blender is crashing at any point during 'Quick Start', mostly likely it is because the Blender App doesn't have the 'Camera' permissions so Apple Security system is preventing it from starting. To work around that just do the following:
 
 - Make sure in your "Security & Privacy" settings > Camera > Terminal.app is checked on (terminal should have access to camera).
 - Open Terminal and start Blender by typing it's path. e.g /Applications/Blender.app/Contents/MacOS/Blender
