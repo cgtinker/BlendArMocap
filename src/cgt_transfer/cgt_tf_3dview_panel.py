@@ -2,7 +2,6 @@ import bpy
 from pathlib import Path
 from bpy.types import Panel
 from ..cgt_core.cgt_interface import cgt_core_panel
-
 from bpy.props import PointerProperty
 
 
@@ -68,7 +67,7 @@ class PT_CGT_Main_Transfer(cgt_core_panel.DefaultPanel, Panel):
             return True
 
     def draw(self, context):
-        user = context.scene.cgtinker_transfer  # noqa
+        user = getattr(context.scene, "cgtinker_transfer")
         layout = self.layout
 
         row = layout.row(align=True)
@@ -88,7 +87,8 @@ class PT_CGT_Main_Transfer(cgt_core_panel.DefaultPanel, Panel):
             row.label(icon='BLANK1')
             row = layout.row(align=True)
             row.use_property_decorate = False
-            row.operator("button.cgt_object_apply_properties", text="Transfer Animation", icon="DRIVER")
+            row.operator("button.cgt_object_apply_properties",
+                         text="Transfer Animation", icon="DRIVER")
             return
 
         row.prop(user, "delete_object_properties_bool", text="", icon='TRASH')
@@ -102,26 +102,33 @@ class PT_CGT_Main_Transfer(cgt_core_panel.DefaultPanel, Panel):
             row = col.row(align=True)
             row.use_property_decorate = False
             row.label(text="Deletion is permanent. Proceed?")
-            row.operator("button.cgt_object_delete_properties", text="", icon='CHECKMARK')
-            row.prop(user, "delete_object_properties_bool", text="", icon='CANCEL', invert_checkbox=True)
+            row.operator("button.cgt_object_delete_properties",
+                         text="", icon='CHECKMARK')
+            row.prop(user, "delete_object_properties_bool",
+                     text="", icon='CANCEL', invert_checkbox=True)
             col.separator()
 
         row = col.row(align=True)
         row.use_property_decorate = False
         sub = row.row(align=True)
-        sub.operator("button.cgt_object_load_properties", text="Load", icon='FILE_TICK')
-        sub.prop(user, "save_object_properties_bool", text="Save Config", icon='FILE_NEW')
+        sub.operator("button.cgt_object_load_properties",
+                     text="Load", icon='FILE_TICK')
+        sub.prop(user, "save_object_properties_bool",
+                 text="Save Config", icon='FILE_NEW')
 
         if user.save_object_properties_bool:
             row = col.row(align=True)
             row.use_property_decorate = False
             row.prop(user, "save_object_properties_name", text="")
-            row.operator("button.cgt_object_save_properties", text="", icon='CHECKMARK')
-            row.prop(user, "save_object_properties_bool", text="", toggle=True, icon='CANCEL', invert_checkbox=True)
+            row.operator("button.cgt_object_save_properties",
+                         text="", icon='CHECKMARK')
+            row.prop(user, "save_object_properties_bool", text="",
+                     toggle=True, icon='CANCEL', invert_checkbox=True)
 
         row = col.row(align=True)
         row.use_property_decorate = False
-        row.operator("button.cgt_object_apply_properties", text="Transfer Animation", icon="DRIVER")
+        row.operator("button.cgt_object_apply_properties",
+                     text="Transfer Animation", icon="DRIVER")
 
 
 class PT_CGT_Advanced_Transfer(cgt_core_panel.DefaultPanel, Panel):
@@ -130,10 +137,11 @@ class PT_CGT_Advanced_Transfer(cgt_core_panel.DefaultPanel, Panel):
     bl_idname = "UI_PT_CGT_Transfer_Tools"
 
     def draw(self, context):
-        user = context.scene.cgtinker_transfer  # noqa
+        user = getattr(context.scene, "cgtinker_transfer")
         layout = self.layout
         row = layout.row(align=True)
-        row.prop(user, "advanced_features", text="Use Advanced Features", toggle=True)
+        row.prop(user, "advanced_features",
+                 text="Use Advanced Features", toggle=True)
 
 
 classes = [
@@ -146,7 +154,8 @@ classes = [
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    bpy.types.Scene.cgtinker_transfer = PointerProperty(type=CgtRigifyTransferProperties)
+    bpy.types.Scene.cgtinker_transfer = PointerProperty(
+        type=CgtRigifyTransferProperties)
 
 
 def unregister():

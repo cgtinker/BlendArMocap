@@ -1,6 +1,6 @@
 import bpy
 import logging
-
+from typing import Optional
 from pathlib import Path
 from ..cgt_core.cgt_patterns import cgt_nodes
 
@@ -10,13 +10,13 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
     bl_idname = "wm.cgt_feature_detection_operator"
     bl_description = "Detect solution in Stream."
 
-    _timer: bpy.types.Timer = None
-    node_chain: cgt_nodes.NodeChain = None
-    frame = key_step = 1
-    memo = None
-    user = None
+    _timer: Optional[bpy.types.Timer] = None
+    node_chain: Optional[cgt_nodes.NodeChain] = None
+    frame: int = 1
+    key_step: int = 1
+    memo: list
 
-    def get_chain(self, stream) -> cgt_nodes.NodeChain:
+    def get_chain(self, stream) -> Optional[cgt_nodes.NodeChain]:
         from ..cgt_core import cgt_core_chains
         from .cgt_mp_core import mp_hand_detector, mp_face_detector, mp_pose_detector, mp_holistic_detector
 
@@ -53,7 +53,8 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
             chain_template = cgt_core_chains.HolisticNodeChainGroup()
 
         if input_node is None or chain_template is None:
-            self.report({'ERROR'}, f"Setting up nodes failed: Input: {input_node}, Chain: {chain_template}")
+            self.report(
+                {'ERROR'}, f"Setting up nodes failed: Input: {input_node}, Chain: {chain_template}")
             return None
 
         node_chain.append(input_node)
@@ -95,7 +96,8 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
 
     def execute(self, context):
         """ Runs movie or stream detection depending on user input. """
-        self.user = context.scene.cgtinker_mediapipe  # noqa
+        self.user = getattr(context.scene, "cgtinker_mediapipe")
+        assert self.user is not None
 
         # don't activate if modal is running
         if self.user.modal_active is True:
@@ -114,12 +116,13 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
 
         # add a timer property and start running
         wm = context.window_manager
-        self._timer = wm.event_timer_add(0.1, window=context.window)
+        self._timer = wm.event_timer_add(0.0, window=context.window)
         context.window_manager.modal_handler_add(self)
 
         # memo skipped frames
         self.memo = []
-        self.report({'INFO'}, f"Running {self.user.enum_detection_type} as modal.")
+        self.report(
+            {'INFO'}, f"Running {self.user.enum_detection_type} as modal.")
         return {'RUNNING_MODAL'}
 
     @classmethod
@@ -169,6 +172,7 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
 
     def modal(self, context, event):
         """ Run detection as modal operation, finish with 'Q', 'ESC' or 'RIGHT MOUSE'. """
+        assert self.node_chain is not None
         if event.type == "TIMER" and self.user.modal_active:
             if self.user.detection_input_type == 'movie':
                 # get data
@@ -200,7 +204,8 @@ class WM_CGT_MP_modal_detection_operator(bpy.types.Operator):
         self.user.modal_active = False  # noqa
         del self.node_chain
         wm = context.window_manager
-        wm.event_timer_remove(self._timer)
+        if self._timer:
+            wm.event_timer_remove(self._timer)
         logging.debug("FINISHED DETECTION")
         return {'FINISHED'}
 

@@ -1,6 +1,7 @@
 import importlib
 import logging
 import sys
+from typing import Optional
 from pathlib import Path
 
 # Ensure all modules are reloaded from new files,
@@ -24,7 +25,8 @@ def get_reload_list(sub_dirs):
     reload_list = []
 
     for sub_dir in sub_dirs:
-        files = [p for p in sub_dir.rglob("*.py") if not p.stem.startswith('_')]
+        files = [p for p in sub_dir.rglob(
+            "*.py") if not p.stem.startswith('_')]
         for file in files:
             parents = get_parents(file, [])
             imp_path = ""
@@ -42,7 +44,7 @@ def get_parents(file: Path, parents: list):
     return parents
 
 
-def manage_imports(dirs: list = None):
+def manage_imports(dirs: Optional[list] = None):
     if dirs is None:
         s = [PACKAGE_PATH / 'src']
     else:
@@ -59,4 +61,3 @@ def manage_imports(dirs: list = None):
 
         if reload:
             reload_module(module)
-
