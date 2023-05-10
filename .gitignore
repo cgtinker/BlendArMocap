@@ -1,6 +1,7 @@
 #Only push Scripts, not blends
 *.blend
 *.blend1
+*.DS_Store
 
 #Byte-compiled / optimized / DLL files
 __pycache__/
