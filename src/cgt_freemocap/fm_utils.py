@@ -18,27 +18,32 @@ Copyright (C) cgtinker, cgtinker.com, hello@cgtinker.com
 import logging
 import bpy
 from pathlib import Path
+from . import fm_paths
 
 
 def is_valid_session_directory(path):
     freemocap_session_path = Path(bpy.path.abspath(path))
     if not freemocap_session_path.is_dir():
-        logging.error(f"Given path doesn't point to a directory {freemocap_session_path}.")
+        logging.error(
+            f"Given path doesn't point to a directory {freemocap_session_path}.")
         return False
 
-    data_arrays = freemocap_session_path / 'DataArrays'
+    data_arrays = freemocap_session_path / fm_paths.DATA_DIR
     if not data_arrays.is_dir():
-        logging.error(f"Given path doesn't contain a DataArrays directory {freemocap_session_path}.")
+        logging.error(
+            f"Given path doesn't contain a DataArrays directory {freemocap_session_path}.")
         return False
 
-    mediaPipeSkel_3d_smoothed = data_arrays / 'mediaPipeSkel_3d_smoothed.npy'
+    mediaPipeSkel_3d_smoothed = data_arrays / fm_paths.SMOOTHED_MEDIAPIPE_DATA
     if not mediaPipeSkel_3d_smoothed.is_file():
-        logging.error(f"Data Arrays don't contain a mediaPipeSkel_3d_smoothed.npy file. {data_arrays}.")
+        logging.error(
+            f"Data Arrays don't contain a mediaPipeSkel_3d_smoothed.npy file. {data_arrays}.")
         return False
 
-    mediaPipeSkel_reprojErr = data_arrays / 'mediaPipeSkel_reprojErr.npy'
-    if not mediaPipeSkel_reprojErr.is_file():
-        logging.error(f"Data Arrays don't contain a mediaPipeSkel_reprojErr.npy file. {data_arrays}.")
+    # mediaPipeSkel_reprojErr = data_arrays / fm_paths.MEDIAPIPE_DATA_REPROJ_ERR
+    # if not mediaPipeSkel_reprojErr.is_file():
+    #     logging.error(
+    #         f"Data Arrays don't contain a mediaPipeSkel_reprojErr.npy file. {data_arrays}.")
 
     logging.debug(f"Path to freemocap session: {freemocap_session_path}")
     return True

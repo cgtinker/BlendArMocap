@@ -2,7 +2,8 @@ import bpy
 import logging
 import addon_utils
 from pathlib import Path
-from . import fm_utils, fm_session_loader
+
+from . import fm_utils, fm_session_loader, fm_paths
 
 
 class OT_Freemocap_Quickload_Operator(bpy.types.Operator):
@@ -24,7 +25,8 @@ class OT_Freemocap_Quickload_Operator(bpy.types.Operator):
         # validate session directory
         if not fm_utils.is_valid_session_directory(self.user.freemocap_session_path):
             self.user.modal_active = False
-            self.report({'ERROR'}, f"Session directory not valid. {self.user.freemocap_session_path}")
+            self.report(
+                {'ERROR'}, f"Session directory not valid. {self.user.freemocap_session_path}")
             return {'FINISHED'}
 
         # load data
@@ -65,7 +67,8 @@ class WM_Load_Freemocap_Operator(bpy.types.Operator):
         # validate session directory
         if not fm_utils.is_valid_session_directory(self.user.freemocap_session_path):
             self.user.modal_active = False
-            self.report({'ERROR'}, f"Session directory not valid. {self.user.freemocap_session_path}")
+            self.report(
+                {'ERROR'}, f"Session directory not valid. {self.user.freemocap_session_path}")
             return {'FINISHED'}
 
         # init loader
@@ -77,7 +80,8 @@ class WM_Load_Freemocap_Operator(bpy.types.Operator):
         wm = context.window_manager
         self._timer = wm.event_timer_add(0.1, window=context.window)
         context.window_manager.modal_handler_add(self)
-        self.report({'INFO'}, f'Start running modal operator {self.__class__.__name__}')
+        self.report(
+            {'INFO'}, f'Start running modal operator {self.__class__.__name__}')
         return {'RUNNING_MODAL'}
 
     @classmethod
@@ -121,7 +125,8 @@ class WM_FMC_bind_freemocap_data_to_skeleton(bpy.types.Operator):
         # set transfer props
         cgtinker_transfer = context.scene.cgtinker_transfer  # noqa
         cgtinker_transfer.selected_rig = bpy.context.active_object
-        cgtinker_transfer.selected_driver_collection = bpy.data.collections.get('cgt_DRIVERS')
+        cgtinker_transfer.selected_driver_collection = bpy.data.collections.get(
+            'cgt_DRIVERS')
         cgtinker_transfer.transfer_types = 'Rigify_Humanoid_DefaultFace_v0.6.1'
 
         bpy.ops.button.cgt_object_apply_properties()
@@ -141,12 +146,13 @@ class WM_FMC_load_synchronized_videos(bpy.types.Operator):
 
         addon_utils.enable("io_import_images_as_planes")
         if not fm_utils.is_valid_session_directory(str(freemocap_session_path)):
-            self.report({'ERROR'}, f"Session directory not valid. {self.user.freemocap_session_path}")
+            self.report(
+                {'ERROR'}, f"Session directory not valid. {self.user.freemocap_session_path}")
             return {'CANCELLED'}
 
         try:
             logging.debug('loading videos as planes...')
-            vidFolderPath = freemocap_session_path / 'SyncedVideos'
+            vidFolderPath = freemocap_session_path / fm_paths.VIDEOS_DIR
 
             # %% create world origin
             bpy.ops.object.empty_add(type='ARROWS')
@@ -167,9 +173,11 @@ class WM_FMC_load_synchronized_videos(bpy.types.Operator):
                 this_vid_as_plane = bpy.context.active_object
                 this_vid_as_plane.name = 'vid_' + str(vid_number)
 
-                vid_x = (vid_number - number_of_videos / 2) * vid_location_scale
+                vid_x = (vid_number - number_of_videos / 2) * \
+                    vid_location_scale
 
-                this_vid_as_plane.location = [vid_x, vid_location_scale, vid_location_scale]
+                this_vid_as_plane.location = [
+                    vid_x, vid_location_scale, vid_location_scale]
                 this_vid_as_plane.rotation_euler = [3.14152 / 2, 0, 0]
                 this_vid_as_plane.scale = [vid_location_scale * 1.5] * 3
                 this_vid_as_plane.parent = world_origin
@@ -177,7 +185,8 @@ class WM_FMC_load_synchronized_videos(bpy.types.Operator):
                 # create a light
                 # bpy.ops.object.light_add(type='POINT', radius=1, align='WORLD')
         except Exception as e:
-            self.report({'ERROR'}, f'Failed to load videos to Blender scene. {e}')
+            self.report(
+                {'ERROR'}, f'Failed to load videos to Blender scene. {e}')
             return {'CANCELLED'}
         self.report({'INFO'}, f"Imported session videos as planes.")
         return {'FINISHED'}

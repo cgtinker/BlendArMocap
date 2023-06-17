@@ -1,0 +1,7 @@
+__VIDEOS_DIR = 'SyncedVideos'
+VIDEOS_DIR = 'annotated_videos'
+__DATA_DIR = 'DataArrays'
+DATA_DIR = 'output_data'
+__SMOOTHED_MEDIAPIPE_DATA = 'mediaPipeSkel_3d_smoothed.npy'
+SMOOTHED_MEDIAPIPE_DATA = 'mediaPipeSkel_3d_body_hands_face.npy'
+# MEDIAPIPE_DATA_REPROJ_ERR = 'mediaPipeSkel_reprojErr.npy'
