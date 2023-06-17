@@ -20,7 +20,7 @@ bl_info = {
     "name":        "BlendArMocap",
     "description": "Mediapipe and Freemocap animation transfer implementation for Blender 3.0+.",
     "author":      "cgtinker",
-    "version":     (1, 6, 0),
+    "version":     (1, 6, 1),
     "blender":     (3, 0, 0),
     "location":    "3D View > Tool",
     "doc_url":    "https://cgtinker.github.io/BlendArMocap/",
