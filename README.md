@@ -4,6 +4,8 @@ BlendArMocap is a tool preform markerless tracking within Blender using Googleâ€
 
 For more information, please refer to the [documentation](https://cgtinker.github.io/BlendArMocap/).
 
+# Discontinued
+I cannot activly maintain BlendArMocap anymore, I may accept PR's and consider to transfer the ownership if someone plans to activly maintain it.
 
 ### Features
 - Detection of [Mediapipe](https://google.github.io/mediapipe/) detection results in stream or video
