@@ -22,7 +22,7 @@ jobs:
           python-version: '3.9'
           architecture: x64
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install and Build
         run: |
           cd docs
