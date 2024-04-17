@@ -315,7 +315,7 @@ elif sys.platform == 'win32':
     required_dependencies = [
         Dependency(module="opencv-contrib-python==4.7.0.68", name="cv2", pkg="opencv_contrib_python", args=None),
         Dependency(module="protobuf==3.20.3", name="google.protobuf", pkg="protobuf", args=None),
-        Dependency(module="mediapipe==0.9.0.1", name="mediapipe", pkg="mediapipe", args=None)
+        Dependency(module="mediapipe==0.10.11", name="mediapipe", pkg="mediapipe", args=None)
     ]
 
 elif sys.platform == 'linux':
