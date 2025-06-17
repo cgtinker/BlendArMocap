@@ -138,3 +138,58 @@ dmypy.json
 /src/cgt_tests/data/
 /src/test.py
 /BlendArMocap_release_160.zip
+
+# Poetry
+poetry.lock
+
+# Claude settings
+.claude/*
+
+# IDE files
+.vscode/
+*.swp
+*.swo
+*~
+
+# Testing artifacts
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.cover
+.hypothesis/
+.tox/
+.nox/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+virtualenv/
+.python-version
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+tmp/
+temp/
